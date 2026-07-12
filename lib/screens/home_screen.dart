@@ -61,7 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.grid_on, size: 96, color: Colors.blue),
+            Image.asset(
+              Theme.of(context).brightness == Brightness.dark
+                  ? 'assets/images/icon_black.png'
+                  : 'assets/images/app_icon.png',
+              width: 96,
+              height: 96,
+            ),
             const SizedBox(height: 32),
             if (_savedGame != null) ...[
               ElevatedButton(

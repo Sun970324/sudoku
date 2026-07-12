@@ -49,6 +49,7 @@ class GameControlsRow extends StatelessWidget {
           onPressed: onToggleNoteMode,
           color: noteColor,
           bold: isNoteMode,
+          noteModeBadge: isNoteMode,
         ),
         _ControlButton(
           icon: Icons.auto_fix_high,
@@ -75,6 +76,7 @@ class _ControlButton extends StatelessWidget {
     this.color,
     this.bold = false,
     this.showAdBadge = false,
+    this.noteModeBadge,
   });
 
   final IconData icon;
@@ -83,6 +85,10 @@ class _ControlButton extends StatelessWidget {
   final Color? color;
   final bool bold;
   final bool showAdBadge;
+
+  /// Null hides the badge entirely (every button except 메모). True/false
+  /// shows an "ON"/"OFF" badge reflecting whether note mode is active.
+  final bool? noteModeBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -135,6 +141,32 @@ class _ControlButton extends StatelessWidget {
                     ),
                   ),
                 ),
+              if (noteModeBadge != null)
+                Positioned(
+                  right: -6,
+                  top: -4,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: noteModeBadge!
+                          ? _darken(Theme.of(context).colorScheme.primary)
+                          : Colors.grey.shade500,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                          color: BoardColors.adBadgeBorder(isDark), width: 1),
+                    ),
+                    child: Text(
+                      noteModeBadge! ? 'ON' : 'OFF',
+                      style: const TextStyle(
+                        fontSize: 8,
+                        height: 1,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 4),
@@ -149,5 +181,12 @@ class _ControlButton extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static Color _darken(Color color, [double amount = 0.2]) {
+    final hsl = HSLColor.fromColor(color);
+    return hsl
+        .withLightness((hsl.lightness - amount).clamp(0.0, 1.0))
+        .toColor();
   }
 }
