@@ -1,0 +1,153 @@
+part of '../hint_engine.dart';
+
+extension HintEngineSingles on HintEngine {
+  Hint? findFullHouse(List<List<int>> board) {
+    final grid = SudokuGrid(board);
+    for (final unit in _allUnits()) {
+      final emptyCells =
+          unit.cells.where((rc) => grid.get(rc[0], rc[1]) == 0).toList();
+      if (emptyCells.length != 1) continue;
+
+      final target = emptyCells.first;
+      final present = <int>{
+        for (final rc in unit.cells) grid.get(rc[0], rc[1]),
+      }..remove(0);
+      final missing = {for (var v = 1; v <= 9; v++) v}..removeAll(present);
+      if (missing.length != 1) continue;
+      final value = missing.first;
+
+      final secondary = unit.cells
+          .where((rc) => rc[0] != target[0] || rc[1] != target[1])
+          .map((rc) => HintCell(rc[0], rc[1]))
+          .toSet();
+
+      final (hRows, hCols, hBoxes) = _highlightFor(unit);
+      return Hint(
+        technique: HintTechnique.fullHouse,
+        type: HintType.reveal,
+        explanation: '${unit.description}에 빈 칸이 이 칸 하나만 남았어요. '
+            '1~9 중 아직 없는 숫자는 $value뿐이라 자동으로 정해집니다.',
+        primaryCells: {HintCell(target[0], target[1])},
+        secondaryCells: secondary,
+        highlightedRows: hRows,
+        highlightedCols: hCols,
+        highlightedBoxes: hBoxes,
+        row: target[0],
+        col: target[1],
+        value: value,
+      );
+    }
+    return null;
+  }
+
+  Hint? findNakedSingle(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+  ]) {
+    final grid = SudokuGrid(board);
+    final cands = candidates ?? _freshCandidates(board);
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        if (grid.get(r, c) != 0) continue;
+        final cellCandidates = cands[r][c];
+        if (cellCandidates.length != 1) continue;
+        final value = cellCandidates.first;
+
+        final secondary = _peers(r, c)
+            .where((rc) => grid.get(rc[0], rc[1]) != 0)
+            .map((rc) => HintCell(rc[0], rc[1]))
+            .toSet();
+
+        return Hint(
+          technique: HintTechnique.nakedSingle,
+          type: HintType.reveal,
+          explanation: '${r + 1}행 ${c + 1}열은 후보 숫자가 $value 하나뿐이에요. '
+              '같은 행·열·박스에 나머지 숫자가 모두 있어서 $value만 남았습니다.',
+          primaryCells: {HintCell(r, c)},
+          secondaryCells: secondary,
+          row: r,
+          col: c,
+          value: value,
+        );
+      }
+    }
+    return null;
+  }
+
+  Hint? findHiddenSingle(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+  ]) {
+    final resolved = candidates ?? _freshCandidates(board);
+
+    for (final unit in _allUnits()) {
+      for (var value = 1; value <= 9; value++) {
+        final cellsWithValue = unit.cells
+            .where((rc) => resolved[rc[0]][rc[1]].contains(value))
+            .toList();
+        if (cellsWithValue.length != 1) continue;
+        final target = cellsWithValue.first;
+
+        final secondary = unit.cells
+            .where((rc) => rc[0] != target[0] || rc[1] != target[1])
+            .map((rc) => HintCell(rc[0], rc[1]))
+            .toSet();
+
+        // For every other still-empty cell in the unit, value isn't a
+        // candidate there because it's already placed somewhere in that
+        // cell's own row, column, or box — highlight those specific units
+        // (so the board visually shows "these areas are already covered by
+        // value, that's why only one cell in the unit is left") and also
+        // color the exact blocking cell itself, same as any other reason
+        // cell. Checking the unit's own row/col/box here is harmless: it
+        // always comes back false, since by definition this unit doesn't
+        // contain value yet.
+        final extraRows = <int>{};
+        final extraCols = <int>{};
+        final extraBoxes = <int>{};
+        final extraSecondary = <HintCell>{};
+        for (final rc in unit.cells) {
+          if (rc[0] == target[0] && rc[1] == target[1]) continue;
+          if (board[rc[0]][rc[1]] != 0) continue;
+          final r = rc[0];
+          final c = rc[1];
+          for (var cc = 0; cc < 9; cc++) {
+            if (board[r][cc] == value) {
+              extraRows.add(r);
+              extraSecondary.add(HintCell(r, cc));
+            }
+          }
+          for (var rr = 0; rr < 9; rr++) {
+            if (board[rr][c] == value) {
+              extraCols.add(c);
+              extraSecondary.add(HintCell(rr, c));
+            }
+          }
+          for (final bcell in SudokuGrid.boxCellsOf(r, c)) {
+            if (board[bcell[0]][bcell[1]] == value) {
+              extraBoxes.add(_boxIndexOf(rc));
+              extraSecondary.add(HintCell(bcell[0], bcell[1]));
+            }
+          }
+        }
+
+        final (hRows, hCols, hBoxes) = _highlightFor(unit);
+        return Hint(
+          technique: HintTechnique.hiddenSingle,
+          type: HintType.reveal,
+          explanation: '${unit.description}에서 숫자 $value가 들어갈 수 있는 '
+              '빈 칸은 ${target[0] + 1}행 ${target[1] + 1}열 하나뿐이에요.',
+          primaryCells: {HintCell(target[0], target[1])},
+          secondaryCells: {...secondary, ...extraSecondary},
+          highlightedRows: {...hRows, ...extraRows},
+          highlightedCols: {...hCols, ...extraCols},
+          highlightedBoxes: {...hBoxes, ...extraBoxes},
+          row: target[0],
+          col: target[1],
+          value: value,
+        );
+      }
+    }
+    return null;
+  }
+}

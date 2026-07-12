@@ -173,13 +173,8 @@ class HumanSolver {
     return null;
   }
 
-  List<List<Set<int>>> _freshCandidates(List<List<int>> board) {
-    final grid = SudokuGrid(board);
-    return List.generate(
-      9,
-      (r) => List.generate(9, (c) => grid.candidatesAt(r, c)),
-    );
-  }
+  List<List<Set<int>>> _freshCandidates(List<List<int>> board) =>
+      SudokuGrid(board).allCandidates();
 
   bool _isComplete(List<List<int>> board) {
     for (final row in board) {

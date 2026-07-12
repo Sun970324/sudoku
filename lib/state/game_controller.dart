@@ -188,20 +188,8 @@ class GameController extends ChangeNotifier {
   /// already holds [value] — the reason a note for [value] was rejected.
   void _flashConflictCells(int row, int col, int value) {
     final conflicts = <HintCell>{};
-    for (var c = 0; c < 9; c++) {
-      if (c != col && _board[row][c] == value) conflicts.add(HintCell(row, c));
-    }
-    for (var r = 0; r < 9; r++) {
-      if (r != row && _board[r][col] == value) conflicts.add(HintCell(r, col));
-    }
-    final boxRow = (row ~/ 3) * 3;
-    final boxCol = (col ~/ 3) * 3;
-    for (var r = boxRow; r < boxRow + 3; r++) {
-      for (var c = boxCol; c < boxCol + 3; c++) {
-        if ((r != row || c != col) && _board[r][c] == value) {
-          conflicts.add(HintCell(r, c));
-        }
-      }
+    for (final p in SudokuGrid.peersOf(row, col)) {
+      if (_board[p[0]][p[1]] == value) conflicts.add(HintCell(p[0], p[1]));
     }
     _conflictFlashCells = conflicts;
     notifyListeners();
@@ -549,18 +537,8 @@ class GameController extends ChangeNotifier {
   /// same row, column, and 3x3 box as (row, col) — those cells can no longer
   /// hold [value] once it's been placed here.
   void _removeNoteFromPeers(int row, int col, int value) {
-    for (var c = 0; c < 9; c++) {
-      if (c != col) _notes[row][c].remove(value);
-    }
-    for (var r = 0; r < 9; r++) {
-      if (r != row) _notes[r][col].remove(value);
-    }
-    final boxRow = (row ~/ 3) * 3;
-    final boxCol = (col ~/ 3) * 3;
-    for (var r = boxRow; r < boxRow + 3; r++) {
-      for (var c = boxCol; c < boxCol + 3; c++) {
-        if (r != row || c != col) _notes[r][c].remove(value);
-      }
+    for (final p in SudokuGrid.peersOf(row, col)) {
+      _notes[p[0]][p[1]].remove(value);
     }
   }
 
