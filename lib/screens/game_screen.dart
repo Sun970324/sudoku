@@ -367,14 +367,17 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                   style: const TextStyle(fontSize: 20),
                 ),
                 const Spacer(),
-                SizedBox(
-                  width: 40,
-                  child: Text(
-                    _formatTime(_controller.elapsedSeconds),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontFeatures: [FontFeature.tabularFigures()],
+                ValueListenableBuilder<int>(
+                  valueListenable: _controller.elapsedSecondsNotifier,
+                  builder: (context, seconds, _) => SizedBox(
+                    width: 40,
+                    child: Text(
+                      _formatTime(seconds),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
                     ),
                   ),
                 ),

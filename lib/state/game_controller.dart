@@ -47,10 +47,23 @@ class GameController extends ChangeNotifier {
   late List<List<Set<int>>> _notes;
   final List<_Move> _history = [];
 
+  /// Cache backing [remainingCount], one entry per digit (index = digit-1).
+  /// Kept in sync by [_recomputeRemainingCounts] wherever [_board] changes.
+  final List<int> _remainingCounts = List.filled(9, 9);
+
   int? selectedRow;
   int? selectedCol;
   int mistakes = 0;
-  int elapsedSeconds = 0;
+
+  /// Elapsed play time, ticked once per second by [tick]. Exposed via its
+  /// own [ValueNotifier] (rather than folded into this class's main
+  /// [notifyListeners] channel) so a UI element showing just the clock can
+  /// rebuild every second without dragging along every other listener
+  /// (the board grid, number pads, controls row) that doesn't care about
+  /// the tick.
+  final ValueNotifier<int> elapsedSecondsNotifier = ValueNotifier<int>(0);
+  int get elapsedSeconds => elapsedSecondsNotifier.value;
+
   int hintsUsed = 0;
   bool isNoteMode = true;
   GameStatus status = GameStatus.playing;
@@ -79,6 +92,7 @@ class GameController extends ChangeNotifier {
     _puzzle = puzzle ?? _generator.generate(difficulty);
     _board = _puzzle.puzzle.toJson();
     _notes = _emptyNotes();
+    _recomputeRemainingCounts();
     _resetRoundState();
   }
 
@@ -88,8 +102,9 @@ class GameController extends ChangeNotifier {
     _notes = snapshot.notes
         .map((row) => row.map((cell) => cell.toSet()).toList())
         .toList();
+    _recomputeRemainingCounts();
     mistakes = snapshot.mistakes;
-    elapsedSeconds = snapshot.elapsedSeconds;
+    elapsedSecondsNotifier.value = snapshot.elapsedSeconds;
     hintsUsed = snapshot.hintsUsed;
     selectedRow = null;
     selectedCol = null;
@@ -121,7 +136,7 @@ class GameController extends ChangeNotifier {
     selectedRow = null;
     selectedCol = null;
     mistakes = 0;
-    elapsedSeconds = 0;
+    elapsedSecondsNotifier.value = 0;
     hintsUsed = 0;
     isNoteMode = true;
     status = GameStatus.playing;
@@ -274,6 +289,7 @@ class GameController extends ChangeNotifier {
     } else if (_isBoardComplete()) {
       status = GameStatus.won;
     }
+    _recomputeRemainingCounts();
     notifyListeners();
   }
 
@@ -308,6 +324,7 @@ class GameController extends ChangeNotifier {
     _notes = move.previousNotes;
     _activeHint = null;
     if (status == GameStatus.gameOver) status = GameStatus.playing;
+    _recomputeRemainingCounts();
     notifyListeners();
   }
 
@@ -444,6 +461,7 @@ class GameController extends ChangeNotifier {
     selectedRow = row;
     selectedCol = col;
     if (_isBoardComplete()) status = GameStatus.won;
+    _recomputeRemainingCounts();
   }
 
   /// Removes the hint's justified digits directly from the notes of the
@@ -497,25 +515,34 @@ class GameController extends ChangeNotifier {
 
   void tick() {
     if (status != GameStatus.playing) return;
-    elapsedSeconds++;
-    notifyListeners();
+    elapsedSecondsNotifier.value++;
   }
 
   /// How many more cells still need [digit] correctly placed before it's
   /// fully used up (a digit appears exactly 9 times in a solved grid).
   /// Only cells matching the solution count — a wrong entry doesn't use up
-  /// the digit it was mistakenly placed as.
-  int remainingCount(int digit) {
-    var placed = 0;
+  /// the digit it was mistakenly placed as. Backed by [_remainingCounts],
+  /// which every [_board]-mutating method keeps up to date via
+  /// [_recomputeRemainingCounts] — this avoids re-scanning all 81 cells for
+  /// each of the 9 digits on every call (e.g. from [NumberPadWidget]'s
+  /// build, which queries all 9 digits per rebuild).
+  int remainingCount(int digit) => _remainingCounts[digit - 1];
+
+  /// Recomputes [_remainingCounts] for all 9 digits in a single 81-cell
+  /// pass. Call after any change to [_board]'s contents.
+  void _recomputeRemainingCounts() {
+    final placed = List.filled(9, 0);
     for (var r = 0; r < 9; r++) {
       for (var c = 0; c < 9; c++) {
-        if (_board[r][c] == digit &&
-            _board[r][c] == _puzzle.solutionValue(r, c)) {
-          placed++;
+        final value = _board[r][c];
+        if (value != 0 && value == _puzzle.solutionValue(r, c)) {
+          placed[value - 1]++;
         }
       }
     }
-    return 9 - placed;
+    for (var i = 0; i < 9; i++) {
+      _remainingCounts[i] = 9 - placed[i];
+    }
   }
 
   /// Removes [value] as a pencil-mark candidate from every other cell in the
@@ -549,6 +576,7 @@ class GameController extends ChangeNotifier {
   @override
   void dispose() {
     _conflictFlashTimer?.cancel();
+    elapsedSecondsNotifier.dispose();
     super.dispose();
   }
 }
