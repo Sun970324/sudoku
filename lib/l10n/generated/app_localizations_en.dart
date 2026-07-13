@@ -33,9 +33,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewStats => 'View Stats';
 
   @override
-  String get generatingLabel => 'Generating...';
-
-  @override
   String get themeSectionTitle => 'Theme';
 
   @override

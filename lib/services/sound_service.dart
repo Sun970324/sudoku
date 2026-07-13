@@ -13,6 +13,15 @@ class SoundService {
   static final AudioPlayer _correctPlayer = AudioPlayer();
   static final AudioPlayer _wrongPlayer = AudioPlayer();
 
+  /// Players currently mid-[_play] call. A caller that doesn't await
+  /// [click]/[correct]/[wrong] (e.g. a fast drag re-triggering [click] on
+  /// every cell it crosses) can otherwise fire a second stop()/play() on
+  /// the same [AudioPlayer] before the first one resolves — racing the
+  /// native player-item status observation and leaking its continuation
+  /// (surfaces on iOS as "SWIFT TASK CONTINUATION MISUSE"). Guarding here
+  /// means an overlapping call is simply skipped rather than overlapping.
+  static final Set<AudioPlayer> _playersInFlight = {};
+
   /// Cell selection / note toggled on or off.
   static Future<void> click() => _play(_clickPlayer, 'sounds/click.ogg');
 
@@ -32,12 +41,15 @@ class SoundService {
     double volume = 1.0,
   }) async {
     if (!enabled) return;
+    if (!_playersInFlight.add(player)) return;
     try {
       await player.stop();
       await player.setVolume(volume);
       await player.play(AssetSource(assetPath));
     } catch (_) {
       // Missing asset / platform issue — a silent miss beats crashing the game.
+    } finally {
+      _playersInFlight.remove(player);
     }
   }
 }

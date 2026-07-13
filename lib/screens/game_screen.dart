@@ -463,12 +463,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                   ),
                   const SizedBox(width: 10),
                   SizedBox(
-                    width: 55,
+                    width: 90,
                     child: Text(
                       AppLocalizations.of(context)!.mistakesLabel(
                         _controller.mistakes,
                         GameController.maxMistakes,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 13,
                         fontFeatures: [FontFeature.tabularFigures()],

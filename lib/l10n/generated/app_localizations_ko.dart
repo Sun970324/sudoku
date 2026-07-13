@@ -33,9 +33,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get viewStats => '기록 보기';
 
   @override
-  String get generatingLabel => '생성 중...';
-
-  @override
   String get themeSectionTitle => '테마';
 
   @override

@@ -72,10 +72,20 @@ class SudokuCellWidget extends StatelessWidget {
     if (value != 0) {
       content = Text(
         '$value',
+        // Fonts carry built-in leading above/below the glyph that isn't
+        // symmetric, so centering via the parent Container's alignment
+        // alone leaves the digit visibly off-center. Zeroing the line
+        // height and excluding it from the first/last line ties the
+        // layout box to the actual glyph bounds.
         style: TextStyle(
           fontSize: 28,
           fontWeight: FontWeight.w400,
           color: textColor,
+          height: 1.0,
+        ),
+        textHeightBehavior: const TextHeightBehavior(
+          applyHeightToFirstAscent: false,
+          applyHeightToLastDescent: false,
         ),
       );
     } else if (notes.isNotEmpty) {
@@ -125,7 +135,6 @@ class _NotesGrid extends StatelessWidget {
     return GridView.count(
       crossAxisCount: 3,
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.zero,
       children: List.generate(9, (i) {
         final digit = i + 1;
         final hasNote = notes.contains(digit);
@@ -152,6 +161,11 @@ class _NotesGrid extends StatelessWidget {
               fontSize: 10,
               color: BoardColors.noteText(isDark),
               fontWeight: FontWeight.w500,
+              height: 1.0,
+            ),
+            textHeightBehavior: const TextHeightBehavior(
+              applyHeightToFirstAscent: false,
+              applyHeightToLastDescent: false,
             ),
           ),
         );

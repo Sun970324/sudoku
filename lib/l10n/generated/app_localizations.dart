@@ -146,12 +146,6 @@ abstract class AppLocalizations {
   /// **'View Stats'**
   String get viewStats;
 
-  /// No description provided for @generatingLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Generating...'**
-  String get generatingLabel;
-
   /// No description provided for @themeSectionTitle.
   ///
   /// In en, this message translates to:

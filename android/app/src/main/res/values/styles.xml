@@ -13,6 +13,11 @@
 
          This Theme is only used starting with V2 of Flutter's Android embedding. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
-        <item name="android:windowBackground">?android:colorBackground</item>
+        <!-- Hardcoded black (not ?android:colorBackground, which is white
+             in light mode): this layer is what's briefly visible behind the
+             status bar during a rewarded/interstitial ad's native
+             show/dismiss transition, and a white flash there reads as a
+             "hole" punched through the ad's fullscreen black background. -->
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
 </resources>

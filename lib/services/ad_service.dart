@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'ad_unit_ids.dart';
@@ -108,6 +108,18 @@ class AdService {
 
     _rewardedAd = null;
     ad.fullScreenContentCallback = FullScreenContentCallback(
+      // The status bar area is otherwise fully transparent (Flutter's
+      // default edge-to-edge mode), and the ad's own view doesn't reliably
+      // repaint that exact strip when it takes over — leaving a sliver of
+      // the game screen visibly peeking through behind it for as long as
+      // the ad is up. Forcing it opaque black here (and letting the app's
+      // own AppBar/Scaffold reassert the normal style once a frame renders
+      // again after dismissal) closes that gap.
+      onAdShowedFullScreenContent: (ad) {
+        SystemChrome.setSystemUIOverlayStyle(
+          const SystemUiOverlayStyle(statusBarColor: Color(0xFF000000)),
+        );
+      },
       onAdDismissedFullScreenContent: (ad) {
         ad.dispose();
         preloadRewardedAd();

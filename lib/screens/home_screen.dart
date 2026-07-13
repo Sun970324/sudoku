@@ -71,6 +71,17 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadSavedGame();
   }
 
+  void _selectDifficulty(int index) {
+    if (index == _selectedIndex) return;
+    // onSelectedItemChanged fires as the wheel settles on the new item,
+    // so _selectedIndex updates from that callback rather than here.
+    _wheelController.animateToItem(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOut,
+    );
+  }
+
   void _onStartPressed() {
     final difficulty = Difficulty.values[_selectedIndex];
     final puzzle = widget.puzzleQueue.take(difficulty);
@@ -102,8 +113,12 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 12),
+            // Only added ahead of the grid when the continue-game button is
+            // showing — otherwise Expanded (and the grid's own top: 8
+            // padding) is the very first thing in this Column, matching
+            // GameScreen exactly so the preview sits at the same position.
             if (_savedGame != null) ...[
+              const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () =>
                     _openGame(GameScreen.resume(resumeSnapshot: _savedGame!)),
@@ -117,25 +132,26 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 12),
             ],
             Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: previewPuzzle == null
-                      ? Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const CircularProgressIndicator(),
-                            const SizedBox(height: 12),
-                            Text(l10n.generatingLabel),
-                          ],
-                        )
-                      : Hero(
-                          // Paired with the same tag on SudokuGridWidget in
-                          // GameScreen so pushing into the game animates
-                          // this preview board growing into the real one.
-                          tag: 'sudoku-board',
-                          child: SudokuPreviewBoard(puzzle: previewPuzzle),
-                        ),
+              child: Padding(
+                // Matches GameScreen's grid padding/alignment exactly. Width
+                // is also pinned explicitly (rather than left to whatever
+                // height Expanded happens to have left after the wheel and
+                // buttons below) so this preview always renders at the same
+                // size and top position as the real grid it Hero's into,
+                // regardless of this screen's other content.
+                padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width - 8,
+                    child: Hero(
+                      // Paired with the same tag on SudokuGridWidget in
+                      // GameScreen so pushing into the game animates this
+                      // preview board growing into the real one.
+                      tag: 'sudoku-board',
+                      child: SudokuPreviewBoard(puzzle: previewPuzzle),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -149,18 +165,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: const FixedExtentScrollPhysics(),
                 onSelectedItemChanged: (index) =>
                     setState(() => _selectedIndex = index),
-                children: Difficulty.values.map((difficulty) {
+                children: Difficulty.values.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final difficulty = entry.value;
                   final isSelected = difficulty == selectedDifficulty;
-                  return Center(
-                    child: Text(
-                      difficulty.label(context),
-                      style: TextStyle(
-                        fontSize: isSelected ? 20 : 16,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.grey,
+                  return GestureDetector(
+                    onTap: () => _selectDifficulty(index),
+                    child: Center(
+                      child: Text(
+                        difficulty.label(context),
+                        style: TextStyle(
+                          fontSize: isSelected ? 20 : 16,
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : Colors.grey,
+                        ),
                       ),
                     ),
                   );

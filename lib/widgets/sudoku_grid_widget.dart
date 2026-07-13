@@ -6,11 +6,29 @@ import '../services/sound_service.dart';
 import '../state/game_controller.dart';
 import '../theme/board_colors.dart';
 import 'sudoku_cell_widget.dart';
+import 'sudoku_grid_lines.dart';
 
-class SudokuGridWidget extends StatelessWidget {
+class SudokuGridWidget extends StatefulWidget {
   const SudokuGridWidget({super.key, required this.controller});
 
   final GameController controller;
+
+  @override
+  State<SudokuGridWidget> createState() => _SudokuGridWidgetState();
+}
+
+class _SudokuGridWidgetState extends State<SudokuGridWidget> {
+  GameController get controller => widget.controller;
+
+  // Manual double-tap tracking (instead of GestureDetector.onDoubleTap) so
+  // a plain single tap never pays Flutter's ~300ms tap/double-tap
+  // disambiguation delay — that delay would apply to every tap on a cell
+  // wired with onDoubleTap, i.e. every cell down to its last candidate,
+  // which is exactly the cell players tap most.
+  DateTime? _lastTapTime;
+  int? _lastTapRow;
+  int? _lastTapCol;
+  static const _doubleTapThreshold = Duration(milliseconds: 300);
 
   @override
   Widget build(BuildContext context) {
@@ -33,46 +51,57 @@ class SudokuGridWidget extends StatelessWidget {
             // untouched) and lets this pan recognizer win once the finger
             // moves past the touch slop, so a drag is never also read as a
             // tap on the cell it started in.
-            onPanStart: (details) =>
-                _handleDragSelect(details.localPosition, cellSize),
-            onPanUpdate: (details) =>
-                _handleDragSelect(details.localPosition, cellSize),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                    color: BoardColors.outerBorder(isDark), width: 2),
-              ),
-              child: Stack(
-                children: [
-                  Column(
-                    children: List.generate(
-                      9,
-                      (row) => Expanded(
-                        child: Row(
-                          children: List.generate(
-                            9,
-                            (col) =>
-                                Expanded(child: _buildCell(context, row, col)),
-                          ),
+            onPanStart: (details) => _handleDragSelect(
+                details.localPosition, cellSize,
+                playSound: true),
+            onPanUpdate: (details) => _handleDragSelect(
+                details.localPosition, cellSize,
+                playSound: false),
+            child: Stack(
+              children: [
+                Column(
+                  children: List.generate(
+                    9,
+                    (row) => Expanded(
+                      child: Row(
+                        children: List.generate(
+                          9,
+                          (col) =>
+                              Expanded(child: _buildCell(context, row, col)),
                         ),
                       ),
                     ),
                   ),
-                  if (hasUnitHighlight)
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: CustomPaint(
-                          painter: _UnitHighlightPainter(
-                            rows: hint.highlightedRows,
-                            cols: hint.highlightedCols,
-                            boxes: hint.highlightedBoxes,
-                            color: BoardColors.unitHighlightBorder(isDark),
-                          ),
+                ),
+                // Painted as a single overlay (instead of a Border per cell)
+                // so every line is pixel-snapped consistently — 81 separate
+                // anti-aliased hairline borders each round sub-pixel cell
+                // offsets differently, which is what made some lines fade
+                // out or blur on Android.
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: CustomPaint(
+                      painter: SudokuGridLinesPainter(
+                        outerColor: BoardColors.outerBorder(isDark),
+                        innerColor: BoardColors.innerBorder(isDark),
+                      ),
+                    ),
+                  ),
+                ),
+                if (hasUnitHighlight)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: CustomPaint(
+                        painter: _UnitHighlightPainter(
+                          rows: hint.highlightedRows,
+                          cols: hint.highlightedCols,
+                          boxes: hint.highlightedBoxes,
+                          color: BoardColors.unitHighlightBorder(isDark),
                         ),
                       ),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
           );
         },
@@ -85,20 +114,24 @@ class SudokuGridWidget extends StatelessWidget {
   /// dragging past an edge just keeps the edge-most cell selected. No-op
   /// (including no haptic/sound) if the finger is still over the
   /// already-selected cell, so lingering within one cell during a drag
-  /// doesn't repeatedly fire feedback.
-  void _handleDragSelect(Offset localPosition, double cellSize) {
+  /// doesn't repeatedly fire feedback. [playSound] is true only for the
+  /// initial touch ([onPanStart]) — subsequent cells crossed while
+  /// dragging ([onPanUpdate]) still get haptic feedback and update the
+  /// selection, but stay silent, so a fast sweep doesn't retrigger the
+  /// click sound on every cell.
+  void _handleDragSelect(Offset localPosition, double cellSize,
+      {required bool playSound}) {
     final row = (localPosition.dy / cellSize).floor().clamp(0, 8);
     final col = (localPosition.dx / cellSize).floor().clamp(0, 8);
     if (row == controller.selectedRow && col == controller.selectedCol) {
       return;
     }
     HapticService.selection();
-    SoundService.click();
+    if (playSound) SoundService.click();
     controller.selectCellForDrag(row, col);
   }
 
   Widget _buildCell(BuildContext context, int row, int col) {
-    final isDark = BoardColors.isDark(context);
     final hint = controller.activeHint;
     final cell = HintCell(row, col);
 
@@ -157,49 +190,61 @@ class SudokuGridWidget extends StatelessWidget {
     }
 
     final isConflictFlash = controller.conflictFlashCells.contains(cell);
+    final notes = controller.notesAt(row, col);
 
-    return Container(
-      decoration: BoxDecoration(
-        // The outer grid Container already draws the rightmost/bottommost
-        // edge, so skip it here to avoid a doubled-up border line.
-        border: Border(
-          right: col == 8
-              ? BorderSide.none
-              : BorderSide(
-                  width: (col + 1) % 3 == 0 ? 2 : 0.5,
-                  color: BoardColors.innerBorder(isDark),
-                ),
-          bottom: row == 8
-              ? BorderSide.none
-              : BorderSide(
-                  width: (row + 1) % 3 == 0 ? 2 : 0.5,
-                  color: BoardColors.innerBorder(isDark),
-                ),
-        ),
-      ),
-      child: SudokuCellWidget(
-        value: cellValue,
-        isFixed: controller.isFixed(row, col),
-        isSelected: isSelected,
-        isWrong: controller.isWrong(row, col),
-        isPeerHighlighted: isPeer,
-        isSameValueHighlighted: isSameValue,
-        isHintFillTarget: isHintFillTarget,
-        isHintReasonCell: isHintReasonCell,
-        isConflictFlash: isConflictFlash,
-        notes: controller.notesAt(row, col),
-        highlightedNotes: highlightedNotes,
-        hintRedNotes: hintRedNotes,
-        hintGreenNotes: hintGreenNotes,
-        hintColorANotes: hintColorANotes,
-        hintColorBNotes: hintColorBNotes,
-        onTap: () {
-          HapticService.selection();
-          SoundService.click();
-          controller.selectCell(row, col);
-        },
-      ),
+    return SudokuCellWidget(
+      value: cellValue,
+      isFixed: controller.isFixed(row, col),
+      isSelected: isSelected,
+      isWrong: controller.isWrong(row, col),
+      isPeerHighlighted: isPeer,
+      isSameValueHighlighted: isSameValue,
+      isHintFillTarget: isHintFillTarget,
+      isHintReasonCell: isHintReasonCell,
+      isConflictFlash: isConflictFlash,
+      notes: notes,
+      highlightedNotes: highlightedNotes,
+      hintRedNotes: hintRedNotes,
+      hintGreenNotes: hintGreenNotes,
+      hintColorANotes: hintColorANotes,
+      hintColorBNotes: hintColorBNotes,
+      onTap: () => _onCellTap(row, col, notes),
     );
+  }
+
+  /// Single onTap handler covering both plain selection and "double tap a
+  /// cell with exactly one candidate note to commit it" — done by hand
+  /// (comparing consecutive tap timestamps) instead of also wiring
+  /// GestureDetector.onDoubleTap, since a widget with both callbacks makes
+  /// every single tap wait out the double-tap disambiguation window before
+  /// firing. Plain taps must stay instant.
+  void _onCellTap(int row, int col, Set<int> notes) {
+    final now = DateTime.now();
+    final isDoubleTap = row == _lastTapRow &&
+        col == _lastTapCol &&
+        _lastTapTime != null &&
+        now.difference(_lastTapTime!) < _doubleTapThreshold;
+    _lastTapRow = row;
+    _lastTapCol = col;
+    _lastTapTime = now;
+
+    if (isDoubleTap && notes.length == 1) {
+      // A cell left with exactly one candidate note is, in practice,
+      // already solved — commits it directly instead of requiring
+      // select-then-tap-the-number-pad. Reuses selectCellForDrag (not
+      // selectCell) so this never toggles the cell back to unselected if
+      // it already happened to be the active one.
+      HapticService.selection();
+      SoundService.click();
+      controller.selectCellForDrag(row, col);
+      controller.inputValue(notes.single);
+      _lastTapTime = null;
+      return;
+    }
+
+    HapticService.selection();
+    SoundService.click();
+    controller.selectCell(row, col);
   }
 }
 
