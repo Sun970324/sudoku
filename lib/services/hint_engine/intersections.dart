@@ -4,9 +4,10 @@ extension HintEngineIntersections on HintEngine {
   Hint? findIntersectionPointing(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findPointing(resolved);
+    return _findPointing(resolved, l10n);
   }
 
   /// Intersection removal (claiming): a digit confined to one box within a
@@ -14,12 +15,14 @@ extension HintEngineIntersections on HintEngine {
   Hint? findIntersectionClaiming(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findClaiming(resolved);
+    return _findClaiming(resolved, l10n);
   }
 
-  Hint? _findPointing(List<List<Set<int>>> candidates) {
+  Hint? _findPointing(List<List<Set<int>>> candidates, AppLocalizations? l10n) {
+    final resolvedL10n = _resolveL10n(l10n);
     for (var boxRow = 0; boxRow < 3; boxRow++) {
       for (var boxCol = 0; boxCol < 3; boxCol++) {
         final boxCells = SudokuGrid.boxCellsOf(boxRow * 3, boxCol * 3);
@@ -38,7 +41,7 @@ extension HintEngineIntersections on HintEngine {
           Set<int> lineCols = const {};
           if (rows.length == 1) {
             final r = rows.first;
-            lineDesc = '${r + 1}행';
+            lineDesc = _rowDesc(r, resolvedL10n);
             lineRows = {r};
             eliminations = [
               for (var c = 0; c < 9; c++)
@@ -47,7 +50,7 @@ extension HintEngineIntersections on HintEngine {
             ];
           } else if (cols.length == 1) {
             final c = cols.first;
-            lineDesc = '${c + 1}열';
+            lineDesc = _colDesc(c, resolvedL10n);
             lineCols = {c};
             eliminations = [
               for (var r = 0; r < 9; r++)
@@ -62,9 +65,11 @@ extension HintEngineIntersections on HintEngine {
           return Hint(
             technique: HintTechnique.intersectionPointing,
             type: HintType.eliminate,
-            explanation: '${_boxDescription(boxRow, boxCol)} 안에서 숫자 $d는 '
-                '$lineDesc 위에만 있어요. 그래서 $lineDesc의 나머지 칸(박스 밖)에서는 '
-                '$d를 후보에서 지울 수 있습니다.',
+            explanation: resolvedL10n.explanationPointing(
+              _boxDescription(boxRow, boxCol, resolvedL10n),
+              d,
+              lineDesc,
+            ),
             primaryCells:
                 cellsWithD.map((rc) => HintCell(rc[0], rc[1])).toSet(),
             secondaryCells:
@@ -80,7 +85,11 @@ extension HintEngineIntersections on HintEngine {
     return null;
   }
 
-  Hint? _findClaiming(List<List<Set<int>>> candidates) {
+  Hint? _findClaiming(
+    List<List<Set<int>>> candidates,
+    AppLocalizations? l10n,
+  ) {
+    final resolvedL10n = _resolveL10n(l10n);
     for (var r = 0; r < 9; r++) {
       for (var d = 1; d <= 9; d++) {
         final cellsWithD = [
@@ -103,9 +112,11 @@ extension HintEngineIntersections on HintEngine {
         return Hint(
           technique: HintTechnique.intersectionClaiming,
           type: HintType.eliminate,
-          explanation: '${r + 1}행에서 숫자 $d는 ${_boxDescription(boxRow, boxCol)} '
-              '안에만 있어요. 그래서 같은 박스의 나머지 칸(이 행 밖)에서는 '
-              '$d를 후보에서 지울 수 있습니다.',
+          explanation: resolvedL10n.explanationClaiming(
+            _rowDesc(r, resolvedL10n),
+            d,
+            _boxDescription(boxRow, boxCol, resolvedL10n),
+          ),
           primaryCells: cellsWithD.map((rc) => HintCell(rc[0], rc[1])).toSet(),
           secondaryCells:
               eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
@@ -137,9 +148,11 @@ extension HintEngineIntersections on HintEngine {
         return Hint(
           technique: HintTechnique.intersectionClaiming,
           type: HintType.eliminate,
-          explanation: '${c + 1}열에서 숫자 $d는 ${_boxDescription(boxRow, boxCol)} '
-              '안에만 있어요. 그래서 같은 박스의 나머지 칸(이 열 밖)에서는 '
-              '$d를 후보에서 지울 수 있습니다.',
+          explanation: resolvedL10n.explanationClaiming(
+            _colDesc(c, resolvedL10n),
+            d,
+            _boxDescription(boxRow, boxCol, resolvedL10n),
+          ),
           primaryCells: cellsWithD.map((rc) => HintCell(rc[0], rc[1])).toSet(),
           secondaryCells:
               eliminations.map((e) => HintCell(e.row, e.col)).toSet(),

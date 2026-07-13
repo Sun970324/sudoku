@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/game_snapshot.dart';
 import '../models/hint.dart';
@@ -49,6 +50,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   BannerAd? _bannerAd;
   Timer? _timer;
   bool _dialogShown = false;
+
+  /// Gates the Hero-tagged board wrapper (see `build`) so the grow
+  /// animation only ever plays going INTO the game (paired with
+  /// SudokuPreviewBoard's Hero on HomeScreen) — flipped off right before
+  /// popping back to Home so that direction is a plain transition instead.
+  bool _heroEnabled = true;
 
   @override
   void initState() {
@@ -123,8 +130,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       finishTimeSeconds: elapsedSeconds,
     );
 
-    final solveResult =
-        HumanSolver().solve(_controller.puzzle.puzzle.toJson());
+    final solveResult = HumanSolver().solve(_controller.puzzle.puzzle.toJson());
     final difficultyResult = DifficultyEvaluator().evaluate(solveResult);
 
     if (!mounted) return;
@@ -153,6 +159,57 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// Turns off the entrance Hero before popping, so leaving the game (unlike
+  /// entering it) is a plain transition instead of the board shrinking back
+  /// into HomeScreen's preview — which would otherwise show the in-progress
+  /// (played-in) board morphing into the static given-only preview, a
+  /// mismatch that looks off.
+  void _popToHome() {
+    setState(() => _heroEnabled = false);
+    Navigator.pop(context);
+  }
+
+  void _onBackPressed() {
+    // A dialog (win/game-over) is already up and deciding the round's
+    // outcome — don't stack a second one on top of it.
+    if (_dialogShown) return;
+    final l10n = AppLocalizations.of(context)!;
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.exitDialogTitle),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.continueAction),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              _restartGame();
+            },
+            child: Text(l10n.restartAction),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              _giveUp();
+              _popToHome();
+            },
+            child: Text(l10n.endGameAction),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _restartGame() {
+    _controller.startNewGame(_controller.difficulty,
+        puzzle: _controller.puzzle);
+    _startTimer();
+    _saveProgress();
+  }
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -170,21 +227,27 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
+  Widget _buildGrid() => ListenableBuilder(
+        listenable: _controller,
+        builder: (context, _) => SudokuGridWidget(controller: _controller),
+      );
+
   void _showGameOverDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('실수 3회'),
-        content: const Text('광고를 보고 계속하시겠어요?'),
+        title: Text(l10n.gameOverTitle),
+        content: Text(l10n.gameOverContent),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
               _giveUp();
-              Navigator.pop(context);
+              _popToHome();
             },
-            child: const Text('포기하고 나가기'),
+            child: Text(l10n.giveUpAction),
           ),
           TextButton(
             onPressed: () {
@@ -198,15 +261,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                 onAdUnavailable: () {
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('광고를 아직 불러오지 못했어요. 잠시 후 다시 시도해주세요.'),
-                    ),
+                    SnackBar(content: Text(l10n.adNotLoaded)),
                   );
                   _showGameOverDialog();
                 },
               );
             },
-            child: const Text('계속하기'),
+            child: Text(l10n.continueAction),
           ),
         ],
       ),
@@ -214,15 +275,16 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   void _onHintPressed() {
+    final l10n = AppLocalizations.of(context)!;
     if (_controller.hasUnresolvedMistake) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('오답을 먼저 지워주세요.')),
+        SnackBar(content: Text(l10n.clearWrongFirst)),
       );
       return;
     }
     if (!_controller.hasAvailableHint) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('지금은 사용할 수 있는 힌트가 없어요.')),
+        SnackBar(content: Text(l10n.noHintAvailable)),
       );
       return;
     }
@@ -232,19 +294,20 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // with no explanatory sheet to match it.
     AdService.instance.showRewardedAd(
       onUserEarnedReward: () {
-        final hint = _controller.requestHint();
+        final hint = _controller.requestHint(l10n: l10n);
         if (hint != null) _showHintDialog(hint);
       },
       onAdUnavailable: () {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('광고를 아직 불러오지 못했어요. 잠시 후 다시 시도해주세요.')),
+          SnackBar(content: Text(l10n.adNotLoaded)),
         );
       },
     );
   }
 
   void _showHintDialog(Hint hint) {
+    final l10n = AppLocalizations.of(context)!;
     // A centered AlertDialog sits right on top of the grid, hiding the
     // amber hint highlight no matter how light its barrier is. A bottom
     // sheet stays anchored below the grid instead, so the highlighted
@@ -260,7 +323,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                hint.technique.label,
+                hint.technique.label(context),
                 style: Theme.of(sheetContext).textTheme.titleLarge,
               ),
               const SizedBox(height: 12),
@@ -271,7 +334,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(sheetContext),
-                    child: const Text('닫기'),
+                    child: Text(l10n.closeAction),
                   ),
                   TextButton(
                     onPressed: () {
@@ -280,7 +343,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                       HapticService.medium();
                       _saveProgress();
                     },
-                    child: const Text('적용하기'),
+                    child: Text(l10n.applyAction),
                   ),
                 ],
               ),
@@ -306,8 +369,9 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       },
       onAdUnavailable: () {
         if (!mounted) return;
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('광고를 아직 불러오지 못했어요. 잠시 후 다시 시도해주세요.')),
+          SnackBar(content: Text(l10n.adNotLoaded)),
         );
       },
     );
@@ -353,133 +417,157 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        title: ListenableBuilder(
-          listenable: _controller,
-          builder: (context, _) => Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Row(
-              children: [
-                Text(
-                  _controller.difficulty.label,
-                  style: const TextStyle(fontSize: 20),
-                ),
-                const Spacer(),
-                ValueListenableBuilder<int>(
-                  valueListenable: _controller.elapsedSecondsNotifier,
-                  builder: (context, seconds, _) => SizedBox(
-                    width: 40,
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _onBackPressed();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          // Explicit instead of Flutter's automatic back button: this
+          // screen can be the app's very first route (resumed straight
+          // into on launch, see main.dart/home_screen.dart), where
+          // Navigator.canPop is false and no back button would otherwise
+          // appear at all. Always routes through the same exit-confirmation
+          // dialog as every other back-navigation path.
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: _onBackPressed,
+          ),
+          titleSpacing: 0,
+          title: ListenableBuilder(
+            listenable: _controller,
+            builder: (context, _) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Row(
+                children: [
+                  Text(
+                    _controller.difficulty.label(context),
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  const Spacer(),
+                  ValueListenableBuilder<int>(
+                    valueListenable: _controller.elapsedSecondsNotifier,
+                    builder: (context, seconds, _) => SizedBox(
+                      width: 40,
+                      child: Text(
+                        _formatTime(seconds),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  SizedBox(
+                    width: 55,
                     child: Text(
-                      _formatTime(seconds),
-                      textAlign: TextAlign.center,
+                      AppLocalizations.of(context)!.mistakesLabel(
+                        _controller.mistakes,
+                        GameController.maxMistakes,
+                      ),
                       style: const TextStyle(
                         fontSize: 13,
                         fontFeatures: [FontFeature.tabularFigures()],
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                SizedBox(
-                  width: 55,
-                  child: Text(
-                    '실수: ${_controller.mistakes}/${GameController.maxMistakes}',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontFeatures: [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Expanded (instead of a fixed height fraction) so the grid
-            // claims all vertical space left over after the controls/number
-            // pads below — it grows as large as the screen allows, capped
-            // only by width via the AspectRatio inside SudokuGridWidget.
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-                // Top-aligned (not centered) so leftover space collects
-                // below the grid instead of splitting evenly — keeps the
-                // grid sitting close to the app bar.
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: ListenableBuilder(
-                    listenable: _controller,
-                    builder: (context, _) =>
-                        SudokuGridWidget(controller: _controller),
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Expanded (instead of a fixed height fraction) so the grid
+              // claims all vertical space left over after the controls/number
+              // pads below — it grows as large as the screen allows, capped
+              // only by width via the AspectRatio inside SudokuGridWidget.
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
+                  // Top-aligned (not centered) so leftover space collects
+                  // below the grid instead of splitting evenly — keeps the
+                  // grid sitting close to the app bar.
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    // Paired with the same tag on SudokuPreviewBoard in
+                    // HomeScreen so entering the game animates the picker's
+                    // preview board growing into this real, interactive one
+                    // — but only entering: _heroEnabled is switched off
+                    // right before popping back to Home (see _popToHome) so
+                    // leaving is a plain transition instead.
+                    child: _heroEnabled
+                        ? Hero(tag: 'sudoku-board', child: _buildGrid())
+                        : _buildGrid(),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 14),
-            ListenableBuilder(
-              listenable: _controller,
-              builder: (context, _) => GameControlsRow(
-                canUndo: _controller.canUndo,
-                onUndo: _onUndo,
-                canErase: _controller.canErase,
-                onErase: _onErase,
-                isNoteMode: _controller.isNoteMode,
-                onToggleNoteMode: _controller.toggleNoteMode,
-                onHint: _onHintPressed,
-                canAutoFillNotes: _controller.canAutoFillNotes,
-                onAutoFillNotes: _onAutoFillNotesPressed,
+              const SizedBox(height: 14),
+              ListenableBuilder(
+                listenable: _controller,
+                builder: (context, _) => GameControlsRow(
+                  canUndo: _controller.canUndo,
+                  onUndo: _onUndo,
+                  canErase: _controller.canErase,
+                  onErase: _onErase,
+                  isNoteMode: _controller.isNoteMode,
+                  onToggleNoteMode: _controller.toggleNoteMode,
+                  onHint: _onHintPressed,
+                  canAutoFillNotes: _controller.canAutoFillNotes,
+                  onAutoFillNotes: _onAutoFillNotesPressed,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            ListenableBuilder(
-              listenable: _controller,
-              builder: (context, _) => NumberPadWidget(
-                controller: _controller,
-                isNotePad: false,
-                onNumberSelected: _onNumberSelected,
+              const SizedBox(height: 16),
+              ListenableBuilder(
+                listenable: _controller,
+                builder: (context, _) => NumberPadWidget(
+                  controller: _controller,
+                  isNotePad: false,
+                  onNumberSelected: _onNumberSelected,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            // The notes pad always reserves its layout space and only
-            // fades in/out — unlike a height-collapsing animation, this
-            // keeps the total height below the grid constant regardless of
-            // note mode, so the Expanded grid above never resizes/shifts.
-            ListenableBuilder(
-              listenable: _controller,
-              builder: (context, _) => AnimatedOpacity(
-                opacity: _controller.isNoteMode ? 1 : 0,
-                duration: const Duration(milliseconds: 250),
-                child: IgnorePointer(
-                  ignoring: !_controller.isNoteMode,
-                  child: NumberPadWidget(
-                    controller: _controller,
-                    isNotePad: true,
-                    onNumberSelected: _onNoteNumberSelected,
+              const SizedBox(height: 8),
+              // The notes pad always reserves its layout space and only
+              // fades in/out — unlike a height-collapsing animation, this
+              // keeps the total height below the grid constant regardless of
+              // note mode, so the Expanded grid above never resizes/shifts.
+              ListenableBuilder(
+                listenable: _controller,
+                builder: (context, _) => AnimatedOpacity(
+                  opacity: _controller.isNoteMode ? 1 : 0,
+                  duration: const Duration(milliseconds: 250),
+                  child: IgnorePointer(
+                    ignoring: !_controller.isNoteMode,
+                    child: NumberPadWidget(
+                      controller: _controller,
+                      isNotePad: true,
+                      onNumberSelected: _onNoteNumberSelected,
+                    ),
                   ),
                 ),
               ),
-            ),
-            // Breathing room above the banner ad so number-pad taps near
-            // the bottom edge don't accidentally hit the ad instead.
-            const SizedBox(height: 16),
-          ],
+              // Breathing room above the banner ad so number-pad taps near
+              // the bottom edge don't accidentally hit the ad instead.
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: _bannerAd == null
-          ? null
-          : SafeArea(
-              top: false,
-              child: SizedBox(
-                width: _bannerAd!.size.width.toDouble(),
-                height: _bannerAd!.size.height.toDouble(),
-                child: AdWidget(ad: _bannerAd!),
+        bottomNavigationBar: _bannerAd == null
+            ? null
+            : SafeArea(
+                top: false,
+                child: SizedBox(
+                  width: _bannerAd!.size.width.toDouble(),
+                  height: _bannerAd!.size.height.toDouble(),
+                  child: AdWidget(ad: _bannerAd!),
+                ),
               ),
-            ),
+      ),
     );
   }
 }

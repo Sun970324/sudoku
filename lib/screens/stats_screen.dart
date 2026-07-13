@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/stats.dart';
 import '../services/storage_service.dart';
@@ -29,8 +30,9 @@ class _StatsScreenState extends State<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('기록')),
+      appBar: AppBar(title: Text(l10n.statsTitle)),
       body: FutureBuilder<Stats>(
         future: _statsFuture,
         builder: (context, snapshot) {
@@ -45,10 +47,12 @@ class _StatsScreenState extends State<StatsScreen> {
               final bestTime = entry.bestTimeSeconds;
               return Card(
                 child: ListTile(
-                  title: Text(difficulty.label),
+                  title: Text(difficulty.label(context)),
                   subtitle: Text(
-                    '플레이 ${entry.played}회 · 승리 ${entry.won}회'
-                    '${bestTime != null ? ' · 최고기록 ${_formatTime(bestTime)}' : ''}',
+                    l10n.playedWonLabel(entry.played, entry.won) +
+                        (bestTime != null
+                            ? l10n.bestTimeSuffix(_formatTime(bestTime))
+                            : ''),
                   ),
                 ),
               );

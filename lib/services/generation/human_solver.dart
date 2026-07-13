@@ -33,6 +33,7 @@ const humanSolverTechniqueOrder = [
   HintTechnique.swordfish,
   HintTechnique.finnedXWing,
   HintTechnique.sashimiXWing,
+  HintTechnique.bugPlusOne,
   HintTechnique.xyChain,
   HintTechnique.jellyfish,
   HintTechnique.uniqueRectangleType1,
@@ -156,6 +157,8 @@ class HumanSolver {
           _hintEngine.findFinnedXWing(board, candidates),
         HintTechnique.sashimiXWing =>
           _hintEngine.findSashimiXWing(board, candidates),
+        HintTechnique.bugPlusOne =>
+          _hintEngine.findBugPlusOne(board, candidates),
         HintTechnique.xyChain => _hintEngine.findXYChain(board, candidates),
         HintTechnique.jellyfish =>
           _hintEngine.findJellyfish(board, candidates),

@@ -36,6 +36,14 @@ class PuzzleQueueManager {
 
   int countFor(Difficulty difficulty) => _queues[difficulty]!.length;
 
+  /// Non-mutating look at the next puzzle queued for [difficulty] — unlike
+  /// [take], never removes from the queue or triggers a refill. Used by the
+  /// home screen's live difficulty-picker preview.
+  SudokuPuzzle? peek(Difficulty difficulty) {
+    final queue = _queues[difficulty]!;
+    return queue.isEmpty ? null : queue.first;
+  }
+
   /// Loads any previously-persisted queue. Call and await before first use
   /// (e.g. in `main()`) so an immediate "새 게임" tap doesn't race the disk
   /// load and wrongly treat a non-empty persisted queue as empty.

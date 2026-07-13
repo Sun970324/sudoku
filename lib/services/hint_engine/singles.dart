@@ -1,7 +1,8 @@
 part of '../hint_engine.dart';
 
 extension HintEngineSingles on HintEngine {
-  Hint? findFullHouse(List<List<int>> board) {
+  Hint? findFullHouse(List<List<int>> board, [AppLocalizations? l10n]) {
+    final resolvedL10n = _resolveL10n(l10n);
     final grid = SudokuGrid(board);
     for (final unit in _allUnits()) {
       final emptyCells =
@@ -25,8 +26,10 @@ extension HintEngineSingles on HintEngine {
       return Hint(
         technique: HintTechnique.fullHouse,
         type: HintType.reveal,
-        explanation: '${unit.description}에 빈 칸이 이 칸 하나만 남았어요. '
-            '1~9 중 아직 없는 숫자는 $value뿐이라 자동으로 정해집니다.',
+        explanation: resolvedL10n.explanationFullHouse(
+          _unitDescription(unit, resolvedL10n),
+          value,
+        ),
         primaryCells: {HintCell(target[0], target[1])},
         secondaryCells: secondary,
         highlightedRows: hRows,
@@ -43,7 +46,9 @@ extension HintEngineSingles on HintEngine {
   Hint? findNakedSingle(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
+    final resolvedL10n = _resolveL10n(l10n);
     final grid = SudokuGrid(board);
     final cands = candidates ?? _freshCandidates(board);
     for (var r = 0; r < 9; r++) {
@@ -61,8 +66,7 @@ extension HintEngineSingles on HintEngine {
         return Hint(
           technique: HintTechnique.nakedSingle,
           type: HintType.reveal,
-          explanation: '${r + 1}행 ${c + 1}열은 후보 숫자가 $value 하나뿐이에요. '
-              '같은 행·열·박스에 나머지 숫자가 모두 있어서 $value만 남았습니다.',
+          explanation: resolvedL10n.explanationNakedSingle(r + 1, c + 1, value),
           primaryCells: {HintCell(r, c)},
           secondaryCells: secondary,
           row: r,
@@ -77,7 +81,9 @@ extension HintEngineSingles on HintEngine {
   Hint? findHiddenSingle(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
+    final resolvedL10n = _resolveL10n(l10n);
     final resolved = candidates ?? _freshCandidates(board);
 
     for (final unit in _allUnits()) {
@@ -135,8 +141,12 @@ extension HintEngineSingles on HintEngine {
         return Hint(
           technique: HintTechnique.hiddenSingle,
           type: HintType.reveal,
-          explanation: '${unit.description}에서 숫자 $value가 들어갈 수 있는 '
-              '빈 칸은 ${target[0] + 1}행 ${target[1] + 1}열 하나뿐이에요.',
+          explanation: resolvedL10n.explanationHiddenSingle(
+            _unitDescription(unit, resolvedL10n),
+            value,
+            target[0] + 1,
+            target[1] + 1,
+          ),
           primaryCells: {HintCell(target[0], target[1])},
           secondaryCells: {...secondary, ...extraSecondary},
           highlightedRows: {...hRows, ...extraRows},

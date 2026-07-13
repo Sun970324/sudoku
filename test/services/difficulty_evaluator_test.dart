@@ -113,12 +113,12 @@ void main() {
     expect(
       evaluator.evaluate(_resultFor([HintTechnique.nakedSingle]))
           .highestDifficulty,
-      Difficulty.beginner,
+      Difficulty.easy,
     );
     expect(
       evaluator.evaluate(_resultFor([HintTechnique.hiddenSingle]))
           .highestDifficulty,
-      Difficulty.easy,
+      Difficulty.medium,
     );
     expect(
       evaluator

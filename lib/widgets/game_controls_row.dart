@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import '../theme/board_colors.dart';
 
 class GameControlsRow extends StatelessWidget {
@@ -29,23 +30,24 @@ class GameControlsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final noteColor = isNoteMode ? Theme.of(context).colorScheme.primary : null;
+    final l10n = AppLocalizations.of(context)!;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _ControlButton(
           icon: Icons.undo,
-          label: '실행취소',
+          label: l10n.undoLabel,
           onPressed: canUndo ? onUndo : null,
         ),
         _ControlButton(
           icon: Icons.backspace_outlined,
-          label: '지우기',
+          label: l10n.eraseLabel,
           onPressed: canErase ? onErase : null,
         ),
         _ControlButton(
           icon: Icons.edit_note,
-          label: '메모',
+          label: l10n.noteLabel,
           onPressed: onToggleNoteMode,
           color: noteColor,
           bold: isNoteMode,
@@ -53,13 +55,13 @@ class GameControlsRow extends StatelessWidget {
         ),
         _ControlButton(
           icon: Icons.auto_fix_high,
-          label: '자동메모',
+          label: l10n.autoFillLabel,
           onPressed: canAutoFillNotes ? onAutoFillNotes : null,
           showAdBadge: true,
         ),
         _ControlButton(
           icon: Icons.lightbulb_outline,
-          label: '힌트',
+          label: l10n.hintLabel,
           onPressed: onHint,
           showAdBadge: true,
         ),

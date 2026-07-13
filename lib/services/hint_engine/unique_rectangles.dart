@@ -81,7 +81,9 @@ extension HintEngineUniqueRectangles on HintEngine {
   Hint? findUniqueRectangleType1(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
+    final resolvedL10n = _resolveL10n(l10n);
     final resolved = candidates ?? _freshCandidates(board);
     for (final base in _findURBases(resolved)) {
       final cells = [...base.group1, ...base.group2];
@@ -100,15 +102,17 @@ extension HintEngineUniqueRectangles on HintEngine {
       ];
       if (eliminations.isEmpty) continue;
 
+      final cellsDesc = cells
+          .map((rc) => _cellDesc(rc[0], rc[1], resolvedL10n))
+          .join(', ');
       return Hint(
         technique: HintTechnique.uniqueRectangleType1,
         type: HintType.eliminate,
-        explanation: '${cells.map((rc) => '${rc[0] + 1}행${rc[1] + 1}열').join(
-                  ', ',
-                )}은 유일사각형(2행 2열, 박스 2개)을 이루는데, 그중 세 칸이 후보 '
-            '${base.a}, ${base.b}뿐이에요. 나머지 한 칸도 이 둘뿐이라면 퍼즐 '
-            '해가 두 개가 되어버리므로, 그 칸에서는 ${base.a}, ${base.b}를 '
-            '후보에서 지울 수 있습니다.',
+        explanation: resolvedL10n.explanationUniqueRectangleType1(
+          cellsDesc,
+          base.a,
+          base.b,
+        ),
         primaryCells: cells.map((rc) => HintCell(rc[0], rc[1])).toSet(),
         secondaryCells: {HintCell(extra[0], extra[1])},
         highlightedBoxes: {
@@ -129,7 +133,9 @@ extension HintEngineUniqueRectangles on HintEngine {
   Hint? findUniqueRectangleType2(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
+    final resolvedL10n = _resolveL10n(l10n);
     final resolved = candidates ?? _freshCandidates(board);
     for (final base in _findURBases(resolved)) {
       final g1Pure = _urCellsPure(resolved, base.group1);
@@ -166,12 +172,13 @@ extension HintEngineUniqueRectangles on HintEngine {
       return Hint(
         technique: HintTechnique.uniqueRectangleType2,
         type: HintType.eliminate,
-        explanation: '${roof[0][0] + 1}행${roof[0][1] + 1}열과 '
-            '${roof[1][0] + 1}행${roof[1][1] + 1}열은 후보가 '
-            '${base.a}, ${base.b}, $c 세 개씩이에요. 둘 다 '
-            '${base.a}, ${base.b}뿐이라면 퍼즐 해가 두 개가 되므로, 둘 중 '
-            '하나는 반드시 $c여야 해요. 그래서 두 칸을 모두 보는 다른 칸에서는 '
-            '$c를 후보에서 지울 수 있습니다.',
+        explanation: resolvedL10n.explanationUniqueRectangleType2(
+          _cellDesc(roof[0][0], roof[0][1], resolvedL10n),
+          _cellDesc(roof[1][0], roof[1][1], resolvedL10n),
+          base.a,
+          base.b,
+          c,
+        ),
         primaryCells: {
           ...base.group1,
           ...base.group2,
@@ -198,7 +205,9 @@ extension HintEngineUniqueRectangles on HintEngine {
   Hint? findUniqueRectangleType3(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
+    final resolvedL10n = _resolveL10n(l10n);
     final resolved = candidates ?? _freshCandidates(board);
     for (final base in _findURBases(resolved)) {
       final g1Pure = _urCellsPure(resolved, base.group1);
@@ -266,11 +275,11 @@ extension HintEngineUniqueRectangles on HintEngine {
           return Hint(
             technique: HintTechnique.uniqueRectangleType3,
             type: HintType.eliminate,
-            explanation: '${roof[0][0] + 1}행${roof[0][1] + 1}열과 '
-                '${roof[1][0] + 1}행${roof[1][1] + 1}열의 추가 후보를 하나로 '
-                '합쳐서 보면, 다른 칸들과 함께 $digitsDesc만 남는 조합을 '
-                '이뤄요. 그래서 같은 구역의 나머지 칸에서는 $digitsDesc을(를) '
-                '후보에서 지울 수 있습니다.',
+            explanation: resolvedL10n.explanationUniqueRectangleType3(
+              _cellDesc(roof[0][0], roof[0][1], resolvedL10n),
+              _cellDesc(roof[1][0], roof[1][1], resolvedL10n),
+              digitsDesc,
+            ),
             primaryCells: {
               ...roof,
               ...extGroup,
@@ -298,7 +307,9 @@ extension HintEngineUniqueRectangles on HintEngine {
   Hint? findUniqueRectangleType4(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
+    final resolvedL10n = _resolveL10n(l10n);
     final resolved = candidates ?? _freshCandidates(board);
     for (final base in _findURBases(resolved)) {
       final g1Pure = _urCellsPure(resolved, base.group1);
@@ -337,11 +348,12 @@ extension HintEngineUniqueRectangles on HintEngine {
         return Hint(
           technique: HintTechnique.uniqueRectangleType4,
           type: HintType.eliminate,
-          explanation: '${roof[0][0] + 1}행${roof[0][1] + 1}열과 '
-              '${roof[1][0] + 1}행${roof[1][1] + 1}열이 있는 줄에서 숫자 '
-              '$lockedDigit는 이 두 칸에만 들어갈 수 있어요. 그러면 $otherDigit가 '
-              '두 칸에 그대로 남아있을 경우 퍼즐 해가 두 개가 되므로, 두 칸 '
-              '모두에서 $otherDigit를 후보에서 지울 수 있습니다.',
+          explanation: resolvedL10n.explanationUniqueRectangleType4(
+            _cellDesc(roof[0][0], roof[0][1], resolvedL10n),
+            _cellDesc(roof[1][0], roof[1][1], resolvedL10n),
+            lockedDigit,
+            otherDigit,
+          ),
           primaryCells: {
             ...base.group1,
             ...base.group2,

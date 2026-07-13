@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sudoku/l10n/generated/app_localizations.dart';
 import 'package:sudoku/models/difficulty.dart';
 import 'package:sudoku/models/game_snapshot.dart';
 import 'package:sudoku/models/hint.dart';
@@ -17,7 +18,11 @@ class _FakeHintEngine extends HintEngine {
   Hint? nextHint;
 
   @override
-  Hint? findHint(List<List<int>> board, [List<List<Set<int>>>? candidates]) =>
+  Hint? findHint(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) =>
       nextHint;
 }
 
@@ -31,7 +36,11 @@ class _ScriptedHintEngine extends HintEngine {
   int _index = 0;
 
   @override
-  Hint? findHint(List<List<int>> board, [List<List<Set<int>>>? candidates]) {
+  Hint? findHint(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) {
     final hint = hints[_index];
     if (_index < hints.length - 1) _index++;
     return hint;
@@ -160,6 +169,66 @@ void main() {
     controller.selectCell(row, col);
     expect(controller.selectedRow, row);
     expect(controller.selectedCol, col);
+  });
+
+  test(
+      'selectCellForDrag selects a cell without toggling it off when '
+      'called again with the same cell', () {
+    locateFirstEditableCell();
+    final row = firstEmptyEditableCellRow!;
+    final col = firstEmptyEditableCellCol!;
+
+    int? otherRow;
+    int? otherCol;
+    outer:
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        if ((r != row || c != col) && !controller.isFixed(r, c)) {
+          otherRow = r;
+          otherCol = c;
+          break outer;
+        }
+      }
+    }
+    expect(otherRow, isNotNull);
+
+    controller.selectCellForDrag(row, col);
+    expect(controller.selectedRow, row);
+    expect(controller.selectedCol, col);
+
+    // Unlike selectCell, calling again with the same cell does not
+    // toggle it off — as if the finger swept back over its starting
+    // cell mid-drag.
+    controller.selectCellForDrag(row, col);
+    expect(controller.selectedRow, row);
+    expect(controller.selectedCol, col);
+
+    controller.selectCellForDrag(otherRow!, otherCol!);
+    expect(controller.selectedRow, otherRow);
+    expect(controller.selectedCol, otherCol);
+  });
+
+  test('selectCellForDrag clears the active hint, like selectCell', () {
+    locateFirstEditableCell();
+    final row = firstEmptyEditableCellRow!;
+    final col = firstEmptyEditableCellCol!;
+    final correctValue = controller.puzzle.solutionValue(row, col);
+
+    hintEngine.nextHint = Hint(
+      technique: HintTechnique.nakedSingle,
+      type: HintType.reveal,
+      explanation: 'test',
+      primaryCells: {HintCell(row, col)},
+      row: row,
+      col: col,
+      value: correctValue,
+    );
+    controller.requestHint();
+    expect(controller.activeHint, isNotNull);
+
+    controller.selectCellForDrag(row, col);
+
+    expect(controller.activeHint, isNull);
   });
 
   test('entering the correct value leaves no mistake and no red flag', () {

@@ -1,0 +1,402 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appTitle => 'Sudoku';
+
+  @override
+  String get homeButton => 'Home';
+
+  @override
+  String get closeAction => 'Close';
+
+  @override
+  String get applyAction => 'Apply';
+
+  @override
+  String get continueAction => 'Continue';
+
+  @override
+  String get continueGame => 'Resume';
+
+  @override
+  String get startGame => 'Start';
+
+  @override
+  String get viewStats => 'View Stats';
+
+  @override
+  String get generatingLabel => 'Generating...';
+
+  @override
+  String get themeSectionTitle => 'Theme';
+
+  @override
+  String get followSystemTheme => 'Follow System';
+
+  @override
+  String get lightTheme => 'Light Mode';
+
+  @override
+  String get darkTheme => 'Dark Mode';
+
+  @override
+  String get hapticsLabel => 'Vibration';
+
+  @override
+  String get soundLabel => 'Sound Effects';
+
+  @override
+  String get languageSectionTitle => 'Language';
+
+  @override
+  String get followSystemLanguage => 'Follow System';
+
+  @override
+  String get koreanLanguage => '한국어';
+
+  @override
+  String get englishLanguage => 'English';
+
+  @override
+  String mistakesLabel(int current, int max) {
+    return 'Mistakes: $current/$max';
+  }
+
+  @override
+  String get exitDialogTitle => 'End the game?';
+
+  @override
+  String get restartAction => 'Restart';
+
+  @override
+  String get endGameAction => 'End Game';
+
+  @override
+  String get gameOverTitle => '3 Mistakes';
+
+  @override
+  String get gameOverContent => 'Watch an ad to continue?';
+
+  @override
+  String get giveUpAction => 'Give Up and Exit';
+
+  @override
+  String get noHintAvailable => 'No hint is available right now.';
+
+  @override
+  String get clearWrongFirst => 'Please clear the wrong answer first.';
+
+  @override
+  String get adNotLoaded =>
+      'The ad hasn\'t loaded yet. Please try again in a moment.';
+
+  @override
+  String get resultTitle => 'Result';
+
+  @override
+  String get perfectClearBadge => 'No Mistakes! Perfect Clear';
+
+  @override
+  String mistakesAndHints(int mistakes, int hints) {
+    return 'Mistakes: $mistakes · Hints used: $hints';
+  }
+
+  @override
+  String get personalBestTitle => 'Personal Best';
+
+  @override
+  String get firstClear => 'First clear for this difficulty!';
+
+  @override
+  String newBest(String time) {
+    return '🏆 New personal best! (Previous: $time)';
+  }
+
+  @override
+  String currentBest(String time) {
+    return 'Personal best: $time';
+  }
+
+  @override
+  String get comparisonTitle => 'Global Player Comparison';
+
+  @override
+  String topPercent(int percent) {
+    return 'Top $percent%';
+  }
+
+  @override
+  String get mockDataDisclaimer => '* This is sample data, not real user data.';
+
+  @override
+  String get techniquesUsedTitle => 'Techniques Used';
+
+  @override
+  String get highestTechniqueLabel => 'Hardest technique:';
+
+  @override
+  String techniqueUsageCount(int count) {
+    return '×$count';
+  }
+
+  @override
+  String get statsTitle => 'Stats';
+
+  @override
+  String playedWonLabel(int played, int won) {
+    return 'Played $played · Won $won';
+  }
+
+  @override
+  String bestTimeSuffix(String time) {
+    return ' · Best $time';
+  }
+
+  @override
+  String get undoLabel => 'Undo';
+
+  @override
+  String get eraseLabel => 'Erase';
+
+  @override
+  String get noteLabel => 'Notes';
+
+  @override
+  String get autoFillLabel => 'Auto Notes';
+
+  @override
+  String get hintLabel => 'Hint';
+
+  @override
+  String get difficultyBeginner => 'Beginner';
+
+  @override
+  String get difficultyEasy => 'Easy';
+
+  @override
+  String get difficultyMedium => 'Medium';
+
+  @override
+  String get difficultyHard => 'Hard';
+
+  @override
+  String get difficultyMaster => 'Master';
+
+  @override
+  String get difficultyExpert => 'Expert';
+
+  @override
+  String get techniqueFullHouse => 'Full House';
+
+  @override
+  String get techniqueNakedSingle => 'Naked Single';
+
+  @override
+  String get techniqueHiddenSingle => 'Hidden Single';
+
+  @override
+  String get techniqueNakedPair => 'Naked Pair';
+
+  @override
+  String get techniqueNakedTriple => 'Naked Triple';
+
+  @override
+  String get techniqueNakedQuad => 'Naked Quad';
+
+  @override
+  String get techniqueHiddenPair => 'Hidden Pair';
+
+  @override
+  String get techniqueHiddenTriple => 'Hidden Triple';
+
+  @override
+  String get techniqueHiddenQuad => 'Hidden Quad';
+
+  @override
+  String get techniqueIntersectionPointing => 'Intersection (Pointing)';
+
+  @override
+  String get techniqueIntersectionClaiming => 'Intersection (Claiming)';
+
+  @override
+  String get techniqueXWing => 'X-Wing';
+
+  @override
+  String get techniqueSimpleColoring => 'Simple Coloring';
+
+  @override
+  String get techniqueXYWing => 'XY-Wing';
+
+  @override
+  String get techniqueSwordfish => 'Swordfish';
+
+  @override
+  String get techniqueFinnedXWing => 'Finned X-Wing';
+
+  @override
+  String get techniqueSashimiXWing => 'Sashimi X-Wing';
+
+  @override
+  String get techniqueBugPlusOne => 'BUG+1';
+
+  @override
+  String get techniqueXYChain => 'XY-Chain';
+
+  @override
+  String get techniqueJellyfish => 'Jellyfish';
+
+  @override
+  String get techniqueUniqueRectangleType1 => 'Unique Rectangle Type 1';
+
+  @override
+  String get techniqueUniqueRectangleType2 => 'Unique Rectangle Type 2';
+
+  @override
+  String get techniqueUniqueRectangleType3 => 'Unique Rectangle Type 3';
+
+  @override
+  String get techniqueUniqueRectangleType4 => 'Unique Rectangle Type 4';
+
+  @override
+  String unitRow(int row) {
+    return 'Row $row';
+  }
+
+  @override
+  String unitCol(int col) {
+    return 'Column $col';
+  }
+
+  @override
+  String unitCell(int row, int col) {
+    return 'R${row}C$col';
+  }
+
+  @override
+  String unitBox(int index, int r1, int r2, int c1, int c2) {
+    return 'Box $index (rows $r1-$r2, columns $c1-$c2)';
+  }
+
+  @override
+  String get wordRows => 'rows';
+
+  @override
+  String get wordColumns => 'columns';
+
+  @override
+  String explanationFullHouse(String unitDesc, int value) {
+    return '$unitDesc has only one empty cell left. Since $value is the only digit from 1-9 missing, it\'s automatically filled in.';
+  }
+
+  @override
+  String explanationNakedSingle(int row, int col, int value) {
+    return 'Row $row, Column $col has only one candidate: $value. Every other digit already appears in its row, column, or box, leaving only $value.';
+  }
+
+  @override
+  String explanationHiddenSingle(String unitDesc, int value, int row, int col) {
+    return 'In $unitDesc, the only empty cell where $value can go is Row $row, Column $col.';
+  }
+
+  @override
+  String explanationNakedSubset(
+      String unitDesc, String cellsDesc, String digitsDesc, int size) {
+    return 'In $unitDesc, the combined candidates of $cellsDesc are only $digitsDesc ($size digits). So $digitsDesc can be removed from every other cell in that unit.';
+  }
+
+  @override
+  String explanationHiddenSubset(
+      String unitDesc, String digitsDesc, String cellsDesc) {
+    return 'In $unitDesc, digits $digitsDesc can only go in $cellsDesc. Every other candidate can be removed from those cells.';
+  }
+
+  @override
+  String explanationPointing(String boxDesc, int digit, String lineDesc) {
+    return 'Within $boxDesc, digit $digit only appears along $lineDesc. So $digit can be removed from the rest of $lineDesc (outside the box).';
+  }
+
+  @override
+  String explanationClaiming(String lineDesc, int digit, String boxDesc) {
+    return 'Within $lineDesc, digit $digit only appears in $boxDesc. So $digit can be removed from the rest of that box (outside $lineDesc).';
+  }
+
+  @override
+  String explanationXWing(
+      int digit, String linesDesc, String crossDesc, String crossUnitName) {
+    return 'Digit $digit can only go in $crossDesc within $linesDesc. Since these four cells form a rectangle, $digit can be removed from the rest of those two $crossUnitName.';
+  }
+
+  @override
+  String explanationFish(int digit, String linesDesc, String crossDesc,
+      String crossUnitName, int size) {
+    return 'Digit $digit can only go in $crossDesc ($size cells total) combined across $linesDesc. So $digit can be removed from the rest of those $crossUnitName.';
+  }
+
+  @override
+  String explanationFinnedFish(
+      String mainLineDesc, int digit, String finLineDesc, String finsDesc) {
+    return '$mainLineDesc forms a clean X-Wing shape with only two candidate cells for digit $digit. $finLineDesc also has extra candidates at $finsDesc (fins), so it\'s not a pure X-Wing — but cells that see every fin can still have $digit removed from their candidates.';
+  }
+
+  @override
+  String explanationSimpleColoringRule1(int digit, String cellA, String cellB) {
+    return 'Chaining digit $digit\'s candidates, $cellA and $cellB — both in the same color group — share a row, column, or box. Since they can\'t both be $digit, this whole group can\'t be $digit. So $digit can be removed from this group\'s cells.';
+  }
+
+  @override
+  String explanationSimpleColoringRule2(int digit, String cellsDesc) {
+    return 'Digit $digit\'s candidate chain ($cellsDesc) splits into two groups with opposite states. Any cell that sees both groups can\'t be $digit regardless of which group is true, so $digit can be removed from its candidates there.';
+  }
+
+  @override
+  String explanationXYWing(String pivotDesc, int x, int y, String w1Desc,
+      int sharedDigitW1, int z, String w2Desc, int otherPivotDigit) {
+    return 'Pivot cell $pivotDesc has candidates $x and $y. Wing cell $w1Desc is either $sharedDigitW1 or $z; wing cell $w2Desc is either $otherPivotDigit or $z. If the pivot is $sharedDigitW1, $w1Desc becomes $z; if it\'s $otherPivotDigit, $w2Desc becomes $z. Either way, cells that see both wings can have $z removed from their candidates.';
+  }
+
+  @override
+  String explanationXYChain(String chainDesc, int z) {
+    return 'The cells chained in order $chainDesc each have only two candidates, so if one end of the chain isn\'t $z, the other end must be. So $z can be removed from cells that see both ends of the chain.';
+  }
+
+  @override
+  String explanationBugPlusOne(int row, int col, int value) {
+    return 'Every empty cell except Row $row, Column $col already has exactly 2 candidates. If this cell weren\'t $value, the whole grid would form a complete BUG (Bi-Value Universal Grave) pattern, which would break this puzzle\'s unique solution. So it must be $value.';
+  }
+
+  @override
+  String explanationUniqueRectangleType1(String cellsDesc, int a, int b) {
+    return '$cellsDesc form a Unique Rectangle (2 rows, 2 columns, 2 boxes), and three of these cells have only candidates $a and $b. If the last cell also had only those two, the puzzle would have two solutions — so $a and $b can be removed from that cell\'s candidates.';
+  }
+
+  @override
+  String explanationUniqueRectangleType2(
+      String cellA, String cellB, int a, int b, int c) {
+    return '$cellA and $cellB each have three candidates: $a, $b, and $c. If both were only $a and $b, the puzzle would have two solutions, so one of them must be $c. So $c can be removed from any other cell that sees both.';
+  }
+
+  @override
+  String explanationUniqueRectangleType3(
+      String cellA, String cellB, String digitsDesc) {
+    return 'Combining the extra candidates of $cellA and $cellB, they form a set of only $digitsDesc together with other cells in that unit. So $digitsDesc can be removed from the rest of that unit\'s cells.';
+  }
+
+  @override
+  String explanationUniqueRectangleType4(
+      String cellA, String cellB, int lockedDigit, int otherDigit) {
+    return 'In the line containing $cellA and $cellB, digit $lockedDigit can only go in these two cells. If $otherDigit remained in both, the puzzle would have two solutions — so $otherDigit can be removed from both cells\' candidates.';
+  }
+
+  @override
+  String noteRepairNotice(String explanation) {
+    return 'Notes needed to be corrected first. $explanation';
+  }
+}

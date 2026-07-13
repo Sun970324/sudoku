@@ -10,15 +10,20 @@ class SettingsController extends ChangeNotifier {
 
   final StorageService _storage;
   ThemeMode _themeMode = ThemeMode.system;
+  Locale? _localeOverride;
   bool _hapticsEnabled = true;
   bool _soundEnabled = true;
 
   ThemeMode get themeMode => _themeMode;
+
+  /// Null means "follow system locale" — see [StorageService.loadLocaleOverride].
+  Locale? get localeOverride => _localeOverride;
   bool get hapticsEnabled => _hapticsEnabled;
   bool get soundEnabled => _soundEnabled;
 
   Future<void> load() async {
     _themeMode = await _storage.loadThemeMode();
+    _localeOverride = await _storage.loadLocaleOverride();
     _hapticsEnabled = await _storage.loadHapticsEnabled();
     _soundEnabled = await _storage.loadSoundEnabled();
     HapticService.enabled = _hapticsEnabled;
@@ -31,6 +36,13 @@ class SettingsController extends ChangeNotifier {
     _themeMode = mode;
     notifyListeners();
     await _storage.saveThemeMode(mode);
+  }
+
+  Future<void> setLocaleOverride(Locale? locale) async {
+    if (locale == _localeOverride) return;
+    _localeOverride = locale;
+    notifyListeners();
+    await _storage.saveLocaleOverride(locale);
   }
 
   Future<void> setHapticsEnabled(bool enabled) async {

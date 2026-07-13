@@ -11,10 +11,21 @@ import 'minimalizer.dart';
 
 /// Orchestrates board generation end to end — the "Generator" module.
 ///
-/// Per generator.md, difficulty is decided by which techniques a
-/// [HumanSolver] actually needed, never by given count. Every [Difficulty]
-/// tier is gated the same way: [ClueRemover] and [Minimalizer] both dig
-/// only while a candidate board's [DifficultyEvaluator]-computed
+/// [Difficulty.beginner]/[Difficulty.easy]/[Difficulty.medium] are generated
+/// purely by given count (see [_generateByGivenCount]): [ClueRemover] digs
+/// straight to the tier's [Difficulty.givenCount] preserving only
+/// uniqueness, with no technique check at all. At these generous given
+/// counts an advanced technique is only ever needed in rare, unlucky cases —
+/// an acceptable tradeoff for these tiers. (The result screen's "which
+/// techniques did this puzzle need" display is unaffected either way — it
+/// re-solves the puzzle's own given board with [HumanSolver] independently
+/// at completion time, regardless of how the puzzle was generated.)
+///
+/// [Difficulty.hard]/[Difficulty.master]/[Difficulty.expert] keep the
+/// original technique-gated generation (see [_generateByTechnique]): per
+/// generator.md, difficulty is decided by which techniques a [HumanSolver]
+/// actually needed, never by given count. [ClueRemover] and [Minimalizer]
+/// both dig only while a candidate board's [DifficultyEvaluator]-computed
 /// `highestDifficulty` stays at or below the target tier (a "ceiling"), and
 /// the final board is only accepted if it *exactly* matches the target —
 /// this catches undershoot (a dig that stayed within the ceiling but never
@@ -37,13 +48,43 @@ class SudokuGenerator {
 
   static const _maxAttempts = 200;
 
+  static const _givenCountBasedTiers = {
+    Difficulty.beginner,
+    Difficulty.easy,
+    Difficulty.medium,
+  };
+
   final BoardGenerator _boardGenerator;
   final ClueRemover _clueRemover;
   final HumanSolver _humanSolver;
   final Minimalizer _minimalizer;
   final DifficultyEvaluator _evaluator;
 
-  SudokuPuzzle generate(Difficulty difficulty) {
+  SudokuPuzzle generate(Difficulty difficulty) =>
+      _givenCountBasedTiers.contains(difficulty)
+          ? _generateByGivenCount(difficulty)
+          : _generateByTechnique(difficulty);
+
+  /// No technique check at all — just dig straight to [Difficulty.givenCount]
+  /// preserving only uniqueness (see class doc for the rationale/tradeoff).
+  /// Always succeeds in one pass: with no ceiling constraining the dig, it
+  /// reliably reaches (or gets very close to) the target given count.
+  SudokuPuzzle _generateByGivenCount(Difficulty difficulty) {
+    final solvedBoard = _boardGenerator.generateSolvedBoard();
+    final dug = _clueRemover.removeClues(solvedBoard, difficulty.givenCount);
+    final fixedMask = List.generate(
+      9,
+      (r) => List.generate(9, (c) => dug[r][c] != 0),
+    );
+    return SudokuPuzzle(
+      puzzle: SudokuGrid(dug),
+      solution: SudokuGrid(solvedBoard),
+      fixedMask: fixedMask,
+      difficulty: difficulty,
+    );
+  }
+
+  SudokuPuzzle _generateByTechnique(Difficulty difficulty) {
     final targetRank = Difficulty.values.indexOf(difficulty);
 
     for (var attempt = 1; attempt <= _maxAttempts; attempt++) {

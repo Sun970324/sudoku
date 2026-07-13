@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sudoku/l10n/generated/app_localizations.dart';
 import 'package:sudoku/models/difficulty.dart';
 import 'package:sudoku/models/hint.dart';
 import 'package:sudoku/models/sudoku_grid.dart';
@@ -43,7 +44,11 @@ class _FixedHintEngine extends HintEngine {
   );
 
   @override
-  Hint? findHint(List<List<int>> board, [List<List<Set<int>>>? candidates]) =>
+  Hint? findHint(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) =>
       hint;
 }
 
@@ -91,5 +96,49 @@ void main() {
         .widgetList<CustomPaint>(find.byType(CustomPaint))
         .where((w) => w.painter.runtimeType.toString().contains('Unit'));
     expect(unitHighlightPaints, isEmpty);
+  });
+
+  testWidgets(
+      'dragging across the grid updates the selected cell to follow the '
+      'finger, without waiting for a release', (tester) async {
+    final controller = GameController(generator: _InstantGenerator());
+    controller.startNewGame(Difficulty.beginner);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SudokuGridWidget(controller: controller),
+        ),
+      ),
+    );
+
+    final gridFinder = find.byType(SudokuGridWidget);
+    final topLeft = tester.getTopLeft(gridFinder);
+    final cellSize = tester.getSize(gridFinder).width / 9;
+    Offset cellCenter(int row, int col) => topLeft +
+        Offset((col + 0.5) * cellSize, (row + 0.5) * cellSize);
+
+    final gesture = await tester.startGesture(cellCenter(0, 0));
+    addTearDown(() => gesture.removePointer());
+    await tester.pump();
+    // A bare pointer-down with no movement yet is still just a
+    // potential tap, not a drag — nothing is selected until the finger
+    // actually moves past the touch slop.
+    expect(controller.selectedRow, isNull);
+    expect(controller.selectedCol, isNull);
+
+    await gesture.moveTo(cellCenter(2, 4));
+    await tester.pump();
+    expect(controller.selectedRow, 2);
+    expect(controller.selectedCol, 4);
+
+    // Sweeping back over the cell the drag started on must not deselect
+    // it (selectCellForDrag never toggles, unlike a plain tap).
+    await gesture.moveTo(cellCenter(0, 0));
+    await tester.pump();
+    expect(controller.selectedRow, 0);
+    expect(controller.selectedCol, 0);
+
+    await gesture.up();
   });
 }

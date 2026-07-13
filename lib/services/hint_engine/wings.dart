@@ -4,12 +4,14 @@ extension HintEngineWings on HintEngine {
   Hint? findXYWing(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findXYWing(resolved);
+    return _findXYWing(resolved, l10n);
   }
 
-  Hint? _findXYWing(List<List<Set<int>>> candidates) {
+  Hint? _findXYWing(List<List<Set<int>>> candidates, AppLocalizations? l10n) {
+    final resolvedL10n = _resolveL10n(l10n);
     for (var pr = 0; pr < 9; pr++) {
       for (var pc = 0; pc < 9; pc++) {
         final pivotCandidates = candidates[pr][pc];
@@ -57,19 +59,23 @@ extension HintEngineWings on HintEngine {
             }
             if (eliminations.isEmpty) continue;
 
-            final pivotDesc = '${pr + 1}행${pc + 1}열';
-            final w1Desc = '${w1[0] + 1}행${w1[1] + 1}열';
-            final w2Desc = '${w2[0] + 1}행${w2[1] + 1}열';
+            final pivotDesc = _cellDesc(pr, pc, resolvedL10n);
+            final w1Desc = _cellDesc(w1[0], w1[1], resolvedL10n);
+            final w2Desc = _cellDesc(w2[0], w2[1], resolvedL10n);
 
             return Hint(
               technique: HintTechnique.xyWing,
               type: HintType.eliminate,
-              explanation: '피벗 칸 $pivotDesc의 후보는 $x, $y 두 개예요. 날개 칸 '
-                  '$w1Desc는 $sharedDigitW1 아니면 $z, $w2Desc는 '
-                  '$otherPivotDigit 아니면 $z예요. 피벗이 $sharedDigitW1이면 '
-                  '$w1Desc가, 피벗이 $otherPivotDigit이면 $w2Desc가 $z가 '
-                  '되므로, 어느 쪽이든 두 날개를 모두 보는 칸에서는 $z를 '
-                  '후보에서 지울 수 있습니다.',
+              explanation: resolvedL10n.explanationXYWing(
+                pivotDesc,
+                x,
+                y,
+                w1Desc,
+                sharedDigitW1,
+                z,
+                w2Desc,
+                otherPivotDigit,
+              ),
               primaryCells: {
                 HintCell(pr, pc),
                 HintCell(w1[0], w1[1]),
@@ -111,12 +117,14 @@ extension HintEngineWings on HintEngine {
   Hint? findXYChain(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findXYChain(resolved);
+    return _findXYChain(resolved, l10n);
   }
 
-  Hint? _findXYChain(List<List<Set<int>>> candidates) {
+  Hint? _findXYChain(List<List<Set<int>>> candidates, AppLocalizations? l10n) {
+    final resolvedL10n = _resolveL10n(l10n);
     for (var r = 0; r < 9; r++) {
       for (var c = 0; c < 9; c++) {
         if (candidates[r][c].length != 2) continue;
@@ -131,7 +139,8 @@ extension HintEngineWings on HintEngine {
               z,
               [
                 [r, c],
-              ]);
+              ],
+              resolvedL10n);
           if (hint != null) return hint;
         }
       }
@@ -145,6 +154,7 @@ extension HintEngineWings on HintEngine {
     int neededDigit,
     int targetZ,
     List<List<int>> path,
+    AppLocalizations l10n,
   ) {
     if (path.length >= _maxXYChainDepth) return null;
 
@@ -163,12 +173,12 @@ extension HintEngineWings on HintEngine {
       final newPath = [...path, next];
 
       if (otherDigit == targetZ && newPath.length >= 4) {
-        final hint = _buildXYChainHint(candidates, newPath, targetZ);
+        final hint = _buildXYChainHint(candidates, newPath, targetZ, l10n);
         if (hint != null) return hint;
       }
 
-      final deeper =
-          _extendXYChain(candidates, next, otherDigit, targetZ, newPath);
+      final deeper = _extendXYChain(
+          candidates, next, otherDigit, targetZ, newPath, l10n);
       if (deeper != null) return deeper;
     }
     return null;
@@ -178,6 +188,7 @@ extension HintEngineWings on HintEngine {
     List<List<Set<int>>> candidates,
     List<List<int>> path,
     int z,
+    AppLocalizations l10n,
   ) {
     final start = path.first;
     final end = path.last;
@@ -195,7 +206,8 @@ extension HintEngineWings on HintEngine {
     }
     if (eliminations.isEmpty) return null;
 
-    final chainDesc = path.map((p) => '${p[0] + 1}행${p[1] + 1}열').join(' - ');
+    final chainDesc =
+        path.map((p) => _cellDesc(p[0], p[1], l10n)).join(' - ');
     final colorGroupA = <HintCell>{
       for (var i = 0; i < path.length; i += 2) HintCell(path[i][0], path[i][1]),
     };
@@ -213,9 +225,7 @@ extension HintEngineWings on HintEngine {
     return Hint(
       technique: HintTechnique.xyChain,
       type: HintType.eliminate,
-      explanation: '$chainDesc 순서로 이어지는 칸들은 후보가 둘씩뿐이라, 사슬 '
-          '한쪽 끝이 $z가 아니면 반대쪽 끝이 $z가 될 수밖에 없어요. 그래서 '
-          '사슬 양쪽 끝을 모두 보는 칸에서는 $z를 후보에서 지울 수 있습니다.',
+      explanation: l10n.explanationXYChain(chainDesc, z),
       primaryCells: path.map((p) => HintCell(p[0], p[1])).toSet(),
       secondaryCells: eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
       colorGroupA: colorGroupA,

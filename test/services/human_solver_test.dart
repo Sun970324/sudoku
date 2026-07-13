@@ -241,6 +241,38 @@ void main() {
     expect(result.history[sashimiIndex + 1], HintTechnique.nakedSingle);
   });
 
+  test('BUG+1 fills the one cell with 3 candidates on a real generated '
+      'puzzle, and the solve goes on to complete', () {
+    // Same approach as the other hard-technique tests above — found by
+    // digging a real BoardGenerator grid (via ClueRemover + Minimalizer,
+    // 22-given target) and checking whether the resulting solve history
+    // ever used bugPlusOne, rather than hand-building a fixture (BUG+1
+    // requires literally every other empty cell on the whole board to
+    // already have exactly 2 real candidates, not just a local pattern —
+    // by far the least practical of these to construct by hand). Confirmed
+    // by running this exact board: bugPlusOne fires exactly once, at
+    // row 8/col 5 (0-indexed), filling it with 7 — the cell's 3 real
+    // candidates there are {3, 7, 8} — and the puzzle goes on to fully
+    // solve afterward.
+    final board = [
+      [0, 3, 0, 0, 7, 5, 4, 0, 0],
+      [0, 0, 2, 1, 3, 0, 0, 8, 0],
+      [1, 0, 0, 0, 0, 0, 0, 0, 7],
+      [0, 0, 0, 0, 2, 0, 0, 6, 5],
+      [0, 2, 7, 5, 0, 0, 0, 1, 3],
+      [0, 0, 0, 0, 0, 9, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [6, 9, 0, 0, 0, 0, 3, 0, 0],
+      [0, 0, 4, 0, 1, 0, 0, 0, 0],
+    ];
+
+    final result = HumanSolver().solve(board);
+
+    expect(result.solved, isTrue);
+    expect(result.techniqueCounts[HintTechnique.bugPlusOne], 1);
+    expect(result.board[8][5], 7);
+  });
+
   test('XY-Chain narrows candidates enough to unlock a subsequent Naked '
       'Single, on a real generated puzzle', () {
     // A genuine puzzle (18 givens) where XY-Chain is the technique that

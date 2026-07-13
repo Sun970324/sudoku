@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+
+import '../l10n/generated/app_localizations.dart';
 import 'difficulty.dart';
 
 enum HintTechnique {
@@ -18,6 +21,7 @@ enum HintTechnique {
   swordfish,
   finnedXWing,
   sashimiXWing,
+  bugPlusOne,
   xyChain,
   jellyfish,
   uniqueRectangleType1,
@@ -27,54 +31,61 @@ enum HintTechnique {
 }
 
 extension HintTechniqueInfo on HintTechnique {
-  String get label {
+  /// Requires a [BuildContext] since the display name is localized — see
+  /// [AppLocalizations]. Note this is only the technique's *name*; the
+  /// per-hint [Hint.explanation] sentence is generated deep in the solver
+  /// (see `hint_engine.dart` and its part files) and is not yet localized.
+  String label(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (this) {
       case HintTechnique.fullHouse:
-        return '풀 하우스';
+        return l10n.techniqueFullHouse;
       case HintTechnique.nakedSingle:
-        return '네이키드 싱글';
+        return l10n.techniqueNakedSingle;
       case HintTechnique.hiddenSingle:
-        return '히든 싱글';
+        return l10n.techniqueHiddenSingle;
       case HintTechnique.nakedPair:
-        return '네이키드 페어';
+        return l10n.techniqueNakedPair;
       case HintTechnique.nakedTriple:
-        return '네이키드 트리플';
+        return l10n.techniqueNakedTriple;
       case HintTechnique.nakedQuad:
-        return '네이키드 쿼드';
+        return l10n.techniqueNakedQuad;
       case HintTechnique.hiddenPair:
-        return '히든 페어';
+        return l10n.techniqueHiddenPair;
       case HintTechnique.hiddenTriple:
-        return '히든 트리플';
+        return l10n.techniqueHiddenTriple;
       case HintTechnique.hiddenQuad:
-        return '히든 쿼드';
+        return l10n.techniqueHiddenQuad;
       case HintTechnique.intersectionPointing:
-        return '교차로(포인팅)';
+        return l10n.techniqueIntersectionPointing;
       case HintTechnique.intersectionClaiming:
-        return '교차로(클레이밍)';
+        return l10n.techniqueIntersectionClaiming;
       case HintTechnique.xWing:
-        return 'X-윙';
+        return l10n.techniqueXWing;
       case HintTechnique.simpleColoring:
-        return '심플 컬러링';
+        return l10n.techniqueSimpleColoring;
       case HintTechnique.xyWing:
-        return 'XY-윙';
+        return l10n.techniqueXYWing;
       case HintTechnique.swordfish:
-        return '스워드피쉬';
+        return l10n.techniqueSwordfish;
       case HintTechnique.finnedXWing:
-        return '핀드 X-윙';
+        return l10n.techniqueFinnedXWing;
       case HintTechnique.sashimiXWing:
-        return '사시미 X-윙';
+        return l10n.techniqueSashimiXWing;
+      case HintTechnique.bugPlusOne:
+        return l10n.techniqueBugPlusOne;
       case HintTechnique.xyChain:
-        return 'XY-사슬';
+        return l10n.techniqueXYChain;
       case HintTechnique.jellyfish:
-        return '젤리피쉬';
+        return l10n.techniqueJellyfish;
       case HintTechnique.uniqueRectangleType1:
-        return '유일사각형 Type 1';
+        return l10n.techniqueUniqueRectangleType1;
       case HintTechnique.uniqueRectangleType2:
-        return '유일사각형 Type 2';
+        return l10n.techniqueUniqueRectangleType2;
       case HintTechnique.uniqueRectangleType3:
-        return '유일사각형 Type 3';
+        return l10n.techniqueUniqueRectangleType3;
       case HintTechnique.uniqueRectangleType4:
-        return '유일사각형 Type 4';
+        return l10n.techniqueUniqueRectangleType4;
     }
   }
 }
@@ -102,6 +113,7 @@ const hintTechniqueOrder = [
   HintTechnique.swordfish,
   HintTechnique.finnedXWing,
   HintTechnique.sashimiXWing,
+  HintTechnique.bugPlusOne,
   HintTechnique.xyChain,
   HintTechnique.jellyfish,
   HintTechnique.uniqueRectangleType1,
@@ -118,9 +130,9 @@ const hintTechniqueOrder = [
 /// slot in [humanSolverTechniqueOrder]) is enough to make it flow through
 /// generation without touching either module's logic.
 const techniqueDifficulty = <HintTechnique, Difficulty>{
-  HintTechnique.fullHouse: Difficulty.beginner,
-  HintTechnique.nakedSingle: Difficulty.beginner,
-  HintTechnique.hiddenSingle: Difficulty.easy,
+  HintTechnique.fullHouse: Difficulty.easy,
+  HintTechnique.nakedSingle: Difficulty.easy,
+  HintTechnique.hiddenSingle: Difficulty.medium,
   HintTechnique.intersectionPointing: Difficulty.medium,
   HintTechnique.intersectionClaiming: Difficulty.medium,
   HintTechnique.nakedPair: Difficulty.hard,
@@ -136,6 +148,7 @@ const techniqueDifficulty = <HintTechnique, Difficulty>{
   HintTechnique.simpleColoring: Difficulty.expert,
   HintTechnique.finnedXWing: Difficulty.expert,
   HintTechnique.sashimiXWing: Difficulty.expert,
+  HintTechnique.bugPlusOne: Difficulty.expert,
   HintTechnique.xyChain: Difficulty.expert,
   HintTechnique.uniqueRectangleType1: Difficulty.expert,
   HintTechnique.uniqueRectangleType2: Difficulty.expert,

@@ -17,6 +17,9 @@ PuzzleQueueManager _emptyPuzzleQueue() => PuzzleQueueManager(
     );
 
 void main() {
+  // flutter_test's default test locale is en_US, which our supportedLocales
+  // resolves to 'en' — so these assertions use the English ARB strings
+  // (see lib/l10n/app_en.arb), not the Korean ones.
   testWidgets('home screen leads into a playable game screen',
       (WidgetTester tester) async {
     await tester.pumpWidget(SudokuApp(
@@ -24,18 +27,16 @@ void main() {
       puzzleQueue: _emptyPuzzleQueue(),
     ));
 
-    expect(find.text('새 게임'), findsOneWidget);
-
-    await tester.tap(find.text('새 게임'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('쉬움'), findsOneWidget);
-    await tester.tap(find.text('쉬움'));
+    // Home screen now shows a difficulty wheel picker (default selection:
+    // Beginner) instead of a "New Game" button + modal — tap "Start"
+    // directly with whatever's selected.
+    expect(find.text('Start'), findsOneWidget);
+    await tester.tap(find.text('Start'));
     await tester.pumpAndSettle();
 
     // Game screen should render the number pad and grid.
     expect(find.text('1'), findsWidgets);
-    expect(find.text('힌트'), findsOneWidget);
+    expect(find.text('Hint'), findsOneWidget);
   });
 
   testWidgets(
@@ -45,9 +46,7 @@ void main() {
       settings: SettingsController(),
       puzzleQueue: _emptyPuzzleQueue(),
     ));
-    await tester.tap(find.text('새 게임'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('쉬움'));
+    await tester.tap(find.text('Start'));
     await tester.pumpAndSettle();
 
     // Both number pads always occupy layout space (so the grid above never
@@ -60,12 +59,12 @@ void main() {
     // fully visible.
     expect(notesOpacity(), 1);
 
-    await tester.tap(find.text('메모'));
+    await tester.tap(find.text('Notes'));
     await tester.pumpAndSettle();
     expect(find.byType(NumberPadWidget), findsNWidgets(2));
     expect(notesOpacity(), 0);
 
-    await tester.tap(find.text('메모'));
+    await tester.tap(find.text('Notes'));
     await tester.pumpAndSettle();
     expect(notesOpacity(), 1);
   });

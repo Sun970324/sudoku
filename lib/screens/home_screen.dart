@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/game_snapshot.dart';
 import '../services/haptic_service.dart';
@@ -7,6 +8,7 @@ import '../services/puzzle_queue_manager.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
 import '../state/settings_controller.dart';
+import '../widgets/sudoku_preview_board.dart';
 import 'game_screen.dart';
 import 'stats_screen.dart';
 
@@ -15,10 +17,18 @@ class HomeScreen extends StatefulWidget {
     super.key,
     required this.settings,
     required this.puzzleQueue,
+    this.initialResumeSnapshot,
   });
 
   final SettingsController settings;
   final PuzzleQueueManager puzzleQueue;
+
+  /// A game already in progress at app launch. When non-null, pushed
+  /// automatically right after the first frame so the app still opens
+  /// straight into the game — but with this [HomeScreen] underneath it in
+  /// the navigator stack, unlike setting [GameScreen] directly as the
+  /// app's `home`, which would leave it with no route to pop back to.
+  final GameSnapshot? initialResumeSnapshot;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -26,12 +36,28 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final StorageService _storage = StorageService();
+  late final FixedExtentScrollController _wheelController =
+      FixedExtentScrollController();
   GameSnapshot? _savedGame;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
     _loadSavedGame();
+    final snapshot = widget.initialResumeSnapshot;
+    if (snapshot != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _openGame(GameScreen.resume(resumeSnapshot: snapshot));
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _wheelController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadSavedGame() async {
@@ -45,11 +71,27 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadSavedGame();
   }
 
+  void _onStartPressed() {
+    final difficulty = Difficulty.values[_selectedIndex];
+    final puzzle = widget.puzzleQueue.take(difficulty);
+    _openGame(GameScreen.newGame(difficulty: difficulty, puzzle: puzzle));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final selectedDifficulty = Difficulty.values[_selectedIndex];
+    final previewPuzzle = widget.puzzleQueue.peek(selectedDifficulty);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('스도쿠'),
+        title: Text(l10n.appTitle),
+        // Flutter's AppBar swaps to colorScheme.surfaceContainer once
+        // scrolled-under is detected (any Scrollable in the body, e.g. the
+        // difficulty wheel, triggers this) — pinning backgroundColor to a
+        // fixed value makes it resolve the same regardless of scroll state.
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        scrolledUnderElevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -57,65 +99,91 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Center(
+      body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              Theme.of(context).brightness == Brightness.dark
-                  ? 'assets/images/icon_black.png'
-                  : 'assets/images/app_icon.png',
-              width: 96,
-              height: 96,
-            ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 12),
             if (_savedGame != null) ...[
               ElevatedButton(
                 onPressed: () =>
                     _openGame(GameScreen.resume(resumeSnapshot: _savedGame!)),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  child: Text('이어하기', style: TextStyle(fontSize: 18)),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  child: Text(l10n.continueGame,
+                      style: const TextStyle(fontSize: 18)),
                 ),
               ),
               const SizedBox(height: 12),
             ],
-            OutlinedButton(
-              onPressed: () => _showDifficultyPicker(context),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                child: Text('새 게임', style: TextStyle(fontSize: 18)),
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: previewPuzzle == null
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const CircularProgressIndicator(),
+                            const SizedBox(height: 12),
+                            Text(l10n.generatingLabel),
+                          ],
+                        )
+                      : Hero(
+                          // Paired with the same tag on SudokuGridWidget in
+                          // GameScreen so pushing into the game animates
+                          // this preview board growing into the real one.
+                          tag: 'sudoku-board',
+                          child: SudokuPreviewBoard(puzzle: previewPuzzle),
+                        ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 160,
+              child: ListWheelScrollView(
+                controller: _wheelController,
+                itemExtent: 40,
+                diameterRatio: 1.8,
+                physics: const FixedExtentScrollPhysics(),
+                onSelectedItemChanged: (index) =>
+                    setState(() => _selectedIndex = index),
+                children: Difficulty.values.map((difficulty) {
+                  final isSelected = difficulty == selectedDifficulty;
+                  return Center(
+                    child: Text(
+                      difficulty.label(context),
+                      style: TextStyle(
+                        fontSize: isSelected ? 20 : 16,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.grey,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: _onStartPressed,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                child:
+                    Text(l10n.startGame, style: const TextStyle(fontSize: 18)),
               ),
             ),
             const SizedBox(height: 12),
             TextButton(
               onPressed: () => _openGame(const StatsScreen()),
-              child: const Text('기록 보기'),
+              child: Text(l10n.viewStats),
             ),
+            const SizedBox(height: 12),
           ],
-        ),
-      ),
-    );
-  }
-
-  void _showDifficultyPicker(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (sheetContext) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: Difficulty.values.map((difficulty) {
-            return ListTile(
-              title: Text(difficulty.label),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                final puzzle = widget.puzzleQueue.take(difficulty);
-                _openGame(
-                  GameScreen.newGame(difficulty: difficulty, puzzle: puzzle),
-                );
-              },
-            );
-          }).toList(),
         ),
       ),
     );
@@ -126,55 +194,85 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (sheetContext) => AnimatedBuilder(
         animation: widget.settings,
-        builder: (context, _) => SafeArea(
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-                child:
-                    Text('테마', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              RadioGroup<ThemeMode>(
-                groupValue: widget.settings.themeMode,
-                onChanged: (mode) => widget.settings.setThemeMode(mode!),
-                child: const Column(
-                  children: [
-                    RadioListTile<ThemeMode>(
-                      title: Text('시스템 설정 따르기'),
-                      value: ThemeMode.system,
-                    ),
-                    RadioListTile<ThemeMode>(
-                      title: Text('라이트 모드'),
-                      value: ThemeMode.light,
-                    ),
-                    RadioListTile<ThemeMode>(
-                      title: Text('다크 모드'),
-                      value: ThemeMode.dark,
-                    ),
-                  ],
+        builder: (context, _) {
+          final l10n = AppLocalizations.of(context)!;
+          return SafeArea(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                  child: Text(l10n.themeSectionTitle,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
-              ),
-              const Divider(),
-              SwitchListTile(
-                title: const Text('진동'),
-                value: widget.settings.hapticsEnabled,
-                onChanged: (v) {
-                  widget.settings.setHapticsEnabled(v);
-                  if (v) HapticService.selection();
-                },
-              ),
-              SwitchListTile(
-                title: const Text('효과음'),
-                value: widget.settings.soundEnabled,
-                onChanged: (v) {
-                  widget.settings.setSoundEnabled(v);
-                  if (v) SoundService.click();
-                },
-              ),
-            ],
-          ),
-        ),
+                RadioGroup<ThemeMode>(
+                  groupValue: widget.settings.themeMode,
+                  onChanged: (mode) => widget.settings.setThemeMode(mode!),
+                  child: Column(
+                    children: [
+                      RadioListTile<ThemeMode>(
+                        title: Text(l10n.followSystemTheme),
+                        value: ThemeMode.system,
+                      ),
+                      RadioListTile<ThemeMode>(
+                        title: Text(l10n.lightTheme),
+                        value: ThemeMode.light,
+                      ),
+                      RadioListTile<ThemeMode>(
+                        title: Text(l10n.darkTheme),
+                        value: ThemeMode.dark,
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                  child: Text(l10n.languageSectionTitle,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                RadioGroup<Locale?>(
+                  groupValue: widget.settings.localeOverride,
+                  onChanged: (locale) =>
+                      widget.settings.setLocaleOverride(locale),
+                  child: Column(
+                    children: [
+                      RadioListTile<Locale?>(
+                        title: Text(l10n.followSystemLanguage),
+                        value: null,
+                      ),
+                      RadioListTile<Locale?>(
+                        title: Text(l10n.koreanLanguage),
+                        value: const Locale('ko'),
+                      ),
+                      RadioListTile<Locale?>(
+                        title: Text(l10n.englishLanguage),
+                        value: const Locale('en'),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                SwitchListTile(
+                  title: Text(l10n.hapticsLabel),
+                  value: widget.settings.hapticsEnabled,
+                  onChanged: (v) {
+                    widget.settings.setHapticsEnabled(v);
+                    if (v) HapticService.selection();
+                  },
+                ),
+                SwitchListTile(
+                  title: Text(l10n.soundLabel),
+                  value: widget.settings.soundEnabled,
+                  onChanged: (v) {
+                    widget.settings.setSoundEnabled(v);
+                    if (v) SoundService.click();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

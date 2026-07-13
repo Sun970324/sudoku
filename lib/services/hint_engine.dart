@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+
+import '../l10n/generated/app_localizations.dart';
 import '../models/hint.dart';
 import '../models/sudoku_grid.dart';
 
@@ -8,14 +11,14 @@ part 'hint_engine/fish.dart';
 part 'hint_engine/coloring.dart';
 part 'hint_engine/wings.dart';
 part 'hint_engine/unique_rectangles.dart';
+part 'hint_engine/uniqueness.dart';
 
 enum _UnitType { row, col, box }
 
 class _Unit {
-  const _Unit(this.cells, this.description, this.type, this.index);
+  const _Unit(this.cells, this.type, this.index);
 
   final List<List<int>> cells;
-  final String description;
 
   /// Whether this unit is a row, column, or box.
   final _UnitType type;
@@ -23,6 +26,14 @@ class _Unit {
   /// Row/column index (0-8), or box index (0-8, `boxRow * 3 + boxCol`).
   final int index;
 }
+
+/// Falls back to this locale wherever a caller doesn't supply one — every
+/// caller that never displays `.explanation` to a player (HumanSolver during
+/// generation, hint-availability checks, tests) can safely omit it. Only
+/// [GameController.requestHint] threads the player's actual current locale
+/// through, since that's the sole place `.explanation` is shown.
+AppLocalizations _resolveL10n(AppLocalizations? l10n) =>
+    l10n ?? lookupAppLocalizations(const Locale('ko'));
 
 /// A candidate Unique Rectangle base: 4 cells at 2 rows x 2 columns
 /// spanning exactly 2 boxes, grouped by which box they belong to.
@@ -53,7 +64,6 @@ List<_Unit> _buildUnits() {
       [
         for (var c = 0; c < 9; c++) [r, c]
       ],
-      '${r + 1}행',
       _UnitType.row,
       r,
     ));
@@ -63,7 +73,6 @@ List<_Unit> _buildUnits() {
       [
         for (var r = 0; r < 9; r++) [r, c]
       ],
-      '${c + 1}열',
       _UnitType.col,
       c,
     ));
@@ -73,7 +82,6 @@ List<_Unit> _buildUnits() {
       final cells = SudokuGrid.boxCellsOf(boxRow * 3, boxCol * 3);
       units.add(_Unit(
         cells,
-        _boxDescription(boxRow, boxCol),
         _UnitType.box,
         boxRow * 3 + boxCol,
       ));
@@ -82,11 +90,35 @@ List<_Unit> _buildUnits() {
   return units;
 }
 
-String _boxDescription(int boxRow, int boxCol) {
-  final boxIndex = boxRow * 3 + boxCol + 1;
-  return '박스 $boxIndex (${boxRow * 3 + 1}~${boxRow * 3 + 3}행, '
-      '${boxCol * 3 + 1}~${boxCol * 3 + 3}열)';
-}
+/// Localized description of a single row/column, built fresh per call (the
+/// [_Unit] cell layout is cached process-wide, but the description text
+/// can't be — it depends on whichever locale the caller currently wants).
+String _rowDesc(int r, AppLocalizations l10n) => l10n.unitRow(r + 1);
+String _colDesc(int c, AppLocalizations l10n) => l10n.unitCol(c + 1);
+
+/// Localized description of a single cell, e.g. "3행4열"/"R3C4".
+String _cellDesc(int r, int c, AppLocalizations l10n) =>
+    l10n.unitCell(r + 1, c + 1);
+
+String _boxDescription(int boxRow, int boxCol, AppLocalizations l10n) =>
+    l10n.unitBox(
+      boxRow * 3 + boxCol + 1,
+      boxRow * 3 + 1,
+      boxRow * 3 + 3,
+      boxCol * 3 + 1,
+      boxCol * 3 + 3,
+    );
+
+/// Localized description of [unit]. Computed fresh per call rather than
+/// cached on [_Unit] itself — [_Unit]'s cell layout is cached process-wide
+/// (see [_allUnits]), but its description can't be, since that would freeze
+/// whichever locale happened to be active on the very first call for the
+/// rest of the app's lifetime.
+String _unitDescription(_Unit unit, AppLocalizations l10n) => switch (unit.type) {
+      _UnitType.row => _rowDesc(unit.index, l10n),
+      _UnitType.col => _colDesc(unit.index, l10n),
+      _UnitType.box => _boxDescription(unit.index ~/ 3, unit.index % 3, l10n),
+    };
 
 /// The box index (0-8, `boxRow * 3 + boxCol`) containing [cell].
 int _boxIndexOf(List<int> cell) => (cell[0] ~/ 3) * 3 + cell[1] ~/ 3;
@@ -147,40 +179,60 @@ class HintEngine {
 
   /// [candidates], if supplied, is shared across every eliminate-type
   /// technique tried in this call so the whole chain stays internally
-  /// consistent; reveal-type techniques ignore it (see class doc).
-  Hint? findHint(List<List<int>> board, [List<List<Set<int>>>? candidates]) {
+  /// consistent; reveal-type techniques ignore it (see class doc). [l10n]
+  /// controls the language of the returned [Hint.explanation] — omit it
+  /// (as every caller except [GameController.requestHint] does) to get the
+  /// [_resolveL10n] default, fine for callers that never display the text.
+  Hint? findHint(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) {
     final resolved = candidates ?? _freshCandidates(board);
+    final resolvedL10n = _resolveL10n(l10n);
     for (final technique in hintTechniqueOrder) {
       final hint = switch (technique) {
-        HintTechnique.fullHouse => findFullHouse(board),
-        HintTechnique.nakedSingle => findNakedSingle(board),
-        HintTechnique.hiddenSingle => findHiddenSingle(board),
-        HintTechnique.nakedPair => findNakedPair(board, resolved),
-        HintTechnique.nakedTriple => findNakedTriple(board, resolved),
-        HintTechnique.nakedQuad => findNakedQuad(board, resolved),
-        HintTechnique.hiddenPair => findHiddenPair(board, resolved),
-        HintTechnique.hiddenTriple => findHiddenTriple(board, resolved),
-        HintTechnique.hiddenQuad => findHiddenQuad(board, resolved),
+        HintTechnique.fullHouse => findFullHouse(board, resolvedL10n),
+        HintTechnique.nakedSingle => findNakedSingle(board, null, resolvedL10n),
+        HintTechnique.hiddenSingle =>
+          findHiddenSingle(board, null, resolvedL10n),
+        HintTechnique.nakedPair => findNakedPair(board, resolved, resolvedL10n),
+        HintTechnique.nakedTriple =>
+          findNakedTriple(board, resolved, resolvedL10n),
+        HintTechnique.nakedQuad => findNakedQuad(board, resolved, resolvedL10n),
+        HintTechnique.hiddenPair =>
+          findHiddenPair(board, resolved, resolvedL10n),
+        HintTechnique.hiddenTriple =>
+          findHiddenTriple(board, resolved, resolvedL10n),
+        HintTechnique.hiddenQuad =>
+          findHiddenQuad(board, resolved, resolvedL10n),
         HintTechnique.intersectionPointing =>
-          findIntersectionPointing(board, resolved),
+          findIntersectionPointing(board, resolved, resolvedL10n),
         HintTechnique.intersectionClaiming =>
-          findIntersectionClaiming(board, resolved),
-        HintTechnique.xWing => findXWing(board, resolved),
-        HintTechnique.simpleColoring => findSimpleColoring(board, resolved),
-        HintTechnique.xyWing => findXYWing(board, resolved),
-        HintTechnique.swordfish => findSwordfish(board, resolved),
-        HintTechnique.finnedXWing => findFinnedXWing(board, resolved),
-        HintTechnique.sashimiXWing => findSashimiXWing(board, resolved),
-        HintTechnique.xyChain => findXYChain(board, resolved),
-        HintTechnique.jellyfish => findJellyfish(board, resolved),
+          findIntersectionClaiming(board, resolved, resolvedL10n),
+        HintTechnique.xWing => findXWing(board, resolved, resolvedL10n),
+        HintTechnique.simpleColoring =>
+          findSimpleColoring(board, resolved, resolvedL10n),
+        HintTechnique.xyWing => findXYWing(board, resolved, resolvedL10n),
+        HintTechnique.swordfish =>
+          findSwordfish(board, resolved, resolvedL10n),
+        HintTechnique.finnedXWing =>
+          findFinnedXWing(board, resolved, resolvedL10n),
+        HintTechnique.sashimiXWing =>
+          findSashimiXWing(board, resolved, resolvedL10n),
+        HintTechnique.bugPlusOne =>
+          findBugPlusOne(board, resolved, resolvedL10n),
+        HintTechnique.xyChain => findXYChain(board, resolved, resolvedL10n),
+        HintTechnique.jellyfish =>
+          findJellyfish(board, resolved, resolvedL10n),
         HintTechnique.uniqueRectangleType1 =>
-          findUniqueRectangleType1(board, resolved),
+          findUniqueRectangleType1(board, resolved, resolvedL10n),
         HintTechnique.uniqueRectangleType2 =>
-          findUniqueRectangleType2(board, resolved),
+          findUniqueRectangleType2(board, resolved, resolvedL10n),
         HintTechnique.uniqueRectangleType3 =>
-          findUniqueRectangleType3(board, resolved),
+          findUniqueRectangleType3(board, resolved, resolvedL10n),
         HintTechnique.uniqueRectangleType4 =>
-          findUniqueRectangleType4(board, resolved),
+          findUniqueRectangleType4(board, resolved, resolvedL10n),
       };
       if (hint != null) return hint;
     }

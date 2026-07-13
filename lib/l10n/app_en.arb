@@ -1,0 +1,336 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Sudoku",
+  "homeButton": "Home",
+  "closeAction": "Close",
+  "applyAction": "Apply",
+  "continueAction": "Continue",
+
+  "continueGame": "Resume",
+  "startGame": "Start",
+  "viewStats": "View Stats",
+  "generatingLabel": "Generating...",
+  "themeSectionTitle": "Theme",
+  "followSystemTheme": "Follow System",
+  "lightTheme": "Light Mode",
+  "darkTheme": "Dark Mode",
+  "hapticsLabel": "Vibration",
+  "soundLabel": "Sound Effects",
+  "languageSectionTitle": "Language",
+  "followSystemLanguage": "Follow System",
+  "koreanLanguage": "한국어",
+  "englishLanguage": "English",
+
+  "mistakesLabel": "Mistakes: {current}/{max}",
+  "@mistakesLabel": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "max": {"type": "int"}
+    }
+  },
+  "exitDialogTitle": "End the game?",
+  "restartAction": "Restart",
+  "endGameAction": "End Game",
+  "gameOverTitle": "3 Mistakes",
+  "gameOverContent": "Watch an ad to continue?",
+  "giveUpAction": "Give Up and Exit",
+  "noHintAvailable": "No hint is available right now.",
+  "clearWrongFirst": "Please clear the wrong answer first.",
+  "adNotLoaded": "The ad hasn't loaded yet. Please try again in a moment.",
+
+  "resultTitle": "Result",
+  "perfectClearBadge": "No Mistakes! Perfect Clear",
+  "mistakesAndHints": "Mistakes: {mistakes} · Hints used: {hints}",
+  "@mistakesAndHints": {
+    "placeholders": {
+      "mistakes": {"type": "int"},
+      "hints": {"type": "int"}
+    }
+  },
+  "personalBestTitle": "Personal Best",
+  "firstClear": "First clear for this difficulty!",
+  "newBest": "🏆 New personal best! (Previous: {time})",
+  "@newBest": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "currentBest": "Personal best: {time}",
+  "@currentBest": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "comparisonTitle": "Global Player Comparison",
+  "topPercent": "Top {percent}%",
+  "@topPercent": {
+    "placeholders": {
+      "percent": {"type": "int"}
+    }
+  },
+  "mockDataDisclaimer": "* This is sample data, not real user data.",
+  "techniquesUsedTitle": "Techniques Used",
+  "highestTechniqueLabel": "Hardest technique:",
+  "techniqueUsageCount": "×{count}",
+  "@techniqueUsageCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "statsTitle": "Stats",
+  "playedWonLabel": "Played {played} · Won {won}",
+  "@playedWonLabel": {
+    "placeholders": {
+      "played": {"type": "int"},
+      "won": {"type": "int"}
+    }
+  },
+  "bestTimeSuffix": " · Best {time}",
+  "@bestTimeSuffix": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+
+  "undoLabel": "Undo",
+  "eraseLabel": "Erase",
+  "noteLabel": "Notes",
+  "autoFillLabel": "Auto Notes",
+  "hintLabel": "Hint",
+
+  "difficultyBeginner": "Beginner",
+  "difficultyEasy": "Easy",
+  "difficultyMedium": "Medium",
+  "difficultyHard": "Hard",
+  "difficultyMaster": "Master",
+  "difficultyExpert": "Expert",
+
+  "techniqueFullHouse": "Full House",
+  "techniqueNakedSingle": "Naked Single",
+  "techniqueHiddenSingle": "Hidden Single",
+  "techniqueNakedPair": "Naked Pair",
+  "techniqueNakedTriple": "Naked Triple",
+  "techniqueNakedQuad": "Naked Quad",
+  "techniqueHiddenPair": "Hidden Pair",
+  "techniqueHiddenTriple": "Hidden Triple",
+  "techniqueHiddenQuad": "Hidden Quad",
+  "techniqueIntersectionPointing": "Intersection (Pointing)",
+  "techniqueIntersectionClaiming": "Intersection (Claiming)",
+  "techniqueXWing": "X-Wing",
+  "techniqueSimpleColoring": "Simple Coloring",
+  "techniqueXYWing": "XY-Wing",
+  "techniqueSwordfish": "Swordfish",
+  "techniqueFinnedXWing": "Finned X-Wing",
+  "techniqueSashimiXWing": "Sashimi X-Wing",
+  "techniqueBugPlusOne": "BUG+1",
+  "techniqueXYChain": "XY-Chain",
+  "techniqueJellyfish": "Jellyfish",
+  "techniqueUniqueRectangleType1": "Unique Rectangle Type 1",
+  "techniqueUniqueRectangleType2": "Unique Rectangle Type 2",
+  "techniqueUniqueRectangleType3": "Unique Rectangle Type 3",
+  "techniqueUniqueRectangleType4": "Unique Rectangle Type 4",
+
+  "unitRow": "Row {row}",
+  "@unitRow": {
+    "placeholders": {
+      "row": {"type": "int"}
+    }
+  },
+  "unitCol": "Column {col}",
+  "@unitCol": {
+    "placeholders": {
+      "col": {"type": "int"}
+    }
+  },
+  "unitCell": "R{row}C{col}",
+  "@unitCell": {
+    "placeholders": {
+      "row": {"type": "int"},
+      "col": {"type": "int"}
+    }
+  },
+  "unitBox": "Box {index} (rows {r1}-{r2}, columns {c1}-{c2})",
+  "@unitBox": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "r1": {"type": "int"},
+      "r2": {"type": "int"},
+      "c1": {"type": "int"},
+      "c2": {"type": "int"}
+    }
+  },
+  "wordRows": "rows",
+  "wordColumns": "columns",
+
+  "explanationFullHouse": "{unitDesc} has only one empty cell left. Since {value} is the only digit from 1-9 missing, it's automatically filled in.",
+  "@explanationFullHouse": {
+    "placeholders": {
+      "unitDesc": {"type": "String"},
+      "value": {"type": "int"}
+    }
+  },
+  "explanationNakedSingle": "Row {row}, Column {col} has only one candidate: {value}. Every other digit already appears in its row, column, or box, leaving only {value}.",
+  "@explanationNakedSingle": {
+    "placeholders": {
+      "row": {"type": "int"},
+      "col": {"type": "int"},
+      "value": {"type": "int"}
+    }
+  },
+  "explanationHiddenSingle": "In {unitDesc}, the only empty cell where {value} can go is Row {row}, Column {col}.",
+  "@explanationHiddenSingle": {
+    "placeholders": {
+      "unitDesc": {"type": "String"},
+      "value": {"type": "int"},
+      "row": {"type": "int"},
+      "col": {"type": "int"}
+    }
+  },
+  "explanationNakedSubset": "In {unitDesc}, the combined candidates of {cellsDesc} are only {digitsDesc} ({size} digits). So {digitsDesc} can be removed from every other cell in that unit.",
+  "@explanationNakedSubset": {
+    "placeholders": {
+      "unitDesc": {"type": "String"},
+      "cellsDesc": {"type": "String"},
+      "digitsDesc": {"type": "String"},
+      "size": {"type": "int"}
+    }
+  },
+  "explanationHiddenSubset": "In {unitDesc}, digits {digitsDesc} can only go in {cellsDesc}. Every other candidate can be removed from those cells.",
+  "@explanationHiddenSubset": {
+    "placeholders": {
+      "unitDesc": {"type": "String"},
+      "digitsDesc": {"type": "String"},
+      "cellsDesc": {"type": "String"}
+    }
+  },
+  "explanationPointing": "Within {boxDesc}, digit {digit} only appears along {lineDesc}. So {digit} can be removed from the rest of {lineDesc} (outside the box).",
+  "@explanationPointing": {
+    "placeholders": {
+      "boxDesc": {"type": "String"},
+      "digit": {"type": "int"},
+      "lineDesc": {"type": "String"}
+    }
+  },
+  "explanationClaiming": "Within {lineDesc}, digit {digit} only appears in {boxDesc}. So {digit} can be removed from the rest of that box (outside {lineDesc}).",
+  "@explanationClaiming": {
+    "placeholders": {
+      "lineDesc": {"type": "String"},
+      "digit": {"type": "int"},
+      "boxDesc": {"type": "String"}
+    }
+  },
+  "explanationXWing": "Digit {digit} can only go in {crossDesc} within {linesDesc}. Since these four cells form a rectangle, {digit} can be removed from the rest of those two {crossUnitName}.",
+  "@explanationXWing": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "linesDesc": {"type": "String"},
+      "crossDesc": {"type": "String"},
+      "crossUnitName": {"type": "String"}
+    }
+  },
+  "explanationFish": "Digit {digit} can only go in {crossDesc} ({size} cells total) combined across {linesDesc}. So {digit} can be removed from the rest of those {crossUnitName}.",
+  "@explanationFish": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "linesDesc": {"type": "String"},
+      "crossDesc": {"type": "String"},
+      "crossUnitName": {"type": "String"},
+      "size": {"type": "int"}
+    }
+  },
+  "explanationFinnedFish": "{mainLineDesc} forms a clean X-Wing shape with only two candidate cells for digit {digit}. {finLineDesc} also has extra candidates at {finsDesc} (fins), so it's not a pure X-Wing — but cells that see every fin can still have {digit} removed from their candidates.",
+  "@explanationFinnedFish": {
+    "placeholders": {
+      "mainLineDesc": {"type": "String"},
+      "digit": {"type": "int"},
+      "finLineDesc": {"type": "String"},
+      "finsDesc": {"type": "String"}
+    }
+  },
+  "explanationSimpleColoringRule1": "Chaining digit {digit}'s candidates, {cellA} and {cellB} — both in the same color group — share a row, column, or box. Since they can't both be {digit}, this whole group can't be {digit}. So {digit} can be removed from this group's cells.",
+  "@explanationSimpleColoringRule1": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cellA": {"type": "String"},
+      "cellB": {"type": "String"}
+    }
+  },
+  "explanationSimpleColoringRule2": "Digit {digit}'s candidate chain ({cellsDesc}) splits into two groups with opposite states. Any cell that sees both groups can't be {digit} regardless of which group is true, so {digit} can be removed from its candidates there.",
+  "@explanationSimpleColoringRule2": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cellsDesc": {"type": "String"}
+    }
+  },
+  "explanationXYWing": "Pivot cell {pivotDesc} has candidates {x} and {y}. Wing cell {w1Desc} is either {sharedDigitW1} or {z}; wing cell {w2Desc} is either {otherPivotDigit} or {z}. If the pivot is {sharedDigitW1}, {w1Desc} becomes {z}; if it's {otherPivotDigit}, {w2Desc} becomes {z}. Either way, cells that see both wings can have {z} removed from their candidates.",
+  "@explanationXYWing": {
+    "placeholders": {
+      "pivotDesc": {"type": "String"},
+      "x": {"type": "int"},
+      "y": {"type": "int"},
+      "w1Desc": {"type": "String"},
+      "sharedDigitW1": {"type": "int"},
+      "z": {"type": "int"},
+      "w2Desc": {"type": "String"},
+      "otherPivotDigit": {"type": "int"}
+    }
+  },
+  "explanationXYChain": "The cells chained in order {chainDesc} each have only two candidates, so if one end of the chain isn't {z}, the other end must be. So {z} can be removed from cells that see both ends of the chain.",
+  "@explanationXYChain": {
+    "placeholders": {
+      "chainDesc": {"type": "String"},
+      "z": {"type": "int"}
+    }
+  },
+  "explanationBugPlusOne": "Every empty cell except Row {row}, Column {col} already has exactly 2 candidates. If this cell weren't {value}, the whole grid would form a complete BUG (Bi-Value Universal Grave) pattern, which would break this puzzle's unique solution. So it must be {value}.",
+  "@explanationBugPlusOne": {
+    "placeholders": {
+      "row": {"type": "int"},
+      "col": {"type": "int"},
+      "value": {"type": "int"}
+    }
+  },
+  "explanationUniqueRectangleType1": "{cellsDesc} form a Unique Rectangle (2 rows, 2 columns, 2 boxes), and three of these cells have only candidates {a} and {b}. If the last cell also had only those two, the puzzle would have two solutions — so {a} and {b} can be removed from that cell's candidates.",
+  "@explanationUniqueRectangleType1": {
+    "placeholders": {
+      "cellsDesc": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "explanationUniqueRectangleType2": "{cellA} and {cellB} each have three candidates: {a}, {b}, and {c}. If both were only {a} and {b}, the puzzle would have two solutions, so one of them must be {c}. So {c} can be removed from any other cell that sees both.",
+  "@explanationUniqueRectangleType2": {
+    "placeholders": {
+      "cellA": {"type": "String"},
+      "cellB": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"},
+      "c": {"type": "int"}
+    }
+  },
+  "explanationUniqueRectangleType3": "Combining the extra candidates of {cellA} and {cellB}, they form a set of only {digitsDesc} together with other cells in that unit. So {digitsDesc} can be removed from the rest of that unit's cells.",
+  "@explanationUniqueRectangleType3": {
+    "placeholders": {
+      "cellA": {"type": "String"},
+      "cellB": {"type": "String"},
+      "digitsDesc": {"type": "String"}
+    }
+  },
+  "explanationUniqueRectangleType4": "In the line containing {cellA} and {cellB}, digit {lockedDigit} can only go in these two cells. If {otherDigit} remained in both, the puzzle would have two solutions — so {otherDigit} can be removed from both cells' candidates.",
+  "@explanationUniqueRectangleType4": {
+    "placeholders": {
+      "cellA": {"type": "String"},
+      "cellB": {"type": "String"},
+      "lockedDigit": {"type": "int"},
+      "otherDigit": {"type": "int"}
+    }
+  },
+  "noteRepairNotice": "Notes needed to be corrected first. {explanation}",
+  "@noteRepairNotice": {
+    "placeholders": {
+      "explanation": {"type": "String"}
+    }
+  }
+}

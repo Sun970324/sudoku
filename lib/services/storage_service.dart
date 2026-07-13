@@ -12,6 +12,7 @@ class StorageService {
   static const _inProgressKey = 'in_progress_game';
   static const _statsKey = 'stats';
   static const _themeModeKey = 'theme_mode';
+  static const _localeOverrideKey = 'locale_override';
   static const _hapticsEnabledKey = 'haptics_enabled';
   static const _soundEnabledKey = 'sound_enabled';
   static const _puzzleQueueKey = 'puzzle_queue';
@@ -71,6 +72,24 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_themeModeKey);
     return raw == null ? ThemeMode.system : ThemeMode.values.byName(raw);
+  }
+
+  /// Null means "follow system" — the same tri-state pattern as
+  /// [ThemeMode.system], just without a dedicated enum value since [Locale]
+  /// has no such member.
+  Future<void> saveLocaleOverride(Locale? locale) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (locale == null) {
+      await prefs.remove(_localeOverrideKey);
+    } else {
+      await prefs.setString(_localeOverrideKey, locale.languageCode);
+    }
+  }
+
+  Future<Locale?> loadLocaleOverride() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_localeOverrideKey);
+    return raw == null ? null : Locale(raw);
   }
 
   Future<void> saveHapticsEnabled(bool enabled) async {

@@ -1146,6 +1146,110 @@ void main() {
     });
   });
 
+  group('findBugPlusOne', () {
+    // A real board+candidates pair taken mid-solve from a genuine
+    // BoardGenerator + ClueRemover + Minimalizer puzzle (found by digging
+    // real grids and checking whether HumanSolver's history ever used
+    // bugPlusOne — see human_solver_test.dart's BUG+1 test for the full
+    // derivation). The *candidates* here matter, not just the board:
+    // earlier eliminate-type techniques (Intersection Claiming, Naked
+    // Pair) had already narrowed several cells' tracked candidates beyond
+    // what a fresh board-only computation would show, which is exactly why
+    // this fixture supplies them explicitly rather than relying on
+    // findBugPlusOne's own board-derived fallback. By this point every
+    // other empty cell already has exactly 2 candidates; (8,5) is the sole
+    // exception with 3 ({3, 7, 8}). Cross-validated against the puzzle's
+    // actual unique solution, which has 7 at (8,5).
+    List<List<int>> realBoard() => [
+          [8, 3, 9, 6, 7, 5, 4, 2, 1],
+          [7, 6, 2, 1, 3, 4, 5, 8, 9],
+          [1, 4, 5, 0, 9, 0, 6, 3, 7],
+          [4, 8, 3, 7, 2, 1, 9, 6, 5],
+          [9, 2, 7, 5, 4, 6, 8, 1, 3],
+          [5, 1, 6, 3, 8, 9, 0, 0, 0],
+          [0, 0, 8, 0, 6, 0, 1, 0, 0],
+          [6, 9, 1, 0, 5, 0, 3, 0, 8],
+          [0, 0, 4, 0, 1, 0, 0, 0, 6],
+        ];
+
+    List<List<Set<int>>> realCandidates() => candidatesFrom({
+          [2, 3]: {2, 8},
+          [2, 5]: {2, 8},
+          [5, 6]: {2, 7},
+          [5, 7]: {4, 7},
+          [5, 8]: {2, 4},
+          [6, 0]: {2, 3},
+          [6, 1]: {5, 7},
+          [6, 3]: {4, 9},
+          [6, 5]: {3, 7},
+          [6, 7]: {5, 9},
+          [6, 8]: {2, 4},
+          [7, 3]: {2, 4},
+          [7, 5]: {2, 7},
+          [7, 7]: {4, 7},
+          [8, 0]: {2, 3},
+          [8, 1]: {5, 7},
+          [8, 3]: {8, 9},
+          [8, 5]: {3, 7, 8},
+          [8, 6]: {2, 7},
+          [8, 7]: {5, 9},
+        });
+
+    test('fills the one cell with 3 candidates via the deadly-pattern '
+        'argument', () {
+      final hint = engine.findBugPlusOne(realBoard(), realCandidates());
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.bugPlusOne);
+      expect(hint.type, HintType.reveal);
+      expect(hint.row, 8);
+      expect(hint.col, 5);
+      expect(hint.value, 7);
+      expect(hint.primaryCells, {const HintCell(8, 5)});
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findBugPlusOne(_emptyBoard()), isNull);
+    });
+
+    test('returns null when a second cell also has 3 candidates (not a '
+        'clean BUG+1 shape)', () {
+      final board = realBoard();
+      board[6][2] = 0; // a second empty cell, in a box/row/col of its own
+      final candidates = realCandidates();
+      candidates[6][2] = {2, 4, 9}; // force a second 3-candidate cell
+      expect(engine.findBugPlusOne(board, candidates), isNull);
+    });
+
+    test('returns null when every empty cell already has exactly 2 '
+        'candidates (no exceptional cell to resolve)', () {
+      // Two isolated 2-candidate cells, nowhere near each other, and
+      // nothing else empty on the board — enough to fail the "find exactly
+      // one 3-candidate cell" precondition without needing a globally
+      // consistent deadly-pattern fixture.
+      final board = _solvedGrid();
+      board[0][6] = 0;
+      board[4][4] = 0;
+      final candidates = candidatesFrom({
+        [0, 6]: {7, 8},
+        [4, 4]: {1, 2},
+      });
+      expect(engine.findBugPlusOne(board, candidates), isNull);
+    });
+
+    test('returns null when excluding none of the extra cell\'s candidates '
+        'completes a valid deadly pattern', () {
+      // Same shape as the real fixture (one 3-candidate cell, rest 2), but
+      // with one neighbor's candidates swapped to unrelated digits so no
+      // removal choice at (8,5) makes every unit's digits pair up exactly
+      // twice.
+      final board = realBoard();
+      final candidates = realCandidates();
+      candidates[6][5] = {4, 5};
+      expect(engine.findBugPlusOne(board, candidates), isNull);
+    });
+  });
+
   group('findHint priority ordering', () {
     test('prefers Full House even when the same cell also qualifies as a '
         'naked/hidden single', () {
@@ -1222,6 +1326,7 @@ void main() {
         HintTechnique.swordfish,
         HintTechnique.finnedXWing,
         HintTechnique.sashimiXWing,
+        HintTechnique.bugPlusOne,
         HintTechnique.xyChain,
         HintTechnique.jellyfish,
         HintTechnique.uniqueRectangleType1,

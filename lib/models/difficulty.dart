@@ -1,3 +1,7 @@
+import 'package:flutter/widgets.dart';
+
+import '../l10n/generated/app_localizations.dart';
+
 enum Difficulty { beginner, easy, medium, hard, master, expert }
 
 /// Parses a [Difficulty] from a stored name, tolerating `'challenger'` —
@@ -19,9 +23,9 @@ extension DifficultyInfo on Difficulty {
       case Difficulty.beginner:
         return 45;
       case Difficulty.easy:
-        return 40;
+        return 37;
       case Difficulty.medium:
-        return 33;
+        return 30;
       case Difficulty.hard:
         return 27;
       case Difficulty.master:
@@ -31,20 +35,23 @@ extension DifficultyInfo on Difficulty {
     }
   }
 
-  String get label {
+  /// Requires a [BuildContext] (unlike [givenCount]) since the display name
+  /// is localized — see [AppLocalizations].
+  String label(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (this) {
       case Difficulty.beginner:
-        return '초보자';
+        return l10n.difficultyBeginner;
       case Difficulty.easy:
-        return '쉬움';
+        return l10n.difficultyEasy;
       case Difficulty.medium:
-        return '보통';
+        return l10n.difficultyMedium;
       case Difficulty.hard:
-        return '어려움';
+        return l10n.difficultyHard;
       case Difficulty.master:
-        return '마스터';
+        return l10n.difficultyMaster;
       case Difficulty.expert:
-        return '익스퍼트';
+        return l10n.difficultyExpert;
     }
   }
 }

@@ -22,42 +22,79 @@ class SudokuGridWidget extends StatelessWidget {
             hint.highlightedBoxes.isNotEmpty);
     return AspectRatio(
       aspectRatio: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: BoardColors.outerBorder(isDark), width: 2),
-        ),
-        child: Stack(
-          children: [
-            Column(
-              children: List.generate(
-                9,
-                (row) => Expanded(
-                  child: Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final cellSize = constraints.biggest.width / 9;
+          return GestureDetector(
+            // Deliberately no tap callbacks here — each cell keeps its own
+            // GestureDetector(onTap: ...) for a plain tap. The gesture
+            // arena lets that child tap recognizer win when there's no
+            // movement (preserving the existing tap-to-toggle behavior
+            // untouched) and lets this pan recognizer win once the finger
+            // moves past the touch slop, so a drag is never also read as a
+            // tap on the cell it started in.
+            onPanStart: (details) =>
+                _handleDragSelect(details.localPosition, cellSize),
+            onPanUpdate: (details) =>
+                _handleDragSelect(details.localPosition, cellSize),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                    color: BoardColors.outerBorder(isDark), width: 2),
+              ),
+              child: Stack(
+                children: [
+                  Column(
                     children: List.generate(
                       9,
-                      (col) => Expanded(child: _buildCell(context, row, col)),
+                      (row) => Expanded(
+                        child: Row(
+                          children: List.generate(
+                            9,
+                            (col) =>
+                                Expanded(child: _buildCell(context, row, col)),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  if (hasUnitHighlight)
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: CustomPaint(
+                          painter: _UnitHighlightPainter(
+                            rows: hint.highlightedRows,
+                            cols: hint.highlightedCols,
+                            boxes: hint.highlightedBoxes,
+                            color: BoardColors.unitHighlightBorder(isDark),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-            if (hasUnitHighlight)
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: CustomPaint(
-                    painter: _UnitHighlightPainter(
-                      rows: hint.highlightedRows,
-                      cols: hint.highlightedCols,
-                      boxes: hint.highlightedBoxes,
-                      color: BoardColors.unitHighlightBorder(isDark),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
+          );
+        },
       ),
     );
+  }
+
+  /// Converts a drag position (relative to the grid, [cellSize] square each)
+  /// into a (row, col) and selects it — clamped to the grid bounds, so
+  /// dragging past an edge just keeps the edge-most cell selected. No-op
+  /// (including no haptic/sound) if the finger is still over the
+  /// already-selected cell, so lingering within one cell during a drag
+  /// doesn't repeatedly fire feedback.
+  void _handleDragSelect(Offset localPosition, double cellSize) {
+    final row = (localPosition.dy / cellSize).floor().clamp(0, 8);
+    final col = (localPosition.dx / cellSize).floor().clamp(0, 8);
+    if (row == controller.selectedRow && col == controller.selectedCol) {
+      return;
+    }
+    HapticService.selection();
+    SoundService.click();
+    controller.selectCellForDrag(row, col);
   }
 
   Widget _buildCell(BuildContext context, int row, int col) {

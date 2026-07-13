@@ -4,20 +4,25 @@ extension HintEngineColoring on HintEngine {
   Hint? findSimpleColoring(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findSimpleColoring(resolved);
+    return _findSimpleColoring(resolved, l10n);
   }
 
-  Hint? _findSimpleColoring(List<List<Set<int>>> candidates) {
+  Hint? _findSimpleColoring(
+    List<List<Set<int>>> candidates,
+    AppLocalizations? l10n,
+  ) {
+    final resolvedL10n = _resolveL10n(l10n);
     for (var d = 1; d <= 9; d++) {
       final components = _colorComponentsForDigit(candidates, d);
       for (final coloring in components) {
-        final hint = _simpleColoringRule1(candidates, coloring, d);
+        final hint = _simpleColoringRule1(candidates, coloring, d, resolvedL10n);
         if (hint != null) return hint;
       }
       for (final coloring in components) {
-        final hint = _simpleColoringRule2(candidates, coloring, d);
+        final hint = _simpleColoringRule2(candidates, coloring, d, resolvedL10n);
         if (hint != null) return hint;
       }
     }
@@ -67,6 +72,7 @@ extension HintEngineColoring on HintEngine {
     List<List<Set<int>>> candidates,
     Map<int, int> coloring,
     int digit,
+    AppLocalizations l10n,
   ) {
     for (final color in [0, 1]) {
       final cellsOfColor = coloring.entries
@@ -90,16 +96,14 @@ extension HintEngineColoring on HintEngine {
               .where((e) => e.value != color)
               .map((e) => HintCell(e.key ~/ 9, e.key % 9))
               .toSet();
-          final aDesc = '${cellsOfColor[i][0] + 1}행${cellsOfColor[i][1] + 1}열';
-          final bDesc = '${cellsOfColor[j][0] + 1}행${cellsOfColor[j][1] + 1}열';
+          final aDesc = _cellDesc(cellsOfColor[i][0], cellsOfColor[i][1], l10n);
+          final bDesc = _cellDesc(cellsOfColor[j][0], cellsOfColor[j][1], l10n);
 
           return Hint(
             technique: HintTechnique.simpleColoring,
             type: HintType.eliminate,
-            explanation: '숫자 $digit의 후보를 사슬로 연결해보면 같은 그룹으로 묶인 '
-                '$aDesc와 $bDesc가 서로 같은 행·열·박스에 있어요. 둘 다 $digit가 '
-                '될 수는 없으므로 이 그룹 전체가 $digit일 수 없습니다. 그래서 이 '
-                '그룹의 칸들에서는 $digit를 후보에서 지울 수 있습니다.',
+            explanation:
+                l10n.explanationSimpleColoringRule1(digit, aDesc, bDesc),
             primaryCells: contradictionCells,
             secondaryCells: otherColorCells,
             colorGroupA: contradictionCells,
@@ -116,6 +120,7 @@ extension HintEngineColoring on HintEngine {
     List<List<Set<int>>> candidates,
     Map<int, int> coloring,
     int digit,
+    AppLocalizations l10n,
   ) {
     final componentCells = coloring.keys.toSet();
     final eliminations = <HintElimination>[];
@@ -146,7 +151,7 @@ extension HintEngineColoring on HintEngine {
     if (eliminations.isEmpty) return null;
 
     final cellsDesc = coloring.keys
-        .map((idx) => '${idx ~/ 9 + 1}행${idx % 9 + 1}열')
+        .map((idx) => _cellDesc(idx ~/ 9, idx % 9, l10n))
         .join(', ');
     final colorGroupA = coloring.entries
         .where((e) => e.value == 0)
@@ -160,9 +165,7 @@ extension HintEngineColoring on HintEngine {
     return Hint(
       technique: HintTechnique.simpleColoring,
       type: HintType.eliminate,
-      explanation: '숫자 $digit의 후보 사슬($cellsDesc)은 두 그룹으로 나뉘어 서로 '
-          '반대 상태를 가져요. 이 두 그룹을 모두 보고 있는 칸은 어느 그룹이 참이든 '
-          '$digit가 될 수 없으므로, 그 칸에서 $digit를 후보에서 지울 수 있습니다.',
+      explanation: l10n.explanationSimpleColoringRule2(digit, cellsDesc),
       primaryCells:
           coloring.keys.map((idx) => HintCell(idx ~/ 9, idx % 9)).toSet(),
       secondaryCells: eliminations.map((e) => HintCell(e.row, e.col)).toSet(),

@@ -4,25 +4,28 @@ extension HintEngineSubsets on HintEngine {
   Hint? findNakedPair(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findNakedSubset(resolved, 2, HintTechnique.nakedPair);
+    return _findNakedSubset(resolved, 2, HintTechnique.nakedPair, l10n);
   }
 
   Hint? findNakedTriple(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findNakedSubset(resolved, 3, HintTechnique.nakedTriple);
+    return _findNakedSubset(resolved, 3, HintTechnique.nakedTriple, l10n);
   }
 
   Hint? findNakedQuad(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findNakedSubset(resolved, 4, HintTechnique.nakedQuad);
+    return _findNakedSubset(resolved, 4, HintTechnique.nakedQuad, l10n);
   }
 
   /// Naked N-subset: [size] cells in a unit whose candidates, combined,
@@ -34,7 +37,9 @@ extension HintEngineSubsets on HintEngine {
     List<List<Set<int>>> candidates,
     int size,
     HintTechnique technique,
+    AppLocalizations? l10n,
   ) {
+    final resolvedL10n = _resolveL10n(l10n);
     for (final unit in _allUnits()) {
       final pool = unit.cells.where((rc) {
         final len = candidates[rc[0]][rc[1]].length;
@@ -63,16 +68,20 @@ extension HintEngineSubsets on HintEngine {
 
         final digits = union.toList()..sort();
         final digitsDesc = digits.join(', ');
-        final cellsDesc =
-            group.map((rc) => '${rc[0] + 1}행${rc[1] + 1}열').join(', ');
+        final cellsDesc = group
+            .map((rc) => _cellDesc(rc[0], rc[1], resolvedL10n))
+            .join(', ');
 
         final (hRows, hCols, hBoxes) = _highlightFor(unit);
         return Hint(
           technique: technique,
           type: HintType.eliminate,
-          explanation: '${unit.description}에서 $cellsDesc의 후보를 모두 '
-              '합치면 $digitsDesc($size개)뿐이에요. 따라서 같은 구역 안 '
-              '다른 칸에서는 $digitsDesc을(를) 후보에서 지울 수 있습니다.',
+          explanation: resolvedL10n.explanationNakedSubset(
+            _unitDescription(unit, resolvedL10n),
+            cellsDesc,
+            digitsDesc,
+            size,
+          ),
           primaryCells: group.map((rc) => HintCell(rc[0], rc[1])).toSet(),
           secondaryCells:
               eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
@@ -90,25 +99,28 @@ extension HintEngineSubsets on HintEngine {
   Hint? findHiddenPair(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findHiddenSubset(resolved, 2, HintTechnique.hiddenPair);
+    return _findHiddenSubset(resolved, 2, HintTechnique.hiddenPair, l10n);
   }
 
   Hint? findHiddenTriple(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findHiddenSubset(resolved, 3, HintTechnique.hiddenTriple);
+    return _findHiddenSubset(resolved, 3, HintTechnique.hiddenTriple, l10n);
   }
 
   Hint? findHiddenQuad(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    return _findHiddenSubset(resolved, 4, HintTechnique.hiddenQuad);
+    return _findHiddenSubset(resolved, 4, HintTechnique.hiddenQuad, l10n);
   }
 
   /// Hidden N-subset: [size] digits in a unit that, between them, only
@@ -120,7 +132,9 @@ extension HintEngineSubsets on HintEngine {
     List<List<Set<int>>> candidates,
     int size,
     HintTechnique technique,
+    AppLocalizations? l10n,
   ) {
+    final resolvedL10n = _resolveL10n(l10n);
     for (final unit in _allUnits()) {
       final digitCells = <int, List<List<int>>>{};
       for (var d = 1; d <= 9; d++) {
@@ -156,16 +170,19 @@ extension HintEngineSubsets on HintEngine {
         if (eliminations.isEmpty) continue;
 
         final digitsDesc = digitGroup.join(', ');
-        final cellsDesc =
-            cellUnion.map((rc) => '${rc[0] + 1}행${rc[1] + 1}열').join(', ');
+        final cellsDesc = cellUnion
+            .map((rc) => _cellDesc(rc[0], rc[1], resolvedL10n))
+            .join(', ');
 
         final (hRows, hCols, hBoxes) = _highlightFor(unit);
         return Hint(
           technique: technique,
           type: HintType.eliminate,
-          explanation: '${unit.description}에서 숫자 $digitsDesc는 오직 '
-              '$cellsDesc에만 들어갈 수 있어요. 이 칸들에서는 $digitsDesc 외의 '
-              '다른 후보를 모두 지울 수 있습니다.',
+          explanation: resolvedL10n.explanationHiddenSubset(
+            _unitDescription(unit, resolvedL10n),
+            digitsDesc,
+            cellsDesc,
+          ),
           primaryCells: cellUnion.map((rc) => HintCell(rc[0], rc[1])).toSet(),
           highlightedRows: hRows,
           highlightedCols: hCols,

@@ -1,7 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/game_snapshot.dart';
 import '../models/hint.dart';
@@ -243,6 +244,22 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Sets the selected cell directly to (row, col), without [selectCell]'s
+  /// toggle-off behavior for re-selecting the same cell — used while
+  /// drag-selecting across the grid, where the finger sweeping back over
+  /// its starting cell must not deselect it. No-op if (row, col) is already
+  /// selected, avoiding a redundant rebuild while the finger lingers within
+  /// one cell.
+  void selectCellForDrag(int row, int col) {
+    if (selectedRow == row && selectedCol == col) return;
+    _activeHint = null;
+    _conflictFlashTimer?.cancel();
+    _conflictFlashCells = {};
+    selectedRow = row;
+    selectedCol = col;
+    notifyListeners();
+  }
+
   /// The digit occupying the selected cell, or null if nothing is selected
   /// or the selected cell is empty. Used to highlight every other cell that
   /// shares this value.
@@ -338,16 +355,17 @@ class GameController extends ChangeNotifier {
   /// notes were corrected; reveal-type hints never depend on notes, so
   /// their explanation is left alone even if some unrelated cell got
   /// repaired along the way.
-  Hint? requestHint() {
+  Hint? requestHint({AppLocalizations? l10n}) {
     if (status != GameStatus.playing) return null;
     if (hasUnresolvedMistake) return null;
     final notesBefore = _cloneNotes();
-    var (hint, repaired) = _findHintWithRepair(boardSnapshot, _notes);
+    var (hint, repaired) = _findHintWithRepair(boardSnapshot, _notes, l10n);
     if (repaired) {
       _history.add(_Move.notesOnly(notesBefore));
       if (hint != null && hint.type == HintType.eliminate) {
         hint = hint.withExplanation(
-          '후보수가 정확하게 입력되어야 합니다. ${hint.explanation}',
+          (l10n ?? lookupAppLocalizations(const Locale('ko')))
+              .noteRepairNotice(hint.explanation),
         );
       }
     }
@@ -391,8 +409,9 @@ class GameController extends ChangeNotifier {
   /// [requestHint] before this ever runs).
   (Hint?, bool) _findHintWithRepair(
     List<List<int>> board,
-    List<List<Set<int>>> notes,
-  ) {
+    List<List<Set<int>>> notes, [
+    AppLocalizations? l10n,
+  ]) {
     final grid = SudokuGrid(board);
     var repairedAny = false;
     for (var r = 0; r < 9; r++) {
@@ -405,7 +424,7 @@ class GameController extends ChangeNotifier {
         }
       }
     }
-    final hint = _hintEngine.findHint(board, notes);
+    final hint = _hintEngine.findHint(board, notes, l10n);
     return (hint, repairedAny);
   }
 

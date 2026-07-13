@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/hint.dart';
 import '../services/generation/difficulty_evaluator.dart';
@@ -55,6 +56,7 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fasterThanPercent =
         estimateFasterThanPercent(difficulty, elapsedSeconds);
@@ -64,14 +66,14 @@ class ResultScreen extends StatelessWidget {
           .compareTo(humanSolverTechniqueOrder.indexOf(b.key)));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('결과')),
+      appBar: AppBar(title: Text(l10n.resultTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Center(
             child: Column(
               children: [
-                Text(difficulty.label,
+                Text(difficulty.label(context),
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 4),
                 Text(
@@ -83,9 +85,10 @@ class ResultScreen extends StatelessWidget {
                 ),
                 if (mistakes == 0) ...[
                   const SizedBox(height: 8),
-                  const Chip(
-                    avatar: Icon(Icons.star, size: 18, color: Colors.amber),
-                    label: Text('노미스 완료! Perfect Clear'),
+                  Chip(
+                    avatar: const Icon(Icons.star,
+                        size: 18, color: Colors.amber),
+                    label: Text(l10n.perfectClearBadge),
                   ),
                 ],
               ],
@@ -95,7 +98,7 @@ class ResultScreen extends StatelessWidget {
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Text('실수 $mistakes회 · 힌트 사용 $hintsUsed회'),
+              child: Text(l10n.mistakesAndHints(mistakes, hintsUsed)),
             ),
           ),
           const SizedBox(height: 12),
@@ -105,16 +108,15 @@ class ResultScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('개인 최고기록',
+                  Text(l10n.personalBestTitle,
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   if (previousBestSeconds == null)
-                    const Text('이 난이도 첫 클리어예요!')
+                    Text(l10n.firstClear)
                   else if (isNewBest)
-                    Text(
-                        '🏆 개인 최고기록 경신! (이전 ${_formatTime(previousBestSeconds!)})')
+                    Text(l10n.newBest(_formatTime(previousBestSeconds!)))
                   else
-                    Text('개인 최고기록: ${_formatTime(previousBestSeconds!)}'),
+                    Text(l10n.currentBest(_formatTime(previousBestSeconds!))),
                 ],
               ),
             ),
@@ -126,11 +128,11 @@ class ResultScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('글로벌 유저 비교',
+                  Text(l10n.comparisonTitle,
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   Text(
-                    '상위 ${100 - fasterThanPercent}%',
+                    l10n.topPercent(100 - fasterThanPercent),
                     style: Theme.of(context)
                         .textTheme
                         .headlineSmall
@@ -146,7 +148,7 @@ class ResultScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '* 실제 유저 데이터가 아닌 예시입니다.',
+                    l10n.mockDataDisclaimer,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -160,7 +162,7 @@ class ResultScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('사용된 기법',
+                  Text(l10n.techniquesUsedTitle,
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   if (difficultyResult.highestTechnique != null)
@@ -170,10 +172,11 @@ class ResultScreen extends StatelessWidget {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 6,
                         children: [
-                          const Text('최고 난이도 기법:'),
+                          Text(l10n.highestTechniqueLabel),
                           Chip(
                             label: Text(
-                              '${difficultyResult.highestTechnique!.label} (${difficultyResult.highestDifficulty.label})',
+                              difficultyResult.highestTechnique!
+                                  .label(context),
                             ),
                             backgroundColor: _difficultyColor(
                                     difficultyResult.highestDifficulty, isDark)
@@ -202,8 +205,8 @@ class ResultScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Expanded(child: Text(entry.key.label)),
-                          Text('${entry.value}회'),
+                          Expanded(child: Text(entry.key.label(context))),
+                          Text(l10n.techniqueUsageCount(entry.value)),
                         ],
                       ),
                     );
@@ -215,7 +218,7 @@ class ResultScreen extends StatelessWidget {
           const SizedBox(height: 20),
           FilledButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('홈으로'),
+            child: Text(l10n.homeButton),
           ),
         ],
       ),
