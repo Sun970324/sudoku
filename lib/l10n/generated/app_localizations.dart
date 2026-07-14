@@ -128,11 +128,11 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get continueAction;
 
-  /// No description provided for @continueGame.
+  /// No description provided for @cancelAction.
   ///
   /// In en, this message translates to:
-  /// **'Resume'**
-  String get continueGame;
+  /// **'Cancel'**
+  String get cancelAction;
 
   /// No description provided for @startGame.
   ///
@@ -736,6 +736,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notes needed to be corrected first. {explanation}'**
   String noteRepairNotice(String explanation);
+
+  /// No description provided for @myPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Page'**
+  String get myPageTitle;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred: {message}'**
+  String errorOccurred(String message);
+
+  /// No description provided for @signInPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to race other players'**
+  String get signInPromptTitle;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @signInWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Apple'**
+  String get signInWithApple;
+
+  /// No description provided for @signInAsGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get signInAsGuest;
+
+  /// No description provided for @ratingAndRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating {rating} · {wins}W {losses}L'**
+  String ratingAndRecord(int rating, int wins, int losses);
+
+  /// No description provided for @linkAccountPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed in as a guest. Link an account to keep your progress.'**
+  String get linkAccountPrompt;
+
+  /// No description provided for @linkGoogleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Google Account'**
+  String get linkGoogleAction;
+
+  /// No description provided for @linkAppleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Apple Account'**
+  String get linkAppleAction;
+
+  /// No description provided for @signOutAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out'**
+  String get signOutAction;
+
+  /// No description provided for @shareCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Puzzle'**
+  String get shareCodeTitle;
+
+  /// No description provided for @enterCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Code'**
+  String get enterCodeTitle;
+
+  /// No description provided for @shareCodeTextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Code'**
+  String get shareCodeTextLabel;
+
+  /// No description provided for @invalidTextCodeError.
+  ///
+  /// In en, this message translates to:
+  /// **'That text code isn\'t valid.'**
+  String get invalidTextCodeError;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @enterTextCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste text code'**
+  String get enterTextCodeHint;
+
+  /// No description provided for @loadButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Load'**
+  String get loadButton;
+
+  /// No description provided for @matchmakingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find Opponent'**
+  String get matchmakingTitle;
+
+  /// No description provided for @matchmakingSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching for an opponent...'**
+  String get matchmakingSearching;
+
+  /// No description provided for @matchmakingPreparingPuzzle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing puzzle...'**
+  String get matchmakingPreparingPuzzle;
+
+  /// No description provided for @matchmakingReadyCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking readiness...'**
+  String get matchmakingReadyCheck;
+
+  /// No description provided for @raceAbortConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Give up the race?'**
+  String get raceAbortConfirmTitle;
+
+  /// No description provided for @opponentLeftBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent disconnected'**
+  String get opponentLeftBanner;
+
+  /// No description provided for @opponentProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent'**
+  String get opponentProgressLabel;
+
+  /// No description provided for @raceResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race Result'**
+  String get raceResultTitle;
+
+  /// No description provided for @raceWon.
+  ///
+  /// In en, this message translates to:
+  /// **'You Won!'**
+  String get raceWon;
+
+  /// No description provided for @raceLost.
+  ///
+  /// In en, this message translates to:
+  /// **'You Lost'**
+  String get raceLost;
+
+  /// No description provided for @raceOpponentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent: {username}'**
+  String raceOpponentLabel(String username);
 }
 
 class _AppLocalizationsDelegate

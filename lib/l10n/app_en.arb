@@ -6,8 +6,8 @@
   "closeAction": "Close",
   "applyAction": "Apply",
   "continueAction": "Continue",
+  "cancelAction": "Cancel",
 
-  "continueGame": "Resume",
   "startGame": "Start",
   "viewStats": "View Stats",
   "themeSectionTitle": "Theme",
@@ -330,6 +330,55 @@
   "@noteRepairNotice": {
     "placeholders": {
       "explanation": {"type": "String"}
+    }
+  },
+
+  "myPageTitle": "My Page",
+  "errorOccurred": "An error occurred: {message}",
+  "@errorOccurred": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "signInPromptTitle": "Sign in to race other players",
+  "signInWithGoogle": "Sign in with Google",
+  "signInWithApple": "Sign in with Apple",
+  "signInAsGuest": "Continue as Guest",
+  "ratingAndRecord": "Rating {rating} · {wins}W {losses}L",
+  "@ratingAndRecord": {
+    "placeholders": {
+      "rating": {"type": "int"},
+      "wins": {"type": "int"},
+      "losses": {"type": "int"}
+    }
+  },
+  "linkAccountPrompt": "You're signed in as a guest. Link an account to keep your progress.",
+  "linkGoogleAction": "Link Google Account",
+  "linkAppleAction": "Link Apple Account",
+  "signOutAction": "Sign Out",
+
+  "shareCodeTitle": "Share Puzzle",
+  "enterCodeTitle": "Enter Code",
+  "shareCodeTextLabel": "Text Code",
+  "invalidTextCodeError": "That text code isn't valid.",
+  "copiedToClipboard": "Copied to clipboard",
+  "enterTextCodeHint": "Paste text code",
+  "loadButton": "Load",
+
+  "matchmakingTitle": "Find Opponent",
+  "matchmakingSearching": "Searching for an opponent...",
+  "matchmakingPreparingPuzzle": "Preparing puzzle...",
+  "matchmakingReadyCheck": "Checking readiness...",
+  "raceAbortConfirmTitle": "Give up the race?",
+  "opponentLeftBanner": "Opponent disconnected",
+  "opponentProgressLabel": "Opponent",
+  "raceResultTitle": "Race Result",
+  "raceWon": "You Won!",
+  "raceLost": "You Lost",
+  "raceOpponentLabel": "Opponent: {username}",
+  "@raceOpponentLabel": {
+    "placeholders": {
+      "username": {"type": "String"}
     }
   }
 }

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:sudoku/main.dart';
 import 'package:sudoku/models/difficulty.dart';
 import 'package:sudoku/models/sudoku_puzzle.dart';
+import 'package:sudoku/services/auth_service.dart';
+import 'package:sudoku/services/profile_service.dart';
 import 'package:sudoku/services/puzzle_queue_manager.dart';
+import 'package:sudoku/state/auth_controller.dart';
 import 'package:sudoku/state/settings_controller.dart';
 import 'package:sudoku/widgets/number_pad_widget.dart';
 
@@ -16,6 +20,26 @@ PuzzleQueueManager _emptyPuzzleQueue() => PuzzleQueueManager(
           <SudokuPuzzle>[],
     );
 
+// A standalone SupabaseClient (not the Supabase.instance singleton, which
+// requires Supabase.initialize() and real project credentials) — enough to
+// satisfy AuthService/ProfileService/AuthController's dependency without any
+// network call, since these tests never sign in.
+AuthController _testAuthController() {
+  // autoRefreshToken: false — otherwise GoTrueClient starts a periodic
+  // refresh Timer that outlives the widget tree and trips flutter_test's
+  // "no pending timers" invariant, since nothing in these tests ever signs
+  // in (so there's no session to refresh anyway).
+  final client = SupabaseClient(
+    'https://test.supabase.co',
+    'test-anon-key',
+    authOptions: const AuthClientOptions(autoRefreshToken: false),
+  );
+  return AuthController(
+    authService: AuthService(client: client),
+    profileService: ProfileService(client: client),
+  );
+}
+
 void main() {
   // flutter_test's default test locale is en_US, which our supportedLocales
   // resolves to 'en' — so these assertions use the English ARB strings
@@ -25,6 +49,7 @@ void main() {
     await tester.pumpWidget(SudokuApp(
       settings: SettingsController(),
       puzzleQueue: _emptyPuzzleQueue(),
+      auth: _testAuthController(),
     ));
 
     // Home screen now shows a difficulty wheel picker (default selection:
@@ -45,6 +70,7 @@ void main() {
     await tester.pumpWidget(SudokuApp(
       settings: SettingsController(),
       puzzleQueue: _emptyPuzzleQueue(),
+      auth: _testAuthController(),
     ));
     await tester.tap(find.text('Start'));
     await tester.pumpAndSettle();

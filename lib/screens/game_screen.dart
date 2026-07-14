@@ -17,7 +17,9 @@ import '../services/storage_service.dart';
 import '../state/game_controller.dart';
 import '../widgets/game_controls_row.dart';
 import '../widgets/number_pad_widget.dart';
+import '../widgets/puzzle_share_dialog.dart';
 import '../widgets/sudoku_grid_widget.dart';
+import '../widgets/sudoku_preview_board.dart';
 import 'result_screen.dart';
 
 class GameScreen extends StatefulWidget {
@@ -27,8 +29,7 @@ class GameScreen extends StatefulWidget {
     this.puzzle,
   }) : resumeSnapshot = null;
 
-  const GameScreen.resume(
-      {super.key, required GameSnapshot this.resumeSnapshot})
+  const GameScreen.resume({super.key, required GameSnapshot this.resumeSnapshot})
       : difficulty = null,
         puzzle = null;
 
@@ -50,12 +51,18 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   BannerAd? _bannerAd;
   Timer? _timer;
   bool _dialogShown = false;
+  bool _abandoningGame = false;
 
-  /// Gates the Hero-tagged board wrapper (see `build`) so the grow
-  /// animation only ever plays going INTO the game (paired with
-  /// SudokuPreviewBoard's Hero on HomeScreen) — flipped off right before
-  /// popping back to Home so that direction is a plain transition instead.
-  bool _heroEnabled = true;
+  /// Shows a decorative, non-interactive clone of the board (paired with
+  /// SudokuPreviewBoard's Hero on HomeScreen) growing on top of the real
+  /// grid while entering the game — flipped off once that push transition
+  /// finishes (see [_onEntranceAnimationStatus]). The real grid underneath
+  /// is never itself Hero-tagged, so it stays tappable from the very first
+  /// frame instead of being made non-hit-testable for the flight's duration
+  /// the way Hero(child: _buildGrid()) directly would (Hero wraps its own
+  /// child in an Offstage while flying).
+  bool _showEntranceHero = true;
+  Animation<double>? _entranceAnimation;
 
   @override
   void initState() {
@@ -76,6 +83,23 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final animation = ModalRoute.of(context)?.animation;
+    if (animation != _entranceAnimation) {
+      _entranceAnimation?.removeStatusListener(_onEntranceAnimationStatus);
+      _entranceAnimation = animation;
+      animation?.addStatusListener(_onEntranceAnimationStatus);
+    }
+  }
+
+  void _onEntranceAnimationStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed && mounted) {
+      setState(() => _showEntranceHero = false);
+    }
+  }
+
   void _startTimer() {
     _timer?.cancel();
     _timer =
@@ -91,6 +115,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _saveProgress() async {
+    // dispose() calls this unconditionally as a just-in-case save, which
+    // would otherwise race clearInProgressGame() in _giveUp() (status is
+    // still `playing` at that point) and can re-persist the game the user
+    // just abandoned if this save's write lands after the clear's.
+    if (_abandoningGame) return;
     if (_controller.status == GameStatus.playing) {
       await _storage.saveInProgressGame(_controller.toSnapshot());
     }
@@ -146,12 +175,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
           isNewBest: previousBestSeconds == null ||
               elapsedSeconds < previousBestSeconds,
           previousBestSeconds: previousBestSeconds,
+          puzzle: _controller.puzzle,
         ),
       ),
     );
   }
 
   Future<void> _giveUp() async {
+    _abandoningGame = true;
     await _storage.clearInProgressGame();
     await _storage.recordGameResult(
       difficulty: _controller.difficulty,
@@ -159,13 +190,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 
-  /// Turns off the entrance Hero before popping, so leaving the game (unlike
-  /// entering it) is a plain transition instead of the board shrinking back
-  /// into HomeScreen's preview — which would otherwise show the in-progress
-  /// (played-in) board morphing into the static given-only preview, a
-  /// mismatch that looks off.
   void _popToHome() {
-    setState(() => _heroEnabled = false);
     Navigator.pop(context);
   }
 
@@ -217,6 +242,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _controller.removeListener(_onGameStateChanged);
     _controller.dispose();
     _bannerAd?.dispose();
+    _entranceAnimation?.removeStatusListener(_onEntranceAnimationStatus);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -435,6 +461,15 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             icon: const Icon(Icons.arrow_back),
             onPressed: _onBackPressed,
           ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.ios_share),
+              onPressed: () => showPuzzleShareDialog(
+                context,
+                puzzle: _controller.puzzle,
+              ),
+            ),
+          ],
           titleSpacing: 0,
           title: ListenableBuilder(
             listenable: _controller,
@@ -497,15 +532,27 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                   // grid sitting close to the app bar.
                   child: Align(
                     alignment: Alignment.topCenter,
-                    // Paired with the same tag on SudokuPreviewBoard in
-                    // HomeScreen so entering the game animates the picker's
-                    // preview board growing into this real, interactive one
-                    // — but only entering: _heroEnabled is switched off
-                    // right before popping back to Home (see _popToHome) so
-                    // leaving is a plain transition instead.
-                    child: _heroEnabled
-                        ? Hero(tag: 'sudoku-board', child: _buildGrid())
-                        : _buildGrid(),
+                    // The real, interactive grid is always present and
+                    // never itself Hero-tagged, so taps register from the
+                    // first frame. A separate, non-interactive clone (paired
+                    // with the same tag on SudokuPreviewBoard in HomeScreen)
+                    // is stacked on top purely for the entrance grow
+                    // animation, and is removed once that push transition
+                    // completes (see _onEntranceAnimationStatus).
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        _buildGrid(),
+                        if (_showEntranceHero)
+                          IgnorePointer(
+                            child: Hero(
+                              tag: 'sudoku-board',
+                              child: SudokuPreviewBoard(
+                                  puzzle: _controller.puzzle),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),

@@ -24,7 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueAction => 'Continue';
 
   @override
-  String get continueGame => 'Resume';
+  String get cancelAction => 'Cancel';
 
   @override
   String get startGame => 'Start';
@@ -395,5 +395,99 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String noteRepairNotice(String explanation) {
     return 'Notes needed to be corrected first. $explanation';
+  }
+
+  @override
+  String get myPageTitle => 'My Page';
+
+  @override
+  String errorOccurred(String message) {
+    return 'An error occurred: $message';
+  }
+
+  @override
+  String get signInPromptTitle => 'Sign in to race other players';
+
+  @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get signInWithApple => 'Sign in with Apple';
+
+  @override
+  String get signInAsGuest => 'Continue as Guest';
+
+  @override
+  String ratingAndRecord(int rating, int wins, int losses) {
+    return 'Rating $rating · ${wins}W ${losses}L';
+  }
+
+  @override
+  String get linkAccountPrompt =>
+      'You\'re signed in as a guest. Link an account to keep your progress.';
+
+  @override
+  String get linkGoogleAction => 'Link Google Account';
+
+  @override
+  String get linkAppleAction => 'Link Apple Account';
+
+  @override
+  String get signOutAction => 'Sign Out';
+
+  @override
+  String get shareCodeTitle => 'Share Puzzle';
+
+  @override
+  String get enterCodeTitle => 'Enter Code';
+
+  @override
+  String get shareCodeTextLabel => 'Text Code';
+
+  @override
+  String get invalidTextCodeError => 'That text code isn\'t valid.';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get enterTextCodeHint => 'Paste text code';
+
+  @override
+  String get loadButton => 'Load';
+
+  @override
+  String get matchmakingTitle => 'Find Opponent';
+
+  @override
+  String get matchmakingSearching => 'Searching for an opponent...';
+
+  @override
+  String get matchmakingPreparingPuzzle => 'Preparing puzzle...';
+
+  @override
+  String get matchmakingReadyCheck => 'Checking readiness...';
+
+  @override
+  String get raceAbortConfirmTitle => 'Give up the race?';
+
+  @override
+  String get opponentLeftBanner => 'Opponent disconnected';
+
+  @override
+  String get opponentProgressLabel => 'Opponent';
+
+  @override
+  String get raceResultTitle => 'Race Result';
+
+  @override
+  String get raceWon => 'You Won!';
+
+  @override
+  String get raceLost => 'You Lost';
+
+  @override
+  String raceOpponentLabel(String username) {
+    return 'Opponent: $username';
   }
 }

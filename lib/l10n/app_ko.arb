@@ -6,8 +6,8 @@
   "closeAction": "닫기",
   "applyAction": "적용하기",
   "continueAction": "계속하기",
+  "cancelAction": "취소",
 
-  "continueGame": "이어하기",
   "startGame": "시작하기",
   "viewStats": "기록 보기",
   "themeSectionTitle": "테마",
@@ -114,5 +114,37 @@
   "explanationUniqueRectangleType2": "{cellA}과 {cellB}은 후보가 {a}, {b}, {c} 세 개씩이에요. 둘 다 {a}, {b}뿐이라면 퍼즐 해가 두 개가 되므로, 둘 중 하나는 반드시 {c}여야 해요. 그래서 두 칸을 모두 보는 다른 칸에서는 {c}를 후보에서 지울 수 있습니다.",
   "explanationUniqueRectangleType3": "{cellA}과 {cellB}의 추가 후보를 하나로 합쳐서 보면, 다른 칸들과 함께 {digitsDesc}만 남는 조합을 이뤄요. 그래서 같은 구역의 나머지 칸에서는 {digitsDesc}번을 후보에서 지울 수 있습니다.",
   "explanationUniqueRectangleType4": "{cellA}과 {cellB}이 있는 줄에서 숫자 {lockedDigit}번은 이 두 칸에만 들어갈 수 있어요. 그러면 {otherDigit}번이 두 칸에 그대로 남아있을 경우 퍼즐 해가 두 개가 되므로, 두 칸 모두에서 {otherDigit}번을 후보에서 지울 수 있습니다.",
-  "noteRepairNotice": "후보수가 정확하게 입력되어야 합니다. {explanation}"
+  "noteRepairNotice": "후보수가 정확하게 입력되어야 합니다. {explanation}",
+
+  "myPageTitle": "마이페이지",
+  "errorOccurred": "오류가 발생했습니다: {message}",
+  "signInPromptTitle": "로그인하고 다른 플레이어와 대결해보세요",
+  "signInWithGoogle": "Google로 로그인",
+  "signInWithApple": "Apple로 로그인",
+  "signInAsGuest": "게스트로 시작",
+  "ratingAndRecord": "레이팅 {rating} · {wins}승 {losses}패",
+  "linkAccountPrompt": "게스트 계정으로 로그인 중입니다. 계정을 연동하면 기록이 유지됩니다.",
+  "linkGoogleAction": "Google 계정 연동",
+  "linkAppleAction": "Apple 계정 연동",
+  "signOutAction": "로그아웃",
+
+  "shareCodeTitle": "퍼즐 공유",
+  "enterCodeTitle": "코드 입력",
+  "shareCodeTextLabel": "텍스트 코드",
+  "invalidTextCodeError": "유효하지 않은 텍스트 코드예요.",
+  "copiedToClipboard": "클립보드에 복사했어요",
+  "enterTextCodeHint": "텍스트 코드 붙여넣기",
+  "loadButton": "불러오기",
+
+  "matchmakingTitle": "대결 상대 찾기",
+  "matchmakingSearching": "상대를 찾는 중...",
+  "matchmakingPreparingPuzzle": "퍼즐 준비 중...",
+  "matchmakingReadyCheck": "상대 확인 중...",
+  "raceAbortConfirmTitle": "레이스를 포기할까요?",
+  "opponentLeftBanner": "상대방 연결이 끊겼어요",
+  "opponentProgressLabel": "상대방",
+  "raceResultTitle": "레이스 결과",
+  "raceWon": "승리!",
+  "raceLost": "패배",
+  "raceOpponentLabel": "상대: {username}"
 }

@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/game_snapshot.dart';
+import '../models/sudoku_puzzle.dart';
 import '../services/haptic_service.dart';
 import '../services/puzzle_queue_manager.dart';
 import '../services/sound_service.dart';
-import '../services/storage_service.dart';
+import '../state/auth_controller.dart';
 import '../state/settings_controller.dart';
 import '../widgets/sudoku_preview_board.dart';
 import 'game_screen.dart';
+import 'my_page_screen.dart';
+import 'puzzle_share/enter_code_screen.dart';
+import 'race/matchmaking_screen.dart';
 import 'stats_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,11 +21,13 @@ class HomeScreen extends StatefulWidget {
     super.key,
     required this.settings,
     required this.puzzleQueue,
+    required this.auth,
     this.initialResumeSnapshot,
   });
 
   final SettingsController settings;
   final PuzzleQueueManager puzzleQueue;
+  final AuthController auth;
 
   /// A game already in progress at app launch. When non-null, pushed
   /// automatically right after the first frame so the app still opens
@@ -35,16 +41,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final StorageService _storage = StorageService();
   late final FixedExtentScrollController _wheelController =
       FixedExtentScrollController();
-  GameSnapshot? _savedGame;
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _loadSavedGame();
     final snapshot = widget.initialResumeSnapshot;
     if (snapshot != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -60,15 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<void> _loadSavedGame() async {
-    final snapshot = await _storage.loadInProgressGame();
-    if (!mounted) return;
-    setState(() => _savedGame = snapshot);
-  }
-
   Future<void> _openGame(Widget screen) async {
     await Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
-    _loadSavedGame();
+    // Returning from a game (win, give up, or a redeemed share code) may
+    // have taken from widget.puzzleQueue, so rebuild to show the new front
+    // of the queue in the preview board — the queue itself isn't
+    // Listenable, so this screen only learns about that on its own return.
+    if (mounted) setState(() {});
   }
 
   void _selectDifficulty(int index) {
@@ -88,6 +89,25 @@ class _HomeScreenState extends State<HomeScreen> {
     _openGame(GameScreen.newGame(difficulty: difficulty, puzzle: puzzle));
   }
 
+  Future<void> _onEnterCodePressed() async {
+    final puzzle = await Navigator.push<SudokuPuzzle>(
+      context,
+      MaterialPageRoute(builder: (_) => const EnterCodeScreen()),
+    );
+    if (puzzle == null) return;
+    _openGame(GameScreen.newGame(
+        difficulty: puzzle.difficulty, puzzle: puzzle));
+  }
+
+  void _onRacePressed() {
+    final difficulty = Difficulty.values[_selectedIndex];
+    _openGame(MatchmakingScreen(
+      auth: widget.auth,
+      puzzleQueue: widget.puzzleQueue,
+      difficulty: difficulty,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -105,6 +125,18 @@ class _HomeScreenState extends State<HomeScreen> {
         scrolledUnderElevation: 0,
         actions: [
           IconButton(
+            icon: const Icon(Icons.bolt),
+            onPressed: _onRacePressed,
+          ),
+          IconButton(
+            icon: const Icon(Icons.qr_code),
+            onPressed: _onEnterCodePressed,
+          ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () => _openGame(MyPageScreen(auth: widget.auth)),
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => _showSettingsSheet(context),
           ),
@@ -113,24 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Only added ahead of the grid when the continue-game button is
-            // showing — otherwise Expanded (and the grid's own top: 8
-            // padding) is the very first thing in this Column, matching
-            // GameScreen exactly so the preview sits at the same position.
-            if (_savedGame != null) ...[
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () =>
-                    _openGame(GameScreen.resume(resumeSnapshot: _savedGame!)),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  child: Text(l10n.continueGame,
-                      style: const TextStyle(fontSize: 18)),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
             Expanded(
               child: Padding(
                 // Matches GameScreen's grid padding/alignment exactly. Width

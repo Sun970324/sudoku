@@ -75,6 +75,21 @@ class PuzzleQueueManager {
     return puzzle;
   }
 
+  /// Same as [take], but pops from the back of the queue instead of the
+  /// front. [peek] (and therefore HomeScreen's difficulty-picker preview)
+  /// always shows the front puzzle, so a race's puzzle_provider using
+  /// plain [take] could hand out a puzzle either player had already seen
+  /// on the home screen — an unfair head start. Used only where that
+  /// matters (race puzzle uploads).
+  SudokuPuzzle? takeLast(Difficulty difficulty) {
+    final queue = _queues[difficulty]!;
+    if (queue.isEmpty) return null;
+    final puzzle = queue.removeLast();
+    unawaited(_persist());
+    _scheduleRefillIfNeeded(difficulty);
+    return puzzle;
+  }
+
   void _scheduleRefillIfNeeded(Difficulty difficulty) {
     if (_queues[difficulty]!.length > 1) return; // refill only at <=1
     if (!_pending.add(difficulty)) return; // already scheduled

@@ -24,7 +24,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get continueAction => '계속하기';
 
   @override
-  String get continueGame => '이어하기';
+  String get cancelAction => '취소';
 
   @override
   String get startGame => '시작하기';
@@ -394,5 +394,98 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String noteRepairNotice(String explanation) {
     return '후보수가 정확하게 입력되어야 합니다. $explanation';
+  }
+
+  @override
+  String get myPageTitle => '마이페이지';
+
+  @override
+  String errorOccurred(String message) {
+    return '오류가 발생했습니다: $message';
+  }
+
+  @override
+  String get signInPromptTitle => '로그인하고 다른 플레이어와 대결해보세요';
+
+  @override
+  String get signInWithGoogle => 'Google로 로그인';
+
+  @override
+  String get signInWithApple => 'Apple로 로그인';
+
+  @override
+  String get signInAsGuest => '게스트로 시작';
+
+  @override
+  String ratingAndRecord(int rating, int wins, int losses) {
+    return '레이팅 $rating · $wins승 $losses패';
+  }
+
+  @override
+  String get linkAccountPrompt => '게스트 계정으로 로그인 중입니다. 계정을 연동하면 기록이 유지됩니다.';
+
+  @override
+  String get linkGoogleAction => 'Google 계정 연동';
+
+  @override
+  String get linkAppleAction => 'Apple 계정 연동';
+
+  @override
+  String get signOutAction => '로그아웃';
+
+  @override
+  String get shareCodeTitle => '퍼즐 공유';
+
+  @override
+  String get enterCodeTitle => '코드 입력';
+
+  @override
+  String get shareCodeTextLabel => '텍스트 코드';
+
+  @override
+  String get invalidTextCodeError => '유효하지 않은 텍스트 코드예요.';
+
+  @override
+  String get copiedToClipboard => '클립보드에 복사했어요';
+
+  @override
+  String get enterTextCodeHint => '텍스트 코드 붙여넣기';
+
+  @override
+  String get loadButton => '불러오기';
+
+  @override
+  String get matchmakingTitle => '대결 상대 찾기';
+
+  @override
+  String get matchmakingSearching => '상대를 찾는 중...';
+
+  @override
+  String get matchmakingPreparingPuzzle => '퍼즐 준비 중...';
+
+  @override
+  String get matchmakingReadyCheck => '상대 확인 중...';
+
+  @override
+  String get raceAbortConfirmTitle => '레이스를 포기할까요?';
+
+  @override
+  String get opponentLeftBanner => '상대방 연결이 끊겼어요';
+
+  @override
+  String get opponentProgressLabel => '상대방';
+
+  @override
+  String get raceResultTitle => '레이스 결과';
+
+  @override
+  String get raceWon => '승리!';
+
+  @override
+  String get raceLost => '패배';
+
+  @override
+  String raceOpponentLabel(String username) {
+    return '상대: $username';
   }
 }

@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/hint.dart';
+import '../models/sudoku_puzzle.dart';
 import '../services/generation/difficulty_evaluator.dart';
 import '../services/generation/human_solver.dart';
 import '../services/percentile_estimator.dart';
+import '../widgets/puzzle_share_dialog.dart';
 
 /// Shown right after a puzzle is completed, replacing the old plain "완료!"
-/// dialog. Takes only already-computed primitive/value-type data (no
-/// [GameController] reference) so it stays valid even after the game screen
-/// that produced it is disposed.
+/// dialog. Takes only already-computed primitive/value-type data (plus the
+/// completed [puzzle], for the share dialog) — no [GameController]
+/// reference — so it stays valid even after the game screen that produced
+/// it is disposed.
 class ResultScreen extends StatelessWidget {
   const ResultScreen({
     super.key,
@@ -21,6 +24,7 @@ class ResultScreen extends StatelessWidget {
     required this.difficultyResult,
     required this.isNewBest,
     required this.previousBestSeconds,
+    required this.puzzle,
   });
 
   final Difficulty difficulty;
@@ -30,6 +34,7 @@ class ResultScreen extends StatelessWidget {
   final DifficultyResult difficultyResult;
   final bool isNewBest;
   final int? previousBestSeconds;
+  final SudokuPuzzle puzzle;
 
   static String _formatTime(int seconds) {
     final minutes = seconds ~/ 60;
@@ -66,7 +71,15 @@ class ResultScreen extends StatelessWidget {
           .compareTo(humanSolverTechniqueOrder.indexOf(b.key)));
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.resultTitle)),
+      appBar: AppBar(
+        title: Text(l10n.resultTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.ios_share),
+            onPressed: () => showPuzzleShareDialog(context, puzzle: puzzle),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
