@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/game_snapshot.dart';
+import '../models/race.dart';
 import '../models/sudoku_puzzle.dart';
+import '../models/tier.dart';
 import '../services/haptic_service.dart';
 import '../services/puzzle_queue_manager.dart';
+import '../services/race_service.dart';
 import '../services/sound_service.dart';
 import '../state/auth_controller.dart';
 import '../state/settings_controller.dart';
@@ -14,7 +17,9 @@ import 'game_screen.dart';
 import 'my_page_screen.dart';
 import 'puzzle_share/enter_code_screen.dart';
 import 'race/matchmaking_screen.dart';
+import 'race/race_result_screen.dart';
 import 'stats_screen.dart';
+import '../state/race_controller.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -44,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late final FixedExtentScrollController _wheelController =
       FixedExtentScrollController();
   int _selectedIndex = 0;
+  bool _checkedForUnfinishedRace = false;
 
   @override
   void initState() {
@@ -55,12 +61,45 @@ class _HomeScreenState extends State<HomeScreen> {
         _openGame(GameScreen.resume(resumeSnapshot: snapshot));
       });
     }
+    widget.auth.addListener(_recoverUnfinishedRace);
+    _recoverUnfinishedRace();
   }
 
   @override
   void dispose() {
+    widget.auth.removeListener(_recoverUnfinishedRace);
     _wheelController.dispose();
     super.dispose();
+  }
+
+  Future<void> _recoverUnfinishedRace() async {
+    if (_checkedForUnfinishedRace || !widget.auth.isSignedIn) return;
+    _checkedForUnfinishedRace = true;
+    try {
+      final service = RaceService();
+      final race = await service.fetchActiveMatch();
+      if (race == null || race.status != RaceStatus.inProgress) return;
+      await service.abortRace(race.id);
+      final controller = RaceController(
+        difficulty: race.difficulty,
+        puzzleQueue: widget.puzzleQueue,
+        raceService: service,
+      );
+      await controller.restore(race.id);
+      if (!mounted) {
+        controller.dispose();
+        return;
+      }
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => RaceResultScreen(controller: controller),
+        ),
+      );
+    } catch (_) {
+      // A later app launch can retry if the network was unavailable.
+      _checkedForUnfinishedRace = false;
+    }
   }
 
   Future<void> _openGame(Widget screen) async {
@@ -95,12 +134,13 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(builder: (_) => const EnterCodeScreen()),
     );
     if (puzzle == null) return;
-    _openGame(GameScreen.newGame(
-        difficulty: puzzle.difficulty, puzzle: puzzle));
+    _openGame(
+        GameScreen.newGame(difficulty: puzzle.difficulty, puzzle: puzzle));
   }
 
   void _onRacePressed() {
-    final difficulty = Difficulty.values[_selectedIndex];
+    final difficulty = widget.auth.profile?.tier.raceDifficulty ??
+        Difficulty.values[_selectedIndex];
     _openGame(MatchmakingScreen(
       auth: widget.auth,
       puzzleQueue: widget.puzzleQueue,
@@ -125,8 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
         scrolledUnderElevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.bolt),
-            onPressed: _onRacePressed,
+            icon: const Icon(Icons.bar_chart),
+            onPressed: () => _openGame(StatsScreen(auth: widget.auth)),
           ),
           IconButton(
             icon: const Icon(Icons.qr_code),
@@ -145,6 +185,29 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            AnimatedBuilder(
+              animation: widget.auth,
+              builder: (context, _) {
+                final profile = widget.auth.profile;
+                if (profile == null) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: GestureDetector(
+                    onTap: () => _openGame(MyPageScreen(auth: widget.auth)),
+                    child: Text(
+                      l10n.homeRatingLabel(
+                          profile.tier.label(context), profile.rating),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: profile.tier.color(
+                            Theme.of(context).brightness == Brightness.dark),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
             Expanded(
               child: Padding(
                 // Matches GameScreen's grid padding/alignment exactly. Width
@@ -213,9 +276,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            TextButton(
-              onPressed: () => _openGame(const StatsScreen()),
-              child: Text(l10n.viewStats),
+            OutlinedButton(
+              onPressed: _onRacePressed,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                child:
+                    Text(l10n.raceButton, style: const TextStyle(fontSize: 18)),
+              ),
             ),
             const SizedBox(height: 12),
           ],

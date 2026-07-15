@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/difficulty.dart';
 import '../models/race.dart';
+import '../models/sudoku_puzzle.dart';
 import '../models/user_profile.dart';
 import '../services/profile_service.dart';
 import '../services/puzzle_queue_manager.dart';
@@ -48,19 +49,49 @@ class RaceController extends ChangeNotifier {
   RacePhase phase = RacePhase.matching;
   Race? _race;
   UserProfile? opponentProfile;
+  UserProfile? selfProfile;
   bool opponentLeft = false;
   int opponentFilledCount = 0;
   int opponentMistakes = 0;
 
   String get selfId => _raceService.selfId;
   bool get isWinner => _race?.winnerId == selfId;
+  int? get selfRatingAfter => _race?.ratingAfterFor(selfId);
+  int? get opponentRatingAfter =>
+      _race?.ratingAfterFor(_race?.opponentOf(selfId) ?? selfId);
+  SudokuPuzzle? get puzzle => _race?.puzzle;
+
+  /// Rating this side of the race started with — set once, alongside the
+  /// initial [opponentProfile] fetch, so [selfRatingDelta]/
+  /// [opponentRatingDelta] can compare against the post-race rating in
+  /// [selfProfile]/[opponentProfile] once those are refreshed on finish.
+  int? _selfRatingBefore;
+  int? _opponentRatingBefore;
+
+  int? get selfRatingDelta => _race?.ratingDeltaFor(selfId) ??
+      (selfProfile == null || _selfRatingBefore == null
+          ? null
+          : selfProfile!.rating - _selfRatingBefore!);
+  int? get opponentRatingDelta => _race?.ratingDeltaFor(
+          _race?.opponentOf(selfId) ?? selfId) ??
+      (opponentProfile == null || _opponentRatingBefore == null
+          ? null
+          : opponentProfile!.rating - _opponentRatingBefore!);
 
   StreamSubscription<Race?>? _matchSubscription;
   StreamSubscription<Race?>? _raceSubscription;
   RealtimeChannel? _channel;
   Timer? _progressTimer;
+  // Polling fallbacks alongside the realtime streams above — a dropped or
+  // missed Postgres Changes event (backgrounding, a network switch, a
+  // flaky connection) would otherwise leave a client stuck indefinitely
+  // with no other signal that anything changed server-side.
+  Timer? _matchPollTimer;
+  Timer? _racePollTimer;
+  bool _attached = false;
   bool _puzzleProvided = false;
   bool _startRequested = false;
+  bool _initialProfilesRequested = false;
 
   Future<void> start() async {
     final raceId = await _raceService.enqueue(_difficulty);
@@ -72,24 +103,43 @@ class RaceController extends ChangeNotifier {
         _matchSubscription?.cancel();
         _attachToRace(race.id);
       });
+      _matchPollTimer =
+          Timer.periodic(const Duration(seconds: 3), (_) async {
+        final race = await _raceService.fetchActiveMatch();
+        if (race != null) {
+          await _matchSubscription?.cancel();
+          _attachToRace(race.id);
+        }
+      });
     }
   }
 
+  /// Restores a race resolved while the app was not running.
+  Future<void> restore(String raceId) async {
+    _attachToRace(raceId);
+    await _onRaceUpdate(await _raceService.fetchRace(raceId));
+  }
+
+  /// Guarded by [_attached] since both the realtime match listener and its
+  /// polling fallback in [start] can race to call this for the same match.
   void _attachToRace(String raceId) {
+    if (_attached) return;
+    _attached = true;
+    _matchPollTimer?.cancel();
     _raceSubscription = _raceService.watchRace(raceId).listen(_onRaceUpdate);
+    _racePollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      final race = await _raceService.fetchRace(raceId);
+      if (race != null) unawaited(_onRaceUpdate(race));
+    });
   }
 
   Future<void> _onRaceUpdate(Race? race) async {
     if (race == null) return;
     _race = race;
 
-    if (opponentProfile == null) {
-      unawaited(_profileService
-          .fetchProfile(race.opponentOf(selfId))
-          .then((profile) {
-        opponentProfile = profile;
-        notifyListeners();
-      }).catchError((_) {}));
+    if (!_initialProfilesRequested) {
+      _initialProfilesRequested = true;
+      unawaited(_loadInitialProfiles(race.opponentOf(selfId)));
     }
 
     switch (race.status) {
@@ -118,11 +168,44 @@ class RaceController extends ChangeNotifier {
       case RaceStatus.finished:
         phase = RacePhase.finished;
         _cleanupRealtime();
+        // Both a normal win and a forfeit-loss (see abort_race) update
+        // rating/tier server-side — refetch so the result screen can show
+        // the before/after delta via selfRatingDelta/opponentRatingDelta.
+        unawaited(_refreshProfilesAfterFinish(race.opponentOf(selfId)));
       case RaceStatus.aborted:
         phase = RacePhase.aborted;
         _cleanupRealtime();
     }
     notifyListeners();
+  }
+
+  Future<void> _loadInitialProfiles(String opponentId) async {
+    try {
+      final results = await Future.wait([
+        _profileService.fetchProfile(selfId),
+        _profileService.fetchProfile(opponentId),
+      ]);
+      _selfRatingBefore = results[0].rating;
+      _opponentRatingBefore = results[1].rating;
+      opponentProfile = results[1];
+      notifyListeners();
+    } catch (_) {
+      // Best-effort — the rating delta simply won't be shown.
+    }
+  }
+
+  Future<void> _refreshProfilesAfterFinish(String opponentId) async {
+    try {
+      final results = await Future.wait([
+        _profileService.fetchProfile(selfId),
+        _profileService.fetchProfile(opponentId),
+      ]);
+      selfProfile = results[0];
+      opponentProfile = results[1];
+      notifyListeners();
+    } catch (_) {
+      // Best-effort — the rating delta simply won't be shown.
+    }
   }
 
   void _joinRaceChannel(String raceId) {
@@ -195,6 +278,7 @@ class RaceController extends ChangeNotifier {
   /// clean up server-side once matched (a `races` row exists by then, and
   /// leaving mid-race goes through [abort] instead).
   Future<void> cancelWhileMatching() async {
+    _matchPollTimer?.cancel();
     await _matchSubscription?.cancel();
     await _raceService.cancelQueue();
   }
@@ -206,6 +290,7 @@ class RaceController extends ChangeNotifier {
 
   void _cleanupRealtime() {
     _progressTimer?.cancel();
+    _racePollTimer?.cancel();
     final channel = _channel;
     if (channel != null) {
       _raceService.leaveChannel(channel);
@@ -215,6 +300,7 @@ class RaceController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _matchPollTimer?.cancel();
     _matchSubscription?.cancel();
     _raceSubscription?.cancel();
     _cleanupRealtime();

@@ -140,11 +140,11 @@ abstract class AppLocalizations {
   /// **'Start'**
   String get startGame;
 
-  /// No description provided for @viewStats.
+  /// No description provided for @raceButton.
   ///
   /// In en, this message translates to:
-  /// **'View Stats'**
-  String get viewStats;
+  /// **'Race'**
+  String get raceButton;
 
   /// No description provided for @themeSectionTitle.
   ///
@@ -361,6 +361,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **' · Best {time}'**
   String bestTimeSuffix(String time);
+
+  /// No description provided for @raceHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race History'**
+  String get raceHistoryTitle;
+
+  /// No description provided for @raceHistoryResultWon.
+  ///
+  /// In en, this message translates to:
+  /// **'Win'**
+  String get raceHistoryResultWon;
+
+  /// No description provided for @raceHistoryResultLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss'**
+  String get raceHistoryResultLost;
+
+  /// No description provided for @raceHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No races yet.'**
+  String get raceHistoryEmpty;
 
   /// No description provided for @undoLabel.
   ///
@@ -779,6 +803,12 @@ abstract class AppLocalizations {
   /// **'Rating {rating} · {wins}W {losses}L'**
   String ratingAndRecord(int rating, int wins, int losses);
 
+  /// No description provided for @winRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Race win rate {percent}%'**
+  String winRateLabel(int percent);
+
   /// No description provided for @linkAccountPrompt.
   ///
   /// In en, this message translates to:
@@ -905,11 +935,66 @@ abstract class AppLocalizations {
   /// **'You Lost'**
   String get raceLost;
 
-  /// No description provided for @raceOpponentLabel.
+  /// No description provided for @tierBronze.
   ///
   /// In en, this message translates to:
-  /// **'Opponent: {username}'**
-  String raceOpponentLabel(String username);
+  /// **'Beginner'**
+  String get tierBronze;
+
+  /// No description provided for @tierSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get tierSilver;
+
+  /// No description provided for @tierGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get tierGold;
+
+  /// No description provided for @tierPlatinum.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get tierPlatinum;
+
+  /// No description provided for @tierDiamond.
+  ///
+  /// In en, this message translates to:
+  /// **'Master'**
+  String get tierDiamond;
+
+  /// No description provided for @tierMaster.
+  ///
+  /// In en, this message translates to:
+  /// **'Master'**
+  String get tierMaster;
+
+  /// No description provided for @tierChallenger.
+  ///
+  /// In en, this message translates to:
+  /// **'Expert'**
+  String get tierChallenger;
+
+  /// No description provided for @yourRatingChangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You: {oldRating} → {newRating} ({delta})'**
+  String yourRatingChangeLabel(int oldRating, int newRating, String delta);
+
+  /// No description provided for @opponentRatingChangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{username}: {oldRating} → {newRating} ({delta})'**
+  String opponentRatingChangeLabel(
+      String username, int oldRating, int newRating, String delta);
+
+  /// No description provided for @homeRatingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} · Rating {rating}'**
+  String homeRatingLabel(String tier, int rating);
 }
 
 class _AppLocalizationsDelegate

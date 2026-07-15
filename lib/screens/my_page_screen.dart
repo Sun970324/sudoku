@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
+import '../models/tier.dart';
 import '../models/user_profile.dart';
 import '../state/auth_controller.dart';
 
@@ -165,8 +166,29 @@ class _ProfileSection extends StatelessWidget {
             ],
           ),
         const SizedBox(height: 8),
+        Center(
+          child: Chip(
+            label: Text(profile.tier.label(context)),
+            backgroundColor: profile.tier
+                .color(Theme.of(context).brightness == Brightness.dark)
+                .withValues(alpha: 0.15),
+            labelStyle: TextStyle(
+              color: profile.tier
+                  .color(Theme.of(context).brightness == Brightness.dark),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
         Text(
           l10n.ratingAndRecord(profile.rating, profile.wins, profile.losses),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          l10n.winRateLabel(profile.wins + profile.losses == 0
+              ? 0
+              : profile.wins * 100 ~/ (profile.wins + profile.losses)),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 24),

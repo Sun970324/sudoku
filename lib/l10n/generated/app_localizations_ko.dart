@@ -30,7 +30,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get startGame => '시작하기';
 
   @override
-  String get viewStats => '기록 보기';
+  String get raceButton => '대결하기';
 
   @override
   String get themeSectionTitle => '테마';
@@ -155,6 +155,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String bestTimeSuffix(String time) {
     return ' · 최고기록 $time';
   }
+
+  @override
+  String get raceHistoryTitle => '대결 기록';
+
+  @override
+  String get raceHistoryResultWon => '승리';
+
+  @override
+  String get raceHistoryResultLost => '패배';
+
+  @override
+  String get raceHistoryEmpty => '아직 대결 기록이 없어요.';
 
   @override
   String get undoLabel => '실행취소';
@@ -422,6 +434,11 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String winRateLabel(int percent) {
+    return '대결 승률 $percent%';
+  }
+
+  @override
   String get linkAccountPrompt => '게스트 계정으로 로그인 중입니다. 계정을 연동하면 기록이 유지됩니다.';
 
   @override
@@ -485,7 +502,39 @@ class AppLocalizationsKo extends AppLocalizations {
   String get raceLost => '패배';
 
   @override
-  String raceOpponentLabel(String username) {
-    return '상대: $username';
+  String get tierBronze => '초보자';
+
+  @override
+  String get tierSilver => '쉬움';
+
+  @override
+  String get tierGold => '보통';
+
+  @override
+  String get tierPlatinum => '어려움';
+
+  @override
+  String get tierDiamond => '마스터';
+
+  @override
+  String get tierMaster => '마스터';
+
+  @override
+  String get tierChallenger => '익스퍼트';
+
+  @override
+  String yourRatingChangeLabel(int oldRating, int newRating, String delta) {
+    return '나: $oldRating → $newRating ($delta)';
+  }
+
+  @override
+  String opponentRatingChangeLabel(
+      String username, int oldRating, int newRating, String delta) {
+    return '$username: $oldRating → $newRating ($delta)';
+  }
+
+  @override
+  String homeRatingLabel(String tier, int rating) {
+    return '$tier · 레이팅 $rating';
   }
 }

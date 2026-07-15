@@ -54,6 +54,33 @@ class RaceService {
         .map((rows) => rows.isEmpty ? null : Race.fromJson(rows.first));
   }
 
+  /// One-shot equivalent of [watchForMatch] — used as a polling fallback
+  /// alongside the realtime stream, since a dropped/missed Postgres Changes
+  /// event (e.g. from backgrounding or a network switch) would otherwise
+  /// leave the waiting side stuck indefinitely with no other signal.
+  Future<Race?> fetchActiveMatch() async {
+    final rows = await _client
+        .from('races')
+        .select()
+        .or('player_a.eq.$selfId,player_b.eq.$selfId')
+        .order('created_at', ascending: false)
+        .limit(5);
+    for (final row in rows as List) {
+      final map = row as Map<String, dynamic>;
+      if (map['status'] != 'finished' && map['status'] != 'aborted') {
+        return Race.fromJson(map);
+      }
+    }
+    return null;
+  }
+
+  /// One-shot equivalent of [watchRace] — see [fetchActiveMatch].
+  Future<Race?> fetchRace(String raceId) async {
+    final row =
+        await _client.from('races').select().eq('id', raceId).maybeSingle();
+    return row == null ? null : Race.fromJson(row);
+  }
+
   Future<void> markPuzzleReady({
     required String raceId,
     required SudokuPuzzle puzzle,
@@ -81,6 +108,28 @@ class RaceService {
 
   Future<void> abortRace(String raceId) async {
     await _client.rpc('abort_race', params: {'p_race_id': raceId});
+  }
+
+  /// The caller's finished races, most recent first. RLS already limits
+  /// `races` rows to ones naming the caller as a player, so no extra
+  /// filter is needed beyond status — the embedded profile selects use the
+  /// FK constraint names to disambiguate player_a vs player_b, since both
+  /// point at the same `profiles` table. Excludes any race decided before
+  /// the rating-delta columns existed (0007) — apply_race_result always
+  /// sets both sides' columns together, so a null player_a delta means the
+  /// whole row predates that migration.
+  Future<List<RaceHistoryEntry>> fetchHistory() async {
+    final rows = await _client
+        .from('races')
+        .select(
+            '*, player_a_profile:profiles!races_player_a_fkey(username), player_b_profile:profiles!races_player_b_fkey(username)')
+        .eq('status', 'finished')
+        .not('player_a_rating_delta', 'is', null)
+        .order('finished_at', ascending: false);
+    return (rows as List)
+        .cast<Map<String, dynamic>>()
+        .map((row) => RaceHistoryEntry.fromJson(row, selfId))
+        .toList();
   }
 
   /// A plain (non-private) channel keyed by raceId — the id is an

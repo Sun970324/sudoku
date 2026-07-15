@@ -9,7 +9,7 @@
   "cancelAction": "Cancel",
 
   "startGame": "Start",
-  "viewStats": "View Stats",
+  "raceButton": "Race",
   "themeSectionTitle": "Theme",
   "followSystemTheme": "Follow System",
   "lightTheme": "Light Mode",
@@ -92,6 +92,10 @@
       "time": {"type": "String"}
     }
   },
+  "raceHistoryTitle": "Race History",
+  "raceHistoryResultWon": "Win",
+  "raceHistoryResultLost": "Loss",
+  "raceHistoryEmpty": "No races yet.",
 
   "undoLabel": "Undo",
   "eraseLabel": "Erase",
@@ -352,6 +356,12 @@
       "losses": {"type": "int"}
     }
   },
+  "winRateLabel": "Race win rate {percent}%",
+  "@winRateLabel": {
+    "placeholders": {
+      "percent": {"type": "int"}
+    }
+  },
   "linkAccountPrompt": "You're signed in as a guest. Link an account to keep your progress.",
   "linkGoogleAction": "Link Google Account",
   "linkAppleAction": "Link Apple Account",
@@ -375,10 +385,36 @@
   "raceResultTitle": "Race Result",
   "raceWon": "You Won!",
   "raceLost": "You Lost",
-  "raceOpponentLabel": "Opponent: {username}",
-  "@raceOpponentLabel": {
+  "tierBronze": "Beginner",
+  "tierSilver": "Easy",
+  "tierGold": "Medium",
+  "tierPlatinum": "Hard",
+  "tierDiamond": "Master",
+  "tierMaster": "Master",
+  "tierChallenger": "Expert",
+
+  "yourRatingChangeLabel": "You: {oldRating} → {newRating} ({delta})",
+  "@yourRatingChangeLabel": {
     "placeholders": {
-      "username": {"type": "String"}
+      "oldRating": {"type": "int"},
+      "newRating": {"type": "int"},
+      "delta": {"type": "String"}
+    }
+  },
+  "opponentRatingChangeLabel": "{username}: {oldRating} → {newRating} ({delta})",
+  "@opponentRatingChangeLabel": {
+    "placeholders": {
+      "username": {"type": "String"},
+      "oldRating": {"type": "int"},
+      "newRating": {"type": "int"},
+      "delta": {"type": "String"}
+    }
+  },
+  "homeRatingLabel": "{tier} · Rating {rating}",
+  "@homeRatingLabel": {
+    "placeholders": {
+      "tier": {"type": "String"},
+      "rating": {"type": "int"}
     }
   }
 }

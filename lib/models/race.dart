@@ -30,6 +30,10 @@ class Race {
     required this.status,
     this.puzzle,
     this.winnerId,
+    this.playerARatingAfter,
+    this.playerARatingDelta,
+    this.playerBRatingAfter,
+    this.playerBRatingDelta,
   });
 
   factory Race.fromJson(Map<String, dynamic> json) {
@@ -42,6 +46,10 @@ class Race {
       difficulty: difficultyFromName(json['difficulty'] as String),
       status: _raceStatusFromDb(json['status'] as String),
       winnerId: json['winner_id'] as String?,
+      playerARatingAfter: json['player_a_rating_after'] as int?,
+      playerARatingDelta: json['player_a_rating_delta'] as int?,
+      playerBRatingAfter: json['player_b_rating_after'] as int?,
+      playerBRatingDelta: json['player_b_rating_delta'] as int?,
       puzzle: puzzleJson == null
           ? null
           : SudokuPuzzle.fromJson({
@@ -61,8 +69,56 @@ class Race {
   final RaceStatus status;
   final SudokuPuzzle? puzzle;
   final String? winnerId;
+  final int? playerARatingAfter;
+  final int? playerARatingDelta;
+  final int? playerBRatingAfter;
+  final int? playerBRatingDelta;
 
   String opponentOf(String selfId) => selfId == playerA ? playerB : playerA;
 
   bool isPuzzleProvider(String selfId) => puzzleProvider == selfId;
+
+  int? ratingAfterFor(String playerId) =>
+      playerId == playerA ? playerARatingAfter : playerBRatingAfter;
+
+  int? ratingDeltaFor(String playerId) =>
+      playerId == playerA ? playerARatingDelta : playerBRatingDelta;
+}
+
+/// One row of a player's past-race list — a finished race seen from
+/// [selfId]'s side, with the rating/tier outcome that race actually
+/// produced (captured by `apply_race_result` at the time, since
+/// `profiles.rating` only ever holds the *current* rating).
+class RaceHistoryEntry {
+  const RaceHistoryEntry({
+    required this.finishedAt,
+    required this.opponentUsername,
+    required this.won,
+    required this.ratingAfter,
+    required this.ratingDelta,
+    required this.puzzle,
+  });
+
+  factory RaceHistoryEntry.fromJson(Map<String, dynamic> json, String selfId) {
+    final isPlayerA = json['player_a'] == selfId;
+    final opponentProfile = (isPlayerA ? json['player_b_profile'] : json['player_a_profile'])
+        as Map<String, dynamic>;
+    return RaceHistoryEntry(
+      finishedAt: DateTime.parse(json['finished_at'] as String),
+      opponentUsername: opponentProfile['username'] as String,
+      won: json['winner_id'] == selfId,
+      ratingAfter:
+          (isPlayerA ? json['player_a_rating_after'] : json['player_b_rating_after']) as int,
+      ratingDelta:
+          (isPlayerA ? json['player_a_rating_delta'] : json['player_b_rating_delta']) as int,
+      puzzle: Race.fromJson(json).puzzle!,
+    );
+  }
+
+  final DateTime finishedAt;
+  final String opponentUsername;
+  final bool won;
+  final int ratingAfter;
+  final int ratingDelta;
+  final SudokuPuzzle puzzle;
 }

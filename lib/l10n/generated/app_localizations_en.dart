@@ -30,7 +30,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startGame => 'Start';
 
   @override
-  String get viewStats => 'View Stats';
+  String get raceButton => 'Race';
 
   @override
   String get themeSectionTitle => 'Theme';
@@ -156,6 +156,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String bestTimeSuffix(String time) {
     return ' · Best $time';
   }
+
+  @override
+  String get raceHistoryTitle => 'Race History';
+
+  @override
+  String get raceHistoryResultWon => 'Win';
+
+  @override
+  String get raceHistoryResultLost => 'Loss';
+
+  @override
+  String get raceHistoryEmpty => 'No races yet.';
 
   @override
   String get undoLabel => 'Undo';
@@ -423,6 +435,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String winRateLabel(int percent) {
+    return 'Race win rate $percent%';
+  }
+
+  @override
   String get linkAccountPrompt =>
       'You\'re signed in as a guest. Link an account to keep your progress.';
 
@@ -487,7 +504,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get raceLost => 'You Lost';
 
   @override
-  String raceOpponentLabel(String username) {
-    return 'Opponent: $username';
+  String get tierBronze => 'Beginner';
+
+  @override
+  String get tierSilver => 'Easy';
+
+  @override
+  String get tierGold => 'Medium';
+
+  @override
+  String get tierPlatinum => 'Hard';
+
+  @override
+  String get tierDiamond => 'Master';
+
+  @override
+  String get tierMaster => 'Master';
+
+  @override
+  String get tierChallenger => 'Expert';
+
+  @override
+  String yourRatingChangeLabel(int oldRating, int newRating, String delta) {
+    return 'You: $oldRating → $newRating ($delta)';
+  }
+
+  @override
+  String opponentRatingChangeLabel(
+      String username, int oldRating, int newRating, String delta) {
+    return '$username: $oldRating → $newRating ($delta)';
+  }
+
+  @override
+  String homeRatingLabel(String tier, int rating) {
+    return '$tier · Rating $rating';
   }
 }

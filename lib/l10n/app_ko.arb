@@ -9,7 +9,7 @@
   "cancelAction": "취소",
 
   "startGame": "시작하기",
-  "viewStats": "기록 보기",
+  "raceButton": "대결하기",
   "themeSectionTitle": "테마",
   "followSystemTheme": "시스템 설정 따르기",
   "lightTheme": "라이트 모드",
@@ -49,6 +49,10 @@
   "statsTitle": "기록",
   "playedWonLabel": "플레이 {played}회 · 승리 {won}회",
   "bestTimeSuffix": " · 최고기록 {time}",
+  "raceHistoryTitle": "대결 기록",
+  "raceHistoryEmpty": "아직 대결 기록이 없어요.",
+  "raceHistoryResultWon": "승리",
+  "raceHistoryResultLost": "패배",
 
   "undoLabel": "실행취소",
   "eraseLabel": "지우기",
@@ -123,6 +127,7 @@
   "signInWithApple": "Apple로 로그인",
   "signInAsGuest": "게스트로 시작",
   "ratingAndRecord": "레이팅 {rating} · {wins}승 {losses}패",
+  "winRateLabel": "대결 승률 {percent}%",
   "linkAccountPrompt": "게스트 계정으로 로그인 중입니다. 계정을 연동하면 기록이 유지됩니다.",
   "linkGoogleAction": "Google 계정 연동",
   "linkAppleAction": "Apple 계정 연동",
@@ -146,5 +151,15 @@
   "raceResultTitle": "레이스 결과",
   "raceWon": "승리!",
   "raceLost": "패배",
-  "raceOpponentLabel": "상대: {username}"
+  "tierBronze": "초보자",
+  "tierSilver": "쉬움",
+  "tierGold": "보통",
+  "tierPlatinum": "어려움",
+  "tierDiamond": "마스터",
+  "tierMaster": "마스터",
+  "tierChallenger": "익스퍼트",
+
+  "yourRatingChangeLabel": "나: {oldRating} → {newRating} ({delta})",
+  "opponentRatingChangeLabel": "{username}: {oldRating} → {newRating} ({delta})",
+  "homeRatingLabel": "{tier} · 레이팅 {rating}"
 }

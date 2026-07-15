@@ -1,3 +1,5 @@
+import 'tier.dart';
+
 class UserProfile {
   const UserProfile({
     required this.id,
@@ -14,7 +16,7 @@ class UserProfile {
         username: json['username'] as String,
         avatarUrl: json['avatar_url'] as String?,
         rating: json['rating'] as int,
-        tier: json['tier'] as String,
+        tier: tierFromName(json['tier'] as String),
         wins: json['wins'] as int,
         losses: json['losses'] as int,
       );
@@ -23,7 +25,7 @@ class UserProfile {
   final String username;
   final String? avatarUrl;
   final int rating;
-  final String tier;
+  final Tier tier;
   final int wins;
   final int losses;
 }
