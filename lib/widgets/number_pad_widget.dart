@@ -18,40 +18,37 @@ class NumberPadWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = BoardColors.isDark(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: List.generate(9, (i) {
-          final number = i + 1;
-          final remaining = controller.remainingCount(number);
-          final isComplete = remaining <= 0;
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 1.5),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (!isNotePad) ...[
-                    Text(
-                      '$remaining',
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: BoardColors.remainingCountText(isDark)),
-                    ),
-                    const SizedBox(height: 2),
-                  ],
-                  _NumberPadButton(
-                    number: number,
-                    enabled: !isComplete,
-                    isNotePad: isNotePad,
-                    onTap: () => onNumberSelected(number),
+    return Row(
+      children: List.generate(9, (i) {
+        final number = i + 1;
+        final remaining = controller.remainingCount(number);
+        final isComplete = remaining <= 0;
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 1),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!isNotePad) ...[
+                  Text(
+                    '$remaining',
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: BoardColors.remainingCountText(isDark)),
                   ),
+                  const SizedBox(height: 2),
                 ],
-              ),
+                _NumberPadButton(
+                  number: number,
+                  enabled: !isComplete,
+                  isNotePad: isNotePad,
+                  onTap: () => onNumberSelected(number),
+                ),
+              ],
             ),
-          );
-        }),
-      ),
+          ),
+        );
+      }),
     );
   }
 }
@@ -118,13 +115,15 @@ class _NumberPadButtonState extends State<_NumberPadButton> {
               color: widget.enabled
                   ? (widget.isNotePad
                       ? Colors.white.withValues(alpha: 0.10)
-                      : BoardColors.padTextValue(isDark).withValues(alpha: 0.35))
+                      : BoardColors.padTextValue(isDark)
+                          .withValues(alpha: 0.35))
                   : Colors.transparent,
             ),
             boxShadow: widget.enabled
                 ? [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.26 : 0.12),
+                      color:
+                          Colors.black.withValues(alpha: isDark ? 0.26 : 0.12),
                       offset: const Offset(0, 3),
                       blurRadius: 4,
                     ),

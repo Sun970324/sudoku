@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
@@ -71,7 +70,6 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   late final GameController _controller;
   final StorageService _storage = StorageService();
-  BannerAd? _bannerAd;
   Timer? _timer;
   bool _dialogShown = false;
   bool _abandoningGame = false;
@@ -105,10 +103,6 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _startTimer();
     _controller.addListener(_onGameStateChanged);
     WidgetsBinding.instance.addObserver(this);
-    _bannerAd = AdService.instance.createBannerAd(
-      onAdLoaded: (ad) => setState(() {}),
-      onAdFailedToLoad: () => setState(() => _bannerAd = null),
-    );
   }
 
   @override
@@ -302,7 +296,6 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _saveProgress();
     _controller.removeListener(_onGameStateChanged);
     _controller.dispose();
-    _bannerAd?.dispose();
     _entranceAnimation?.removeStatusListener(_onEntranceAnimationStatus);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -343,9 +336,16 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(dialogContext);
+              // Deliberately doesn't pop dialogContext here — only once the
+              // reward is actually earned. The rewarded ad is a native
+              // fullscreen overlay regardless (see AdService.showRewardedAd),
+              // so leaving this dialog mounted underneath is invisible while
+              // it's up; if the player backs out before earning the reward,
+              // this same dialog is still exactly where they left it instead
+              // of having been dismissed for nothing.
               AdService.instance.showRewardedAd(
                 onUserEarnedReward: () {
+                  Navigator.pop(dialogContext);
                   _dialogShown = false;
                   _controller.reviveAfterAd();
                   _startTimer();
@@ -355,7 +355,6 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(l10n.adNotLoaded)),
                   );
-                  _showGameOverDialog();
                 },
               );
             },
@@ -680,9 +679,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             child: Column(
               children: [
                 // Expanded (instead of a fixed height fraction) so the grid
-                // claims all vertical space left over after the controls/number
-                // pads below — it grows as large as the screen allows, capped
-                // only by width via the AspectRatio inside SudokuGridWidget.
+                // claims all vertical space left over after the controls/
+                // number pads below — it grows as large as the screen
+                // allows, capped only by width via the AspectRatio inside
+                // SudokuGridWidget. Without this, the AspectRatio's loose
+                // height constraint inside a plain Column lets it size up to
+                // the full screen WIDTH as its height too, overflowing the
+                // Column on any screen where that exceeds the actual
+                // available height.
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
@@ -693,22 +697,18 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                       alignment: Alignment.topCenter,
                       // The real, interactive grid is always present and
                       // never itself Hero-tagged, so taps register from the
-                      // first frame. A separate, non-interactive clone (paired
-                      // with the same tag on SudokuPreviewBoard in HomeScreen)
-                      // is stacked on top purely for the entrance grow
-                      // animation, and is removed once that push transition
-                      // completes (see _onEntranceAnimationStatus).
+                      // first frame. A separate, non-interactive clone
+                      // (paired with the same tag on SudokuPreviewBoard in
+                      // HomeScreen) is stacked on top purely for the
+                      // entrance grow animation, and is removed once that
+                      // push transition completes (see
+                      // _onEntranceAnimationStatus).
                       child: Stack(
                         alignment: Alignment.topCenter,
                         children: [
                           DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(11),
-                              border: Border.all(
-                                color: BoardColors.outerBorder(
-                                    BoardColors.isDark(context)),
-                                width: 3,
-                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: BoardColors.outerBorder(
@@ -748,7 +748,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                     onAutoFillNotes: _onAutoFillNotesPressed,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 ListenableBuilder(
                   listenable: _controller,
                   builder: (context, _) => NumberPadWidget(
@@ -757,7 +757,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                     onNumberSelected: _onNumberSelected,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 28),
                 // The notes pad always reserves its layout space and only
                 // fades in/out — unlike a height-collapsing animation, this
                 // keeps the total height below the grid constant regardless of
@@ -777,23 +777,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
-                // Breathing room above the banner ad so number-pad taps near
-                // the bottom edge don't accidentally hit the ad instead.
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
               ],
             ),
           ),
         ),
-        // bottomNavigationBar: _bannerAd == null
-        //     ? null
-        //     : SafeArea(
-        //         top: false,
-        //         child: SizedBox(
-        //           width: _bannerAd!.size.width.toDouble(),
-        //           height: _bannerAd!.size.height.toDouble(),
-        //           child: AdWidget(ad: _bannerAd!),
-        //         ),
-        //       ),
       ),
     );
   }

@@ -277,6 +277,27 @@ void main() {
     expect(controller.status, GameStatus.gameOver);
   });
 
+  test('undo does nothing once the game is over — only reviveAfterAd may '
+      'resume play', () {
+    var mistakesMade = 0;
+    for (var r = 0; r < 9 && mistakesMade < 3; r++) {
+      for (var c = 0; c < 9 && mistakesMade < 3; c++) {
+        if (controller.isFixed(r, c)) continue;
+        final correctValue = controller.puzzle.solutionValue(r, c);
+        final wrongValue = correctValue == 9 ? 1 : correctValue + 1;
+        controller.selectCell(r, c);
+        controller.inputValue(wrongValue);
+        mistakesMade++;
+      }
+    }
+    expect(controller.status, GameStatus.gameOver);
+    expect(controller.canUndo, isFalse);
+
+    controller.undo();
+
+    expect(controller.status, GameStatus.gameOver);
+  });
+
   test('reviveAfterAd knocks mistakes back to 2 and resumes play after '
       'game over', () {
     var mistakesMade = 0;

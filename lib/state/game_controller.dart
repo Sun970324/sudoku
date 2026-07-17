@@ -114,7 +114,7 @@ class GameController extends ChangeNotifier {
 
   SudokuPuzzle get puzzle => _puzzle;
   Difficulty get difficulty => _puzzle.difficulty;
-  bool get canUndo => _history.isNotEmpty;
+  bool get canUndo => status == GameStatus.playing && _history.isNotEmpty;
 
   /// Starts a new game for [difficulty]. If [puzzle] is supplied (e.g. from
   /// [PuzzleQueueManager]'s pre-generated queue) it's used directly instead
@@ -352,6 +352,7 @@ class GameController extends ChangeNotifier {
   }
 
   void undo() {
+    if (status != GameStatus.playing) return;
     if (_history.isEmpty) return;
     final move = _history.removeLast();
     if (move.row != null) {
@@ -359,7 +360,6 @@ class GameController extends ChangeNotifier {
     }
     _notes = move.previousNotes;
     _setActiveHint(null);
-    if (status == GameStatus.gameOver) status = GameStatus.playing;
     _recomputeRemainingCounts();
     notifyListeners();
   }

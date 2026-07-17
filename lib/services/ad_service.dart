@@ -52,24 +52,6 @@ class AdService {
     );
   }
 
-  BannerAd createBannerAd({
-    required void Function(BannerAd ad) onAdLoaded,
-    required VoidCallback onAdFailedToLoad,
-  }) {
-    return BannerAd(
-      adUnitId: AdUnitIds.bannerAdUnitId,
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) => onAdLoaded(ad as BannerAd),
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          onAdFailedToLoad();
-        },
-      ),
-    )..load();
-  }
-
   void preloadRewardedAd() {
     if (_isLoadingRewardedAd || _rewardedAd != null) return;
     _isLoadingRewardedAd = true;
