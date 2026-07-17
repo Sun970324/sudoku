@@ -64,15 +64,53 @@ class SudokuApp extends StatelessWidget {
         supportedLocales: AppLocalizations.supportedLocales,
         locale: settings.localeOverride,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF6E56FF),
+            brightness: Brightness.light,
+          ),
           useMaterial3: true,
+          scaffoldBackgroundColor: const Color(0xFFF6F5FF),
+          appBarTheme: const AppBarTheme(
+            centerTitle: true,
+            backgroundColor: Color(0xFFF6F5FF),
+            surfaceTintColor: Colors.transparent,
+            titleTextStyle: TextStyle(
+              color: Color(0xFF241B4B),
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.8,
+            ),
+          ),
+          filledButtonTheme: FilledButtonThemeData(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF6E56FF),
+              foregroundColor: Colors.white,
+              elevation: 5,
+              shadowColor: const Color(0xFF6E56FF).withValues(alpha: 0.4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+          ),
         ),
         darkTheme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
+            seedColor: const Color(0xFF9D8CFF),
             brightness: Brightness.dark,
           ),
           useMaterial3: true,
+          scaffoldBackgroundColor: const Color(0xFF0D0B1E),
+          appBarTheme: const AppBarTheme(
+            centerTitle: true,
+            backgroundColor: Color(0xFF0D0B1E),
+            surfaceTintColor: Colors.transparent,
+            titleTextStyle: TextStyle(
+              color: Color(0xFFF0EEFF),
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.8,
+            ),
+          ),
         ),
         themeMode: settings.themeMode,
         home: HomeScreen(

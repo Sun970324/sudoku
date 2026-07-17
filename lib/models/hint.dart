@@ -15,15 +15,25 @@ enum HintTechnique {
   hiddenQuad,
   intersectionPointing,
   intersectionClaiming,
+  lockedPair,
+  lockedTriple,
   xWing,
+  skyscraper,
+  twoStringKite,
+  turbotFish,
+  remotePair,
   simpleColoring,
   xyWing,
+  xyzWing,
+  wWing,
   swordfish,
   finnedXWing,
   sashimiXWing,
   bugPlusOne,
   xyChain,
   jellyfish,
+  finnedSwordfish,
+  finnedJellyfish,
   uniqueRectangleType1,
   uniqueRectangleType2,
   uniqueRectangleType3,
@@ -60,12 +70,28 @@ extension HintTechniqueInfo on HintTechnique {
         return l10n.techniqueIntersectionPointing;
       case HintTechnique.intersectionClaiming:
         return l10n.techniqueIntersectionClaiming;
+      case HintTechnique.lockedPair:
+        return l10n.techniqueLockedPair;
+      case HintTechnique.lockedTriple:
+        return l10n.techniqueLockedTriple;
       case HintTechnique.xWing:
         return l10n.techniqueXWing;
+      case HintTechnique.skyscraper:
+        return l10n.techniqueSkyscraper;
+      case HintTechnique.twoStringKite:
+        return l10n.techniqueTwoStringKite;
+      case HintTechnique.turbotFish:
+        return l10n.techniqueTurbotFish;
+      case HintTechnique.remotePair:
+        return l10n.techniqueRemotePair;
       case HintTechnique.simpleColoring:
         return l10n.techniqueSimpleColoring;
       case HintTechnique.xyWing:
         return l10n.techniqueXYWing;
+      case HintTechnique.xyzWing:
+        return l10n.techniqueXYZWing;
+      case HintTechnique.wWing:
+        return l10n.techniqueWWing;
       case HintTechnique.swordfish:
         return l10n.techniqueSwordfish;
       case HintTechnique.finnedXWing:
@@ -78,6 +104,10 @@ extension HintTechniqueInfo on HintTechnique {
         return l10n.techniqueXYChain;
       case HintTechnique.jellyfish:
         return l10n.techniqueJellyfish;
+      case HintTechnique.finnedSwordfish:
+        return l10n.techniqueFinnedSwordfish;
+      case HintTechnique.finnedJellyfish:
+        return l10n.techniqueFinnedJellyfish;
       case HintTechnique.uniqueRectangleType1:
         return l10n.techniqueUniqueRectangleType1;
       case HintTechnique.uniqueRectangleType2:
@@ -101,6 +131,8 @@ const hintTechniqueOrder = [
   HintTechnique.nakedSingle,
   HintTechnique.intersectionPointing,
   HintTechnique.intersectionClaiming,
+  HintTechnique.lockedPair,
+  HintTechnique.lockedTriple,
   HintTechnique.xWing,
   HintTechnique.nakedPair,
   HintTechnique.nakedTriple,
@@ -108,14 +140,22 @@ const hintTechniqueOrder = [
   HintTechnique.hiddenTriple,
   HintTechnique.nakedQuad,
   HintTechnique.hiddenQuad,
+  HintTechnique.skyscraper,
+  HintTechnique.twoStringKite,
+  HintTechnique.turbotFish,
+  HintTechnique.remotePair,
   HintTechnique.simpleColoring,
   HintTechnique.xyWing,
+  HintTechnique.xyzWing,
+  HintTechnique.wWing,
   HintTechnique.swordfish,
   HintTechnique.finnedXWing,
   HintTechnique.sashimiXWing,
   HintTechnique.bugPlusOne,
   HintTechnique.xyChain,
   HintTechnique.jellyfish,
+  HintTechnique.finnedSwordfish,
+  HintTechnique.finnedJellyfish,
   HintTechnique.uniqueRectangleType1,
   HintTechnique.uniqueRectangleType2,
   HintTechnique.uniqueRectangleType3,
@@ -135,14 +175,24 @@ const techniqueDifficulty = <HintTechnique, Difficulty>{
   HintTechnique.hiddenSingle: Difficulty.medium,
   HintTechnique.intersectionPointing: Difficulty.medium,
   HintTechnique.intersectionClaiming: Difficulty.medium,
+  // Same tier as the naked subsets they're built from — a Locked Pair IS a
+  // naked pair, just one that happens to sit in a box/line intersection.
+  HintTechnique.lockedPair: Difficulty.hard,
+  HintTechnique.lockedTriple: Difficulty.hard,
   HintTechnique.nakedPair: Difficulty.hard,
   HintTechnique.hiddenPair: Difficulty.hard,
   HintTechnique.nakedTriple: Difficulty.hard,
   HintTechnique.hiddenTriple: Difficulty.hard,
   HintTechnique.xWing: Difficulty.master,
+  HintTechnique.skyscraper: Difficulty.master,
+  HintTechnique.twoStringKite: Difficulty.master,
+  HintTechnique.turbotFish: Difficulty.master,
   HintTechnique.swordfish: Difficulty.master,
   HintTechnique.jellyfish: Difficulty.master,
   HintTechnique.xyWing: Difficulty.master,
+  HintTechnique.remotePair: Difficulty.master,
+  HintTechnique.xyzWing: Difficulty.master,
+  HintTechnique.wWing: Difficulty.master,
   HintTechnique.nakedQuad: Difficulty.expert,
   HintTechnique.hiddenQuad: Difficulty.expert,
   HintTechnique.simpleColoring: Difficulty.expert,
@@ -150,6 +200,12 @@ const techniqueDifficulty = <HintTechnique, Difficulty>{
   HintTechnique.sashimiXWing: Difficulty.expert,
   HintTechnique.bugPlusOne: Difficulty.expert,
   HintTechnique.xyChain: Difficulty.expert,
+  // Hint-only (absent from [humanSolverTechniqueOrder]), so this tier never
+  // actually classifies a generated puzzle — but every technique needs an
+  // entry here regardless, and Expert is where they'd land if they ever
+  // joined generation.
+  HintTechnique.finnedSwordfish: Difficulty.expert,
+  HintTechnique.finnedJellyfish: Difficulty.expert,
   HintTechnique.uniqueRectangleType1: Difficulty.expert,
   HintTechnique.uniqueRectangleType2: Difficulty.expert,
   HintTechnique.uniqueRectangleType3: Difficulty.expert,
@@ -178,6 +234,81 @@ class HintElimination {
   final int row;
   final int col;
   final int digit;
+
+  @override
+  bool operator ==(Object other) =>
+      other is HintElimination &&
+      other.row == row &&
+      other.col == col &&
+      other.digit == digit;
+
+  @override
+  int get hashCode => Object.hash(row, col, digit);
+}
+
+/// One end of a chain link: candidate [digit] within [cells]. Almost always
+/// a single cell; a *grouped* node — several cells of one unit that all hold
+/// the digit and act as a single link end — carries more than one, which is
+/// why this is a list rather than a bare [HintCell].
+///
+/// Note a node is a (cells, digit) pair, not just a cell: the same cell
+/// appears as two different nodes when a chain passes *through* it on two
+/// different digits (an XY-Chain's bivalue cell is exactly this), and that
+/// distinction is what lets the overlay attach a link to a specific pencil
+/// mark instead of the cell as a whole.
+class HintChainNode {
+  const HintChainNode(this.cells, this.digit);
+
+  HintChainNode.single(HintCell cell, this.digit) : cells = [cell];
+
+  final List<HintCell> cells;
+  final int digit;
+
+  @override
+  bool operator ==(Object other) =>
+      other is HintChainNode &&
+      other.digit == digit &&
+      _listEquals(other.cells, cells);
+
+  @override
+  int get hashCode => Object.hash(digit, Object.hashAll(cells));
+
+  static bool _listEquals(List<HintCell> a, List<HintCell> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+}
+
+/// One inference step of a chain, joining two candidate-level nodes.
+///
+/// A [strong] link means "if [from] is false, [to] is true" (the two are the
+/// only places its digit can go in some unit, or the only two candidates of
+/// one cell) and is drawn as a solid line; a weak link means "[from] and
+/// [to] cannot both be true" and is drawn dashed. Chains alternate between
+/// the two.
+class HintChainLink {
+  const HintChainLink({
+    required this.from,
+    required this.to,
+    required this.strong,
+  });
+
+  final HintChainNode from;
+  final HintChainNode to;
+  final bool strong;
+
+  @override
+  bool operator ==(Object other) =>
+      other is HintChainLink &&
+      other.from == from &&
+      other.to == to &&
+      other.strong == strong;
+
+  @override
+  int get hashCode => Object.hash(from, to, strong);
 }
 
 /// A single hint found by [HintEngine]. Reveal-type hints (Full House,
@@ -194,6 +325,7 @@ class Hint {
     required this.type,
     required this.explanation,
     required this.primaryCells,
+    this.mainInfo,
     this.secondaryCells = const {},
     this.colorGroupA = const {},
     this.colorGroupB = const {},
@@ -205,6 +337,7 @@ class Hint {
     this.col,
     this.value,
     this.eliminations = const [],
+    this.chainLinks = const [],
   });
 
   final HintTechnique technique;
@@ -212,6 +345,13 @@ class Hint {
   final String explanation;
   final Set<HintCell> primaryCells;
   final Set<HintCell> secondaryCells;
+
+  /// A short "where" phrase (e.g. the unit the reasoning is confined to, or
+  /// the digits involved) shown at the middle stage of the progressive hint
+  /// reveal — between the bare technique name and the full [explanation].
+  /// Null for techniques that have no useful summary short of the full
+  /// sentence, in which case that stage is skipped.
+  final String? mainInfo;
 
   /// For Simple Coloring / XY-Chain only: the two "opposite state" groups
   /// of the coloring/chain pattern (the two sides of a conjugate-chain
@@ -254,6 +394,61 @@ class Hint {
 
   final List<HintElimination> eliminations;
 
+  /// For chain techniques only (XY-Chain, Skyscraper/2-String Kite/Turbot
+  /// Fish): the chain's inference steps in the order they were followed, so
+  /// the hint overlay can trace it link by link. Empty for every other
+  /// technique — [primaryCells]/[colorGroupA]/[colorGroupB] are unordered
+  /// sets, which is enough for those, but a chain's shape needs the order and
+  /// the strong/weak alternation, which those sets don't preserve.
+  ///
+  /// Consecutive links share a node: `chainLinks[i].to == chainLinks[i+1]
+  /// .from`. The chain's two ends — the nodes whose digit gets eliminated
+  /// wherever both are seen — are `chainLinks.first.from` and
+  /// `chainLinks.last.to`.
+  final List<HintChainLink> chainLinks;
+
+  /// The hint's conclusion in standard sudoku notation, shown alongside the
+  /// full [explanation] at the last stage of the progressive reveal: a reveal
+  /// is `r4c7 = 5`, an elimination is `r4c258<>7` per digit (cells sharing a
+  /// row collapse into one column run, likewise for a column), joined by
+  /// `, ` across digits.
+  String get actionSummary {
+    if (type == HintType.reveal) {
+      return 'r${row! + 1}c${col! + 1} = $value';
+    }
+    final byDigit = <int, List<HintCell>>{};
+    for (final e in eliminations) {
+      byDigit.putIfAbsent(e.digit, () => []).add(HintCell(e.row, e.col));
+    }
+    final groups = <String>[];
+    for (final digit in byDigit.keys.toList()..sort()) {
+      final cells = byDigit[digit]!
+        ..sort((a, b) => a.row != b.row ? a.row - b.row : a.col - b.col);
+      groups.add('${_compactCells(cells)}<>$digit');
+    }
+    return groups.join(', ');
+  }
+
+  /// `r4c258` when every cell shares a row, `r258c4` when they share a
+  /// column, else one `rXcYZ` run per row joined by `,`.
+  static String _compactCells(List<HintCell> cells) {
+    if (cells.every((c) => c.row == cells.first.row)) {
+      final cols = cells.map((c) => c.col + 1).join();
+      return 'r${cells.first.row + 1}c$cols';
+    }
+    if (cells.every((c) => c.col == cells.first.col)) {
+      final rows = cells.map((c) => c.row + 1).join();
+      return 'r${rows}c${cells.first.col + 1}';
+    }
+    final byRow = <int, List<int>>{};
+    for (final c in cells) {
+      byRow.putIfAbsent(c.row, () => []).add(c.col);
+    }
+    return byRow.entries
+        .map((e) => 'r${e.key + 1}c${e.value.map((c) => c + 1).join()}')
+        .join(',');
+  }
+
   /// A copy with [explanation] replaced — used to prepend a note about
   /// notes having been auto-corrected before this hint was found (see
   /// [GameController.requestHint]) without needing a full field-by-field
@@ -263,6 +458,7 @@ class Hint {
         type: type,
         explanation: explanation,
         primaryCells: primaryCells,
+        mainInfo: mainInfo,
         secondaryCells: secondaryCells,
         colorGroupA: colorGroupA,
         colorGroupB: colorGroupB,
@@ -274,5 +470,6 @@ class Hint {
         col: col,
         value: value,
         eliminations: eliminations,
+        chainLinks: chainLinks,
       );
 }

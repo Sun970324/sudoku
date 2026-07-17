@@ -169,6 +169,215 @@ extension HintEngineFish on HintEngine {
     return _findFish(resolved, 4, HintTechnique.jellyfish, l10n);
   }
 
+  /// Finned Swordfish: a Swordfish whose base rows hold extra candidates
+  /// (fins) outside the 3 cover columns, via the size-parameterized
+  /// [_findFinnedFish].
+  Hint? findFinnedSwordfish(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) {
+    final resolved = candidates ?? _freshCandidates(board);
+    return _findFinnedFish(resolved, 3, HintTechnique.finnedSwordfish, l10n);
+  }
+
+  /// Finned Jellyfish: the size-4 counterpart of [findFinnedSwordfish].
+  Hint? findFinnedJellyfish(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) {
+    final resolved = candidates ?? _freshCandidates(board);
+    return _findFinnedFish(resolved, 4, HintTechnique.finnedJellyfish, l10n);
+  }
+
+  /// The size-[size] generalization of [findFinnedXWing]'s argument: pick
+  /// [size] base rows and [size] cover columns; any base-row candidate
+  /// outside the cover columns is a *fin*. If every fin is false the pattern
+  /// is a plain fish and eliminates in the cover columns outside the base
+  /// rows; if some fin is true, that fin's peers lose the digit. A cell only
+  /// survives neither branch — and can be eliminated — when it is a fish
+  /// target AND sees every fin.
+  ///
+  /// Deliberately kept separate from [findFinnedXWing]'s own search rather
+  /// than folding that in: the size-2 case additionally splits Finned vs
+  /// Sashimi by whether the fin row still covers both columns, a distinction
+  /// that has no counterpart here.
+  ///
+  /// Note this uses the "sees every fin" rule rather than the more commonly
+  /// published "all fins share one box" shortcut — same-box is just the
+  /// usual case of it, and checking each fin individually is both simpler
+  /// and strictly more general (it also finds patterns the shortcut misses).
+  Hint? _findFinnedFish(
+    List<List<Set<int>>> candidates,
+    int size,
+    HintTechnique technique,
+    AppLocalizations? l10n,
+  ) =>
+      _findFinnedFishRows(candidates, size, technique, l10n) ??
+      _findFinnedFishCols(candidates, size, technique, l10n);
+
+  Hint? _findFinnedFishRows(
+    List<List<Set<int>>> candidates,
+    int size,
+    HintTechnique technique,
+    AppLocalizations? l10n,
+  ) {
+    final resolvedL10n = _resolveL10n(l10n);
+    for (var d = 1; d <= 9; d++) {
+      final rowCols = <int, Set<int>>{};
+      for (var r = 0; r < 9; r++) {
+        final cols = {
+          for (var c = 0; c < 9; c++)
+            if (candidates[r][c].contains(d)) c,
+        };
+        // A base line needs at least 2 places for the digit, and more than
+        // `size + 2` can never be covered by `size` columns plus fins that a
+        // single target could all see.
+        if (cols.length >= 2 && cols.length <= size + 2) rowCols[r] = cols;
+      }
+      if (rowCols.length < size) continue;
+
+      for (final baseRows in _combinations(rowCols.keys.toList(), size)) {
+        final spanned = <int>{for (final r in baseRows) ...rowCols[r]!};
+        // Exactly-`size` columns would be a plain fish (no fins); beyond
+        // `size + 2` the fins spread too far to share a target.
+        if (spanned.length <= size || spanned.length > size + 2) continue;
+
+        for (final coverCols in _combinations(spanned.toList(), size)) {
+          final cover = coverCols.toSet();
+          final fins = <List<int>>[
+            for (final r in baseRows)
+              for (final c in rowCols[r]!)
+                if (!cover.contains(c)) [r, c],
+          ];
+          if (fins.isEmpty) continue;
+          // Every base row must still reach the cover, or it isn't a fish
+          // shape at all — matching [findFinnedXWing]'s own overlap check.
+          if (baseRows.any((r) => rowCols[r]!.intersection(cover).isEmpty)) {
+            continue;
+          }
+
+          final eliminations = <HintElimination>[];
+          for (var r = 0; r < 9; r++) {
+            if (baseRows.contains(r)) continue;
+            for (final c in cover) {
+              if (!candidates[r][c].contains(d)) continue;
+              if (fins.every((f) => _seeEachOther([r, c], f))) {
+                eliminations.add(HintElimination(r, c, d));
+              }
+            }
+          }
+          if (eliminations.isEmpty) continue;
+
+          return Hint(
+            technique: technique,
+            type: HintType.eliminate,
+            explanation: resolvedL10n.explanationFinnedFishN(
+              _linesDesc(baseRows, isRows: true, l10n: resolvedL10n),
+              d,
+              size,
+              fins.map((f) => _cellDesc(f[0], f[1], resolvedL10n)).join(', '),
+            ),
+            primaryCells: {
+              for (final r in baseRows)
+                for (final c in rowCols[r]!) HintCell(r, c),
+            },
+            secondaryCells:
+                eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
+            highlightedRows: baseRows.toSet(),
+            highlightedCols: cover,
+            eliminations: eliminations,
+          );
+        }
+      }
+    }
+    return null;
+  }
+
+  Hint? _findFinnedFishCols(
+    List<List<Set<int>>> candidates,
+    int size,
+    HintTechnique technique,
+    AppLocalizations? l10n,
+  ) {
+    final resolvedL10n = _resolveL10n(l10n);
+    for (var d = 1; d <= 9; d++) {
+      final colRows = <int, Set<int>>{};
+      for (var c = 0; c < 9; c++) {
+        final rows = {
+          for (var r = 0; r < 9; r++)
+            if (candidates[r][c].contains(d)) r,
+        };
+        if (rows.length >= 2 && rows.length <= size + 2) colRows[c] = rows;
+      }
+      if (colRows.length < size) continue;
+
+      for (final baseCols in _combinations(colRows.keys.toList(), size)) {
+        final spanned = <int>{for (final c in baseCols) ...colRows[c]!};
+        if (spanned.length <= size || spanned.length > size + 2) continue;
+
+        for (final coverRows in _combinations(spanned.toList(), size)) {
+          final cover = coverRows.toSet();
+          final fins = <List<int>>[
+            for (final c in baseCols)
+              for (final r in colRows[c]!)
+                if (!cover.contains(r)) [r, c],
+          ];
+          if (fins.isEmpty) continue;
+          if (baseCols.any((c) => colRows[c]!.intersection(cover).isEmpty)) {
+            continue;
+          }
+
+          final eliminations = <HintElimination>[];
+          for (var c = 0; c < 9; c++) {
+            if (baseCols.contains(c)) continue;
+            for (final r in cover) {
+              if (!candidates[r][c].contains(d)) continue;
+              if (fins.every((f) => _seeEachOther([r, c], f))) {
+                eliminations.add(HintElimination(r, c, d));
+              }
+            }
+          }
+          if (eliminations.isEmpty) continue;
+
+          return Hint(
+            technique: technique,
+            type: HintType.eliminate,
+            explanation: resolvedL10n.explanationFinnedFishN(
+              _linesDesc(baseCols, isRows: false, l10n: resolvedL10n),
+              d,
+              size,
+              fins.map((f) => _cellDesc(f[0], f[1], resolvedL10n)).join(', '),
+            ),
+            primaryCells: {
+              for (final c in baseCols)
+                for (final r in colRows[c]!) HintCell(r, c),
+            },
+            secondaryCells:
+                eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
+            highlightedCols: baseCols.toSet(),
+            highlightedRows: cover,
+            eliminations: eliminations,
+          );
+        }
+      }
+    }
+    return null;
+  }
+
+  /// `Row 1, Row 4` / `1행, 4행` — the localized names of several lines, for
+  /// the finned-fish explanations (which describe a set of base lines rather
+  /// than the single line the size-2 case has).
+  String _linesDesc(
+    List<int> lines,
+    {required bool isRows,
+    required AppLocalizations l10n}) =>
+      lines
+          .map((i) =>
+              isRows ? _rowDesc(i, l10n) : _colDesc(i, l10n))
+          .join(', ');
+
   Hint? _findFish(
     List<List<Set<int>>> candidates,
     int size,

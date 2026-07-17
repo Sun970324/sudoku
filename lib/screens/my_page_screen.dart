@@ -185,6 +185,21 @@ class _ProfileSection extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4),
+        Builder(builder: (context) {
+          final next = profile.tier.nextTier;
+          final text = next == null
+              ? l10n.tierTopReached
+              : l10n.tierPromotionRemaining(
+                  (next.minRating - profile.rating).clamp(0, next.minRating),
+                  next.label(context),
+                );
+          return Text(
+            text,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          );
+        }),
+        const SizedBox(height: 4),
         Text(
           l10n.winRateLabel(profile.wins + profile.losses == 0
               ? 0

@@ -113,7 +113,23 @@ class _NumberPadButtonState extends State<_NumberPadButton> {
         child: Container(
           decoration: BoxDecoration(
             color: backgroundColor,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: widget.enabled
+                  ? (widget.isNotePad
+                      ? Colors.white.withValues(alpha: 0.10)
+                      : BoardColors.padTextValue(isDark).withValues(alpha: 0.35))
+                  : Colors.transparent,
+            ),
+            boxShadow: widget.enabled
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.26 : 0.12),
+                      offset: const Offset(0, 3),
+                      blurRadius: 4,
+                    ),
+                  ]
+                : null,
           ),
           height: 56,
           alignment: Alignment.center,

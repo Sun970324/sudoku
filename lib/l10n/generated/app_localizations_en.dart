@@ -21,6 +21,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applyAction => 'Apply';
 
   @override
+  String get hintRevealMoreAction => 'Show more';
+
+  @override
   String get continueAction => 'Continue';
 
   @override
@@ -90,6 +93,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clearWrongFirst => 'Please clear the wrong answer first.';
+
+  @override
+  String get hintNoTechniqueWithNotes =>
+      'No technique can be applied with your current notes.';
+
+  @override
+  String get hintAutoGenerateCandidatesPrompt =>
+      'Generate candidate notes automatically and analyze again?';
 
   @override
   String get adNotLoaded =>
@@ -185,22 +196,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hintLabel => 'Hint';
 
   @override
-  String get difficultyBeginner => 'Beginner';
+  String get difficultyBeginner => 'Bronze';
 
   @override
-  String get difficultyEasy => 'Easy';
+  String get difficultyEasy => 'Silver';
 
   @override
-  String get difficultyMedium => 'Medium';
+  String get difficultyMedium => 'Gold';
 
   @override
-  String get difficultyHard => 'Hard';
+  String get difficultyHard => 'Diamond';
 
   @override
   String get difficultyMaster => 'Master';
 
   @override
-  String get difficultyExpert => 'Expert';
+  String get difficultyExpert => 'Challenger';
 
   @override
   String get techniqueFullHouse => 'Full House';
@@ -236,13 +247,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueIntersectionClaiming => 'Intersection (Claiming)';
 
   @override
+  String get techniqueLockedPair => 'Locked Pair';
+
+  @override
+  String get techniqueLockedTriple => 'Locked Triple';
+
+  @override
   String get techniqueXWing => 'X-Wing';
+
+  @override
+  String get techniqueSkyscraper => 'Skyscraper';
+
+  @override
+  String get techniqueTwoStringKite => '2-String Kite';
+
+  @override
+  String get techniqueTurbotFish => 'Turbot Fish';
+
+  @override
+  String get techniqueRemotePair => 'Remote Pair';
 
   @override
   String get techniqueSimpleColoring => 'Simple Coloring';
 
   @override
   String get techniqueXYWing => 'XY-Wing';
+
+  @override
+  String get techniqueXYZWing => 'XYZ-Wing';
+
+  @override
+  String get techniqueWWing => 'W-Wing';
 
   @override
   String get techniqueSwordfish => 'Swordfish';
@@ -261,6 +296,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get techniqueJellyfish => 'Jellyfish';
+
+  @override
+  String get techniqueFinnedSwordfish => 'Finned Swordfish';
+
+  @override
+  String get techniqueFinnedJellyfish => 'Finned Jellyfish';
 
   @override
   String get techniqueUniqueRectangleType1 => 'Unique Rectangle Type 1';
@@ -350,9 +391,41 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String explanationSkyscraper(int digit, String cell1, String cell2) {
+    return 'Digit $digit forms a Skyscraper: two strong links join so that at least one of $cell1 and $cell2 must be $digit. Any cell that sees both can have $digit removed from its candidates.';
+  }
+
+  @override
+  String explanationTwoStringKite(int digit, String cell1, String cell2) {
+    return 'Digit $digit forms a 2-String Kite joined through a shared box, so at least one of $cell1 and $cell2 must be $digit. Any cell that sees both can have $digit removed from its candidates.';
+  }
+
+  @override
+  String explanationTurbotFish(int digit, String cell1, String cell2) {
+    return 'Digit $digit forms a Turbot Fish chain, so at least one of $cell1 and $cell2 must be $digit. Any cell that sees both can have $digit removed from its candidates.';
+  }
+
+  @override
   String explanationFinnedFish(
       String mainLineDesc, int digit, String finLineDesc, String finsDesc) {
     return '$mainLineDesc forms a clean X-Wing shape with only two candidate cells for digit $digit. $finLineDesc also has extra candidates at $finsDesc (fins), so it\'s not a pure X-Wing — but cells that see every fin can still have $digit removed from their candidates.';
+  }
+
+  @override
+  String explanationFinnedFishN(
+      String baseLinesDesc, int digit, int size, String finsDesc) {
+    return '$baseLinesDesc confine digit $digit to a $size-line fish shape, except for extra candidates (fins) at $finsDesc. If every fin is false this is a true fish; otherwise one of the fins is $digit. Either way, cells that see every fin can have $digit removed from their candidates.';
+  }
+
+  @override
+  String explanationLockedSubset(String lineDesc, String boxDesc,
+      String cellsDesc, String digitsDesc, int size) {
+    return '$cellsDesc lie where $lineDesc crosses $boxDesc, and together their only candidates are $digitsDesc ($size digits). Those cells take all $size digits, so $digitsDesc can be removed from the rest of $lineDesc AND the rest of $boxDesc.';
+  }
+
+  @override
+  String explanationRemotePair(String chainDesc, int a, int b) {
+    return '$chainDesc all hold only $a and $b, and each sees the next, so their values alternate along the chain. The two ends sit an odd number of steps apart, so one is $a and the other is $b — meaning any cell seeing both ends can have BOTH $a and $b removed.';
   }
 
   @override
@@ -369,6 +442,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String explanationXYWing(String pivotDesc, int x, int y, String w1Desc,
       int sharedDigitW1, int z, String w2Desc, int otherPivotDigit) {
     return 'Pivot cell $pivotDesc has candidates $x and $y. Wing cell $w1Desc is either $sharedDigitW1 or $z; wing cell $w2Desc is either $otherPivotDigit or $z. If the pivot is $sharedDigitW1, $w1Desc becomes $z; if it\'s $otherPivotDigit, $w2Desc becomes $z. Either way, cells that see both wings can have $z removed from their candidates.';
+  }
+
+  @override
+  String explanationXYZWing(String pivotDesc, String pivotDigits, String w1Desc,
+      String w2Desc, int z) {
+    return 'The pivot $pivotDesc has three candidates ($pivotDigits), and its wings $w1Desc and $w2Desc each hold $z plus one of the others. Whichever digit the pivot takes, $z ends up on the pivot or one of the wings — so any cell seeing all three can have $z removed.';
+  }
+
+  @override
+  String explanationWWing(
+      String cell1, String cell2, int a, int b, String unitDesc) {
+    return '$cell1 and $cell2 both hold only $a and $b, and $unitDesc has just two places for $b — one seeing each of them. If both were $b, that unit would have nowhere left for $b. So at least one of them is $a, and any cell seeing both can have $a removed.';
   }
 
   @override
@@ -440,6 +525,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String tierPromotionRemaining(int points, String nextTier) {
+    return '$points pts to $nextTier';
+  }
+
+  @override
+  String get tierTopReached => 'Top tier reached';
+
+  @override
   String get linkAccountPrompt =>
       'You\'re signed in as a guest. Link an account to keep your progress.';
 
@@ -504,25 +597,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get raceLost => 'You Lost';
 
   @override
-  String get tierBronze => 'Beginner';
+  String get tierBronze => 'Bronze';
 
   @override
-  String get tierSilver => 'Easy';
+  String get tierSilver => 'Silver';
 
   @override
-  String get tierGold => 'Medium';
+  String get tierGold => 'Gold';
 
   @override
-  String get tierPlatinum => 'Hard';
-
-  @override
-  String get tierDiamond => 'Master';
+  String get tierDiamond => 'Diamond';
 
   @override
   String get tierMaster => 'Master';
 
   @override
-  String get tierChallenger => 'Expert';
+  String get tierChallenger => 'Challenger';
 
   @override
   String yourRatingChangeLabel(int oldRating, int newRating, String delta) {
@@ -539,4 +629,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String homeRatingLabel(String tier, int rating) {
     return '$tier · Rating $rating';
   }
+
+  @override
+  String get dailyButton => 'Daily Sudoku';
+
+  @override
+  String get dailyTitle => 'Daily Sudoku';
+
+  @override
+  String get dailyLoading => 'Preparing today\'s puzzle...';
+
+  @override
+  String get dailySignInPromptTitle => 'Sign in to play the Daily Sudoku';
+
+  @override
+  String get dailyResultTitle => 'Today\'s Result';
+
+  @override
+  String dailyMyRankLabel(int rank, int total) {
+    return 'Ranked #$rank of $total today';
+  }
+
+  @override
+  String get dailyLeaderboardTitle => 'Top 10';
+
+  @override
+  String get dailyEmptyLeaderboard => 'No one has finished yet.';
+
+  @override
+  String get dailyReplayAction => 'Play Again';
+
+  @override
+  String get dailyNotRankedNotice => 'Only your first clear is recorded.';
+
+  @override
+  String get dailySubmitFailed => 'Couldn\'t submit your result.';
+
+  @override
+  String get retryAction => 'Retry';
 }

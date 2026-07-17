@@ -101,26 +101,31 @@ void main() {
 
   test('Simple Coloring narrows candidates enough to unlock a subsequent '
       'Naked Single, on a real generated puzzle', () {
-    // A genuine puzzle produced by BoardGenerator + ClueRemover (22 givens)
-    // where singles/intersections/hidden-pair alone stall out and Simple
-    // Coloring is the technique that breaks the stall — confirmed by
-    // running this exact board: history[10] is simpleColoring and
-    // history[11] is an immediately-following nakedSingle, and the puzzle
-    // goes on to fully solve. Hand-crafting an equivalent board from
-    // scratch turned out to be impractical (a 2-3 cell conjugate pattern
-    // confined to one box/line is always also solvable by Intersection
-    // Pointing/Claiming, which is tried first — a real generated puzzle is
-    // what actually needs Simple Coloring).
+    // A genuine puzzle produced by BoardGenerator + ClueRemover +
+    // Minimalizer where Simple Coloring is the technique that breaks a stall
+    // even though every single-digit chain technique (Skyscraper, 2-String
+    // Kite, Turbot Fish) and Remote Pair are all tried before it — confirmed
+    // by running this exact board: history[45] is simpleColoring, history[46]
+    // is an immediately-following nakedSingle, and the puzzle goes on to
+    // fully solve. Hand-crafting an equivalent board from scratch turned out
+    // to be impractical (a 2-3 cell conjugate pattern confined to one
+    // box/line is always also solvable by an earlier technique — a real
+    // generated puzzle is what actually needs Simple Coloring).
+    //
+    // The previous board here was retired when Remote Pair was added ahead of
+    // Simple Coloring and preempted it — the deliberate "more specific
+    // deduction wins" effect, same as when the Turbot family landed. Replaced
+    // by re-mining rather than by reordering the engine to suit the test.
     final board = [
-      [0, 0, 1, 0, 0, 0, 0, 8, 0],
-      [6, 0, 0, 0, 0, 4, 0, 0, 2],
-      [0, 2, 0, 9, 0, 0, 7, 0, 0],
-      [0, 0, 0, 0, 1, 6, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 4, 0, 1],
-      [0, 0, 0, 0, 3, 2, 0, 6, 0],
-      [4, 0, 6, 3, 0, 0, 0, 0, 0],
-      [3, 1, 0, 0, 0, 0, 5, 7, 0],
-      [0, 8, 5, 0, 0, 0, 0, 0, 4],
+      [0, 1, 6, 3, 8, 0, 0, 0, 0],
+      [0, 0, 0, 6, 0, 0, 0, 0, 0],
+      [9, 0, 0, 0, 4, 0, 0, 0, 0],
+      [0, 5, 0, 8, 0, 0, 0, 0, 2],
+      [1, 0, 0, 0, 2, 0, 0, 0, 6],
+      [0, 0, 0, 0, 1, 6, 9, 0, 0],
+      [0, 0, 0, 0, 9, 0, 4, 0, 0],
+      [0, 8, 7, 2, 0, 0, 0, 0, 1],
+      [0, 0, 2, 1, 6, 0, 0, 0, 5],
     ];
 
     final result = HumanSolver().solve(board);
@@ -216,21 +221,22 @@ void main() {
 
   test('Sashimi X-Wing narrows candidates enough to unlock a subsequent '
       'Naked Single, on a real generated puzzle', () {
-    // A genuine puzzle (17 givens) where Sashimi X-Wing is the technique
-    // that breaks a stall — confirmed by running this exact board:
-    // history[45] is sashimiXWing and history[46] is an
+    // A genuine puzzle where Sashimi X-Wing is the technique that breaks a
+    // stall even with the single-digit chain techniques (Skyscraper,
+    // 2-String Kite, Turbot Fish) tried before it — confirmed by running
+    // this exact board: history[16] is sashimiXWing and history[17] is an
     // immediately-following nakedSingle, and the puzzle goes on to fully
     // solve.
     final board = [
-      [0, 0, 0, 1, 0, 5, 4, 0, 0],
-      [0, 0, 0, 0, 0, 4, 3, 5, 0],
-      [0, 6, 0, 0, 0, 0, 2, 0, 0],
-      [0, 2, 0, 4, 7, 0, 0, 3, 0],
-      [0, 0, 0, 0, 0, 0, 8, 0, 9],
       [0, 8, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 8, 2, 0, 0, 0, 7, 0],
-      [6, 3, 0, 5, 0, 0, 0, 0, 0],
-      [0, 4, 2, 0, 3, 7, 5, 0, 0],
+      [0, 0, 1, 0, 6, 8, 0, 0, 0],
+      [0, 0, 5, 0, 0, 1, 2, 0, 0],
+      [0, 0, 2, 0, 0, 0, 4, 3, 0],
+      [0, 7, 0, 0, 8, 2, 6, 0, 0],
+      [5, 0, 0, 0, 7, 3, 0, 0, 8],
+      [0, 0, 7, 0, 2, 0, 0, 0, 6],
+      [9, 0, 0, 0, 0, 0, 0, 1, 0],
+      [0, 0, 0, 0, 9, 7, 5, 0, 0],
     ];
 
     final result = HumanSolver().solve(board);

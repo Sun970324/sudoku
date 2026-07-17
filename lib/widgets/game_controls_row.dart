@@ -121,7 +121,15 @@ class _ControlButton extends StatelessWidget {
               CircleAvatar(
                 radius: 20,
                 backgroundColor: backgroundColor,
-                child: Icon(icon, color: iconColor, size: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: iconColor.withValues(alpha: enabled ? 0.35 : 0.12),
+                    ),
+                  ),
+                  child: Center(child: Icon(icon, color: iconColor, size: 20)),
+                ),
               ),
               // Marks that this action plays a rewarded ad before running.
               if (showAdBadge)

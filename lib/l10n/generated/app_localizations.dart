@@ -122,6 +122,12 @@ abstract class AppLocalizations {
   /// **'Apply'**
   String get applyAction;
 
+  /// No description provided for @hintRevealMoreAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get hintRevealMoreAction;
+
   /// No description provided for @continueAction.
   ///
   /// In en, this message translates to:
@@ -259,6 +265,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please clear the wrong answer first.'**
   String get clearWrongFirst;
+
+  /// No description provided for @hintNoTechniqueWithNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No technique can be applied with your current notes.'**
+  String get hintNoTechniqueWithNotes;
+
+  /// No description provided for @hintAutoGenerateCandidatesPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate candidate notes automatically and analyze again?'**
+  String get hintAutoGenerateCandidatesPrompt;
 
   /// No description provided for @adNotLoaded.
   ///
@@ -419,25 +437,25 @@ abstract class AppLocalizations {
   /// No description provided for @difficultyBeginner.
   ///
   /// In en, this message translates to:
-  /// **'Beginner'**
+  /// **'Bronze'**
   String get difficultyBeginner;
 
   /// No description provided for @difficultyEasy.
   ///
   /// In en, this message translates to:
-  /// **'Easy'**
+  /// **'Silver'**
   String get difficultyEasy;
 
   /// No description provided for @difficultyMedium.
   ///
   /// In en, this message translates to:
-  /// **'Medium'**
+  /// **'Gold'**
   String get difficultyMedium;
 
   /// No description provided for @difficultyHard.
   ///
   /// In en, this message translates to:
-  /// **'Hard'**
+  /// **'Diamond'**
   String get difficultyHard;
 
   /// No description provided for @difficultyMaster.
@@ -449,7 +467,7 @@ abstract class AppLocalizations {
   /// No description provided for @difficultyExpert.
   ///
   /// In en, this message translates to:
-  /// **'Expert'**
+  /// **'Challenger'**
   String get difficultyExpert;
 
   /// No description provided for @techniqueFullHouse.
@@ -518,11 +536,47 @@ abstract class AppLocalizations {
   /// **'Intersection (Claiming)'**
   String get techniqueIntersectionClaiming;
 
+  /// No description provided for @techniqueLockedPair.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked Pair'**
+  String get techniqueLockedPair;
+
+  /// No description provided for @techniqueLockedTriple.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked Triple'**
+  String get techniqueLockedTriple;
+
   /// No description provided for @techniqueXWing.
   ///
   /// In en, this message translates to:
   /// **'X-Wing'**
   String get techniqueXWing;
+
+  /// No description provided for @techniqueSkyscraper.
+  ///
+  /// In en, this message translates to:
+  /// **'Skyscraper'**
+  String get techniqueSkyscraper;
+
+  /// No description provided for @techniqueTwoStringKite.
+  ///
+  /// In en, this message translates to:
+  /// **'2-String Kite'**
+  String get techniqueTwoStringKite;
+
+  /// No description provided for @techniqueTurbotFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Turbot Fish'**
+  String get techniqueTurbotFish;
+
+  /// No description provided for @techniqueRemotePair.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Pair'**
+  String get techniqueRemotePair;
 
   /// No description provided for @techniqueSimpleColoring.
   ///
@@ -535,6 +589,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'XY-Wing'**
   String get techniqueXYWing;
+
+  /// No description provided for @techniqueXYZWing.
+  ///
+  /// In en, this message translates to:
+  /// **'XYZ-Wing'**
+  String get techniqueXYZWing;
+
+  /// No description provided for @techniqueWWing.
+  ///
+  /// In en, this message translates to:
+  /// **'W-Wing'**
+  String get techniqueWWing;
 
   /// No description provided for @techniqueSwordfish.
   ///
@@ -571,6 +637,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Jellyfish'**
   String get techniqueJellyfish;
+
+  /// No description provided for @techniqueFinnedSwordfish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finned Swordfish'**
+  String get techniqueFinnedSwordfish;
+
+  /// No description provided for @techniqueFinnedJellyfish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finned Jellyfish'**
+  String get techniqueFinnedJellyfish;
 
   /// No description provided for @techniqueUniqueRectangleType1.
   ///
@@ -690,12 +768,50 @@ abstract class AppLocalizations {
   String explanationFish(int digit, String linesDesc, String crossDesc,
       String crossUnitName, int size);
 
+  /// No description provided for @explanationSkyscraper.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms a Skyscraper: two strong links join so that at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.'**
+  String explanationSkyscraper(int digit, String cell1, String cell2);
+
+  /// No description provided for @explanationTwoStringKite.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms a 2-String Kite joined through a shared box, so at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.'**
+  String explanationTwoStringKite(int digit, String cell1, String cell2);
+
+  /// No description provided for @explanationTurbotFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms a Turbot Fish chain, so at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.'**
+  String explanationTurbotFish(int digit, String cell1, String cell2);
+
   /// No description provided for @explanationFinnedFish.
   ///
   /// In en, this message translates to:
   /// **'{mainLineDesc} forms a clean X-Wing shape with only two candidate cells for digit {digit}. {finLineDesc} also has extra candidates at {finsDesc} (fins), so it\'s not a pure X-Wing — but cells that see every fin can still have {digit} removed from their candidates.'**
   String explanationFinnedFish(
       String mainLineDesc, int digit, String finLineDesc, String finsDesc);
+
+  /// No description provided for @explanationFinnedFishN.
+  ///
+  /// In en, this message translates to:
+  /// **'{baseLinesDesc} confine digit {digit} to a {size}-line fish shape, except for extra candidates (fins) at {finsDesc}. If every fin is false this is a true fish; otherwise one of the fins is {digit}. Either way, cells that see every fin can have {digit} removed from their candidates.'**
+  String explanationFinnedFishN(
+      String baseLinesDesc, int digit, int size, String finsDesc);
+
+  /// No description provided for @explanationLockedSubset.
+  ///
+  /// In en, this message translates to:
+  /// **'{cellsDesc} lie where {lineDesc} crosses {boxDesc}, and together their only candidates are {digitsDesc} ({size} digits). Those cells take all {size} digits, so {digitsDesc} can be removed from the rest of {lineDesc} AND the rest of {boxDesc}.'**
+  String explanationLockedSubset(String lineDesc, String boxDesc,
+      String cellsDesc, String digitsDesc, int size);
+
+  /// No description provided for @explanationRemotePair.
+  ///
+  /// In en, this message translates to:
+  /// **'{chainDesc} all hold only {a} and {b}, and each sees the next, so their values alternate along the chain. The two ends sit an odd number of steps apart, so one is {a} and the other is {b} — meaning any cell seeing both ends can have BOTH {a} and {b} removed.'**
+  String explanationRemotePair(String chainDesc, int a, int b);
 
   /// No description provided for @explanationSimpleColoringRule1.
   ///
@@ -715,6 +831,20 @@ abstract class AppLocalizations {
   /// **'Pivot cell {pivotDesc} has candidates {x} and {y}. Wing cell {w1Desc} is either {sharedDigitW1} or {z}; wing cell {w2Desc} is either {otherPivotDigit} or {z}. If the pivot is {sharedDigitW1}, {w1Desc} becomes {z}; if it\'s {otherPivotDigit}, {w2Desc} becomes {z}. Either way, cells that see both wings can have {z} removed from their candidates.'**
   String explanationXYWing(String pivotDesc, int x, int y, String w1Desc,
       int sharedDigitW1, int z, String w2Desc, int otherPivotDigit);
+
+  /// No description provided for @explanationXYZWing.
+  ///
+  /// In en, this message translates to:
+  /// **'The pivot {pivotDesc} has three candidates ({pivotDigits}), and its wings {w1Desc} and {w2Desc} each hold {z} plus one of the others. Whichever digit the pivot takes, {z} ends up on the pivot or one of the wings — so any cell seeing all three can have {z} removed.'**
+  String explanationXYZWing(String pivotDesc, String pivotDigits, String w1Desc,
+      String w2Desc, int z);
+
+  /// No description provided for @explanationWWing.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} both hold only {a} and {b}, and {unitDesc} has just two places for {b} — one seeing each of them. If both were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}, and any cell seeing both can have {a} removed.'**
+  String explanationWWing(
+      String cell1, String cell2, int a, int b, String unitDesc);
 
   /// No description provided for @explanationXYChain.
   ///
@@ -808,6 +938,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Race win rate {percent}%'**
   String winRateLabel(int percent);
+
+  /// No description provided for @tierPromotionRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts to {nextTier}'**
+  String tierPromotionRemaining(int points, String nextTier);
+
+  /// No description provided for @tierTopReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Top tier reached'**
+  String get tierTopReached;
 
   /// No description provided for @linkAccountPrompt.
   ///
@@ -938,31 +1080,25 @@ abstract class AppLocalizations {
   /// No description provided for @tierBronze.
   ///
   /// In en, this message translates to:
-  /// **'Beginner'**
+  /// **'Bronze'**
   String get tierBronze;
 
   /// No description provided for @tierSilver.
   ///
   /// In en, this message translates to:
-  /// **'Easy'**
+  /// **'Silver'**
   String get tierSilver;
 
   /// No description provided for @tierGold.
   ///
   /// In en, this message translates to:
-  /// **'Medium'**
+  /// **'Gold'**
   String get tierGold;
-
-  /// No description provided for @tierPlatinum.
-  ///
-  /// In en, this message translates to:
-  /// **'Hard'**
-  String get tierPlatinum;
 
   /// No description provided for @tierDiamond.
   ///
   /// In en, this message translates to:
-  /// **'Master'**
+  /// **'Diamond'**
   String get tierDiamond;
 
   /// No description provided for @tierMaster.
@@ -974,7 +1110,7 @@ abstract class AppLocalizations {
   /// No description provided for @tierChallenger.
   ///
   /// In en, this message translates to:
-  /// **'Expert'**
+  /// **'Challenger'**
   String get tierChallenger;
 
   /// No description provided for @yourRatingChangeLabel.
@@ -995,6 +1131,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{tier} · Rating {rating}'**
   String homeRatingLabel(String tier, int rating);
+
+  /// No description provided for @dailyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Sudoku'**
+  String get dailyButton;
+
+  /// No description provided for @dailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Sudoku'**
+  String get dailyTitle;
+
+  /// No description provided for @dailyLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing today\'s puzzle...'**
+  String get dailyLoading;
+
+  /// No description provided for @dailySignInPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to play the Daily Sudoku'**
+  String get dailySignInPromptTitle;
+
+  /// No description provided for @dailyResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Result'**
+  String get dailyResultTitle;
+
+  /// No description provided for @dailyMyRankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked #{rank} of {total} today'**
+  String dailyMyRankLabel(int rank, int total);
+
+  /// No description provided for @dailyLeaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 10'**
+  String get dailyLeaderboardTitle;
+
+  /// No description provided for @dailyEmptyLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'No one has finished yet.'**
+  String get dailyEmptyLeaderboard;
+
+  /// No description provided for @dailyReplayAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Play Again'**
+  String get dailyReplayAction;
+
+  /// No description provided for @dailyNotRankedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Only your first clear is recorded.'**
+  String get dailyNotRankedNotice;
+
+  /// No description provided for @dailySubmitFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t submit your result.'**
+  String get dailySubmitFailed;
+
+  /// No description provided for @retryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryAction;
 }
 
 class _AppLocalizationsDelegate

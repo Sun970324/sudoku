@@ -1,6 +1,223 @@
 part of '../hint_engine.dart';
 
 extension HintEngineWings on HintEngine {
+  /// XYZ-Wing: like [findXYWing], but the pivot holds three candidates
+  /// {x, y, z} rather than two, with wings {x, z} and {y, z} that both see
+  /// it. Whichever of the three the pivot takes, z lands on the pivot or one
+  /// of the wings — so a cell seeing ALL THREE loses z.
+  ///
+  /// The "all three" is the whole difference from XY-Wing, where a bivalue
+  /// pivot can never be z itself and only the two wings need to be seen.
+  Hint? findXYZWing(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) {
+    final resolved = candidates ?? _freshCandidates(board);
+    return _findXYZWing(resolved, l10n);
+  }
+
+  Hint? _findXYZWing(List<List<Set<int>>> candidates, AppLocalizations? l10n) {
+    final resolvedL10n = _resolveL10n(l10n);
+    for (var pr = 0; pr < 9; pr++) {
+      for (var pc = 0; pc < 9; pc++) {
+        final pivot = candidates[pr][pc];
+        if (pivot.length != 3) continue;
+
+        final wings = _peers(pr, pc)
+            .where((rc) =>
+                candidates[rc[0]][rc[1]].length == 2 &&
+                candidates[rc[0]][rc[1]].every(pivot.contains))
+            .toList();
+
+        for (var i = 0; i < wings.length; i++) {
+          for (var j = i + 1; j < wings.length; j++) {
+            final w1 = wings[i];
+            final w2 = wings[j];
+            final c1 = candidates[w1[0]][w1[1]];
+            final c2 = candidates[w2[0]][w2[1]];
+            // {x,z} and {y,z} share exactly z and together span the pivot.
+            final shared = c1.intersection(c2);
+            if (shared.length != 1) continue;
+            if (c1.union(c2).length != 3) continue;
+            final z = shared.first;
+
+            final eliminations = <HintElimination>[];
+            for (var r = 0; r < 9; r++) {
+              for (var c = 0; c < 9; c++) {
+                if ((r == pr && c == pc) ||
+                    (r == w1[0] && c == w1[1]) ||
+                    (r == w2[0] && c == w2[1])) {
+                  continue;
+                }
+                if (!candidates[r][c].contains(z)) continue;
+                if (_seeEachOther([r, c], [pr, pc]) &&
+                    _seeEachOther([r, c], w1) &&
+                    _seeEachOther([r, c], w2)) {
+                  eliminations.add(HintElimination(r, c, z));
+                }
+              }
+            }
+            if (eliminations.isEmpty) continue;
+
+            return Hint(
+              technique: HintTechnique.xyzWing,
+              type: HintType.eliminate,
+              explanation: resolvedL10n.explanationXYZWing(
+                _cellDesc(pr, pc, resolvedL10n),
+                (pivot.toList()..sort()).join(', '),
+                _cellDesc(w1[0], w1[1], resolvedL10n),
+                _cellDesc(w2[0], w2[1], resolvedL10n),
+                z,
+              ),
+              primaryCells: {
+                HintCell(pr, pc),
+                HintCell(w1[0], w1[1]),
+                HintCell(w2[0], w2[1]),
+              },
+              secondaryCells:
+                  eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
+              primaryDigits: pivot,
+              eliminations: eliminations,
+            );
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  /// W-Wing: two non-peer cells that hold the same pair {a, b}, joined by a
+  /// strong link on b — a unit where b has exactly two places, one seeing
+  /// each cell. If both pair cells were b, the strong link's two ends would
+  /// both be forced off b, leaving that unit no place for it. So at least one
+  /// pair cell is a, and any cell seeing both loses a.
+  ///
+  /// Not reachable via [findXYChain] despite the family resemblance: the
+  /// strong link's own cells need not be bivalue, and that search only ever
+  /// steps through bivalue cells.
+  Hint? findWWing(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) {
+    final resolved = candidates ?? _freshCandidates(board);
+    return _findWWing(resolved, l10n);
+  }
+
+  Hint? _findWWing(List<List<Set<int>>> candidates, AppLocalizations? l10n) {
+    final resolvedL10n = _resolveL10n(l10n);
+    final bivalue = <List<int>>[
+      for (var r = 0; r < 9; r++)
+        for (var c = 0; c < 9; c++)
+          if (candidates[r][c].length == 2) [r, c],
+    ];
+
+    for (var i = 0; i < bivalue.length; i++) {
+      for (var j = i + 1; j < bivalue.length; j++) {
+        final p1 = bivalue[i];
+        final p2 = bivalue[j];
+        final pair = candidates[p1[0]][p1[1]];
+        // Both are bivalue, so containsAll is equality here.
+        if (!pair.containsAll(candidates[p2[0]][p2[1]])) continue;
+        // Two cells that see each other are a Naked Pair, not a W-Wing.
+        if (_seeEachOther(p1, p2)) continue;
+        final digits = pair.toList()..sort();
+
+        for (final b in digits) {
+          final a = digits.first == b ? digits[1] : digits.first;
+          for (final unit in _allUnits()) {
+            final places = unit.cells
+                .where((rc) => candidates[rc[0]][rc[1]].contains(b))
+                .toList();
+            if (places.length != 2) continue;
+            final e1 = places[0];
+            final e2 = places[1];
+            // The link must bridge the two pair cells without being one of
+            // them — one end seeing each, either way round.
+            final bridges = (_seeEachOther(e1, p1) && _seeEachOther(e2, p2)) ||
+                (_seeEachOther(e1, p2) && _seeEachOther(e2, p1));
+            if (!bridges) continue;
+            if (places.any((rc) =>
+                (rc[0] == p1[0] && rc[1] == p1[1]) ||
+                (rc[0] == p2[0] && rc[1] == p2[1]))) {
+              continue;
+            }
+
+            final eliminations = <HintElimination>[];
+            for (var r = 0; r < 9; r++) {
+              for (var c = 0; c < 9; c++) {
+                if ((r == p1[0] && c == p1[1]) ||
+                    (r == p2[0] && c == p2[1])) {
+                  continue;
+                }
+                if (!candidates[r][c].contains(a)) continue;
+                if (_seeEachOther([r, c], p1) && _seeEachOther([r, c], p2)) {
+                  eliminations.add(HintElimination(r, c, a));
+                }
+              }
+            }
+            if (eliminations.isEmpty) continue;
+
+            final (hRows, hCols, hBoxes) = _highlightFor(unit);
+            return Hint(
+              technique: HintTechnique.wWing,
+              type: HintType.eliminate,
+              explanation: resolvedL10n.explanationWWing(
+                _cellDesc(p1[0], p1[1], resolvedL10n),
+                _cellDesc(p2[0], p2[1], resolvedL10n),
+                a,
+                b,
+                _unitDescription(unit, resolvedL10n),
+              ),
+              primaryCells: {
+                HintCell(p1[0], p1[1]),
+                HintCell(p2[0], p2[1]),
+                HintCell(e1[0], e1[1]),
+                HintCell(e2[0], e2[1]),
+              },
+              secondaryCells:
+                  eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
+              highlightedRows: hRows,
+              highlightedCols: hCols,
+              highlightedBoxes: hBoxes,
+              primaryDigits: {a, b},
+              eliminations: eliminations,
+              chainLinks: [
+                HintChainLink(
+                  from: HintChainNode.single(HintCell(p1[0], p1[1]), a),
+                  to: HintChainNode.single(HintCell(p1[0], p1[1]), b),
+                  strong: true,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(HintCell(p1[0], p1[1]), b),
+                  to: HintChainNode.single(HintCell(e1[0], e1[1]), b),
+                  strong: false,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(HintCell(e1[0], e1[1]), b),
+                  to: HintChainNode.single(HintCell(e2[0], e2[1]), b),
+                  strong: true,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(HintCell(e2[0], e2[1]), b),
+                  to: HintChainNode.single(HintCell(p2[0], p2[1]), b),
+                  strong: false,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(HintCell(p2[0], p2[1]), b),
+                  to: HintChainNode.single(HintCell(p2[0], p2[1]), a),
+                  strong: true,
+                ),
+              ],
+            );
+          }
+        }
+      }
+    }
+    return null;
+  }
+
   Hint? findXYWing(
     List<List<int>> board, [
     List<List<Set<int>>>? candidates,
@@ -222,6 +439,38 @@ extension HintEngineWings on HintEngine {
       chainDigits.addAll(candidates[p[0]][p[1]]);
     }
 
+    // An XY-Chain alternates *within* and *between* cells, so each bivalue
+    // cell is two nodes, not one: the strong link is the cell's own pair
+    // ("not z here means a here"), and the weak link is the shared digit
+    // reaching the next cell. Walking it that way is what lets the overlay
+    // attach each link to the pencil mark it actually reasons about —
+    // `(C1,z) =strong= (C1,a) ~weak~ (C2,a) =strong= (C2,d2) ~weak~ ...`,
+    // ending on `(Cn,z)`, so the chain's two ends are both z.
+    HintCell cellAt(int i) => HintCell(path[i][0], path[i][1]);
+    final chainLinks = <HintChainLink>[];
+    var carry = candidates[start[0]][start[1]].firstWhere((d) => d != z);
+    chainLinks.add(HintChainLink(
+      from: HintChainNode.single(cellAt(0), z),
+      to: HintChainNode.single(cellAt(0), carry),
+      strong: true,
+    ));
+    for (var i = 0; i + 1 < path.length; i++) {
+      final next = path[i + 1];
+      chainLinks.add(HintChainLink(
+        from: HintChainNode.single(cellAt(i), carry),
+        to: HintChainNode.single(cellAt(i + 1), carry),
+        strong: false,
+      ));
+      final other =
+          candidates[next[0]][next[1]].firstWhere((d) => d != carry);
+      chainLinks.add(HintChainLink(
+        from: HintChainNode.single(cellAt(i + 1), carry),
+        to: HintChainNode.single(cellAt(i + 1), other),
+        strong: true,
+      ));
+      carry = other;
+    }
+
     return Hint(
       technique: HintTechnique.xyChain,
       type: HintType.eliminate,
@@ -232,6 +481,7 @@ extension HintEngineWings on HintEngine {
       colorGroupB: colorGroupB,
       primaryDigits: chainDigits,
       eliminations: eliminations,
+      chainLinks: chainLinks,
     );
   }
 }

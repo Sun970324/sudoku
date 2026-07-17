@@ -5,6 +5,7 @@ import '../../models/difficulty.dart';
 import '../../services/puzzle_queue_manager.dart';
 import '../../state/auth_controller.dart';
 import '../../state/race_controller.dart';
+import '../../widgets/sign_in_prompt.dart';
 import 'race_screen.dart';
 
 class MatchmakingScreen extends StatefulWidget {
@@ -97,7 +98,10 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
       appBar: AppBar(title: Text(l10n.matchmakingTitle)),
       body: Center(
         child: !widget.auth.isSignedIn
-            ? _SignInPrompt(auth: widget.auth)
+            ? SignInPrompt(
+                auth: widget.auth,
+                title: l10n.signInPromptTitle,
+              )
             : Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -131,41 +135,5 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
       case null:
         return l10n.matchmakingSearching;
     }
-  }
-}
-
-class _SignInPrompt extends StatelessWidget {
-  const _SignInPrompt({required this.auth});
-
-  final AuthController auth;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(l10n.signInPromptTitle, textAlign: TextAlign.center),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: auth.signInWithGoogle,
-            child: Text(l10n.signInWithGoogle),
-          ),
-          const SizedBox(height: 12),
-          FilledButton(
-            onPressed: auth.signInWithApple,
-            child: Text(l10n.signInWithApple),
-          ),
-          const SizedBox(height: 12),
-          OutlinedButton(
-            onPressed: auth.signInAnonymously,
-            child: Text(l10n.signInAsGuest),
-          ),
-        ],
-      ),
-    );
   }
 }

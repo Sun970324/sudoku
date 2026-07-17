@@ -8,6 +8,7 @@ part 'hint_engine/singles.dart';
 part 'hint_engine/subsets.dart';
 part 'hint_engine/intersections.dart';
 part 'hint_engine/fish.dart';
+part 'hint_engine/single_digit_chains.dart';
 part 'hint_engine/coloring.dart';
 part 'hint_engine/wings.dart';
 part 'hint_engine/unique_rectangles.dart';
@@ -114,7 +115,8 @@ String _boxDescription(int boxRow, int boxCol, AppLocalizations l10n) =>
 /// (see [_allUnits]), but its description can't be, since that would freeze
 /// whichever locale happened to be active on the very first call for the
 /// rest of the app's lifetime.
-String _unitDescription(_Unit unit, AppLocalizations l10n) => switch (unit.type) {
+String _unitDescription(_Unit unit, AppLocalizations l10n) =>
+    switch (unit.type) {
       _UnitType.row => _rowDesc(unit.index, l10n),
       _UnitType.col => _colDesc(unit.index, l10n),
       _UnitType.box => _boxDescription(unit.index ~/ 3, unit.index % 3, l10n),
@@ -196,6 +198,10 @@ class HintEngine {
         HintTechnique.nakedSingle => findNakedSingle(board, null, resolvedL10n),
         HintTechnique.hiddenSingle =>
           findHiddenSingle(board, null, resolvedL10n),
+        HintTechnique.lockedPair =>
+          findLockedPair(board, resolved, resolvedL10n),
+        HintTechnique.lockedTriple =>
+          findLockedTriple(board, resolved, resolvedL10n),
         HintTechnique.nakedPair => findNakedPair(board, resolved, resolvedL10n),
         HintTechnique.nakedTriple =>
           findNakedTriple(board, resolved, resolvedL10n),
@@ -211,20 +217,31 @@ class HintEngine {
         HintTechnique.intersectionClaiming =>
           findIntersectionClaiming(board, resolved, resolvedL10n),
         HintTechnique.xWing => findXWing(board, resolved, resolvedL10n),
+        HintTechnique.skyscraper =>
+          findSkyscraper(board, resolved, resolvedL10n),
+        HintTechnique.twoStringKite =>
+          findTwoStringKite(board, resolved, resolvedL10n),
+        HintTechnique.turbotFish =>
+          findTurbotFish(board, resolved, resolvedL10n),
+        HintTechnique.remotePair =>
+          findRemotePair(board, resolved, resolvedL10n),
         HintTechnique.simpleColoring =>
           findSimpleColoring(board, resolved, resolvedL10n),
         HintTechnique.xyWing => findXYWing(board, resolved, resolvedL10n),
-        HintTechnique.swordfish =>
-          findSwordfish(board, resolved, resolvedL10n),
+        HintTechnique.xyzWing => findXYZWing(board, resolved, resolvedL10n),
+        HintTechnique.wWing => findWWing(board, resolved, resolvedL10n),
+        HintTechnique.swordfish => findSwordfish(board, resolved, resolvedL10n),
         HintTechnique.finnedXWing =>
           findFinnedXWing(board, resolved, resolvedL10n),
         HintTechnique.sashimiXWing =>
           findSashimiXWing(board, resolved, resolvedL10n),
         HintTechnique.bugPlusOne =>
           findBugPlusOne(board, resolved, resolvedL10n),
-        HintTechnique.xyChain => findXYChain(board, resolved, resolvedL10n),
-        HintTechnique.jellyfish =>
-          findJellyfish(board, resolved, resolvedL10n),
+        HintTechnique.jellyfish => findJellyfish(board, resolved, resolvedL10n),
+        HintTechnique.finnedSwordfish =>
+          findFinnedSwordfish(board, resolved, resolvedL10n),
+        HintTechnique.finnedJellyfish =>
+          findFinnedJellyfish(board, resolved, resolvedL10n),
         HintTechnique.uniqueRectangleType1 =>
           findUniqueRectangleType1(board, resolved, resolvedL10n),
         HintTechnique.uniqueRectangleType2 =>
@@ -233,12 +250,12 @@ class HintEngine {
           findUniqueRectangleType3(board, resolved, resolvedL10n),
         HintTechnique.uniqueRectangleType4 =>
           findUniqueRectangleType4(board, resolved, resolvedL10n),
+        HintTechnique.xyChain => findXYChain(board, resolved, resolvedL10n),
       };
       if (hint != null) return hint;
     }
     return null;
   }
-
 
   /// Intersection removal (pointing): a digit confined to one line within a
   /// box lets it be eliminated from the rest of that line outside the box.

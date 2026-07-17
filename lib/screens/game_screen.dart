@@ -15,11 +15,13 @@ import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
 import '../state/game_controller.dart';
+import '../theme/board_colors.dart';
 import '../widgets/game_controls_row.dart';
 import '../widgets/number_pad_widget.dart';
 import '../widgets/puzzle_share_dialog.dart';
 import '../widgets/sudoku_grid_widget.dart';
 import '../widgets/sudoku_preview_board.dart';
+import 'daily/daily_result_screen.dart';
 import 'result_screen.dart';
 
 class GameScreen extends StatefulWidget {
@@ -27,14 +29,35 @@ class GameScreen extends StatefulWidget {
     super.key,
     required Difficulty this.difficulty,
     this.puzzle,
-  }) : resumeSnapshot = null;
+  })  : resumeSnapshot = null,
+        isDaily = false,
+        dailyAlreadyCompleted = false;
 
-  const GameScreen.resume({super.key, required GameSnapshot this.resumeSnapshot})
+  const GameScreen.resume(
+      {super.key, required GameSnapshot this.resumeSnapshot})
       : difficulty = null,
-        puzzle = null;
+        puzzle = null,
+        isDaily = false,
+        dailyAlreadyCompleted = false;
+
+  /// Today's shared ranked puzzle. Daily games never touch local solo
+  /// stats or the in-progress save slot, and on win route to
+  /// [DailyResultScreen] instead of [ResultScreen].
+  const GameScreen.daily({
+    super.key,
+    required SudokuPuzzle this.puzzle,
+    this.dailyAlreadyCompleted = false,
+  })  : difficulty = null,
+        resumeSnapshot = null,
+        isDaily = true;
 
   final Difficulty? difficulty;
   final GameSnapshot? resumeSnapshot;
+  final bool isDaily;
+
+  /// A daily replay run after today's record already exists — the win is
+  /// shown but never submitted (the server would ignore it anyway).
+  final bool dailyAlreadyCompleted;
 
   /// A pre-generated puzzle (e.g. from [PuzzleQueueManager]) to use instead
   /// of generating one synchronously. Null falls back to generating on the
@@ -72,7 +95,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     if (snapshot != null) {
       _controller.resumeFrom(snapshot);
     } else {
-      _controller.startNewGame(widget.difficulty!, puzzle: widget.puzzle);
+      // Daily mode has no difficulty param — the puzzle (required there)
+      // carries its own.
+      _controller.startNewGame(
+        widget.difficulty ?? widget.puzzle!.difficulty,
+        puzzle: widget.puzzle,
+      );
     }
     _startTimer();
     _controller.addListener(_onGameStateChanged);
@@ -115,6 +143,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _saveProgress() async {
+    // Daily games are never persisted/resumed: abandoning one simply means
+    // retrying from 0:00 later (matching the retry-until-first-completion
+    // policy), and a snapshot surviving past the KST midnight boundary
+    // would resurrect a stale board no longer tied to any ranking.
+    if (widget.isDaily) return;
     // dispose() calls this unconditionally as a just-in-case save, which
     // would otherwise race clearInProgressGame() in _giveUp() (status is
     // still `playing` at that point) and can re-persist the game the user
@@ -144,6 +177,30 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     final elapsedSeconds = _controller.elapsedSeconds;
     final mistakes = _controller.mistakes;
     final hintsUsed = _controller.hintsUsed;
+
+    if (widget.isDaily) {
+      // No local stats/in-progress bookkeeping for daily games. The submit
+      // RPC itself runs inside DailyResultScreen so its loading/retry UX
+      // lives in one place.
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DailyResultScreen(
+            puzzle: _controller.puzzle,
+            submission: widget.dailyAlreadyCompleted
+                ? null
+                : DailySubmission(
+                    board: _controller.boardSnapshot,
+                    elapsedSeconds: elapsedSeconds,
+                    mistakes: mistakes,
+                    hintsUsed: hintsUsed,
+                  ),
+          ),
+        ),
+      );
+      return;
+    }
 
     // Read the previous best before recordGameResult overwrites it, so the
     // result screen can tell "first clear" / "new best" / "same as before"
@@ -182,6 +239,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _giveUp() async {
+    // Abandoning a daily attempt has no local-stats consequence and there's
+    // no saved slot to clear — the user can simply retry from the entry
+    // point until their first completion.
+    if (widget.isDaily) return;
     _abandoningGame = true;
     await _storage.clearInProgressGame();
     await _storage.recordGameResult(
@@ -248,9 +309,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   String _formatTime(int seconds) {
-    final minutes = seconds ~/ 60;
+    final hours = seconds ~/ 3600;
+    final minutes = (seconds % 3600) ~/ 60;
     final secs = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+    final mm = minutes.toString().padLeft(2, '0');
+    final ss = secs.toString().padLeft(2, '0');
+    // Show hours only once past the hour mark so a normal game stays "MM:SS"
+    // but a long one ("1:23:45") no longer overflows its slot in the app bar.
+    return hours > 0 ? '$hours:$mm:$ss' : '$mm:$ss';
   }
 
   Widget _buildGrid() => ListenableBuilder(
@@ -318,17 +384,63 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // board) only runs once the reward is actually earned — never before
     // or during the ad — so backing out mid-ad leaves no hint highlighted
     // with no explanatory sheet to match it.
-    AdService.instance.showRewardedAd(
-      onUserEarnedReward: () {
-        final hint = _controller.requestHint(l10n: l10n);
-        if (hint != null) _showHintDialog(hint);
-      },
-      onAdUnavailable: () {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.adNotLoaded)),
-        );
-      },
+    final hint = _controller.requestHintFromNotes(l10n: l10n);
+    if (hint != null) {
+      _showHintDialog(hint);
+    } else {
+      _showAutoCandidatePrompt(l10n);
+    }
+    // AdService.instance.showRewardedAd(
+    //   onUserEarnedReward: () {
+    //     if (!mounted) return;
+    //     // Stage 1: analyze using only the board and the player's own notes.
+    //     final hint = _controller.requestHintFromNotes(l10n: l10n);
+    //     if (hint != null) {
+    //       _showHintDialog(hint);
+    //     } else {
+    //       _showAutoCandidatePrompt(l10n);
+    //     }
+    //   },
+    //   onAdUnavailable: () {
+    //     if (!mounted) return;
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(content: Text(l10n.adNotLoaded)),
+    //     );
+    //   },
+    // );
+  }
+
+  /// Shown when a stage-1 (notes-only) hint search comes up empty: offers to
+  /// auto-generate candidates and re-run the search (stage 2) — no second ad,
+  /// since the reward was already earned for this hint request.
+  void _showAutoCandidatePrompt(AppLocalizations l10n) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.hintNoTechniqueWithNotes),
+        content: Text(l10n.hintAutoGenerateCandidatesPrompt),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancelAction),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              final hint = _controller.requestHint(l10n: l10n);
+              if (!mounted) return;
+              if (hint != null) {
+                _showHintDialog(hint);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.noHintAvailable)),
+                );
+              }
+            },
+            child: Text(l10n.continueAction),
+          ),
+        ],
+      ),
     );
   }
 
@@ -341,41 +453,73 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     showModalBottomSheet<void>(
       context: context,
       barrierColor: Colors.transparent,
-      builder: (sheetContext) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                hint.technique.label(context),
-                style: Theme.of(sheetContext).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 12),
-              Text(hint.explanation),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setSheetState) {
+          final stage = _controller.hintStage;
+          final isFinal = stage >= 2;
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(sheetContext),
-                    child: Text(l10n.closeAction),
+                  Text(
+                    hint.technique.label(context),
+                    style: Theme.of(sheetContext).textTheme.titleLarge,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(sheetContext);
-                      _controller.applyHint();
-                      HapticService.medium();
-                      _saveProgress();
-                    },
-                    child: Text(l10n.applyAction),
+                  if (stage == 1 && hint.mainInfo != null) ...[
+                    const SizedBox(height: 12),
+                    Text(hint.mainInfo!),
+                  ],
+                  if (isFinal) ...[
+                    const SizedBox(height: 12),
+                    Text(hint.explanation),
+                    const SizedBox(height: 8),
+                    Text(
+                      hint.actionSummary,
+                      style: Theme.of(sheetContext).textTheme.bodyMedium,
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(sheetContext),
+                        child: Text(l10n.closeAction),
+                      ),
+                      if (isFinal)
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(sheetContext);
+                            _controller.applyHint();
+                            HapticService.medium();
+                            _saveProgress();
+                          },
+                          child: Text(l10n.applyAction),
+                        )
+                      else
+                        TextButton(
+                          // Skips the mainInfo stage for techniques that
+                          // don't supply one, so the button never reveals
+                          // nothing new.
+                          onPressed: () => setSheetState(() {
+                            _controller.advanceHintStage();
+                            if (_controller.hintStage == 1 &&
+                                hint.mainInfo == null) {
+                              _controller.advanceHintStage();
+                            }
+                          }),
+                          child: Text(l10n.hintRevealMoreAction),
+                        ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     ).then((_) {
       // Covers barrier-tap / drag-down dismissal, where neither action
@@ -478,17 +622,22 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               child: Row(
                 children: [
                   Text(
-                    _controller.difficulty.label(context),
+                    widget.isDaily
+                        ? AppLocalizations.of(context)!.dailyTitle
+                        : _controller.difficulty.label(context),
                     style: const TextStyle(fontSize: 20),
                   ),
                   const Spacer(),
                   ValueListenableBuilder<int>(
                     valueListenable: _controller.elapsedSecondsNotifier,
                     builder: (context, seconds, _) => SizedBox(
-                      width: 40,
+                      width: 64,
                       child: Text(
                         _formatTime(seconds),
                         textAlign: TextAlign.center,
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.visible,
                         style: const TextStyle(
                           fontSize: 13,
                           fontFeatures: [FontFeature.tabularFigures()],
@@ -517,105 +666,134 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             ),
           ),
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Expanded (instead of a fixed height fraction) so the grid
-              // claims all vertical space left over after the controls/number
-              // pads below — it grows as large as the screen allows, capped
-              // only by width via the AspectRatio inside SudokuGridWidget.
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-                  // Top-aligned (not centered) so leftover space collects
-                  // below the grid instead of splitting evenly — keeps the
-                  // grid sitting close to the app bar.
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    // The real, interactive grid is always present and
-                    // never itself Hero-tagged, so taps register from the
-                    // first frame. A separate, non-interactive clone (paired
-                    // with the same tag on SudokuPreviewBoard in HomeScreen)
-                    // is stacked on top purely for the entrance grow
-                    // animation, and is removed once that push transition
-                    // completes (see _onEntranceAnimationStatus).
-                    child: Stack(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: Theme.of(context).brightness == Brightness.dark
+                  ? const [Color(0xFF15102C), Color(0xFF0D0B1E)]
+                  : const [Color(0xFFF6F5FF), Color(0xFFECE9FF)],
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                // Expanded (instead of a fixed height fraction) so the grid
+                // claims all vertical space left over after the controls/number
+                // pads below — it grows as large as the screen allows, capped
+                // only by width via the AspectRatio inside SudokuGridWidget.
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
+                    // Top-aligned (not centered) so leftover space collects
+                    // below the grid instead of splitting evenly — keeps the
+                    // grid sitting close to the app bar.
+                    child: Align(
                       alignment: Alignment.topCenter,
-                      children: [
-                        _buildGrid(),
-                        if (_showEntranceHero)
-                          IgnorePointer(
-                            child: Hero(
-                              tag: 'sudoku-board',
-                              child: SudokuPreviewBoard(
-                                  puzzle: _controller.puzzle),
+                      // The real, interactive grid is always present and
+                      // never itself Hero-tagged, so taps register from the
+                      // first frame. A separate, non-interactive clone (paired
+                      // with the same tag on SudokuPreviewBoard in HomeScreen)
+                      // is stacked on top purely for the entrance grow
+                      // animation, and is removed once that push transition
+                      // completes (see _onEntranceAnimationStatus).
+                      child: Stack(
+                        alignment: Alignment.topCenter,
+                        children: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(11),
+                              border: Border.all(
+                                color: BoardColors.outerBorder(
+                                    BoardColors.isDark(context)),
+                                width: 3,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: BoardColors.outerBorder(
+                                          BoardColors.isDark(context))
+                                      .withValues(alpha: 0.28),
+                                  blurRadius: 18,
+                                  spreadRadius: 2,
+                                ),
+                              ],
                             ),
+                            child: _buildGrid(),
                           ),
-                      ],
+                          if (_showEntranceHero)
+                            IgnorePointer(
+                              child: Hero(
+                                tag: 'sudoku-board',
+                                child: SudokuPreviewBoard(
+                                    puzzle: _controller.puzzle),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 14),
-              ListenableBuilder(
-                listenable: _controller,
-                builder: (context, _) => GameControlsRow(
-                  canUndo: _controller.canUndo,
-                  onUndo: _onUndo,
-                  canErase: _controller.canErase,
-                  onErase: _onErase,
-                  isNoteMode: _controller.isNoteMode,
-                  onToggleNoteMode: _controller.toggleNoteMode,
-                  onHint: _onHintPressed,
-                  canAutoFillNotes: _controller.canAutoFillNotes,
-                  onAutoFillNotes: _onAutoFillNotesPressed,
+                ListenableBuilder(
+                  listenable: _controller,
+                  builder: (context, _) => GameControlsRow(
+                    canUndo: _controller.canUndo,
+                    onUndo: _onUndo,
+                    canErase: _controller.canErase,
+                    onErase: _onErase,
+                    isNoteMode: _controller.isNoteMode,
+                    onToggleNoteMode: _controller.toggleNoteMode,
+                    onHint: _onHintPressed,
+                    canAutoFillNotes: _controller.canAutoFillNotes,
+                    onAutoFillNotes: _onAutoFillNotesPressed,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              ListenableBuilder(
-                listenable: _controller,
-                builder: (context, _) => NumberPadWidget(
-                  controller: _controller,
-                  isNotePad: false,
-                  onNumberSelected: _onNumberSelected,
+                const SizedBox(height: 16),
+                ListenableBuilder(
+                  listenable: _controller,
+                  builder: (context, _) => NumberPadWidget(
+                    controller: _controller,
+                    isNotePad: false,
+                    onNumberSelected: _onNumberSelected,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              // The notes pad always reserves its layout space and only
-              // fades in/out — unlike a height-collapsing animation, this
-              // keeps the total height below the grid constant regardless of
-              // note mode, so the Expanded grid above never resizes/shifts.
-              ListenableBuilder(
-                listenable: _controller,
-                builder: (context, _) => AnimatedOpacity(
-                  opacity: _controller.isNoteMode ? 1 : 0,
-                  duration: const Duration(milliseconds: 250),
-                  child: IgnorePointer(
-                    ignoring: !_controller.isNoteMode,
-                    child: NumberPadWidget(
-                      controller: _controller,
-                      isNotePad: true,
-                      onNumberSelected: _onNoteNumberSelected,
+                const SizedBox(height: 8),
+                // The notes pad always reserves its layout space and only
+                // fades in/out — unlike a height-collapsing animation, this
+                // keeps the total height below the grid constant regardless of
+                // note mode, so the Expanded grid above never resizes/shifts.
+                ListenableBuilder(
+                  listenable: _controller,
+                  builder: (context, _) => AnimatedOpacity(
+                    opacity: _controller.isNoteMode ? 1 : 0,
+                    duration: const Duration(milliseconds: 250),
+                    child: IgnorePointer(
+                      ignoring: !_controller.isNoteMode,
+                      child: NumberPadWidget(
+                        controller: _controller,
+                        isNotePad: true,
+                        onNumberSelected: _onNoteNumberSelected,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              // Breathing room above the banner ad so number-pad taps near
-              // the bottom edge don't accidentally hit the ad instead.
-              const SizedBox(height: 16),
-            ],
+                // Breathing room above the banner ad so number-pad taps near
+                // the bottom edge don't accidentally hit the ad instead.
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
-        bottomNavigationBar: _bannerAd == null
-            ? null
-            : SafeArea(
-                top: false,
-                child: SizedBox(
-                  width: _bannerAd!.size.width.toDouble(),
-                  height: _bannerAd!.size.height.toDouble(),
-                  child: AdWidget(ad: _bannerAd!),
-                ),
-              ),
+        // bottomNavigationBar: _bannerAd == null
+        //     ? null
+        //     : SafeArea(
+        //         top: false,
+        //         child: SizedBox(
+        //           width: _bannerAd!.size.width.toDouble(),
+        //           height: _bannerAd!.size.height.toDouble(),
+        //           child: AdWidget(ad: _bannerAd!),
+        //         ),
+        //       ),
       ),
     );
   }

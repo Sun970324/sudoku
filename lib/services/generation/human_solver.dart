@@ -21,6 +21,8 @@ const humanSolverTechniqueOrder = [
   HintTechnique.hiddenSingle,
   HintTechnique.intersectionPointing,
   HintTechnique.intersectionClaiming,
+  HintTechnique.lockedPair,
+  HintTechnique.lockedTriple,
   HintTechnique.nakedPair,
   HintTechnique.hiddenPair,
   HintTechnique.nakedTriple,
@@ -28,8 +30,14 @@ const humanSolverTechniqueOrder = [
   HintTechnique.nakedQuad,
   HintTechnique.hiddenQuad,
   HintTechnique.xWing,
+  HintTechnique.skyscraper,
+  HintTechnique.twoStringKite,
+  HintTechnique.turbotFish,
+  HintTechnique.remotePair,
   HintTechnique.simpleColoring,
   HintTechnique.xyWing,
+  HintTechnique.xyzWing,
+  HintTechnique.wWing,
   HintTechnique.swordfish,
   HintTechnique.finnedXWing,
   HintTechnique.sashimiXWing,
@@ -135,6 +143,10 @@ class HumanSolver {
           _hintEngine.findIntersectionPointing(board, candidates),
         HintTechnique.intersectionClaiming =>
           _hintEngine.findIntersectionClaiming(board, candidates),
+        HintTechnique.lockedPair =>
+          _hintEngine.findLockedPair(board, candidates),
+        HintTechnique.lockedTriple =>
+          _hintEngine.findLockedTriple(board, candidates),
         HintTechnique.nakedPair =>
           _hintEngine.findNakedPair(board, candidates),
         HintTechnique.hiddenPair =>
@@ -148,9 +160,19 @@ class HumanSolver {
         HintTechnique.hiddenQuad =>
           _hintEngine.findHiddenQuad(board, candidates),
         HintTechnique.xWing => _hintEngine.findXWing(board, candidates),
+        HintTechnique.skyscraper =>
+          _hintEngine.findSkyscraper(board, candidates),
+        HintTechnique.twoStringKite =>
+          _hintEngine.findTwoStringKite(board, candidates),
+        HintTechnique.turbotFish =>
+          _hintEngine.findTurbotFish(board, candidates),
+        HintTechnique.remotePair =>
+          _hintEngine.findRemotePair(board, candidates),
         HintTechnique.simpleColoring =>
           _hintEngine.findSimpleColoring(board, candidates),
         HintTechnique.xyWing => _hintEngine.findXYWing(board, candidates),
+        HintTechnique.xyzWing => _hintEngine.findXYZWing(board, candidates),
+        HintTechnique.wWing => _hintEngine.findWWing(board, candidates),
         HintTechnique.swordfish =>
           _hintEngine.findSwordfish(board, candidates),
         HintTechnique.finnedXWing =>
@@ -162,6 +184,15 @@ class HumanSolver {
         HintTechnique.xyChain => _hintEngine.findXYChain(board, candidates),
         HintTechnique.jellyfish =>
           _hintEngine.findJellyfish(board, candidates),
+        // Hint-only: deliberately absent from [humanSolverTechniqueOrder], so
+        // these arms are unreachable today. Wired to the real search anyway
+        // rather than `null`, so that adding them to that list is all it
+        // would take — a `null` here would instead make them silently
+        // find nothing.
+        HintTechnique.finnedSwordfish =>
+          _hintEngine.findFinnedSwordfish(board, candidates),
+        HintTechnique.finnedJellyfish =>
+          _hintEngine.findFinnedJellyfish(board, candidates),
         HintTechnique.uniqueRectangleType1 =>
           _hintEngine.findUniqueRectangleType1(board, candidates),
         HintTechnique.uniqueRectangleType2 =>

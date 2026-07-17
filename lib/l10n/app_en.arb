@@ -5,6 +5,7 @@
   "homeButton": "Home",
   "closeAction": "Close",
   "applyAction": "Apply",
+  "hintRevealMoreAction": "Show more",
   "continueAction": "Continue",
   "cancelAction": "Cancel",
 
@@ -36,6 +37,8 @@
   "giveUpAction": "Give Up and Exit",
   "noHintAvailable": "No hint is available right now.",
   "clearWrongFirst": "Please clear the wrong answer first.",
+  "hintNoTechniqueWithNotes": "No technique can be applied with your current notes.",
+  "hintAutoGenerateCandidatesPrompt": "Generate candidate notes automatically and analyze again?",
   "adNotLoaded": "The ad hasn't loaded yet. Please try again in a moment.",
 
   "resultTitle": "Result",
@@ -103,12 +106,12 @@
   "autoFillLabel": "Auto Notes",
   "hintLabel": "Hint",
 
-  "difficultyBeginner": "Beginner",
-  "difficultyEasy": "Easy",
-  "difficultyMedium": "Medium",
-  "difficultyHard": "Hard",
+  "difficultyBeginner": "Bronze",
+  "difficultyEasy": "Silver",
+  "difficultyMedium": "Gold",
+  "difficultyHard": "Diamond",
   "difficultyMaster": "Master",
-  "difficultyExpert": "Expert",
+  "difficultyExpert": "Challenger",
 
   "techniqueFullHouse": "Full House",
   "techniqueNakedSingle": "Naked Single",
@@ -121,15 +124,25 @@
   "techniqueHiddenQuad": "Hidden Quad",
   "techniqueIntersectionPointing": "Intersection (Pointing)",
   "techniqueIntersectionClaiming": "Intersection (Claiming)",
+  "techniqueLockedPair": "Locked Pair",
+  "techniqueLockedTriple": "Locked Triple",
   "techniqueXWing": "X-Wing",
+  "techniqueSkyscraper": "Skyscraper",
+  "techniqueTwoStringKite": "2-String Kite",
+  "techniqueTurbotFish": "Turbot Fish",
+  "techniqueRemotePair": "Remote Pair",
   "techniqueSimpleColoring": "Simple Coloring",
   "techniqueXYWing": "XY-Wing",
+  "techniqueXYZWing": "XYZ-Wing",
+  "techniqueWWing": "W-Wing",
   "techniqueSwordfish": "Swordfish",
   "techniqueFinnedXWing": "Finned X-Wing",
   "techniqueSashimiXWing": "Sashimi X-Wing",
   "techniqueBugPlusOne": "BUG+1",
   "techniqueXYChain": "XY-Chain",
   "techniqueJellyfish": "Jellyfish",
+  "techniqueFinnedSwordfish": "Finned Swordfish",
+  "techniqueFinnedJellyfish": "Finned Jellyfish",
   "techniqueUniqueRectangleType1": "Unique Rectangle Type 1",
   "techniqueUniqueRectangleType2": "Unique Rectangle Type 2",
   "techniqueUniqueRectangleType3": "Unique Rectangle Type 3",
@@ -243,6 +256,30 @@
       "size": {"type": "int"}
     }
   },
+  "explanationSkyscraper": "Digit {digit} forms a Skyscraper: two strong links join so that at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.",
+  "@explanationSkyscraper": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "explanationTwoStringKite": "Digit {digit} forms a 2-String Kite joined through a shared box, so at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.",
+  "@explanationTwoStringKite": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "explanationTurbotFish": "Digit {digit} forms a Turbot Fish chain, so at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.",
+  "@explanationTurbotFish": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
   "explanationFinnedFish": "{mainLineDesc} forms a clean X-Wing shape with only two candidate cells for digit {digit}. {finLineDesc} also has extra candidates at {finsDesc} (fins), so it's not a pure X-Wing — but cells that see every fin can still have {digit} removed from their candidates.",
   "@explanationFinnedFish": {
     "placeholders": {
@@ -250,6 +287,33 @@
       "digit": {"type": "int"},
       "finLineDesc": {"type": "String"},
       "finsDesc": {"type": "String"}
+    }
+  },
+  "explanationFinnedFishN": "{baseLinesDesc} confine digit {digit} to a {size}-line fish shape, except for extra candidates (fins) at {finsDesc}. If every fin is false this is a true fish; otherwise one of the fins is {digit}. Either way, cells that see every fin can have {digit} removed from their candidates.",
+  "@explanationFinnedFishN": {
+    "placeholders": {
+      "baseLinesDesc": {"type": "String"},
+      "digit": {"type": "int"},
+      "size": {"type": "int"},
+      "finsDesc": {"type": "String"}
+    }
+  },
+  "explanationLockedSubset": "{cellsDesc} lie where {lineDesc} crosses {boxDesc}, and together their only candidates are {digitsDesc} ({size} digits). Those cells take all {size} digits, so {digitsDesc} can be removed from the rest of {lineDesc} AND the rest of {boxDesc}.",
+  "@explanationLockedSubset": {
+    "placeholders": {
+      "lineDesc": {"type": "String"},
+      "boxDesc": {"type": "String"},
+      "cellsDesc": {"type": "String"},
+      "digitsDesc": {"type": "String"},
+      "size": {"type": "int"}
+    }
+  },
+  "explanationRemotePair": "{chainDesc} all hold only {a} and {b}, and each sees the next, so their values alternate along the chain. The two ends sit an odd number of steps apart, so one is {a} and the other is {b} — meaning any cell seeing both ends can have BOTH {a} and {b} removed.",
+  "@explanationRemotePair": {
+    "placeholders": {
+      "chainDesc": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"}
     }
   },
   "explanationSimpleColoringRule1": "Chaining digit {digit}'s candidates, {cellA} and {cellB} — both in the same color group — share a row, column, or box. Since they can't both be {digit}, this whole group can't be {digit}. So {digit} can be removed from this group's cells.",
@@ -278,6 +342,26 @@
       "z": {"type": "int"},
       "w2Desc": {"type": "String"},
       "otherPivotDigit": {"type": "int"}
+    }
+  },
+  "explanationXYZWing": "The pivot {pivotDesc} has three candidates ({pivotDigits}), and its wings {w1Desc} and {w2Desc} each hold {z} plus one of the others. Whichever digit the pivot takes, {z} ends up on the pivot or one of the wings — so any cell seeing all three can have {z} removed.",
+  "@explanationXYZWing": {
+    "placeholders": {
+      "pivotDesc": {"type": "String"},
+      "pivotDigits": {"type": "String"},
+      "w1Desc": {"type": "String"},
+      "w2Desc": {"type": "String"},
+      "z": {"type": "int"}
+    }
+  },
+  "explanationWWing": "{cell1} and {cell2} both hold only {a} and {b}, and {unitDesc} has just two places for {b} — one seeing each of them. If both were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}, and any cell seeing both can have {a} removed.",
+  "@explanationWWing": {
+    "placeholders": {
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"},
+      "unitDesc": {"type": "String"}
     }
   },
   "explanationXYChain": "The cells chained in order {chainDesc} each have only two candidates, so if one end of the chain isn't {z}, the other end must be. So {z} can be removed from cells that see both ends of the chain.",
@@ -362,6 +446,14 @@
       "percent": {"type": "int"}
     }
   },
+  "tierPromotionRemaining": "{points} pts to {nextTier}",
+  "@tierPromotionRemaining": {
+    "placeholders": {
+      "points": {"type": "int"},
+      "nextTier": {"type": "String"}
+    }
+  },
+  "tierTopReached": "Top tier reached",
   "linkAccountPrompt": "You're signed in as a guest. Link an account to keep your progress.",
   "linkGoogleAction": "Link Google Account",
   "linkAppleAction": "Link Apple Account",
@@ -385,13 +477,12 @@
   "raceResultTitle": "Race Result",
   "raceWon": "You Won!",
   "raceLost": "You Lost",
-  "tierBronze": "Beginner",
-  "tierSilver": "Easy",
-  "tierGold": "Medium",
-  "tierPlatinum": "Hard",
-  "tierDiamond": "Master",
+  "tierBronze": "Bronze",
+  "tierSilver": "Silver",
+  "tierGold": "Gold",
+  "tierDiamond": "Diamond",
   "tierMaster": "Master",
-  "tierChallenger": "Expert",
+  "tierChallenger": "Challenger",
 
   "yourRatingChangeLabel": "You: {oldRating} → {newRating} ({delta})",
   "@yourRatingChangeLabel": {
@@ -416,5 +507,24 @@
       "tier": {"type": "String"},
       "rating": {"type": "int"}
     }
-  }
+  },
+
+  "dailyButton": "Daily Sudoku",
+  "dailyTitle": "Daily Sudoku",
+  "dailyLoading": "Preparing today's puzzle...",
+  "dailySignInPromptTitle": "Sign in to play the Daily Sudoku",
+  "dailyResultTitle": "Today's Result",
+  "dailyMyRankLabel": "Ranked #{rank} of {total} today",
+  "@dailyMyRankLabel": {
+    "placeholders": {
+      "rank": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "dailyLeaderboardTitle": "Top 10",
+  "dailyEmptyLeaderboard": "No one has finished yet.",
+  "dailyReplayAction": "Play Again",
+  "dailyNotRankedNotice": "Only your first clear is recorded.",
+  "dailySubmitFailed": "Couldn't submit your result.",
+  "retryAction": "Retry"
 }

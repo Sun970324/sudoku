@@ -21,6 +21,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get applyAction => '적용하기';
 
   @override
+  String get hintRevealMoreAction => '더 보기';
+
+  @override
   String get continueAction => '계속하기';
 
   @override
@@ -90,6 +93,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get clearWrongFirst => '오답을 먼저 지워주세요.';
+
+  @override
+  String get hintNoTechniqueWithNotes => '현재 메모만으로는 적용할 수 있는 기술이 없습니다.';
+
+  @override
+  String get hintAutoGenerateCandidatesPrompt => '후보수를 자동으로 생성해서 다시 분석할까요?';
 
   @override
   String get adNotLoaded => '광고를 아직 불러오지 못했어요. 잠시 후 다시 시도해주세요.';
@@ -184,22 +193,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get hintLabel => '힌트';
 
   @override
-  String get difficultyBeginner => '초보자';
+  String get difficultyBeginner => '브론즈';
 
   @override
-  String get difficultyEasy => '쉬움';
+  String get difficultyEasy => '실버';
 
   @override
-  String get difficultyMedium => '보통';
+  String get difficultyMedium => '골드';
 
   @override
-  String get difficultyHard => '어려움';
+  String get difficultyHard => '다이아몬드';
 
   @override
   String get difficultyMaster => '마스터';
 
   @override
-  String get difficultyExpert => '익스퍼트';
+  String get difficultyExpert => '챌린저';
 
   @override
   String get techniqueFullHouse => '풀 하우스';
@@ -235,13 +244,37 @@ class AppLocalizationsKo extends AppLocalizations {
   String get techniqueIntersectionClaiming => '교차로(클레이밍)';
 
   @override
+  String get techniqueLockedPair => '락드 페어';
+
+  @override
+  String get techniqueLockedTriple => '락드 트리플';
+
+  @override
   String get techniqueXWing => 'X-윙';
+
+  @override
+  String get techniqueSkyscraper => '스카이스크래퍼';
+
+  @override
+  String get techniqueTwoStringKite => '2-스트링 카이트';
+
+  @override
+  String get techniqueTurbotFish => '터봇 피시';
+
+  @override
+  String get techniqueRemotePair => '리모트 페어';
 
   @override
   String get techniqueSimpleColoring => '심플 컬러링';
 
   @override
   String get techniqueXYWing => 'XY-윙';
+
+  @override
+  String get techniqueXYZWing => 'XYZ-윙';
+
+  @override
+  String get techniqueWWing => 'W-윙';
 
   @override
   String get techniqueSwordfish => '스워드피쉬';
@@ -260,6 +293,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get techniqueJellyfish => '젤리피쉬';
+
+  @override
+  String get techniqueFinnedSwordfish => '핀드 스워드피쉬';
+
+  @override
+  String get techniqueFinnedJellyfish => '핀드 젤리피쉬';
 
   @override
   String get techniqueUniqueRectangleType1 => '유일사각형 Type 1';
@@ -349,9 +388,41 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String explanationSkyscraper(int digit, String cell1, String cell2) {
+    return '숫자 $digit번이 스카이스크래퍼를 이뤄요. 두 강한 연결이 이어져 $cell1과 $cell2 중 적어도 한 칸은 $digit번이어야 해요. 그래서 두 칸을 모두 보는 칸에서는 $digit번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationTwoStringKite(int digit, String cell1, String cell2) {
+    return '숫자 $digit번이 한 박스를 통해 2-스트링 카이트를 이뤄서, $cell1과 $cell2 중 적어도 한 칸은 $digit번이어야 해요. 그래서 두 칸을 모두 보는 칸에서는 $digit번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationTurbotFish(int digit, String cell1, String cell2) {
+    return '숫자 $digit번이 터봇 피시 사슬을 이뤄서, $cell1과 $cell2 중 적어도 한 칸은 $digit번이어야 해요. 그래서 두 칸을 모두 보는 칸에서는 $digit번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
   String explanationFinnedFish(
       String mainLineDesc, int digit, String finLineDesc, String finsDesc) {
     return '$mainLineDesc은 숫자 $digit의 후보가 두 곳뿐인 정석 X-윙 모양이에요. $finLineDesc에는 그 외에 $finsDesc(핀)에도 후보가 있어서 온전한 X-윙은 아니지만, 핀을 모두 보는 칸에서는 $digit번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationFinnedFishN(
+      String baseLinesDesc, int digit, int size, String finsDesc) {
+    return '$baseLinesDesc에서 숫자 $digit번이 $size줄 피시 모양을 이루는데, $finsDesc(핀)에 후보가 더 있어요. 핀이 모두 거짓이면 온전한 피시가 되고, 아니면 핀 중 하나가 $digit번이에요. 어느 쪽이든 핀을 모두 보는 칸에서는 $digit번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationLockedSubset(String lineDesc, String boxDesc,
+      String cellsDesc, String digitsDesc, int size) {
+    return '$cellsDesc은 $lineDesc과 $boxDesc이 겹치는 자리에 있고, 이 칸들의 후보를 모두 합치면 $digitsDesc($size개)뿐이에요. 이 칸들이 $size개 숫자를 모두 가져가므로, $lineDesc의 나머지 칸과 $boxDesc의 나머지 칸 양쪽에서 $digitsDesc번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationRemotePair(String chainDesc, int a, int b) {
+    return '$chainDesc은 모두 후보가 $a, $b 두 개뿐이고 서로 이어져 있어서 값이 번갈아 정해져요. 사슬의 양 끝은 홀수 칸 떨어져 있으므로 한쪽이 $a면 다른 쪽은 반드시 $b입니다. 그래서 양 끝을 모두 보는 칸에서는 $a번과 $b번을 모두 후보에서 지울 수 있습니다.';
   }
 
   @override
@@ -371,8 +442,20 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String explanationXYZWing(String pivotDesc, String pivotDigits, String w1Desc,
+      String w2Desc, int z) {
+    return '피벗 칸 $pivotDesc의 후보는 $pivotDigits 세 개이고, 날개 칸 $w1Desc와 $w2Desc는 각각 $z번과 나머지 하나를 갖고 있어요. 피벗이 어느 숫자가 되든 $z번은 피벗이나 날개 중 한 곳에 들어가므로, 세 칸을 모두 보는 칸에서는 $z번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationWWing(
+      String cell1, String cell2, int a, int b, String unitDesc) {
+    return '$cell1과 $cell2는 후보가 똑같이 $a, $b 두 개뿐이고, $unitDesc에는 $b번이 들어갈 자리가 두 곳뿐인데 그 두 곳이 각각 두 칸을 하나씩 보고 있어요. 만약 두 칸이 모두 $b번이면 $unitDesc에 $b번이 들어갈 자리가 없어집니다. 따라서 둘 중 적어도 하나는 $a번이고, 두 칸을 모두 보는 칸에서는 $a번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
   String explanationXYChain(String chainDesc, int z) {
-    return '$chainDesc 순서로 이어지는 칸들은 후보가 둘씩뿐이라, 사슬 한쪽 끝이 $z가 아니면 반대쪽 끝이 $z가 될 수밖에 없어요. 그래서 사슬 양쪽 끝을 모두 보는 칸에서는 $z를 후보에서 지울 수 있습니다.';
+    return '$chainDesc 순서로 이어지는 칸들은 후보가 둘씩뿐이라, 사슬 한쪽 끝이 $z번이 아니면 반대쪽 끝이 $z번이 될 수밖에 없어요. 그래서 사슬 양쪽 끝을 모두 보는 칸에서는 $z번을 후보에서 지울 수 있습니다.';
   }
 
   @override
@@ -439,6 +522,14 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String tierPromotionRemaining(int points, String nextTier) {
+    return '$nextTier 승급까지 $points점';
+  }
+
+  @override
+  String get tierTopReached => '최고 티어예요';
+
+  @override
   String get linkAccountPrompt => '게스트 계정으로 로그인 중입니다. 계정을 연동하면 기록이 유지됩니다.';
 
   @override
@@ -502,25 +593,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get raceLost => '패배';
 
   @override
-  String get tierBronze => '초보자';
+  String get tierBronze => '브론즈';
 
   @override
-  String get tierSilver => '쉬움';
+  String get tierSilver => '실버';
 
   @override
-  String get tierGold => '보통';
+  String get tierGold => '골드';
 
   @override
-  String get tierPlatinum => '어려움';
-
-  @override
-  String get tierDiamond => '마스터';
+  String get tierDiamond => '다이아몬드';
 
   @override
   String get tierMaster => '마스터';
 
   @override
-  String get tierChallenger => '익스퍼트';
+  String get tierChallenger => '챌린저';
 
   @override
   String yourRatingChangeLabel(int oldRating, int newRating, String delta) {
@@ -537,4 +625,42 @@ class AppLocalizationsKo extends AppLocalizations {
   String homeRatingLabel(String tier, int rating) {
     return '$tier · 레이팅 $rating';
   }
+
+  @override
+  String get dailyButton => '오늘의 스도쿠';
+
+  @override
+  String get dailyTitle => '오늘의 스도쿠';
+
+  @override
+  String get dailyLoading => '오늘의 퍼즐 준비 중...';
+
+  @override
+  String get dailySignInPromptTitle => '로그인하고 오늘의 스도쿠에 도전해보세요';
+
+  @override
+  String get dailyResultTitle => '오늘의 결과';
+
+  @override
+  String dailyMyRankLabel(int rank, int total) {
+    return '오늘 $rank등 / $total명';
+  }
+
+  @override
+  String get dailyLeaderboardTitle => 'TOP 10';
+
+  @override
+  String get dailyEmptyLeaderboard => '아직 완료한 사람이 없어요.';
+
+  @override
+  String get dailyReplayAction => '다시 풀기';
+
+  @override
+  String get dailyNotRankedNotice => '기록은 첫 완료 기준이에요.';
+
+  @override
+  String get dailySubmitFailed => '기록 전송에 실패했어요.';
+
+  @override
+  String get retryAction => '다시 시도';
 }

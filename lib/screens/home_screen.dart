@@ -13,6 +13,7 @@ import '../services/sound_service.dart';
 import '../state/auth_controller.dart';
 import '../state/settings_controller.dart';
 import '../widgets/sudoku_preview_board.dart';
+import 'daily/daily_entry_screen.dart';
 import 'game_screen.dart';
 import 'my_page_screen.dart';
 import 'puzzle_share/enter_code_screen.dart';
@@ -283,6 +284,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 child:
                     Text(l10n.raceButton, style: const TextStyle(fontSize: 18)),
+              ),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton(
+              onPressed: () => _openGame(DailyEntryScreen(
+                  auth: widget.auth, puzzleQueue: widget.puzzleQueue)),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                child: Text(l10n.dailyButton,
+                    style: const TextStyle(fontSize: 18)),
               ),
             ),
             const SizedBox(height: 12),

@@ -52,6 +52,82 @@ class _FixedHintEngine extends HintEngine {
       hint;
 }
 
+/// Always returns a reveal-type hint (Naked Single) — used to check the
+/// arrow overlay is gated to eliminate-type hints only.
+class _FixedRevealHintEngine extends HintEngine {
+  static final hint = Hint(
+    technique: HintTechnique.nakedSingle,
+    type: HintType.reveal,
+    explanation: 'test reveal',
+    primaryCells: {const HintCell(0, 0)},
+    row: 0,
+    col: 0,
+    value: 5,
+  );
+
+  @override
+  Hint? findHint(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) =>
+      hint;
+}
+
+/// Always returns a chain-type hint (Skyscraper) carrying chainLinks — the
+/// only hints the arrow overlay draws for.
+class _FixedChainHintEngine extends HintEngine {
+  static final hint = Hint(
+    technique: HintTechnique.skyscraper,
+    type: HintType.eliminate,
+    explanation: 'chain',
+    primaryCells: {
+      const HintCell(0, 0),
+      const HintCell(0, 3),
+      const HintCell(8, 0),
+      const HintCell(8, 5),
+    },
+    primaryDigits: {4},
+    eliminations: [const HintElimination(1, 5, 4)],
+    chainLinks: [
+      HintChainLink(
+        from: HintChainNode.single(const HintCell(0, 3), 4),
+        to: HintChainNode.single(const HintCell(0, 0), 4),
+        strong: true,
+      ),
+      HintChainLink(
+        from: HintChainNode.single(const HintCell(0, 0), 4),
+        to: HintChainNode.single(const HintCell(8, 0), 4),
+        strong: false,
+      ),
+      HintChainLink(
+        from: HintChainNode.single(const HintCell(8, 0), 4),
+        to: HintChainNode.single(const HintCell(8, 5), 4),
+        strong: true,
+      ),
+    ],
+  );
+
+  @override
+  Hint? findHint(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) =>
+      hint;
+}
+
+/// Requests a hint and drives the progressive reveal to its final stage —
+/// the board deliberately draws nothing until then (see
+/// [GameController.visualizedHint]), so every test that asserts on the
+/// overlay layers has to get there first.
+void _requestVisualizedHint(GameController controller) {
+  controller.requestHint();
+  while (controller.hintStage < 2) {
+    controller.advanceHintStage();
+  }
+}
+
 void main() {
   testWidgets(
       'a hint with highlighted units renders a unit-highlight CustomPaint '
@@ -61,7 +137,7 @@ void main() {
       hintEngine: _FixedHintEngine(),
     );
     controller.startNewGame(Difficulty.beginner);
-    controller.requestHint();
+    _requestVisualizedHint(controller);
     expect(controller.activeHint?.highlightedRows, {0, 3});
 
     await tester.pumpWidget(
@@ -96,6 +172,73 @@ void main() {
         .widgetList<CustomPaint>(find.byType(CustomPaint))
         .where((w) => w.painter.runtimeType.toString().contains('Unit'));
     expect(unitHighlightPaints, isEmpty);
+  });
+
+  testWidgets('a chain hint renders a hint-arrow CustomPaint layer',
+      (tester) async {
+    final controller = GameController(
+      generator: _InstantGenerator(),
+      hintEngine: _FixedChainHintEngine(),
+    );
+    controller.startNewGame(Difficulty.beginner);
+    _requestVisualizedHint(controller);
+    expect(controller.activeHint?.chainLinks, isNotEmpty);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: SudokuGridWidget(controller: controller)),
+      ),
+    );
+
+    final arrowPaints = tester
+        .widgetList<CustomPaint>(find.byType(CustomPaint))
+        .where((w) => w.painter.runtimeType.toString().contains('Arrow'));
+    expect(arrowPaints, isNotEmpty);
+  });
+
+  testWidgets(
+      'a non-chain eliminate hint (X-Wing) renders no hint-arrow layer',
+      (tester) async {
+    final controller = GameController(
+      generator: _InstantGenerator(),
+      hintEngine: _FixedHintEngine(),
+    );
+    controller.startNewGame(Difficulty.beginner);
+    _requestVisualizedHint(controller);
+    expect(controller.activeHint?.type, HintType.eliminate);
+    expect(controller.activeHint?.chainLinks, isEmpty);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: SudokuGridWidget(controller: controller)),
+      ),
+    );
+
+    final arrowPaints = tester
+        .widgetList<CustomPaint>(find.byType(CustomPaint))
+        .where((w) => w.painter.runtimeType.toString().contains('Arrow'));
+    expect(arrowPaints, isEmpty);
+  });
+
+  testWidgets('a reveal hint renders no hint-arrow layer', (tester) async {
+    final controller = GameController(
+      generator: _InstantGenerator(),
+      hintEngine: _FixedRevealHintEngine(),
+    );
+    controller.startNewGame(Difficulty.beginner);
+    _requestVisualizedHint(controller);
+    expect(controller.activeHint?.type, HintType.reveal);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: SudokuGridWidget(controller: controller)),
+      ),
+    );
+
+    final arrowPaints = tester
+        .widgetList<CustomPaint>(find.byType(CustomPaint))
+        .where((w) => w.painter.runtimeType.toString().contains('Arrow'));
+    expect(arrowPaints, isEmpty);
   });
 
   testWidgets(

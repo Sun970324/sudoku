@@ -7,7 +7,12 @@
       "Read(//Users/sun/.pub-cache/hosted/pub.dev/sign_in_with_apple-8.1.0/lib/src/**)",
       "Bash(grep -rn \"signInAnonymously\\\\|signInWithIdToken\\\\|linkIdentity\" /Users/sun/.pub-cache/hosted/pub.dev/gotrue-2.26.0/lib/src/gotrue_client.dart 2>&1 | head -30)",
       "Read(//Users/sun/.pub-cache/hosted/pub.dev/gotrue-2.26.0/lib/src/**)",
-      "Read(//Users/sun/.claude/plans/**)"
+      "Read(//Users/sun/.claude/plans/**)",
+      "Bash(flutter gen-l10n *)",
+      "Bash(grep -v \"new version\\\\|flutter upgrade\\\\|l10n.yaml\\\\|command line\\\\|^│\\\\|^└\\\\|^┌\\\\|^ *$\")",
+      "Bash(flutter analyze *)",
+      "Bash(grep -iv \"new version\\\\|flutter upgrade\\\\|l10n.yaml\\\\|command line\\\\|^│\\\\|^└\\\\|^┌\\\\|^ *$\")",
+      "Bash(flutter test *)"
     ]
   }
 }

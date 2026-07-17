@@ -1,6 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/models/hint.dart';
 import 'package:sudoku/models/sudoku_grid.dart';
+import 'package:sudoku/services/generation/board_generator.dart';
+import 'package:sudoku/services/generation/clue_remover.dart';
+import 'package:sudoku/services/generation/minimalizer.dart';
 import 'package:sudoku/services/hint_engine.dart';
 import 'package:sudoku/services/sudoku_solver.dart';
 
@@ -13,6 +18,55 @@ List<List<int>> _solvedGrid() =>
 bool _hasElimination(Hint hint, int row, int col, int digit) => hint
     .eliminations
     .any((e) => e.row == row && e.col == col && e.digit == digit);
+
+bool _cellsSee(HintCell a, HintCell b) =>
+    (a.row != b.row || a.col != b.col) &&
+    (a.row == b.row ||
+        a.col == b.col ||
+        (a.row ~/ 3 == b.row ~/ 3 && a.col ~/ 3 == b.col ~/ 3));
+
+/// Asserts a chain technique's [chainLinks] is the shape the hint-arrow
+/// overlay relies on: the links are contiguous and alternate strong/weak,
+/// their nodes cover exactly [primaryCells], each link either joins peers or
+/// stays within one cell (an XY-Chain's own bivalue link does the latter),
+/// and both ends claim the same digit and are seen by [elimination] — which
+/// is what makes the "sees both ends" conclusion sound.
+void _expectWellFormedChain(
+  List<HintChainLink> chainLinks,
+  Set<HintCell> primaryCells,
+  HintCell elimination,
+) {
+  expect(chainLinks, isNotEmpty);
+
+  for (var i = 0; i + 1 < chainLinks.length; i++) {
+    expect(chainLinks[i].to, chainLinks[i + 1].from,
+        reason: 'link $i must end where link ${i + 1} begins');
+    expect(chainLinks[i].strong, isNot(chainLinks[i + 1].strong),
+        reason: 'links $i and ${i + 1} must alternate strong/weak');
+  }
+
+  for (final link in chainLinks) {
+    for (final a in link.from.cells) {
+      for (final b in link.to.cells) {
+        expect(a == b || _cellsSee(a, b), isTrue,
+            reason: 'a link joins peers or stays within a single cell');
+      }
+    }
+  }
+
+  expect({
+    for (final link in chainLinks) ...[...link.from.cells, ...link.to.cells],
+  }, primaryCells);
+
+  final start = chainLinks.first.from;
+  final end = chainLinks.last.to;
+  expect(start.digit, end.digit,
+      reason: 'both ends must claim the same digit — the one eliminated '
+          'wherever both are seen');
+  for (final cell in [...start.cells, ...end.cells]) {
+    expect(_cellsSee(cell, elimination), isTrue);
+  }
+}
 
 /// Builds a candidates grid directly from a sparse cell -> digit-set map,
 /// leaving every other cell's candidate set empty — lets a fixture target
@@ -619,6 +673,135 @@ void main() {
     });
   });
 
+  group('findSkyscraper', () {
+    test('eliminates the digit from a cell seeing both free ends of two '
+        'row strong links sharing one column', () {
+      // Rows 0 and 8 each have 4 exactly twice; they share column 0, so
+      // (0,0)~(8,0) is the connecting weak link. The free ends (0,3) and
+      // (8,5) mean at least one must be 4, so (1,5) — which sees (0,3) via
+      // box 1 and (8,5) via column 5 — loses 4.
+      final candidates = candidatesFrom({
+        [0, 0]: {4},
+        [0, 3]: {4},
+        [8, 0]: {4},
+        [8, 5]: {4},
+        [1, 5]: {4, 7},
+      });
+
+      final hint = engine.findSkyscraper(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.skyscraper);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryCells, {
+        const HintCell(0, 0),
+        const HintCell(0, 3),
+        const HintCell(8, 0),
+        const HintCell(8, 5),
+      });
+      expect(_hasElimination(hint, 1, 5, 4), isTrue);
+      expect(hint.eliminations, hasLength(1));
+      expect(hint.primaryDigits, {4});
+      _expectWellFormedChain(
+          hint.chainLinks, hint.primaryCells, const HintCell(1, 5));
+    });
+
+    test('returns null for an X-Wing where both strong links share both '
+        'columns (the free ends align)', () {
+      // Both rows have 4 in exactly columns 0 and 3, so the free ends are in
+      // the same column — this is an X-Wing, not a Skyscraper, and must not
+      // be reported as one (it would wrongly eliminate 4 at (4,0)).
+      final candidates = candidatesFrom({
+        [0, 0]: {4},
+        [0, 3]: {4},
+        [8, 0]: {4},
+        [8, 3]: {4},
+        [4, 0]: {4, 7},
+      });
+      expect(engine.findSkyscraper(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findSkyscraper(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findTwoStringKite', () {
+    test('eliminates the digit from the cell seeing both free ends of a row '
+        'and column strong link joined in a box', () {
+      // Row 0 has 4 at (0,0) and (0,5); column 1 has 4 at (2,1) and (7,1).
+      // The near ends (0,0) and (2,1) share box 0 (the weak link). The free
+      // ends (0,5) and (7,1) force at least one to be 4, so (7,5) — seeing
+      // (0,5) via column 5 and (7,1) via row 7 — loses 4.
+      final candidates = candidatesFrom({
+        [0, 0]: {4},
+        [0, 5]: {4},
+        [2, 1]: {4},
+        [7, 1]: {4},
+        [7, 5]: {4, 7},
+      });
+
+      final hint = engine.findTwoStringKite(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.twoStringKite);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryCells, {
+        const HintCell(0, 0),
+        const HintCell(0, 5),
+        const HintCell(2, 1),
+        const HintCell(7, 1),
+      });
+      expect(_hasElimination(hint, 7, 5, 4), isTrue);
+      expect(hint.eliminations, hasLength(1));
+      expect(hint.primaryDigits, {4});
+      _expectWellFormedChain(
+          hint.chainLinks, hint.primaryCells, const HintCell(7, 5));
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findTwoStringKite(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findTurbotFish', () {
+    test('eliminates the digit using one box strong link and one line '
+        'strong link joined by a weak link', () {
+      // Box 0 has 4 at (0,2) and (1,0); row 5 has 4 at (5,2) and (5,7). The
+      // near ends (0,2) and (5,2) share column 2 (the weak link). The free
+      // ends (1,0) and (5,7) force at least one to be 4, so (1,7) — seeing
+      // (1,0) via row 1 and (5,7) via column 7 — loses 4.
+      final candidates = candidatesFrom({
+        [1, 0]: {4},
+        [0, 2]: {4},
+        [5, 2]: {4},
+        [5, 7]: {4},
+        [1, 7]: {4, 7},
+      });
+
+      final hint = engine.findTurbotFish(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.turbotFish);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryCells, {
+        const HintCell(0, 2),
+        const HintCell(1, 0),
+        const HintCell(5, 2),
+        const HintCell(5, 7),
+      });
+      expect(_hasElimination(hint, 1, 7, 4), isTrue);
+      expect(hint.eliminations, hasLength(1));
+      expect(hint.primaryDigits, {4});
+      _expectWellFormedChain(
+          hint.chainLinks, hint.primaryCells, const HintCell(1, 7));
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findTurbotFish(_emptyBoard()), isNull);
+    });
+  });
+
   group('findSimpleColoring', () {
     // These fixtures build the candidates grid by hand rather than from a
     // real board (same trick as the "candidates parameter" group above) —
@@ -711,6 +894,7 @@ void main() {
       expect(_hasElimination(hint, 4, 4, 3), isTrue);
       expect(hint.eliminations, hasLength(1));
       expect(hint.primaryDigits, {1, 2});
+      expect(hint.chainLinks, isEmpty);
     });
 
     test('returns null when the pattern matches structurally but no cell '
@@ -846,6 +1030,418 @@ void main() {
     });
   });
 
+  group('findLockedPair', () {
+    test('sweeps both the line and the box, which is the whole point — a '
+        'plain Naked Pair only ever clears one of them', () {
+      // (0,0) and (0,1) are both {4,7}: same row 0, same box 0. So 4 and 7
+      // must take those two cells, clearing out of the rest of row 0 AND the
+      // rest of box 0.
+      final candidates = candidatesFrom({
+        [0, 0]: {4, 7},
+        [0, 1]: {4, 7},
+        [0, 5]: {4, 9}, // rest of the line
+        [1, 1]: {7, 8}, // rest of the box
+        [2, 2]: {4, 5}, // rest of the box
+      });
+
+      final hint = engine.findLockedPair(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.lockedPair);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryCells, {const HintCell(0, 0), const HintCell(0, 1)});
+      expect(hint.primaryDigits, {4, 7});
+      // Down the line...
+      expect(_hasElimination(hint, 0, 5, 4), isTrue);
+      // ...and inside the box, in the same step.
+      expect(_hasElimination(hint, 1, 1, 7), isTrue);
+      expect(_hasElimination(hint, 2, 2, 4), isTrue);
+      expect(hint.eliminations, hasLength(3));
+      expect(hint.highlightedRows, {0});
+      expect(hint.highlightedBoxes, {0});
+    });
+
+    test('returns null for a pair that shares a line but not a box, since '
+        'there is nothing locked about it', () {
+      final candidates = candidatesFrom({
+        [0, 0]: {4, 7},
+        [0, 5]: {4, 7},
+        [0, 8]: {4, 9},
+      });
+
+      expect(engine.findLockedPair(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null when the pair is alone in its intersection with '
+        'nothing to eliminate', () {
+      final candidates = candidatesFrom({
+        [0, 0]: {4, 7},
+        [0, 1]: {4, 7},
+      });
+
+      expect(engine.findLockedPair(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findLockedPair(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findLockedTriple', () {
+    test('sweeps both the line and the box for all three digits', () {
+      // {1,2}/{2,3}/{1,3} across the row-0 x box-0 intersection spans exactly
+      // {1,2,3} — the cells need not have identical candidate sets.
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2},
+        [0, 1]: {2, 3},
+        [0, 2]: {1, 3},
+        [0, 7]: {1, 9}, // rest of the line
+        [2, 1]: {3, 8}, // rest of the box
+      });
+
+      final hint = engine.findLockedTriple(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.lockedTriple);
+      expect(hint.primaryDigits, {1, 2, 3});
+      expect(_hasElimination(hint, 0, 7, 1), isTrue);
+      expect(_hasElimination(hint, 2, 1, 3), isTrue);
+      expect(hint.eliminations, hasLength(2));
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findLockedTriple(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findRemotePair', () {
+    test('removes BOTH digits from a cell seeing the two ends of an '
+        'odd-length chain', () {
+      // Four {1,2} cells chained (0,0)-(0,4)-(5,4)-(5,7): each sees the next,
+      // three links, so the ends hold opposite values. (0,7) sees (0,0) by
+      // row and (5,7) by column, so it loses both 1 and 2.
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2},
+        [0, 4]: {1, 2},
+        [5, 4]: {1, 2},
+        [5, 7]: {1, 2},
+        [0, 7]: {1, 2, 9},
+      });
+
+      final hint = engine.findRemotePair(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.remotePair);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryDigits, {1, 2});
+      // Both digits, not just one — that's what separates this from a
+      // one-digit chain elimination.
+      expect(_hasElimination(hint, 0, 7, 1), isTrue);
+      expect(_hasElimination(hint, 0, 7, 2), isTrue);
+      expect(hint.colorGroupA, isNotEmpty);
+      expect(hint.colorGroupB, isNotEmpty);
+    });
+
+    test('returns null for cells whose pairs differ, since the alternation '
+        'argument needs one shared pair throughout', () {
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2},
+        [0, 4]: {1, 3},
+        [5, 4]: {1, 2},
+        [5, 7]: {1, 2},
+        [0, 7]: {1, 2, 9},
+      });
+
+      expect(engine.findRemotePair(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findRemotePair(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findXYZWing', () {
+    test('eliminates z only from cells that see the pivot as well as both '
+        'wings, since a 3-candidate pivot can itself be z', () {
+      // Pivot (0,0)={1,2,3}; wings (0,1)={1,3} and (1,0)={2,3}. z = 3.
+      // (1,1) sees all three (shared box 0), so it loses 3.
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2, 3},
+        [0, 1]: {1, 3},
+        [1, 0]: {2, 3},
+        [1, 1]: {3, 8},
+      });
+
+      final hint = engine.findXYZWing(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.xyzWing);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryCells, {
+        const HintCell(0, 0),
+        const HintCell(0, 1),
+        const HintCell(1, 0),
+      });
+      expect(hint.primaryDigits, {1, 2, 3});
+      expect(_hasElimination(hint, 1, 1, 3), isTrue);
+      expect(hint.eliminations, hasLength(1));
+    });
+
+    test('returns null when the pattern is present but nothing sees all '
+        'three cells', () {
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2, 3},
+        [0, 1]: {1, 3},
+        [1, 0]: {2, 3},
+      });
+
+      expect(engine.findXYZWing(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null for a bivalue pivot, which is an XY-Wing rather than '
+        'an XYZ-Wing', () {
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2},
+        [0, 1]: {1, 3},
+        [1, 0]: {2, 3},
+        [1, 1]: {3, 8},
+      });
+
+      expect(engine.findXYZWing(_emptyBoard(), candidates), isNull);
+      // ...and the XY-Wing search does claim it.
+      expect(engine.findXYWing(_emptyBoard(), candidates), isNotNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findXYZWing(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findWWing', () {
+    test('eliminates a from cells seeing both pair cells, via a strong link '
+        'on b', () {
+      // (0,0) and (4,4) both {1,2}, not peers. Column 8 has exactly two
+      // places for 2: (0,8) sees (0,0) by row, (4,8) sees (4,4) by row.
+      // So at least one of the pair is 1 -> any cell seeing both loses 1.
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2},
+        [4, 4]: {1, 2},
+        [0, 8]: {2, 7},
+        [4, 8]: {2, 7},
+        [4, 0]: {1, 9}, // sees (0,0) by column, (4,4) by row
+      });
+
+      final hint = engine.findWWing(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.wWing);
+      expect(hint.type, HintType.eliminate);
+      expect(_hasElimination(hint, 4, 0, 1), isTrue);
+      expect(hint.primaryCells, contains(const HintCell(0, 0)));
+      expect(hint.primaryCells, contains(const HintCell(4, 4)));
+      // The strong link's own cells belong to the pattern too.
+      expect(hint.primaryCells, contains(const HintCell(0, 8)));
+      expect(hint.primaryCells, contains(const HintCell(4, 8)));
+    });
+
+    test('returns null when the two pair cells see each other, which is a '
+        'Naked Pair rather than a W-Wing', () {
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2},
+        [0, 4]: {1, 2},
+        [0, 8]: {2, 7},
+        [4, 8]: {2, 7},
+        [4, 0]: {1, 9},
+      });
+
+      expect(engine.findWWing(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null without a strong link to join the pair', () {
+      // Column 8 now has three places for 2, so it is not a strong link.
+      final candidates = candidatesFrom({
+        [0, 0]: {1, 2},
+        [4, 4]: {1, 2},
+        [0, 8]: {2, 7},
+        [4, 8]: {2, 7},
+        [7, 8]: {2, 7},
+        [4, 0]: {1, 9},
+      });
+
+      expect(engine.findWWing(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findWWing(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findFinnedSwordfish', () {
+    /// Rows 0/3/6 would be a Swordfish for digit 6 on cover columns {1,4,7},
+    /// except row 6 also has a candidate at column 2 — the fin. Either the
+    /// fin is false (making this a true Swordfish, which empties column 1
+    /// outside the base rows) or (6,2) is 6 — and (7,1) sees (6,2) via their
+    /// shared box, so it loses 6 under both branches.
+    List<List<Set<int>>> finnedFixture() => candidatesFrom({
+          [0, 1]: {6},
+          [0, 4]: {6},
+          [3, 4]: {6},
+          [3, 7]: {6},
+          [6, 1]: {6},
+          [6, 7]: {6},
+          [6, 2]: {6}, // the fin
+          [7, 1]: {6}, // the target: sees the fin, sits in a cover column
+        });
+
+    test('eliminates from a cover-column cell that sees the fin', () {
+      final hint = engine.findFinnedSwordfish(_emptyBoard(), finnedFixture());
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.finnedSwordfish);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.highlightedRows, {0, 3, 6});
+      expect(hint.highlightedCols, {1, 4, 7});
+      expect(_hasElimination(hint, 7, 1, 6), isTrue);
+      expect(hint.eliminations, hasLength(1));
+      // The fin belongs to the pattern, so it's highlighted with the rest.
+      expect(hint.primaryCells, contains(const HintCell(6, 2)));
+    });
+
+    test('the fixture is genuinely finned — a plain Swordfish does not see '
+        'it, so the elimination is not just a Swordfish in disguise', () {
+      expect(engine.findSwordfish(_emptyBoard(), finnedFixture()), isNull);
+    });
+
+    test('returns null for a clean Swordfish, which has no fin to reason '
+        'about', () {
+      final candidates = candidatesFrom({
+        [0, 1]: {6},
+        [0, 4]: {6},
+        [3, 4]: {6},
+        [3, 7]: {6},
+        [6, 1]: {6},
+        [6, 7]: {6},
+        [7, 1]: {6},
+      });
+
+      expect(engine.findFinnedSwordfish(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null when no cell sees every fin', () {
+      // Same shape, but the target (7,5) shares neither box, row, nor column
+      // with the fin at (6,2) — so the "fin is true" branch leaves it alone.
+      final candidates = candidatesFrom({
+        [0, 1]: {6},
+        [0, 4]: {6},
+        [3, 4]: {6},
+        [3, 7]: {6},
+        [6, 1]: {6},
+        [6, 7]: {6},
+        [6, 2]: {6},
+        [7, 4]: {6},
+      });
+
+      expect(engine.findFinnedSwordfish(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findFinnedSwordfish(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findFinnedJellyfish', () {
+    test('eliminates from a cover-column cell that sees the fin', () {
+      // Rows 0/2/4/6 on cover columns {1,4,7,8} for digit 6, with a fin at
+      // (6,6); (7,7) sees it through their shared box.
+      final candidates = candidatesFrom({
+        [0, 1]: {6},
+        [0, 4]: {6},
+        [2, 4]: {6},
+        [2, 7]: {6},
+        [4, 1]: {6},
+        [4, 8]: {6},
+        [6, 7]: {6},
+        [6, 8]: {6},
+        [6, 6]: {6}, // the fin
+        [7, 7]: {6}, // the target
+      });
+
+      final hint = engine.findFinnedJellyfish(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.finnedJellyfish);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.highlightedRows, {0, 2, 4, 6});
+      expect(hint.highlightedCols, {1, 4, 7, 8});
+      expect(_hasElimination(hint, 7, 7, 6), isTrue);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findFinnedJellyfish(_emptyBoard()), isNull);
+    });
+  });
+
+  // Hand-built fixtures can only show that a technique fires where it should.
+  // They cannot show it stays silent everywhere it shouldn't — and an
+  // over-permissive elimination rule doesn't throw, it quietly removes digits
+  // that are the actual answer, corrupting both hints and (for the techniques
+  // in humanSolverTechniqueOrder) generated puzzles. So assert the property
+  // directly against real dug boards whose solutions are known.
+  //
+  // Worth the seconds it costs: the rules exercised here are the subtle ones.
+  // Finned fish uses "the target must see every fin" rather than the commonly
+  // published "all fins share one box" shortcut; XYZ-Wing must require the
+  // target to see the pivot too; Remote Pair drops BOTH digits at once.
+  // Seeded, so it's deterministic.
+  group('elimination soundness', () {
+    test('no technique ever eliminates a digit that is the cell\'s actual '
+        'solution, across many real generated boards', () {
+      final rng = Random(3);
+      final engine = HintEngine();
+      final found = <HintTechnique, int>{};
+
+      for (var i = 0; i < 150; i++) {
+        final solution = BoardGenerator(random: rng).generateSolvedBoard();
+        final puzzle = Minimalizer(random: rng)
+            .minimalize(ClueRemover(random: rng).removeClues(solution, 24));
+
+        for (final hint in [
+          engine.findFinnedSwordfish(puzzle),
+          engine.findFinnedJellyfish(puzzle),
+          engine.findLockedPair(puzzle),
+          engine.findLockedTriple(puzzle),
+          engine.findXYZWing(puzzle),
+          engine.findWWing(puzzle),
+          engine.findRemotePair(puzzle),
+        ]) {
+          if (hint == null) continue;
+          found[hint.technique] = (found[hint.technique] ?? 0) + 1;
+          for (final e in hint.eliminations) {
+            expect(solution[e.row][e.col], isNot(e.digit),
+                reason: '${hint.technique} eliminated ${e.digit} from '
+                    'r${e.row + 1}c${e.col + 1}, but that is its solution');
+          }
+        }
+      }
+
+      // Guards the guard: a technique that silently stopped firing would make
+      // every assertion above pass vacuously, so require each to be exercised.
+      for (final technique in [
+        HintTechnique.finnedSwordfish,
+        HintTechnique.finnedJellyfish,
+        HintTechnique.lockedPair,
+        HintTechnique.lockedTriple,
+        HintTechnique.xyzWing,
+        HintTechnique.wWing,
+        HintTechnique.remotePair,
+      ]) {
+        expect(found[technique] ?? 0, greaterThan(0),
+            reason: '$technique never fired across 150 real boards — either '
+                'it is dead code or this probe stopped reaching it');
+      }
+    });
+  });
+
   group('findFinnedXWing', () {
     test('eliminates the digit from a cell that sees every fin and sits '
         'in a cover column outside the base rows', () {
@@ -969,6 +1565,8 @@ void main() {
       expect(_hasElimination(hint, 4, 0, 9), isTrue);
       expect(hint.eliminations, hasLength(1));
       expect(hint.primaryDigits, {1, 2, 3, 9});
+      _expectWellFormedChain(
+          hint.chainLinks, hint.primaryCells, const HintCell(4, 0));
     });
 
     test('returns null for a 3-cell chain (that shape is exactly an '
@@ -1314,6 +1912,8 @@ void main() {
         HintTechnique.nakedSingle,
         HintTechnique.intersectionPointing,
         HintTechnique.intersectionClaiming,
+        HintTechnique.lockedPair,
+        HintTechnique.lockedTriple,
         HintTechnique.xWing,
         HintTechnique.nakedPair,
         HintTechnique.nakedTriple,
@@ -1321,14 +1921,22 @@ void main() {
         HintTechnique.hiddenTriple,
         HintTechnique.nakedQuad,
         HintTechnique.hiddenQuad,
+        HintTechnique.skyscraper,
+        HintTechnique.twoStringKite,
+        HintTechnique.turbotFish,
+        HintTechnique.remotePair,
         HintTechnique.simpleColoring,
         HintTechnique.xyWing,
+        HintTechnique.xyzWing,
+        HintTechnique.wWing,
         HintTechnique.swordfish,
         HintTechnique.finnedXWing,
         HintTechnique.sashimiXWing,
         HintTechnique.bugPlusOne,
         HintTechnique.xyChain,
         HintTechnique.jellyfish,
+        HintTechnique.finnedSwordfish,
+        HintTechnique.finnedJellyfish,
         HintTechnique.uniqueRectangleType1,
         HintTechnique.uniqueRectangleType2,
         HintTechnique.uniqueRectangleType3,

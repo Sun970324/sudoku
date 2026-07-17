@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../models/hint.dart';
@@ -7,6 +9,50 @@ import '../state/game_controller.dart';
 import '../theme/board_colors.dart';
 import 'sudoku_cell_widget.dart';
 import 'sudoku_grid_lines.dart';
+
+/// Control point for the quadratic bow given to a chain's weak links, so
+/// they read as distinct from the straight strong links and two links
+/// between the same pair of candidates don't overdraw each other.
+///
+/// Bows perpendicular to [from]->[to] by 12% of the link's length, capped at
+/// half a cell. Two details carry their weight:
+///
+/// * The normal is flipped to a canonical direction (downward, or rightward
+///   when it is horizontal) rather than following each link's own winding,
+///   so a link and its reverse bow the *same* way instead of crossing.
+/// * A control point that would land outside [gridSize] bows inward
+///   instead, keeping chains that hug an edge on the board.
+///
+/// Kept top-level and pure — a curve is impractical to assert on through a
+/// rendered widget, but this is trivially testable in isolation.
+@visibleForTesting
+Offset curveControlPoint(
+  Offset from,
+  Offset to,
+  double cellW,
+  Size gridSize,
+) {
+  final mid = (from + to) / 2;
+  final delta = to - from;
+  final len = delta.distance;
+  if (len == 0) return mid;
+
+  var nx = -delta.dy / len;
+  var ny = delta.dx / len;
+  if (ny < 0 || (ny == 0 && nx < 0)) {
+    nx = -nx;
+    ny = -ny;
+  }
+
+  final offset = math.min(len * 0.12, cellW * 0.5);
+  final margin = cellW * 0.15;
+  final cp = mid + Offset(nx, ny) * offset;
+  final outside = cp.dx < margin ||
+      cp.dx > gridSize.width - margin ||
+      cp.dy < margin ||
+      cp.dy > gridSize.height - margin;
+  return outside ? mid - Offset(nx, ny) * offset : cp;
+}
 
 class SudokuGridWidget extends StatefulWidget {
   const SudokuGridWidget({super.key, required this.controller});
@@ -33,7 +79,7 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = BoardColors.isDark(context);
-    final hint = controller.activeHint;
+    final hint = controller.visualizedHint;
     final hasUnitHighlight = hint != null &&
         (hint.highlightedRows.isNotEmpty ||
             hint.highlightedCols.isNotEmpty ||
@@ -82,7 +128,6 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
                   child: IgnorePointer(
                     child: CustomPaint(
                       painter: SudokuGridLinesPainter(
-                        outerColor: BoardColors.outerBorder(isDark),
                         innerColor: BoardColors.innerBorder(isDark),
                       ),
                     ),
@@ -97,6 +142,17 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
                           cols: hint.highlightedCols,
                           boxes: hint.highlightedBoxes,
                           color: BoardColors.unitHighlightBorder(isDark),
+                        ),
+                      ),
+                    ),
+                  ),
+                if (hint != null && hint.chainLinks.isNotEmpty)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: CustomPaint(
+                        painter: _HintArrowPainter(
+                          hint: hint,
+                          color: BoardColors.hintArrow(isDark),
                         ),
                       ),
                     ),
@@ -132,7 +188,7 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
   }
 
   Widget _buildCell(BuildContext context, int row, int col) {
-    final hint = controller.activeHint;
+    final hint = controller.visualizedHint;
     final cell = HintCell(row, col);
 
     // While a hint is showing, selection-driven highlighting (selected
@@ -298,4 +354,153 @@ class _UnitHighlightPainter extends CustomPainter {
       old.cols != cols ||
       old.boxes != boxes ||
       old.color != color;
+}
+
+/// Draws the chain overlay for a chain-based eliminate hint — XY-Chain and
+/// the single-digit chains (Skyscraper / 2-String Kite / Turbot Fish), i.e.
+/// the ones that carry a [Hint.chainPath]. Fish/subset/pointing/wing/UR hints
+/// draw no overlay. The chain is a polyline through each node's candidate
+/// position (a single-digit chain routes to that digit's note slot; a
+/// multi-digit XY-Chain routes to cell centers), with **strong links solid
+/// and weak links dashed** ([Hint.chainStrongLinks]), a ring at each node,
+/// and a faint dashed connector from each chain end to the candidate(s) it
+/// helps eliminate. Same square [Size] as the other overlays, so
+/// `cellW = size.width / 9`, `cellH = size.height / 9` map identically.
+class _HintArrowPainter extends CustomPainter {
+  const _HintArrowPainter({required this.hint, required this.color});
+
+  final Hint hint;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final links = hint.chainLinks;
+    if (links.isEmpty) return;
+    final cellW = size.width / 9;
+    final cellH = size.height / 9;
+    // Kept under a sixth of a cell so a ring stays within its own candidate
+    // slot (slots are a third of a cell) instead of bleeding into its
+    // neighbours' — chains now anchor per-candidate, not per-cell.
+    final radius = cellW * 0.15;
+
+    // Every link end names its own digit, so a node always resolves to a
+    // specific pencil mark. A grouped node (several cells acting as one
+    // end) anchors at the centroid of its candidates.
+    Offset node(HintChainNode n) {
+      var sum = Offset.zero;
+      for (final c in n.cells) {
+        sum += _candidateCenter(c.row, c.col, n.digit, cellW, cellH);
+      }
+      return sum / n.cells.length.toDouble();
+    }
+
+    final linkPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..strokeCap = StrokeCap.round
+      ..color = color;
+
+    for (final link in links) {
+      final from = node(link.from);
+      final to = node(link.to);
+      final dir = to - from;
+      final len = dir.distance;
+      if (len < 1) continue;
+      // Stop the segment at the node rings so it doesn't cross the digits —
+      // but never trim away the whole link. Two nodes in the SAME cell (an
+      // XY-Chain's own bivalue link) sit only a third of a cell apart, which
+      // is less than two ring radii, so trimming by the full radius would
+      // silently drop exactly the links that explain the chain.
+      final u = dir / len;
+      final trim = math.min(radius, len * 0.3);
+      final a = from + u * trim;
+      final b = to - u * trim;
+      if (link.strong) {
+        canvas.drawLine(a, b, linkPaint);
+      } else {
+        final cp = curveControlPoint(a, b, cellW, size);
+        _drawDashedPath(
+          canvas,
+          Path()
+            ..moveTo(a.dx, a.dy)
+            ..quadraticBezierTo(cp.dx, cp.dy, b.dx, b.dy),
+          linkPaint,
+        );
+      }
+    }
+
+    final ringPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..color = color;
+    for (final n in {
+      for (final link in links) ...[link.from, link.to],
+    }) {
+      canvas.drawCircle(node(n), radius, ringPaint);
+    }
+
+    // Faint dashed connectors from the chain's two ends to each eliminated
+    // candidate they both see (the "both ends see this cell" conclusion).
+    final ends = {links.first.from, links.last.to};
+    final elimPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.6
+      ..strokeCap = StrokeCap.round
+      ..color = color.withValues(alpha: 0.55);
+    for (final e in hint.eliminations) {
+      final target = _candidateCenter(e.row, e.col, e.digit, cellW, cellH);
+      for (final end in ends) {
+        if (end.cells.any((c) => c.row == e.row && c.col == e.col)) continue;
+        if (!end.cells.every((c) => _sees(c.row, c.col, e.row, e.col))) {
+          continue;
+        }
+        final from = node(end);
+        final dir = target - from;
+        final len = dir.distance;
+        if (len < radius + 3) continue;
+        final u = dir / len;
+        _drawDashedPath(
+          canvas,
+          Path()
+            ..moveTo((from + u * radius).dx, (from + u * radius).dy)
+            ..lineTo((target - u * 3).dx, (target - u * 3).dy),
+          elimPaint,
+        );
+      }
+    }
+  }
+
+  /// Center of candidate [digit]'s slot in the cell's 3x3 notes grid
+  /// (row-major, digit d at sub-row (d-1)~/3, sub-col (d-1)%3), matching
+  /// `_NotesGrid` in sudoku_cell_widget.dart.
+  Offset _candidateCenter(
+          int row, int col, int digit, double cellW, double cellH) =>
+      Offset(
+        (col + ((digit - 1) % 3 + 0.5) / 3) * cellW,
+        (row + ((digit - 1) ~/ 3 + 0.5) / 3) * cellH,
+      );
+
+  bool _sees(int r1, int c1, int r2, int c2) =>
+      !(r1 == r2 && c1 == c2) &&
+      (r1 == r2 || c1 == c2 || (r1 ~/ 3 == r2 ~/ 3 && c1 ~/ 3 == c2 ~/ 3));
+
+  /// Dashes any [path], straight or curved — [ui.PathMetric.extractPath]
+  /// walks it by arc length, which a point-to-point dash loop can't do once
+  /// the segment is a bezier.
+  void _drawDashedPath(Canvas canvas, Path path, Paint paint) {
+    const dash = 5.0;
+    const gap = 4.0;
+    for (final metric in path.computeMetrics()) {
+      var d = 0.0;
+      while (d < metric.length) {
+        final end = math.min(d + dash, metric.length);
+        canvas.drawPath(metric.extractPath(d, end), paint);
+        d += dash + gap;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _HintArrowPainter old) =>
+      old.hint != hint || old.color != color;
 }

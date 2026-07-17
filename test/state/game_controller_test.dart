@@ -514,6 +514,98 @@ void main() {
     expect(controller.activeHint, isNull);
   });
 
+  /// Builds a reveal hint for the first editable cell — enough for the
+  /// stage tests, which only care about the progressive reveal, not about
+  /// which technique found the hint.
+  Hint scriptRevealHint() {
+    locateFirstEditableCell();
+    final row = firstEmptyEditableCellRow!;
+    final col = firstEmptyEditableCellCol!;
+    final hint = Hint(
+      technique: HintTechnique.nakedSingle,
+      type: HintType.reveal,
+      explanation: 'test',
+      primaryCells: {HintCell(row, col)},
+      mainInfo: 'test-main-info',
+      row: row,
+      col: col,
+      value: controller.puzzle.solutionValue(row, col),
+    );
+    hintEngine.nextHint = hint;
+    return hint;
+  }
+
+  test('a new hint starts at stage 0 and advances one step at a time up to '
+      'the final stage', () {
+    scriptRevealHint();
+
+    controller.requestHint();
+    expect(controller.hintStage, 0);
+
+    controller.advanceHintStage();
+    expect(controller.hintStage, 1);
+
+    controller.advanceHintStage();
+    expect(controller.hintStage, 2);
+
+    // Clamped — there is no stage past the full reveal.
+    controller.advanceHintStage();
+    expect(controller.hintStage, 2);
+  });
+
+  test('the board visualises a hint only at the final stage', () {
+    final hint = scriptRevealHint();
+
+    controller.requestHint();
+    expect(controller.activeHint, hint);
+    expect(controller.visualizedHint, isNull);
+
+    controller.advanceHintStage();
+    expect(controller.visualizedHint, isNull);
+
+    controller.advanceHintStage();
+    expect(controller.visualizedHint, hint);
+  });
+
+  test('stage resets when a hint is dismissed, applied, or superseded, so a '
+      'new hint never inherits the previous one\'s stage', () {
+    scriptRevealHint();
+
+    controller.requestHint();
+    controller.advanceHintStage();
+    controller.advanceHintStage();
+    expect(controller.hintStage, 2);
+
+    controller.dismissHint();
+    expect(controller.hintStage, 0);
+
+    // Superseded by a fresh request.
+    controller.requestHint();
+    controller.advanceHintStage();
+    controller.requestHint();
+    expect(controller.hintStage, 0);
+
+    // Cleared by an unrelated board action.
+    controller.advanceHintStage();
+    controller.selectCell(0, 0);
+    expect(controller.hintStage, 0);
+
+    scriptRevealHint();
+    controller.requestHint();
+    controller.advanceHintStage();
+    controller.advanceHintStage();
+    controller.applyHint();
+    expect(controller.hintStage, 0);
+  });
+
+  test('advanceHintStage is a no-op with no active hint', () {
+    expect(controller.activeHint, isNull);
+
+    controller.advanceHintStage();
+
+    expect(controller.hintStage, 0);
+  });
+
   test('undo reverts the most recent move', () {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
@@ -1333,6 +1425,110 @@ void main() {
     )..resumeFrom(snapshot);
 
     expect(realController.hasAvailableHint, isFalse);
+  });
+
+  group('requestHintFromNotes (stage 1: notes-only, no repair)', () {
+    (GameController, _ScriptedHintEngine, int, int, int) buildMissingNoteCase() {
+      final scriptedEngine = _ScriptedHintEngine();
+      final testController = GameController(
+        generator: SudokuGenerator(random: Random(7)),
+        hintEngine: scriptedEngine,
+      )..startNewGame(Difficulty.easy);
+
+      int? row;
+      int? col;
+      outer:
+      for (var r = 0; r < 9; r++) {
+        for (var c = 0; c < 9; c++) {
+          if (testController.isFixed(r, c)) continue;
+          if (_candidates(testController, r, c).length < 2) continue;
+          row = r;
+          col = c;
+          break outer;
+        }
+      }
+      final solutionDigit = testController.puzzle.solutionValue(row!, col!);
+      final otherDigit = _candidates(testController, row, col)
+          .firstWhere((d) => d != solutionDigit);
+      return (testController, scriptedEngine, row, col, otherDigit);
+    }
+
+    test(
+        'returns the engine hint verbatim, without repairing notes or '
+        'prepending a repair notice, even when a cell is missing its '
+        'solution digit', () {
+      final (testController, scriptedEngine, row, col, otherDigit) =
+          buildMissingNoteCase();
+      testController.selectCell(row, col);
+      testController.toggleNote(otherDigit);
+
+      final placeholder = Hint(
+        technique: HintTechnique.intersectionPointing,
+        type: HintType.eliminate,
+        explanation: 'fake',
+        primaryCells: {HintCell(row, col)},
+      );
+      scriptedEngine.hints = [placeholder];
+
+      final hint = testController.requestHintFromNotes();
+
+      // Unlike requestHint, stage 1 does no repair: the explanation is
+      // returned verbatim (no "후보수가..." prefix) and the player's single
+      // note is left exactly as they set it.
+      expect(hint, isNotNull);
+      expect(hint!.explanation, placeholder.explanation);
+      expect(testController.notesAt(row, col), {otherDigit});
+      expect(testController.activeHint, hint);
+    });
+
+    test('returns null and leaves the active hint cleared when the '
+        'notes-only search finds nothing', () {
+      final (testController, _, _, _, _) = buildMissingNoteCase();
+      // Scripted engine defaults to returning null.
+      expect(testController.requestHintFromNotes(), isNull);
+      expect(testController.activeHint, isNull);
+    });
+
+    test('rejects a notes-only hint that would eliminate a cell\'s true '
+        'solution digit (faulty notes) and returns null', () {
+      // Simulates the "faulty notes → wrong deduction" case: the engine
+      // returns an eliminate hint removing a cell's actual answer, exactly
+      // what an understated Naked Pair could produce. It must NOT be shown.
+      final (testController, scriptedEngine, row, col, _) =
+          buildMissingNoteCase();
+      final solutionDigit = testController.puzzle.solutionValue(row, col);
+      scriptedEngine.hints = [
+        Hint(
+          technique: HintTechnique.nakedPair,
+          type: HintType.eliminate,
+          explanation: 'faulty',
+          primaryCells: {HintCell(row, col)},
+          eliminations: [HintElimination(row, col, solutionDigit)],
+        ),
+      ];
+
+      expect(testController.requestHintFromNotes(), isNull);
+      expect(testController.activeHint, isNull);
+    });
+
+    test('returns a notes-only hint whose eliminations agree with the '
+        'solution', () {
+      final (testController, scriptedEngine, row, col, otherDigit) =
+          buildMissingNoteCase();
+      // otherDigit is, by construction, NOT this cell's solution digit, so
+      // eliminating it is solution-consistent and the hint is shown as-is.
+      final hint = Hint(
+        technique: HintTechnique.nakedPair,
+        type: HintType.eliminate,
+        explanation: 'ok',
+        primaryCells: {HintCell(row, col)},
+        eliminations: [HintElimination(row, col, otherDigit)],
+      );
+      scriptedEngine.hints = [hint];
+
+      expect(testController.requestHintFromNotes(), same(hint));
+      expect(testController.activeHint, same(hint));
+    });
   });
 
   group('requestHint repairs notes missing the solution digit', () {

@@ -74,6 +74,37 @@ class GameController extends ChangeNotifier {
   Hint? _activeHint;
   Hint? get activeHint => _activeHint;
 
+  /// How much of [activeHint] has been revealed so far: 0 = the technique's
+  /// name only, 1 = name plus [Hint.mainInfo], 2 = the full explanation and
+  /// the board visualisation. Always reset to 0 alongside [_activeHint] —
+  /// assign through [_setActiveHint] rather than the field so a new hint can
+  /// never inherit the previous one's stage.
+  int _hintStage = 0;
+  int get hintStage => _hintStage;
+
+  /// The hint the board should actually draw — [activeHint] only once the
+  /// player has reached the final stage. The earlier stages deliberately
+  /// show nothing on the grid: naming the technique is only a nudge if it
+  /// doesn't also point at the cells.
+  Hint? get visualizedHint => _hintStage >= 2 ? _activeHint : null;
+
+  /// The only place [_activeHint] is assigned, so every path that shows or
+  /// drops a hint resets [_hintStage] with it. Does not notify — callers
+  /// already do, and several set a hint mid-way through a larger mutation.
+  void _setActiveHint(Hint? hint) {
+    _activeHint = hint;
+    _hintStage = 0;
+  }
+
+  /// Advances the progressive reveal one step, up to the final stage. No-op
+  /// with no active hint. Notifies so the board picks up the stage-2
+  /// visualisation.
+  void advanceHintStage() {
+    if (_activeHint == null || _hintStage >= 2) return;
+    _hintStage++;
+    notifyListeners();
+  }
+
   /// Cells that briefly flash red because the player just tried to note a
   /// digit that's already confirmed elsewhere in the same row/column/box.
   /// Transient UI state only — never persisted, auto-clears via [_conflictFlashTimer].
@@ -167,7 +198,7 @@ class GameController extends ChangeNotifier {
     final notes = _notes[row][col];
     if (notes.contains(value)) {
       // Removing an existing note is always allowed, no validity check.
-      _activeHint = null;
+      _setActiveHint(null);
       _history.add(_Move.value(row, col, _board[row][col], _cloneNotes()));
       notes.remove(value);
       notifyListeners();
@@ -179,7 +210,7 @@ class GameController extends ChangeNotifier {
       return;
     }
 
-    _activeHint = null;
+    _setActiveHint(null);
     _history.add(_Move.value(row, col, _board[row][col], _cloneNotes()));
     notes.add(value);
     notifyListeners();
@@ -231,7 +262,7 @@ class GameController extends ChangeNotifier {
   /// value is still blocked separately (see inputValue/toggleNote). Tapping
   /// the already-selected cell again deselects it instead.
   void selectCell(int row, int col) {
-    _activeHint = null;
+    _setActiveHint(null);
     _conflictFlashTimer?.cancel();
     _conflictFlashCells = {};
     if (selectedRow == row && selectedCol == col) {
@@ -252,7 +283,7 @@ class GameController extends ChangeNotifier {
   /// one cell.
   void selectCellForDrag(int row, int col) {
     if (selectedRow == row && selectedCol == col) return;
-    _activeHint = null;
+    _setActiveHint(null);
     _conflictFlashTimer?.cancel();
     _conflictFlashCells = {};
     selectedRow = row;
@@ -278,7 +309,7 @@ class GameController extends ChangeNotifier {
     if (row == null || col == null) return;
     if (isFixed(row, col)) return;
 
-    _activeHint = null;
+    _setActiveHint(null);
     _history.add(_Move.value(row, col, _board[row][col], _cloneNotes()));
     _board[row][col] = value;
     _notes[row][col].clear();
@@ -327,7 +358,7 @@ class GameController extends ChangeNotifier {
       _board[move.row!][move.col!] = move.previousValue!;
     }
     _notes = move.previousNotes;
-    _activeHint = null;
+    _setActiveHint(null);
     if (status == GameStatus.gameOver) status = GameStatus.playing;
     _recomputeRemainingCounts();
     notifyListeners();
@@ -369,9 +400,54 @@ class GameController extends ChangeNotifier {
         );
       }
     }
-    _activeHint = hint;
+    _setActiveHint(hint);
     notifyListeners();
     return hint;
+  }
+
+  /// Stage 1 of the two-step hint flow (see `GameScreen._onHintPressed`):
+  /// analyzes using ONLY the board's confirmed digits and the player's own
+  /// notes as they stand — deliberately WITHOUT [_findHintWithRepair]'s
+  /// auto-fill of missing candidates. Returns null (and clears [activeHint])
+  /// when the player's current notes don't enable any known technique; the UI
+  /// then offers to auto-generate candidates and retry via [requestHint]
+  /// (stage 2). Reveal-type techniques still read the board directly, so a
+  /// Naked/Hidden Single is found regardless of notes — only eliminate-type
+  /// techniques depend on what the player has actually pencilled in. Never
+  /// edits [_notes], so unlike [requestHint] it pushes no history entry.
+  Hint? requestHintFromNotes({AppLocalizations? l10n}) {
+    if (status != GameStatus.playing) return null;
+    if (hasUnresolvedMistake) return null;
+    var hint = _hintEngine.findHint(boardSnapshot, _notes, l10n);
+    // Safety net: a notes-only search trusts the player's pencil marks as a
+    // COMPLETE candidate set. If they understate a cell (omit a digit the
+    // cell actually needs), an otherwise-sound eliminate technique can
+    // "prove" something the real solution violates — e.g. a Naked Pair {1,3}
+    // that removes 1 from a cell whose true answer is 1. Never surface a hint
+    // that contradicts the solution: drop it so the UI offers auto-generated
+    // candidates instead (stage 2's [_findHintWithRepair] restores the
+    // every-cell-contains-its-solution-digit invariant that makes sound
+    // eliminations provably solution-safe, which this stage deliberately
+    // skips). Reveal hints read the board, not the notes, so they can't hit
+    // this — but the check is cheap and covers them too.
+    if (hint != null && !_agreesWithSolution(hint)) hint = null;
+    _setActiveHint(hint);
+    notifyListeners();
+    return hint;
+  }
+
+  /// Whether [hint]'s conclusion matches the actual solution: no eliminated
+  /// candidate is a cell's true answer, and a revealed value is the true
+  /// answer. Used to reject a notes-only hint built on faulty player notes
+  /// (see [requestHintFromNotes]).
+  bool _agreesWithSolution(Hint hint) {
+    if (hint.type == HintType.reveal) {
+      return hint.value == _puzzle.solutionValue(hint.row!, hint.col!);
+    }
+    for (final e in hint.eliminations) {
+      if (e.digit == _puzzle.solutionValue(e.row, e.col)) return false;
+    }
+    return true;
   }
 
   /// Whether [requestHint] would actually return a hint right now — lets
@@ -431,7 +507,7 @@ class GameController extends ChangeNotifier {
   /// Discards the active hint without applying it.
   void dismissHint() {
     if (_activeHint == null) return;
-    _activeHint = null;
+    _setActiveHint(null);
     notifyListeners();
   }
 
@@ -447,7 +523,7 @@ class GameController extends ChangeNotifier {
     } else {
       _applyEliminateHint(hint);
     }
-    _activeHint = null;
+    _setActiveHint(null);
     hintsUsed++;
     notifyListeners();
   }
@@ -496,7 +572,7 @@ class GameController extends ChangeNotifier {
   /// when [canAutoFillNotes] is false (game not in progress).
   void autoFillNotes() {
     if (!canAutoFillNotes) return;
-    _activeHint = null;
+    _setActiveHint(null);
     _history.add(_Move.notesOnly(_cloneNotes()));
     _recomputeAllNotes();
     notifyListeners();

@@ -20,24 +20,26 @@ class BoardColors {
       Color.alphaBlend(accent.withValues(alpha: opacity), Colors.grey.shade900);
 
   // sudoku_cell_widget.dart
-  static Color cellDefault(bool d) => d ? Colors.grey.shade900 : Colors.white;
+  static Color cellDefault(bool d) =>
+      d ? const Color(0xFF17132F) : const Color(0xFFFFFFFF);
 
   /// Reveal-type hint (Full House / Naked Single / Hidden Single): the
   /// whole cell that needs to be filled.
   static Color cellHintFill(bool d) =>
-      d ? _tintOnDark(Colors.blue, 0.55) : Colors.blue.shade300;
+      d ? _tintOnDark(const Color(0xFF00D9FF), 0.58) : const Color(0xFF8DEBFF);
 
   /// Reveal-type hint: the whole cell(s) that justify the fill.
   static Color cellHintReason(bool d) =>
-      d ? _tintOnDark(Colors.green, 0.30) : Colors.green.shade100;
+      d ? _tintOnDark(const Color(0xFF64F5B6), 0.30) : const Color(0xFFD5FFED);
   static Color cellSelected(bool d) =>
-      d ? _tintOnDark(Colors.blue, 0.45) : Colors.blue.shade200;
+      d ? _tintOnDark(const Color(0xFF9D8CFF), 0.55) : const Color(0xFFDCD6FF);
   static Color cellPeer(bool d) =>
-      d ? _tintOnDark(Colors.white, 0.08) : Colors.blue.shade50;
+      d ? _tintOnDark(const Color(0xFF9D8CFF), 0.12) : const Color(0xFFF0EEFF);
   static Color textWrong(bool d) => d ? Colors.red.shade300 : Colors.red;
-  static Color textFixed(bool d) => d ? Colors.grey.shade100 : Colors.black;
+  static Color textFixed(bool d) =>
+      d ? const Color(0xFFE8E4FF) : const Color(0xFF241B4B);
   static Color textEntered(bool d) =>
-      d ? Colors.blue.shade200 : Colors.blue.shade900;
+      d ? const Color(0xFF65E9FF) : const Color(0xFF5341D8);
 
   /// User-entered digit text when its cell is selected or same-value
   /// highlighted — white in both themes so it pops against the (now
@@ -70,8 +72,10 @@ class BoardColors {
       d ? _tintOnDark(Colors.orange, 0.7) : Colors.orange.shade200;
 
   // sudoku_grid_widget.dart
-  static Color outerBorder(bool d) => d ? Colors.grey.shade600 : Colors.black87;
-  static Color innerBorder(bool d) => d ? Colors.grey.shade800 : Colors.black45;
+  static Color outerBorder(bool d) =>
+      d ? const Color(0xFF9D8CFF) : const Color(0xFF5341D8);
+  static Color innerBorder(bool d) =>
+      d ? const Color(0xFF36305D) : const Color(0xFFC8C1F2);
 
   /// The emphasized border drawn around the row(s)/column(s)/box(es) a
   /// unit-confined hint is scoped to (Full House, Hidden Single, Naked/
@@ -79,33 +83,40 @@ class BoardColors {
   /// Finned/Sashimi X-Wing, Unique Rectangle). Teal — distinct from the
   /// blue/green/red/purple/orange already used for cell/note highlights.
   static Color unitHighlightBorder(bool d) =>
-      d ? Colors.teal.shade300 : Colors.teal.shade600;
+      d ? const Color(0xFF64F5B6) : const Color(0xFF007D62);
+
+  /// The connective arrows an eliminate-type hint draws from its cause cells
+  /// to the candidate(s) being removed. A bold amber directional line —
+  /// distinct from the blue/green/red/purple/orange note fills and the teal
+  /// unit border, and it reads as a line/arrow rather than a cell state.
+  static Color hintArrow(bool d) =>
+      d ? const Color(0xFFFFB74D) : const Color(0xFFB26A00);
 
   // number_pad_widget.dart
   static Color remainingCountText(bool d) =>
-      d ? Colors.grey.shade400 : Colors.grey.shade600;
+      d ? const Color(0xFFB9B3D8) : const Color(0xFF716A96);
   static Color padTextDisabled(bool d) =>
       d ? Colors.grey.shade600 : Colors.grey.shade400;
   static Color padTextNote(bool d) =>
       d ? Colors.grey.shade300 : Colors.grey.shade600;
   static Color padTextValue(bool d) =>
-      d ? Colors.blue.shade200 : Colors.blue.shade900;
+      d ? const Color(0xFF65E9FF) : const Color(0xFF5341D8);
   static Color padBgDisabled(bool d) =>
-      d ? Colors.grey.shade800 : Colors.grey.shade200;
+      d ? const Color(0xFF252042) : const Color(0xFFE9E6FA);
   static Color padBgNote(bool d) =>
-      d ? Colors.grey.shade700 : Colors.grey.shade300;
+      d ? const Color(0xFF322C57) : const Color(0xFFE1DEFA);
   static Color padBgValue(bool d) =>
-      d ? Colors.blue.shade900 : Colors.blue.shade100;
+      d ? const Color(0xFF302966) : const Color(0xFFE0DCFF);
 
   // game_controls_row.dart
   static Color controlIconDefault(bool d) =>
-      d ? Colors.blue.shade300 : Colors.blue.shade700;
+      d ? const Color(0xFF65E9FF) : const Color(0xFF5341D8);
   static Color controlIconDisabled(bool d) =>
       d ? Colors.grey.shade600 : Colors.grey.shade400;
   static Color controlCircleBgDisabled(bool d) =>
       d ? Colors.grey.shade800 : Colors.grey.shade100;
   static Color controlCircleBaseColor(bool d) =>
-      d ? Colors.blue.shade300 : Colors.blue;
+      d ? const Color(0xFF65E9FF) : const Color(0xFF6E56FF);
   static double controlCircleBgAlpha(bool d) => d ? 0.20 : 0.12;
   static Color adBadgeBorder(bool d) => d ? Colors.grey.shade900 : Colors.white;
 }
