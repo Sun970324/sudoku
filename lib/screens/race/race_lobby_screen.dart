@@ -4,9 +4,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../models/difficulty.dart';
+import '../../models/race.dart';
 import '../../models/tier.dart';
 import '../../models/user_profile.dart';
 import '../../services/puzzle_queue_manager.dart';
+import '../../services/race_service.dart';
 import '../../state/auth_controller.dart';
 import '../../theme/app_palette.dart';
 import '../../widgets/gradient_scaffold.dart';
@@ -14,6 +16,7 @@ import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
 import '../../widgets/sign_in_prompt.dart';
 import '../../widgets/tier_badge.dart';
+import '../game_screen.dart';
 import 'friend_match_screen.dart';
 import 'matchmaking_screen.dart';
 
@@ -36,13 +39,21 @@ class RaceLobbyScreen extends StatefulWidget {
 }
 
 class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
+  Future<List<RaceHistoryEntry>>? _historyFuture;
+
   @override
   void initState() {
     super.initState();
     widget.auth.addListener(_onAuthChanged);
+    if (widget.auth.isSignedIn) {
+      _historyFuture = RaceService().fetchHistory();
+    }
   }
 
   void _onAuthChanged() {
+    if (widget.auth.isSignedIn && _historyFuture == null) {
+      _historyFuture = RaceService().fetchHistory();
+    }
     if (mounted) setState(() {});
   }
 
@@ -74,6 +85,61 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
         builder: (_) => FriendMatchScreen(
           auth: widget.auth,
           puzzleQueue: widget.puzzleQueue,
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime dt) {
+    final local = dt.toLocal();
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${local.year}.${two(local.month)}.${two(local.day)} ${two(local.hour)}:${two(local.minute)}';
+  }
+
+  /// One finished race, tappable to replay its puzzle — moved here from
+  /// StatsScreen so past races live where racing starts.
+  Widget _buildRaceHistoryTile(RaceHistoryEntry entry) {
+    final l10n = AppLocalizations.of(context)!;
+    final delta = entry.ratingDelta;
+    final deltaColor = delta >= 0 ? Colors.green : Colors.red;
+    final deltaText = delta >= 0 ? '+$delta' : '$delta';
+    final resultLabel =
+        entry.won ? l10n.raceHistoryResultWon : l10n.raceHistoryResultLost;
+    const baseStyle = TextStyle(fontSize: 13);
+    return Card(
+      child: ListTile(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => GameScreen.newGame(
+              difficulty: entry.puzzle.difficulty,
+              puzzle: entry.puzzle,
+            ),
+          ),
+        ),
+        leading: Icon(
+          entry.won ? Icons.emoji_events : Icons.sentiment_dissatisfied,
+          color:
+              entry.won ? Colors.amber : Theme.of(context).colorScheme.outline,
+        ),
+        title: Text.rich(
+          TextSpan(
+            style: baseStyle,
+            children: [
+              TextSpan(
+                  text:
+                      '($resultLabel) ${_formatDate(entry.finishedAt)} vs ${entry.opponentUsername} ${entry.ratingAfter}'),
+              const TextSpan(text: ' ('),
+              TextSpan(
+                text: deltaText,
+                style: baseStyle.copyWith(
+                  color: deltaColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const TextSpan(text: ')'),
+            ],
+          ),
         ),
       ),
     );
@@ -112,6 +178,34 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
                   label: l10n.rankedMatchButton,
                   expanded: true,
                 ),
+                if (_historyFuture != null) ...[
+                  const SizedBox(height: 24),
+                  Text(l10n.raceHistoryTitle,
+                      style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  FutureBuilder<List<RaceHistoryEntry>>(
+                    future: _historyFuture,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      final history = snapshot.data!;
+                      if (history.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(l10n.raceHistoryEmpty),
+                        );
+                      }
+                      return Column(
+                        children:
+                            history.map(_buildRaceHistoryTile).toList(),
+                      );
+                    },
+                  ),
+                ],
               ]
                   .animate(interval: 60.ms)
                   .fadeIn(duration: 250.ms)
