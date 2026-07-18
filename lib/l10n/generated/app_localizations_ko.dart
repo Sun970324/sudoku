@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appTitle => '스도쿠';
+  String get appTitle => '스도쿠 리그';
 
   @override
   String get homeButton => '홈으로';
@@ -31,6 +31,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get startGame => '시작하기';
+
+  @override
+  String get privacyPolicyTitle => '개인정보처리방침';
+
+  @override
+  String get termsOfServiceTitle => '이용약관';
 
   @override
   String get raceButton => '대결하기';

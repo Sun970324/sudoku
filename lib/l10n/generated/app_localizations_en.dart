@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Sudoku';
+  String get appTitle => 'Sudoku League';
 
   @override
   String get homeButton => 'Home';
@@ -31,6 +31,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startGame => 'Start';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get termsOfServiceTitle => 'Terms of Service';
 
   @override
   String get raceButton => 'Race';

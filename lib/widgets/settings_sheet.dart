@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../content/policy_texts.dart';
 import '../l10n/generated/app_localizations.dart';
+import '../screens/policy_screen.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../state/settings_controller.dart';
@@ -76,6 +78,39 @@ void showSettingsSheet(BuildContext context, SettingsController settings) {
                   settings.setSoundEnabled(v);
                   if (v) SoundService.click();
                 },
+              ),
+              const Divider(),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: Text(l10n.privacyPolicyTitle),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PolicyScreen(
+                      title: l10n.privacyPolicyTitle,
+                      bodyKo: privacyPolicyKo,
+                      bodyEn: privacyPolicyEn,
+                    ),
+                  ),
+                ),
+              ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.description_outlined),
+                title: Text(l10n.termsOfServiceTitle),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PolicyScreen(
+                      title: l10n.termsOfServiceTitle,
+                      bodyKo: termsOfServiceKo,
+                      bodyEn: termsOfServiceEn,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

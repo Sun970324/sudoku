@@ -1,7 +1,7 @@
 {
   "@@locale": "ko",
 
-  "appTitle": "스도쿠",
+  "appTitle": "스도쿠 리그",
   "homeButton": "홈으로",
   "closeAction": "닫기",
   "applyAction": "적용하기",
@@ -10,6 +10,8 @@
   "cancelAction": "취소",
 
   "startGame": "시작하기",
+  "privacyPolicyTitle": "개인정보처리방침",
+  "termsOfServiceTitle": "이용약관",
   "raceButton": "대결하기",
   "themeSectionTitle": "테마",
   "followSystemTheme": "시스템 설정 따르기",

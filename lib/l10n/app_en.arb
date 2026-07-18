@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "appTitle": "Sudoku",
+  "appTitle": "Sudoku League",
   "homeButton": "Home",
   "closeAction": "Close",
   "applyAction": "Apply",
@@ -10,6 +10,8 @@
   "cancelAction": "Cancel",
 
   "startGame": "Start",
+  "privacyPolicyTitle": "Privacy Policy",
+  "termsOfServiceTitle": "Terms of Service",
   "raceButton": "Race",
   "themeSectionTitle": "Theme",
   "followSystemTheme": "Follow System",
