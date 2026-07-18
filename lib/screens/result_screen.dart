@@ -7,7 +7,13 @@ import '../models/sudoku_puzzle.dart';
 import '../services/generation/difficulty_evaluator.dart';
 import '../services/generation/human_solver.dart';
 import '../services/percentile_estimator.dart';
+import '../theme/app_palette.dart';
+import '../widgets/celebration_overlay.dart';
+import '../widgets/gradient_scaffold.dart';
+import '../widgets/pop_button.dart';
+import '../widgets/pop_card.dart';
 import '../widgets/puzzle_share_dialog.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 /// Shown right after a puzzle is completed, replacing the old plain "완료!"
 /// dialog. Takes only already-computed primitive/value-type data (plus the
@@ -42,22 +48,8 @@ class ResultScreen extends StatelessWidget {
     return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
-  static Color _difficultyColor(Difficulty d, bool isDark) {
-    switch (d) {
-      case Difficulty.beginner:
-        return isDark ? Colors.green.shade300 : Colors.green.shade700;
-      case Difficulty.easy:
-        return isDark ? Colors.teal.shade300 : Colors.teal.shade700;
-      case Difficulty.medium:
-        return isDark ? Colors.blue.shade300 : Colors.blue.shade700;
-      case Difficulty.hard:
-        return isDark ? Colors.orange.shade300 : Colors.orange.shade700;
-      case Difficulty.master:
-        return isDark ? Colors.deepOrange.shade300 : Colors.deepOrange.shade700;
-      case Difficulty.expert:
-        return isDark ? Colors.purple.shade300 : Colors.purple.shade700;
-    }
-  }
+  static Color _difficultyColor(Difficulty d, bool isDark) =>
+      AppPalette.difficultyColor(d, isDark);
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +62,8 @@ class ResultScreen extends StatelessWidget {
           .indexOf(a.key)
           .compareTo(humanSolverTechniqueOrder.indexOf(b.key)));
 
-    return Scaffold(
+    final accent = AppPalette.difficultyColor(difficulty, isDark);
+    return GradientScaffold(
       appBar: AppBar(
         title: Text(l10n.resultTitle),
         actions: [
@@ -80,45 +73,85 @@ class ResultScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+      body: CelebrationOverlay(
+        big: mistakes == 0,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
           Center(
             child: Column(
               children: [
-                Text(difficulty.label(context),
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 4),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    difficulty.label(context),
+                    style: TextStyle(
+                        fontFamily: 'Jua', fontSize: 16, color: accent),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 Text(
                   _formatTime(elapsedSeconds),
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
+                  style: const TextStyle(fontFamily: 'Jua', fontSize: 56),
+                )
+                    .animate()
+                    .scale(
+                        begin: const Offset(0.8, 0.8),
+                        curve: Curves.elasticOut,
+                        duration: 600.ms),
                 if (mistakes == 0) ...[
                   const SizedBox(height: 8),
-                  Chip(
-                    avatar: const Icon(Icons.star,
-                        size: 18, color: Colors.amber),
-                    label: Text(l10n.perfectClearBadge),
-                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(colors: [
+                        Color(0xFFFFD24A),
+                        Color(0xFFFFA726),
+                      ]),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.star,
+                            size: 18, color: Colors.white),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            l10n.perfectClearBadge,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontFamily: 'Jua', color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                      .animate()
+                      .scale(
+                          begin: const Offset(0.6, 0.6),
+                          delay: 250.ms,
+                          curve: Curves.elasticOut,
+                          duration: 600.ms),
                 ],
               ],
             ),
           ),
           const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(l10n.mistakesAndHints(mistakes, hintsUsed)),
-            ),
+          PopCard(
+            child: Text(l10n.mistakesAndHints(mistakes, hintsUsed)),
           ),
           const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
+          PopCard(
+            tint: const Color(0xFF6E56FF),
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.personalBestTitle,
@@ -132,13 +165,11 @@ class ResultScreen extends StatelessWidget {
                     Text(l10n.currentBest(_formatTime(previousBestSeconds!))),
                 ],
               ),
-            ),
           ),
           const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
+          PopCard(
+            tint: const Color(0xFF2563EB),
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.comparisonTitle,
@@ -153,10 +184,12 @@ class ResultScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(6),
                     child: LinearProgressIndicator(
                       value: fasterThanPercent / 100,
-                      minHeight: 8,
+                      minHeight: 10,
+                      color: accent,
+                      backgroundColor: accent.withValues(alpha: 0.15),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -166,13 +199,10 @@ class ResultScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
           ),
           const SizedBox(height: 12),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
+          PopCard(
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.techniquesUsedTitle,
@@ -226,14 +256,18 @@ class ResultScreen extends StatelessWidget {
                   }),
                 ],
               ),
-            ),
           ),
           const SizedBox(height: 20),
-          FilledButton(
+          PopButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.homeButton),
+            label: l10n.homeButton,
+            expanded: true,
           ),
-        ],
+        ]
+            .animate(interval: 60.ms)
+            .fadeIn(duration: 250.ms)
+            .slideY(begin: 0.08, curve: Curves.easeOutCubic),
+        ),
       ),
     );
   }

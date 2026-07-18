@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_animate/flutter_animate.dart';
+
 import '../../l10n/generated/app_localizations.dart';
+import '../../widgets/celebration_overlay.dart';
+import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pop_button.dart';
+import '../../widgets/pop_card.dart';
 import '../../models/daily.dart';
 import '../../models/sudoku_puzzle.dart';
 import '../../services/daily_puzzle_service.dart';
@@ -102,7 +108,7 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(title: Text(l10n.dailyResultTitle)),
       body: _failed
           ? Center(
@@ -111,9 +117,10 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
                 children: [
                   Text(l10n.dailySubmitFailed),
                   const SizedBox(height: 16),
-                  OutlinedButton(
+                  PopButton(
                     onPressed: _load,
-                    child: Text(l10n.retryAction),
+                    variant: PopButtonVariant.outline,
+                    label: l10n.retryAction,
                   ),
                 ],
               ),
@@ -127,13 +134,32 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
   Widget _buildResult(AppLocalizations l10n, DailyLeaderboard board) {
     final myTime =
         board.myElapsedSeconds ?? widget.submission?.elapsedSeconds;
-    return ListView(
+    return CelebrationOverlay(
+      play: board.myRank != null,
+      child: ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Center(
           child: Column(
             children: [
-              const Icon(Icons.today, size: 64, color: Colors.amber),
+              Container(
+                width: 96,
+                height: 96,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(colors: [
+                    Color(0xFFFFD24A),
+                    Color(0xFFFFA726),
+                  ]),
+                ),
+                child:
+                    const Icon(Icons.today, size: 48, color: Colors.white),
+              )
+                  .animate()
+                  .scale(
+                      begin: const Offset(0.5, 0.5),
+                      curve: Curves.elasticOut,
+                      duration: 700.ms),
               const SizedBox(height: 16),
               if (board.myRank != null)
                 Text(
@@ -144,10 +170,7 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _formatTime(myTime),
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontFamily: 'Jua', fontSize: 44),
                 ),
               ],
               if (_notRanked) ...[
@@ -161,10 +184,8 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+        PopCard(
+          child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(l10n.dailyLeaderboardTitle,
@@ -176,15 +197,15 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
                   ...board.entries.map(_buildEntryRow),
               ],
             ),
-          ),
         ),
         const SizedBox(height: 24),
-        FilledButton(
+        PopButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(l10n.homeButton),
+          label: l10n.homeButton,
+          expanded: true,
         ),
         const SizedBox(height: 12),
-        OutlinedButton(
+        PopButton(
           onPressed: () => Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -194,9 +215,12 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
               ),
             ),
           ),
-          child: Text(l10n.dailyReplayAction),
+          variant: PopButtonVariant.outline,
+          label: l10n.dailyReplayAction,
+          expanded: true,
         ),
       ],
+    ),
     );
   }
 

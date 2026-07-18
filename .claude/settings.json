@@ -12,7 +12,11 @@
       "Bash(grep -v \"new version\\\\|flutter upgrade\\\\|l10n.yaml\\\\|command line\\\\|^│\\\\|^└\\\\|^┌\\\\|^ *$\")",
       "Bash(flutter analyze *)",
       "Bash(grep -iv \"new version\\\\|flutter upgrade\\\\|l10n.yaml\\\\|command line\\\\|^│\\\\|^└\\\\|^┌\\\\|^ *$\")",
-      "Bash(flutter test *)"
+      "Bash(flutter test *)",
+      "Bash(python3 -)",
+      "Bash(grep -iv \"because\\\\|to use\\\\|^$\")",
+      "Bash(supabase status *)",
+      "Bash(claude mcp *)"
     ]
   }
 }

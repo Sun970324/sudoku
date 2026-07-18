@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -7,10 +8,23 @@ import '../models/difficulty.dart';
 import '../models/race.dart';
 import '../models/sudoku_puzzle.dart';
 import '../models/user_profile.dart';
+import '../services/generation/sudoku_generator.dart';
 import '../services/profile_service.dart';
 import '../services/puzzle_queue_manager.dart';
 import '../services/race_service.dart';
 import 'game_controller.dart';
+
+/// Off-thread fallback for a race whose provider found its puzzle queue
+/// empty. Same top-level-function + JSON-across-the-boundary shape as
+/// PuzzleQueueManager's batch generator, and for the same reason: the
+/// closure must only capture trivially-sendable values.
+Future<SudokuPuzzle> _isolateGeneratePuzzle(Difficulty difficulty) async {
+  final json = await Isolate.run(() => _generatePuzzleJson(difficulty));
+  return SudokuPuzzle.fromJson(json);
+}
+
+Map<String, dynamic> _generatePuzzleJson(Difficulty difficulty) =>
+    SudokuGenerator().generate(difficulty).toJson();
 
 enum RacePhase {
   matching,
@@ -47,6 +61,11 @@ class RaceController extends ChangeNotifier {
   final GameController game = GameController();
 
   RacePhase phase = RacePhase.matching;
+
+  /// The room code to show the friend — set only on the hosting side of a
+  /// private match (see [startPrivateHost]), null in every other flow.
+  String? joinCode;
+
   Race? _race;
   UserProfile? opponentProfile;
   UserProfile? selfProfile;
@@ -56,6 +75,11 @@ class RaceController extends ChangeNotifier {
 
   String get selfId => _raceService.selfId;
   bool get isWinner => _race?.winnerId == selfId;
+
+  /// Whether this is a friendly (room-code) match — no rating at stake, so
+  /// result UI should show a friendly-match label instead of waiting for
+  /// rating deltas that will never arrive.
+  bool get isPrivate => _race?.isPrivate ?? false;
   int? get selfRatingAfter => _race?.ratingAfterFor(selfId);
   int? get opponentRatingAfter =>
       _race?.ratingAfterFor(_race?.opponentOf(selfId) ?? selfId);
@@ -98,20 +122,43 @@ class RaceController extends ChangeNotifier {
     if (raceId != null) {
       _attachToRace(raceId);
     } else {
-      _matchSubscription = _raceService.watchForMatch().listen((race) {
-        if (race == null) return;
-        _matchSubscription?.cancel();
-        _attachToRace(race.id);
-      });
-      _matchPollTimer =
-          Timer.periodic(const Duration(seconds: 3), (_) async {
-        final race = await _raceService.fetchActiveMatch();
-        if (race != null) {
-          await _matchSubscription?.cancel();
-          _attachToRace(race.id);
-        }
-      });
+      _watchForMatch();
     }
+  }
+
+  /// Hosts a private (friend) room: registers it server-side, exposes its
+  /// join code via [joinCode], then waits for the friend exactly the way a
+  /// ranked waiter does — the join creates a `races` row naming this side
+  /// as player_a, which [_watchForMatch]'s stream/polling picks up.
+  Future<void> startPrivateHost() async {
+    joinCode = await _raceService.createPrivateRoom(_difficulty);
+    notifyListeners();
+    _watchForMatch();
+  }
+
+  /// Joins a friend's room by its code. Rethrows the service error for an
+  /// unknown/expired code — the caller shows it and pops; nothing has been
+  /// attached yet, so there is no state to unwind.
+  Future<void> joinPrivateRoom(String code) async {
+    final raceId = await _raceService.joinPrivateRoom(code);
+    _attachToRace(raceId);
+  }
+
+  /// Waits (stream + polling fallback) for a `races` row naming this side
+  /// as player_a — shared by ranked matching and private hosting.
+  void _watchForMatch() {
+    _matchSubscription = _raceService.watchForMatch().listen((race) {
+      if (race == null) return;
+      _matchSubscription?.cancel();
+      _attachToRace(race.id);
+    });
+    _matchPollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      final race = await _raceService.fetchActiveMatch();
+      if (race != null) {
+        await _matchSubscription?.cancel();
+        _attachToRace(race.id);
+      }
+    });
   }
 
   /// Restores a race resolved while the app was not running.
@@ -147,12 +194,19 @@ class RaceController extends ChangeNotifier {
         phase = RacePhase.waitingForPuzzle;
         if (race.isPuzzleProvider(selfId) && !_puzzleProvided) {
           _puzzleProvided = true;
-          // takeLast, not take: the front of the queue is what
-          // HomeScreen's difficulty-picker preview shows, so using it here
-          // could hand out a puzzle either player had already glimpsed.
-          final puzzle = _puzzleQueue.takeLast(race.difficulty);
-          if (puzzle != null) {
+          try {
+            // takeLast, not take: the front of the queue is what
+            // HomeScreen's difficulty-picker preview shows, so using it here
+            // could hand out a puzzle either player had already glimpsed. An
+            // exhausted queue falls back to generating in an isolate — a null
+            // here previously just never called markPuzzleReady, leaving both
+            // players stuck on "preparing puzzle" forever.
+            final puzzle = _puzzleQueue.takeLast(race.difficulty) ??
+                await _isolateGeneratePuzzle(race.difficulty);
             await _raceService.markPuzzleReady(raceId: race.id, puzzle: puzzle);
+          } catch (_) {
+            // Let the 3s race poll re-enter this case and try again.
+            _puzzleProvided = false;
           }
         }
       case RaceStatus.ready:
@@ -281,6 +335,15 @@ class RaceController extends ChangeNotifier {
     _matchPollTimer?.cancel();
     await _matchSubscription?.cancel();
     await _raceService.cancelQueue();
+  }
+
+  /// The private-host counterpart of [cancelWhileMatching]: tears down the
+  /// room server-side, which also aborts a race a joiner created in the
+  /// same instant (that joiner's client sees the aborted status and exits).
+  Future<void> cancelPrivateHost() async {
+    _matchPollTimer?.cancel();
+    await _matchSubscription?.cancel();
+    await _raceService.cancelPrivateRoom();
   }
 
   Future<void> abort() async {

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../models/hint.dart';
 import '../../services/generation/difficulty_evaluator.dart';
 import '../../services/generation/human_solver.dart';
 import '../../state/race_controller.dart';
+import '../../widgets/celebration_overlay.dart';
+import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pop_button.dart';
+import '../../widgets/pop_card.dart';
 
 /// Terminal screen for a finished race — the last owner in the
 /// Matchmaking -> Race -> RaceResult controller hand-off chain, so this is
@@ -64,32 +69,83 @@ class _RaceResultScreenState extends State<RaceResultScreen> {
         final selfRatingAfter = controller.selfRatingAfter;
         final opponentRatingAfter = controller.opponentRatingAfter;
 
-        return Scaffold(
+        return GradientScaffold(
           appBar: AppBar(title: Text(l10n.raceResultTitle)),
-          body: ListView(
+          body: CelebrationOverlay(
+            play: won,
+            big: won,
+            child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
               Center(child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  won ? Icons.emoji_events : Icons.sentiment_dissatisfied,
-                  size: 64,
-                  color:
-                      won ? Colors.amber : Theme.of(context).colorScheme.outline,
-                ),
+                Container(
+                  width: 96,
+                  height: 96,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: won
+                        ? const LinearGradient(colors: [
+                            Color(0xFFFFD24A),
+                            Color(0xFFFFA726),
+                          ])
+                        : LinearGradient(colors: [
+                            Colors.indigo.shade300,
+                            Colors.indigo.shade500,
+                          ]),
+                  ),
+                  child: Icon(
+                    won ? Icons.emoji_events : Icons.sentiment_dissatisfied,
+                    size: 52,
+                    color: Colors.white,
+                  ),
+                )
+                    .animate()
+                    .scale(
+                        begin: const Offset(0.5, 0.5),
+                        curve: Curves.elasticOut,
+                        duration: 700.ms),
                 const SizedBox(height: 16),
                 Text(won ? l10n.raceWon : l10n.raceLost,
                     style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 8),
-                Text(_formatTime(controller.game.elapsedSeconds)),
+                Text(
+                  _formatTime(controller.game.elapsedSeconds),
+                  style: const TextStyle(fontFamily: 'Jua', fontSize: 24),
+                ),
                 const SizedBox(height: 16),
-                if (selfRatingAfter != null && selfDelta != null)
-                  Text(l10n.yourRatingChangeLabel(
-                    selfRatingAfter - selfDelta,
-                    selfRatingAfter,
-                    _formatDelta(selfDelta),
-                  ))
+                // A friendly match never writes rating columns, so the
+                // ranked branches below would spin forever waiting for a
+                // delta that never comes (or show a bogus "+0" via the
+                // profile-diff fallback).
+                if (controller.isPrivate)
+                  Text(l10n.friendlyMatchLabel)
+                else if (selfRatingAfter != null && selfDelta != null)
+                  PopCard(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 14),
+                    child: Column(
+                      children: [
+                        Text(l10n.yourRatingChangeLabel(
+                          selfRatingAfter - selfDelta,
+                          selfRatingAfter,
+                          _formatDelta(selfDelta),
+                        )),
+                        const SizedBox(height: 4),
+                        Text(
+                          _formatDelta(selfDelta),
+                          style: TextStyle(
+                            fontFamily: 'Jua',
+                            fontSize: 28,
+                            color: selfDelta >= 0
+                                ? const Color(0xFF16A34A)
+                                : const Color(0xFFE11D48),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 else
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 4),
@@ -98,7 +154,8 @@ class _RaceResultScreenState extends State<RaceResultScreen> {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2)),
                   ),
-                if (opponentUsername != null &&
+                if (!controller.isPrivate &&
+                    opponentUsername != null &&
                     controller.opponentProfile != null &&
                     opponentDelta != null && opponentRatingAfter != null)
                   Padding(
@@ -115,11 +172,13 @@ class _RaceResultScreenState extends State<RaceResultScreen> {
             const SizedBox(height: 16),
             if (_difficultyResult != null) _TechniqueCard(result: _difficultyResult!),
             const SizedBox(height: 24),
-            FilledButton(
+            PopButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.homeButton),
+              label: l10n.homeButton,
+              expanded: true,
             ),
             ],
+          ),
           ),
         );
       },
@@ -139,10 +198,8 @@ class _TechniqueCard extends StatelessWidget {
       ..sort((a, b) => humanSolverTechniqueOrder
           .indexOf(a.key)
           .compareTo(humanSolverTechniqueOrder.indexOf(b.key)));
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+    return PopCard(
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(l10n.techniquesUsedTitle,
@@ -160,7 +217,6 @@ class _TechniqueCard extends StatelessWidget {
                 )),
           ],
         ),
-      ),
     );
   }
 }

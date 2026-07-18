@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
 import '../models/game_snapshot.dart';
 import '../models/race.dart';
 import '../models/sudoku_puzzle.dart';
-import '../models/tier.dart';
-import '../services/haptic_service.dart';
 import '../services/puzzle_queue_manager.dart';
 import '../services/race_service.dart';
-import '../services/sound_service.dart';
 import '../state/auth_controller.dart';
 import '../state/settings_controller.dart';
+import '../theme/app_palette.dart';
+import '../widgets/gradient_scaffold.dart';
+import '../widgets/pop_button.dart';
+import '../widgets/settings_sheet.dart';
 import '../widgets/sudoku_preview_board.dart';
+import '../widgets/tier_badge.dart';
 import 'daily/daily_entry_screen.dart';
 import 'game_screen.dart';
 import 'my_page_screen.dart';
 import 'puzzle_share/enter_code_screen.dart';
-import 'race/matchmaking_screen.dart';
+import 'race/race_lobby_screen.dart';
 import 'race/race_result_screen.dart';
 import 'stats_screen.dart';
 import '../state/race_controller.dart';
@@ -79,7 +82,17 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final service = RaceService();
       final race = await service.fetchActiveMatch();
-      if (race == null || race.status != RaceStatus.inProgress) return;
+      if (race == null) return;
+      // A race stuck before in_progress (both apps killed mid-handshake —
+      // most likely a friend room whose players never both arrived) has no
+      // outcome worth showing; just clear it so it stops shadowing future
+      // matches in watchForMatch/fetchActiveMatch.
+      if (race.status == RaceStatus.pendingPuzzle ||
+          race.status == RaceStatus.ready) {
+        await service.abortRace(race.id);
+        return;
+      }
+      if (race.status != RaceStatus.inProgress) return;
       await service.abortRace(race.id);
       final controller = RaceController(
         difficulty: race.difficulty,
@@ -140,12 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onRacePressed() {
-    final difficulty = widget.auth.profile?.tier.raceDifficulty ??
-        Difficulty.values[_selectedIndex];
-    _openGame(MatchmakingScreen(
+    _openGame(RaceLobbyScreen(
       auth: widget.auth,
       puzzleQueue: widget.puzzleQueue,
-      difficulty: difficulty,
     ));
   }
 
@@ -155,37 +165,43 @@ class _HomeScreenState extends State<HomeScreen> {
     final selectedDifficulty = Difficulty.values[_selectedIndex];
     final previewPuzzle = widget.puzzleQueue.peek(selectedDifficulty);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.appTitle),
-        // Flutter's AppBar swaps to colorScheme.surfaceContainer once
-        // scrolled-under is detected (any Scrollable in the body, e.g. the
-        // difficulty wheel, triggers this) — pinning backgroundColor to a
-        // fixed value makes it resolve the same regardless of scroll state.
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        scrolledUnderElevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            onPressed: () => _openGame(StatsScreen(auth: widget.auth)),
-          ),
-          IconButton(
-            icon: const Icon(Icons.qr_code),
-            onPressed: _onEnterCodePressed,
-          ),
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () => _openGame(MyPageScreen(auth: widget.auth)),
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => _showSettingsSheet(context),
-          ),
-        ],
-      ),
+    return GradientScaffold(
       body: SafeArea(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 12, 0),
+              child: Row(
+                children: [
+                  Text(
+                    l10n.appTitle,
+                    style: TextStyle(
+                      fontFamily: 'Jua',
+                      fontSize: 26,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  const Spacer(),
+                  _RoundIconButton(
+                    icon: Icons.bar_chart,
+                    onPressed: () => _openGame(StatsScreen(auth: widget.auth)),
+                  ),
+                  _RoundIconButton(
+                    icon: Icons.qr_code,
+                    onPressed: _onEnterCodePressed,
+                  ),
+                  _RoundIconButton(
+                    icon: Icons.person,
+                    onPressed: () => _openGame(MyPageScreen(auth: widget.auth)),
+                  ),
+                  _RoundIconButton(
+                    icon: Icons.settings,
+                    onPressed: () =>
+                        showSettingsSheet(context, widget.settings),
+                  ),
+                ],
+              ).animate().fadeIn(duration: 250.ms),
+            ),
             AnimatedBuilder(
               animation: widget.auth,
               builder: (context, _) {
@@ -195,18 +211,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(top: 8),
                   child: GestureDetector(
                     onTap: () => _openGame(MyPageScreen(auth: widget.auth)),
-                    child: Text(
-                      l10n.homeRatingLabel(
-                          profile.tier.label(context), profile.rating),
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: profile.tier.color(
-                            Theme.of(context).brightness == Brightness.dark),
-                      ),
-                    ),
+                    child:
+                        TierBadge(tier: profile.tier, rating: profile.rating),
                   ),
-                );
+                )
+                    .animate()
+                    .fadeIn(delay: 60.ms, duration: 250.ms)
+                    .slideY(begin: 0.08, curve: Curves.easeOutCubic);
               },
             ),
             Expanded(
@@ -235,159 +246,143 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 160,
-              child: ListWheelScrollView(
-                controller: _wheelController,
-                itemExtent: 40,
-                diameterRatio: 1.8,
-                physics: const FixedExtentScrollPhysics(),
-                onSelectedItemChanged: (index) =>
-                    setState(() => _selectedIndex = index),
-                children: Difficulty.values.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final difficulty = entry.value;
-                  final isSelected = difficulty == selectedDifficulty;
-                  return GestureDetector(
-                    onTap: () => _selectDifficulty(index),
-                    child: Center(
-                      child: Text(
-                        difficulty.label(context),
-                        style: TextStyle(
-                          fontSize: isSelected ? 20 : 16,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.grey,
-                        ),
+              height: 140,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Center selection band the wheel scrolls behind.
+                  IgnorePointer(
+                    child: Container(
+                      height: 44,
+                      margin: const EdgeInsets.symmetric(horizontal: 72),
+                      decoration: BoxDecoration(
+                        color: AppPalette.difficultyColor(
+                                selectedDifficulty, AppPalette.isDark(context))
+                            .withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(999),
                       ),
                     ),
-                  );
-                }).toList(),
+                  ),
+                  ListWheelScrollView(
+                    controller: _wheelController,
+                    itemExtent: 44,
+                    diameterRatio: 1.8,
+                    physics: const FixedExtentScrollPhysics(),
+                    onSelectedItemChanged: (index) =>
+                        setState(() => _selectedIndex = index),
+                    children: Difficulty.values.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final difficulty = entry.value;
+                      final isSelected = difficulty == selectedDifficulty;
+                      return GestureDetector(
+                        onTap: () => _selectDifficulty(index),
+                        child: Center(
+                          child: Text(
+                            difficulty.label(context),
+                            style: TextStyle(
+                              fontFamily: isSelected ? 'Jua' : null,
+                              fontSize: isSelected ? 20 : 16,
+                              color: isSelected
+                                  ? AppPalette.difficultyColor(
+                                      difficulty, AppPalette.isDark(context))
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
-            ),
+            ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
             const SizedBox(height: 16),
-            FilledButton(
-              onPressed: _onStartPressed,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                child:
-                    Text(l10n.startGame, style: const TextStyle(fontSize: 18)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48),
+              child: PopButton(
+                onPressed: _onStartPressed,
+                label: l10n.startGame,
+                fontSize: 20,
+                expanded: true,
               ),
-            ),
+            )
+                .animate()
+                .fadeIn(delay: 180.ms, duration: 250.ms)
+                .slideY(begin: 0.08, curve: Curves.easeOutCubic),
             const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: _onRacePressed,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                child:
-                    Text(l10n.raceButton, style: const TextStyle(fontSize: 18)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: PopButton(
+                      onPressed: _onRacePressed,
+                      label: l10n.raceButton,
+                      icon: Icons.sports_esports,
+                      color: AppPalette.raceCoral,
+                      variant: PopButtonVariant.secondary,
+                      fontSize: 16,
+                      expanded: true,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: PopButton(
+                      onPressed: () => _openGame(DailyEntryScreen(
+                          auth: widget.auth, puzzleQueue: widget.puzzleQueue)),
+                      label: l10n.dailyButton,
+                      icon: Icons.today,
+                      color: AppPalette.dailyTeal,
+                      variant: PopButtonVariant.secondary,
+                      fontSize: 16,
+                      expanded: true,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: () => _openGame(DailyEntryScreen(
-                  auth: widget.auth, puzzleQueue: widget.puzzleQueue)),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                child: Text(l10n.dailyButton,
-                    style: const TextStyle(fontSize: 18)),
-              ),
-            ),
-            const SizedBox(height: 12),
+            )
+                .animate()
+                .fadeIn(delay: 240.ms, duration: 250.ms)
+                .slideY(begin: 0.08, curve: Curves.easeOutCubic),
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
 
-  void _showSettingsSheet(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (sheetContext) => AnimatedBuilder(
-        animation: widget.settings,
-        builder: (context, _) {
-          final l10n = AppLocalizations.of(context)!;
-          return SafeArea(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-                  child: Text(l10n.themeSectionTitle,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                RadioGroup<ThemeMode>(
-                  groupValue: widget.settings.themeMode,
-                  onChanged: (mode) => widget.settings.setThemeMode(mode!),
-                  child: Column(
-                    children: [
-                      RadioListTile<ThemeMode>(
-                        title: Text(l10n.followSystemTheme),
-                        value: ThemeMode.system,
-                      ),
-                      RadioListTile<ThemeMode>(
-                        title: Text(l10n.lightTheme),
-                        value: ThemeMode.light,
-                      ),
-                      RadioListTile<ThemeMode>(
-                        title: Text(l10n.darkTheme),
-                        value: ThemeMode.dark,
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-                  child: Text(l10n.languageSectionTitle,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                RadioGroup<Locale?>(
-                  groupValue: widget.settings.localeOverride,
-                  onChanged: (locale) =>
-                      widget.settings.setLocaleOverride(locale),
-                  child: Column(
-                    children: [
-                      RadioListTile<Locale?>(
-                        title: Text(l10n.followSystemLanguage),
-                        value: null,
-                      ),
-                      RadioListTile<Locale?>(
-                        title: Text(l10n.koreanLanguage),
-                        value: const Locale('ko'),
-                      ),
-                      RadioListTile<Locale?>(
-                        title: Text(l10n.englishLanguage),
-                        value: const Locale('en'),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                SwitchListTile(
-                  title: Text(l10n.hapticsLabel),
-                  value: widget.settings.hapticsEnabled,
-                  onChanged: (v) {
-                    widget.settings.setHapticsEnabled(v);
-                    if (v) HapticService.selection();
-                  },
-                ),
-                SwitchListTile(
-                  title: Text(l10n.soundLabel),
-                  value: widget.settings.soundEnabled,
-                  onChanged: (v) {
-                    widget.settings.setSoundEnabled(v);
-                    if (v) SoundService.click();
-                  },
-                ),
-              ],
-            ),
-          );
-        },
+  // (settings sheet moved to lib/widgets/settings_sheet.dart)
+}
+
+/// Small circular icon button for the home header — a soft card-surface
+/// disc so the actions read as game chrome rather than a toolbar.
+class _RoundIconButton extends StatelessWidget {
+  const _RoundIconButton({required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = AppPalette.isDark(context);
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Material(
+        color: AppPalette.cardSurface(isDark),
+        shape: const CircleBorder(),
+        elevation: isDark ? 0 : 2,
+        shadowColor: AppPalette.cardShadow(isDark),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onPressed,
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: Icon(icon,
+                size: 20, color: Theme.of(context).colorScheme.primary),
+          ),
+        ),
       ),
     );
   }

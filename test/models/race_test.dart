@@ -22,6 +22,29 @@ void main() {
       expect(race.difficulty, Difficulty.medium);
       expect(race.puzzle, isNull);
       expect(race.winnerId, isNull);
+      // is_private absent (pre-0010 row / stream payload) defaults ranked.
+      expect(race.isPrivate, isFalse);
+    });
+
+    test('parses is_private, defaulting to ranked when absent', () {
+      final base = {
+        'id': 'race-1',
+        'player_a': 'user-a',
+        'player_b': 'user-b',
+        'puzzle_provider': 'user-a',
+        'difficulty': 'medium',
+        'status': 'pending_puzzle',
+        'puzzle': null,
+        'solution': null,
+        'fixed_mask': null,
+        'winner_id': null,
+      };
+
+      expect(
+          Race.fromJson({...base, 'is_private': true}).isPrivate, isTrue);
+      expect(
+          Race.fromJson({...base, 'is_private': false}).isPrivate, isFalse);
+      expect(Race.fromJson({...base, 'is_private': null}).isPrivate, isFalse);
     });
 
     test('parses a ready row into a full SudokuPuzzle', () {

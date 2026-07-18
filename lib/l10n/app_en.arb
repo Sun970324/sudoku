@@ -467,6 +467,25 @@
   "enterTextCodeHint": "Paste text code",
   "loadButton": "Load",
 
+  "raceLobbyTitle": "Race",
+  "friendMatchButton": "Play with a Friend",
+  "rankedMatchButton": "Ranked Match",
+  "friendMatchTitle": "Play with a Friend",
+  "createRoomTitle": "Choose difficulty",
+  "createRoomAction": "Make Room",
+  "joinRoomTitle": "Join Room",
+  "joinRoomAction": "Join",
+  "roomCodeFieldLabel": "Room code",
+  "roomCodeInvalid": "Room not found or expired.",
+  "roomCodeShareHint": "Share this code with your friend",
+  "waitingForFriend": "Waiting for your friend to join...",
+  "matchmakingElapsed": "Waiting {time}",
+  "@matchmakingElapsed": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "friendlyMatchLabel": "Friendly match \u00b7 no rating change",
   "matchmakingTitle": "Find Opponent",
   "matchmakingSearching": "Searching for an opponent...",
   "matchmakingPreparingPuzzle": "Preparing puzzle...",

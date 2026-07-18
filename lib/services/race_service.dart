@@ -25,6 +25,30 @@ class RaceService {
     await _client.from('matchmaking_queue').delete().eq('profile_id', selfId);
   }
 
+  /// Creates (or replaces) the caller's private room and returns its 6-char
+  /// join code. The friend's join is detected via [watchForMatch] — joining
+  /// creates a `races` row with the creator as player_a, exactly like ranked
+  /// matchmaking's waiting side.
+  Future<String> createPrivateRoom(Difficulty difficulty) async {
+    final result = await _client.rpc('create_private_room',
+        params: {'p_difficulty': difficulty.name});
+    return result as String;
+  }
+
+  /// Joins the room for [code] and returns the created race's id. Throws a
+  /// [PostgrestException] for an unknown, expired, or self-owned code.
+  Future<String> joinPrivateRoom(String code) async {
+    final result =
+        await _client.rpc('join_private_room', params: {'p_code': code});
+    return result as String;
+  }
+
+  /// Cancels the caller's open room; also aborts a private race a joiner
+  /// created in the same instant, so that joiner's client exits cleanly.
+  Future<void> cancelPrivateRoom() async {
+    await _client.rpc('cancel_private_room');
+  }
+
   /// Streams the caller's active (not finished/aborted) race, if any — the
   /// *waiting* side of a match always ends up as player_a (see
   /// enqueue_for_race), so this is how a waiting client learns it's been

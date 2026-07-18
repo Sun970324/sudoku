@@ -1017,6 +1017,90 @@ abstract class AppLocalizations {
   /// **'Load'**
   String get loadButton;
 
+  /// No description provided for @raceLobbyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race'**
+  String get raceLobbyTitle;
+
+  /// No description provided for @friendMatchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Play with a Friend'**
+  String get friendMatchButton;
+
+  /// No description provided for @rankedMatchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked Match'**
+  String get rankedMatchButton;
+
+  /// No description provided for @friendMatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play with a Friend'**
+  String get friendMatchTitle;
+
+  /// No description provided for @createRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose difficulty'**
+  String get createRoomTitle;
+
+  /// No description provided for @createRoomAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Make Room'**
+  String get createRoomAction;
+
+  /// No description provided for @joinRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Room'**
+  String get joinRoomTitle;
+
+  /// No description provided for @joinRoomAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get joinRoomAction;
+
+  /// No description provided for @roomCodeFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Room code'**
+  String get roomCodeFieldLabel;
+
+  /// No description provided for @roomCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Room not found or expired.'**
+  String get roomCodeInvalid;
+
+  /// No description provided for @roomCodeShareHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this code with your friend'**
+  String get roomCodeShareHint;
+
+  /// No description provided for @waitingForFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your friend to join...'**
+  String get waitingForFriend;
+
+  /// No description provided for @matchmakingElapsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting {time}'**
+  String matchmakingElapsed(String time);
+
+  /// No description provided for @friendlyMatchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Friendly match · no rating change'**
+  String get friendlyMatchLabel;
+
   /// No description provided for @matchmakingTitle.
   ///
   /// In en, this message translates to:

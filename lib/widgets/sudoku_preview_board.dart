@@ -79,6 +79,7 @@ class _SudokuPreviewBoardState extends State<SudokuPreviewBoard> {
               child: CustomPaint(
                 painter: SudokuGridLinesPainter(
                   innerColor: BoardColors.innerBorder(isDark),
+                  outerColor: BoardColors.outerBorder(isDark),
                 ),
               ),
             ),

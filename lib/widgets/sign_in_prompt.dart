@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../state/auth_controller.dart';
+import 'pop_button.dart';
 
 /// The sign-in gate shown by features that need an account (guest included)
 /// before proceeding — matchmaking, the daily puzzle. [title] carries the
@@ -23,19 +24,23 @@ class SignInPrompt extends StatelessWidget {
         children: [
           Text(title, textAlign: TextAlign.center),
           const SizedBox(height: 24),
-          FilledButton(
+          PopButton(
             onPressed: auth.signInWithGoogle,
-            child: Text(l10n.signInWithGoogle),
+            label: l10n.signInWithGoogle,
+            expanded: true,
           ),
-          const SizedBox(height: 12),
-          FilledButton(
+          const SizedBox(height: 16),
+          PopButton(
             onPressed: auth.signInWithApple,
-            child: Text(l10n.signInWithApple),
+            label: l10n.signInWithApple,
+            expanded: true,
           ),
-          const SizedBox(height: 12),
-          OutlinedButton(
+          const SizedBox(height: 16),
+          PopButton(
             onPressed: auth.signInAnonymously,
-            child: Text(l10n.signInAsGuest),
+            label: l10n.signInAsGuest,
+            variant: PopButtonVariant.outline,
+            expanded: true,
           ),
         ],
       ),

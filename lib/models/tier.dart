@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
+import '../theme/app_palette.dart';
 import 'difficulty.dart';
 
 enum Tier { bronze, silver, gold, diamond, master, challenger }
@@ -62,21 +63,8 @@ extension TierInfo on Tier {
     }
   }
 
-  /// Mirrors ResultScreen._difficultyColor's light/dark-aware pattern.
-  Color color(bool isDark) {
-    switch (this) {
-      case Tier.bronze:
-        return isDark ? Colors.brown.shade300 : Colors.brown.shade700;
-      case Tier.silver:
-        return isDark ? Colors.blueGrey.shade200 : Colors.blueGrey.shade600;
-      case Tier.gold:
-        return isDark ? Colors.amber.shade300 : Colors.amber.shade800;
-      case Tier.diamond:
-        return isDark ? Colors.lightBlue.shade200 : Colors.lightBlue.shade700;
-      case Tier.master:
-        return isDark ? Colors.deepPurple.shade200 : Colors.deepPurple.shade600;
-      case Tier.challenger:
-        return isDark ? Colors.redAccent.shade100 : Colors.redAccent.shade700;
-    }
-  }
+  /// Delegates to the app-wide palette so tier colors stay consistent with
+  /// the rest of the design system (same signature as before, so call
+  /// sites are untouched).
+  Color color(bool isDark) => AppPalette.tierColor(this, isDark);
 }

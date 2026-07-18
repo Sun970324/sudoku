@@ -1,10 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../models/difficulty.dart';
 import '../../services/puzzle_queue_manager.dart';
 import '../../state/auth_controller.dart';
 import '../../state/race_controller.dart';
+import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pop_button.dart';
+import '../../widgets/pulse_ring.dart';
 import '../../widgets/sign_in_prompt.dart';
 import 'race_screen.dart';
 
@@ -32,6 +38,9 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
   /// under the screen that now owns it.
   bool _handedOff = false;
 
+  Timer? _elapsedTimer;
+  int _elapsedSeconds = 0;
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +60,9 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
     );
     controller.addListener(_onRaceChanged);
     controller.start();
+    _elapsedTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() => _elapsedSeconds++);
+    });
     setState(() => _controller = controller);
   }
 
@@ -83,6 +95,7 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
 
   @override
   void dispose() {
+    _elapsedTimer?.cancel();
     widget.auth.removeListener(_onAuthChanged);
     if (!_handedOff) {
       _controller?.removeListener(_onRaceChanged);
@@ -94,7 +107,7 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(title: Text(l10n.matchmakingTitle)),
       body: Center(
         child: !widget.auth.isSignedIn
@@ -107,19 +120,34 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 16),
-                    Text(_statusText(l10n, _controller?.phase)),
+                    const PulseRing(),
                     const SizedBox(height: 24),
-                    OutlinedButton(
+                    Text(
+                      _statusText(l10n, _controller?.phase),
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    _ElapsedPill(
+                        text: l10n.matchmakingElapsed(
+                            _formatElapsed(_elapsedSeconds))),
+                    const SizedBox(height: 32),
+                    PopButton(
                       onPressed: _cancel,
-                      child: Text(l10n.cancelAction),
+                      variant: PopButtonVariant.outline,
+                      label: l10n.cancelAction,
                     ),
                   ],
-                ),
+                ).animate().fadeIn(duration: 250.ms),
               ),
       ),
     );
+  }
+
+  String _formatElapsed(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
   }
 
   String _statusText(AppLocalizations l10n, RacePhase? phase) {
@@ -135,5 +163,28 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
       case null:
         return l10n.matchmakingSearching;
     }
+  }
+}
+
+/// Rounded pill showing the waiting timer.
+class _ElapsedPill extends StatelessWidget {
+  const _ElapsedPill({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      decoration: BoxDecoration(
+        color: scheme.primary.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontFamily: 'Jua', color: scheme.primary),
+      ),
+    );
   }
 }

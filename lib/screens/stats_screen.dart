@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
+import '../widgets/gradient_scaffold.dart';
 import '../models/difficulty.dart';
 import '../models/race.dart';
 import '../models/stats.dart';
@@ -51,10 +52,7 @@ class _StatsScreenState extends State<StatsScreen> {
     final deltaText = delta >= 0 ? '+$delta' : '$delta';
     final resultLabel =
         entry.won ? l10n.raceHistoryResultWon : l10n.raceHistoryResultLost;
-    final baseStyle = TextStyle(
-      fontSize: 13,
-      color: DefaultTextStyle.of(context).style.color,
-    );
+    const baseStyle = TextStyle(fontSize: 13);
     return Card(
       child: ListTile(
         onTap: () => Navigator.push(
@@ -75,12 +73,16 @@ class _StatsScreenState extends State<StatsScreen> {
           TextSpan(
             style: baseStyle,
             children: [
-              TextSpan(text:
-                  '($resultLabel) ${_formatDate(entry.finishedAt)} vs ${entry.opponentUsername} ${entry.ratingAfter} ('),
+              TextSpan(
+                  text:
+                      '($resultLabel) ${_formatDate(entry.finishedAt)} vs ${entry.opponentUsername} ${entry.ratingAfter}'),
+              const TextSpan(text: ' ('),
               TextSpan(
                 text: deltaText,
                 style: baseStyle.copyWith(
-                    color: deltaColor, fontWeight: FontWeight.bold),
+                  color: deltaColor,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const TextSpan(text: ')'),
             ],
@@ -93,7 +95,7 @@ class _StatsScreenState extends State<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(title: Text(l10n.statsTitle)),
       body: FutureBuilder<Stats>(
         future: _statsFuture,

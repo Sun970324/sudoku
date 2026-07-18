@@ -567,6 +567,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadButton => 'Load';
 
   @override
+  String get raceLobbyTitle => 'Race';
+
+  @override
+  String get friendMatchButton => 'Play with a Friend';
+
+  @override
+  String get rankedMatchButton => 'Ranked Match';
+
+  @override
+  String get friendMatchTitle => 'Play with a Friend';
+
+  @override
+  String get createRoomTitle => 'Choose difficulty';
+
+  @override
+  String get createRoomAction => 'Make Room';
+
+  @override
+  String get joinRoomTitle => 'Join Room';
+
+  @override
+  String get joinRoomAction => 'Join';
+
+  @override
+  String get roomCodeFieldLabel => 'Room code';
+
+  @override
+  String get roomCodeInvalid => 'Room not found or expired.';
+
+  @override
+  String get roomCodeShareHint => 'Share this code with your friend';
+
+  @override
+  String get waitingForFriend => 'Waiting for your friend to join...';
+
+  @override
+  String matchmakingElapsed(String time) {
+    return 'Waiting $time';
+  }
+
+  @override
+  String get friendlyMatchLabel => 'Friendly match · no rating change';
+
+  @override
   String get matchmakingTitle => 'Find Opponent';
 
   @override

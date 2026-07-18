@@ -563,6 +563,50 @@ class AppLocalizationsKo extends AppLocalizations {
   String get loadButton => '불러오기';
 
   @override
+  String get raceLobbyTitle => '대결';
+
+  @override
+  String get friendMatchButton => '친구와 대결하기';
+
+  @override
+  String get rankedMatchButton => '랭크대전';
+
+  @override
+  String get friendMatchTitle => '친구와 대결하기';
+
+  @override
+  String get createRoomTitle => '난이도 선택';
+
+  @override
+  String get createRoomAction => '방 만들기';
+
+  @override
+  String get joinRoomTitle => '방 참가';
+
+  @override
+  String get joinRoomAction => '참가하기';
+
+  @override
+  String get roomCodeFieldLabel => '방 코드';
+
+  @override
+  String get roomCodeInvalid => '방을 찾을 수 없거나 만료되었어요.';
+
+  @override
+  String get roomCodeShareHint => '이 코드를 친구에게 공유하세요';
+
+  @override
+  String get waitingForFriend => '친구가 참가하길 기다리는 중...';
+
+  @override
+  String matchmakingElapsed(String time) {
+    return '대기 시간 $time';
+  }
+
+  @override
+  String get friendlyMatchLabel => '친선전 · 레이팅 변동 없음';
+
+  @override
   String get matchmakingTitle => '대결 상대 찾기';
 
   @override

@@ -28,6 +28,7 @@ class Race {
     required this.puzzleProvider,
     required this.difficulty,
     required this.status,
+    this.isPrivate = false,
     this.puzzle,
     this.winnerId,
     this.playerARatingAfter,
@@ -45,6 +46,9 @@ class Race {
       puzzleProvider: json['puzzle_provider'] as String,
       difficulty: difficultyFromName(json['difficulty'] as String),
       status: _raceStatusFromDb(json['status'] as String),
+      // Tolerates rows/stream payloads from before migration 0010 added the
+      // column — absent means a ranked race.
+      isPrivate: json['is_private'] as bool? ?? false,
       winnerId: json['winner_id'] as String?,
       playerARatingAfter: json['player_a_rating_after'] as int?,
       playerARatingDelta: json['player_a_rating_delta'] as int?,
@@ -67,6 +71,11 @@ class Race {
   final String puzzleProvider;
   final Difficulty difficulty;
   final RaceStatus status;
+
+  /// A friendly match created via room code (migration 0010): resolves like
+  /// a ranked race but never touches rating/wins/losses/tier, so its
+  /// rating_after/delta columns stay null.
+  final bool isPrivate;
   final SudokuPuzzle? puzzle;
   final String? winnerId;
   final int? playerARatingAfter;

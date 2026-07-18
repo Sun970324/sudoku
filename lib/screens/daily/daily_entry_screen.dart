@@ -3,6 +3,9 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pop_button.dart';
+import '../../widgets/pulse_ring.dart';
 import '../../models/daily.dart';
 import '../../models/difficulty.dart';
 import '../../models/sudoku_puzzle.dart';
@@ -114,7 +117,7 @@ class _DailyEntryScreenState extends State<DailyEntryScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(title: Text(l10n.dailyTitle)),
       body: Center(
         child: !widget.auth.isSignedIn
@@ -128,18 +131,20 @@ class _DailyEntryScreenState extends State<DailyEntryScreen> {
                     children: [
                       Text(l10n.dailySubmitFailed),
                       const SizedBox(height: 16),
-                      OutlinedButton(
+                      PopButton(
                         onPressed: _load,
-                        child: Text(l10n.retryAction),
+                        variant: PopButtonVariant.outline,
+                        label: l10n.retryAction,
                       ),
                     ],
                   )
                 : Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const CircularProgressIndicator(),
-                      const SizedBox(height: 16),
-                      Text(l10n.dailyLoading),
+                      const PulseRing(),
+                      const SizedBox(height: 24),
+                      Text(l10n.dailyLoading,
+                          style: Theme.of(context).textTheme.titleLarge),
                     ],
                   ),
       ),

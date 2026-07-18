@@ -129,6 +129,7 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
                     child: CustomPaint(
                       painter: SudokuGridLinesPainter(
                         innerColor: BoardColors.innerBorder(isDark),
+                        outerColor: BoardColors.outerBorder(isDark),
                       ),
                     ),
                   ),

@@ -44,6 +44,8 @@ dependencies:
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0
   crypto: ^3.0.7
+  confetti: ^0.8.0
+  flutter_animate: ^4.5.0
 
 dev_dependencies:
   flutter_test:
@@ -85,6 +87,11 @@ flutter:
   assets:
     - assets/sounds/
     - assets/images/
+
+  fonts:
+    - family: Jua
+      fonts:
+        - asset: assets/fonts/Jua-Regular.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
