@@ -52,6 +52,12 @@
   "techniqueUsageCount": "{count}회",
 
   "statsTitle": "기록",
+  "statsCompletedLabel": "완료 횟수",
+  "statsPerfectLabel": "퍼펙트 횟수",
+  "statsAverageLabel": "평균 기록",
+  "statsBestLabel": "최고 기록",
+  "statsNoRecord": "-",
+  "statsTopPercentBadge": "상위 {percent}%",
   "playedWonLabel": "플레이 {played}회 · 승리 {won}회",
   "bestTimeSuffix": " · 최고기록 {time}",
   "raceHistoryTitle": "대결 기록",
@@ -164,7 +170,7 @@
   "invalidTextCodeError": "유효하지 않은 텍스트 코드예요.",
   "copiedToClipboard": "클립보드에 복사했어요",
   "enterTextCodeHint": "텍스트 코드 붙여넣기",
-  "loadButton": "불러오기",
+  "loadButton": "입장하기",
 
   "raceLobbyTitle": "대결",
   "friendMatchButton": "친구와 대결하기",

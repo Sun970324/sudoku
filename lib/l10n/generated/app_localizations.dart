@@ -380,6 +380,42 @@ abstract class AppLocalizations {
   /// **'Stats'**
   String get statsTitle;
 
+  /// No description provided for @statsCompletedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get statsCompletedLabel;
+
+  /// No description provided for @statsPerfectLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect clears'**
+  String get statsPerfectLabel;
+
+  /// No description provided for @statsAverageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Average time'**
+  String get statsAverageLabel;
+
+  /// No description provided for @statsBestLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Best time'**
+  String get statsBestLabel;
+
+  /// No description provided for @statsNoRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'-'**
+  String get statsNoRecord;
+
+  /// No description provided for @statsTopPercentBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Top {percent}%'**
+  String statsTopPercentBadge(int percent);
+
   /// No description provided for @playedWonLabel.
   ///
   /// In en, this message translates to:
@@ -1026,7 +1062,7 @@ abstract class AppLocalizations {
   /// No description provided for @loadButton.
   ///
   /// In en, this message translates to:
-  /// **'Load'**
+  /// **'Enter'**
   String get loadButton;
 
   /// No description provided for @raceLobbyTitle.

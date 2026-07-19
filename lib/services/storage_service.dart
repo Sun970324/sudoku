@@ -45,6 +45,7 @@ class StorageService {
     required Difficulty difficulty,
     required bool won,
     int? finishTimeSeconds,
+    int? mistakes,
   }) async {
     final stats = await getStats();
     final current = stats.byDifficulty[difficulty]!;
@@ -52,11 +53,18 @@ class StorageService {
         finishTimeSeconds != null &&
         (current.bestTimeSeconds == null ||
             finishTimeSeconds < current.bestTimeSeconds!);
+    final isPerfectWin = won && mistakes == 0;
+    final isTimedWin = won && finishTimeSeconds != null;
 
     stats.byDifficulty[difficulty] = DifficultyStats(
       played: current.played + 1,
       won: won ? current.won + 1 : current.won,
       bestTimeSeconds: isNewBest ? finishTimeSeconds : current.bestTimeSeconds,
+      perfectWins: isPerfectWin ? current.perfectWins + 1 : current.perfectWins,
+      totalWinSeconds: isTimedWin
+          ? current.totalWinSeconds + finishTimeSeconds
+          : current.totalWinSeconds,
+      timedWins: isTimedWin ? current.timedWins + 1 : current.timedWins,
     );
 
     final prefs = await SharedPreferences.getInstance();

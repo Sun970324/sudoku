@@ -208,6 +208,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       difficulty: difficulty,
       won: true,
       finishTimeSeconds: elapsedSeconds,
+      mistakes: mistakes,
     );
 
     final solveResult = HumanSolver().solve(_controller.puzzle.puzzle.toJson());

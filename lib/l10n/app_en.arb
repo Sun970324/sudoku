@@ -84,6 +84,17 @@
   },
 
   "statsTitle": "Stats",
+  "statsCompletedLabel": "Completed",
+  "statsPerfectLabel": "Perfect clears",
+  "statsAverageLabel": "Average time",
+  "statsBestLabel": "Best time",
+  "statsNoRecord": "-",
+  "statsTopPercentBadge": "Top {percent}%",
+  "@statsTopPercentBadge": {
+    "placeholders": {
+      "percent": {"type": "int"}
+    }
+  },
   "playedWonLabel": "Played {played} · Won {won}",
   "@playedWonLabel": {
     "placeholders": {
@@ -467,7 +478,7 @@
   "invalidTextCodeError": "That text code isn't valid.",
   "copiedToClipboard": "Copied to clipboard",
   "enterTextCodeHint": "Paste text code",
-  "loadButton": "Load",
+  "loadButton": "Enter",
 
   "raceLobbyTitle": "Race",
   "friendMatchButton": "Play with a Friend",

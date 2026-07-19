@@ -165,6 +165,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsTitle => 'Stats';
 
   @override
+  String get statsCompletedLabel => 'Completed';
+
+  @override
+  String get statsPerfectLabel => 'Perfect clears';
+
+  @override
+  String get statsAverageLabel => 'Average time';
+
+  @override
+  String get statsBestLabel => 'Best time';
+
+  @override
+  String get statsNoRecord => '-';
+
+  @override
+  String statsTopPercentBadge(int percent) {
+    return 'Top $percent%';
+  }
+
+  @override
   String playedWonLabel(int played, int won) {
     return 'Played $played · Won $won';
   }
@@ -570,7 +590,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterTextCodeHint => 'Paste text code';
 
   @override
-  String get loadButton => 'Load';
+  String get loadButton => 'Enter';
 
   @override
   String get raceLobbyTitle => 'Race';

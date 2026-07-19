@@ -162,6 +162,26 @@ class AppLocalizationsKo extends AppLocalizations {
   String get statsTitle => '기록';
 
   @override
+  String get statsCompletedLabel => '완료 횟수';
+
+  @override
+  String get statsPerfectLabel => '퍼펙트 횟수';
+
+  @override
+  String get statsAverageLabel => '평균 기록';
+
+  @override
+  String get statsBestLabel => '최고 기록';
+
+  @override
+  String get statsNoRecord => '-';
+
+  @override
+  String statsTopPercentBadge(int percent) {
+    return '상위 $percent%';
+  }
+
+  @override
   String playedWonLabel(int played, int won) {
     return '플레이 $played회 · 승리 $won회';
   }
@@ -566,7 +586,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get enterTextCodeHint => '텍스트 코드 붙여넣기';
 
   @override
-  String get loadButton => '불러오기';
+  String get loadButton => '입장하기';
 
   @override
   String get raceLobbyTitle => '대결';
