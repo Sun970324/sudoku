@@ -970,7 +970,7 @@ abstract class AppLocalizations {
   /// No description provided for @explanationUniqueRectangleType3.
   ///
   /// In en, this message translates to:
-  /// **'Combining the extra candidates of {cellA} and {cellB}, they form a set of only {digitsDesc} together with other cells in that unit. So {digitsDesc} can be removed from the rest of that unit\'s cells.'**
+  /// **'One of {cellA} and {cellB} must take an extra candidate (if both kept only the rectangle pair, the puzzle would have two solutions). Treating their extra candidates as one virtual cell, they form a set of only {digitsDesc} with other cells in that unit — so {digitsDesc} can be removed from the rest of that unit.'**
   String explanationUniqueRectangleType3(
       String cellA, String cellB, String digitsDesc);
 
@@ -984,7 +984,7 @@ abstract class AppLocalizations {
   /// No description provided for @noteRepairNotice.
   ///
   /// In en, this message translates to:
-  /// **'Notes needed to be corrected first. {explanation}'**
+  /// **'Some cells\' notes didn\'t match the board, so they were corrected first. {explanation}'**
   String noteRepairNotice(String explanation);
 
   /// No description provided for @myPageTitle.
@@ -1437,6 +1437,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retryAction;
+
+  /// No description provided for @hintStepPrevAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get hintStepPrevAction;
+
+  /// No description provided for @hintStepNextAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get hintStepNextAction;
+
+  /// No description provided for @hintStepXYWingPivot.
+  ///
+  /// In en, this message translates to:
+  /// **'The pivot {pivot} has only two candidates: {x} and {y}.'**
+  String hintStepXYWingPivot(String pivot, int x, int y);
+
+  /// No description provided for @hintStepWingCase.
+  ///
+  /// In en, this message translates to:
+  /// **'If the pivot is {digit}, {wing} loses {digit} — so it must be {z}.'**
+  String hintStepWingCase(int digit, String wing, int z);
+
+  /// No description provided for @hintStepXYWingConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Either way, one of the two wings is {z}. Any cell that sees both wings can\'t be {z}.'**
+  String hintStepXYWingConclusion(int z);
+
+  /// No description provided for @hintStepXYZWingPivot.
+  ///
+  /// In en, this message translates to:
+  /// **'The pivot {pivot} has three candidates: {digits}.'**
+  String hintStepXYZWingPivot(String pivot, String digits);
+
+  /// No description provided for @hintStepXYZWingPivotZ.
+  ///
+  /// In en, this message translates to:
+  /// **'And the pivot could be {z} itself — that\'s the third case.'**
+  String hintStepXYZWingPivotZ(int z);
+
+  /// No description provided for @hintStepXYZWingConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'In every case, one of the three cells is {z}. Any cell that sees all three can\'t be {z}.'**
+  String hintStepXYZWingConclusion(int z);
+
+  /// No description provided for @hintStepWWingPair.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} hold exactly the same pair: {a} and {b}.'**
+  String hintStepWWingPair(String cell1, String cell2, int a, int b);
+
+  /// No description provided for @hintStepWWingBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'In {unitDesc}, {b} fits in only two places — and each one sees one of the pair cells.'**
+  String hintStepWWingBridge(String unitDesc, int b);
+
+  /// No description provided for @hintStepWWingForced.
+  ///
+  /// In en, this message translates to:
+  /// **'If both pair cells were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}.'**
+  String hintStepWWingForced(int a, int b);
+
+  /// No description provided for @hintStepWWingConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Any cell that sees both pair cells can\'t be {a}.'**
+  String hintStepWWingConclusion(int a);
+
+  /// No description provided for @hintStepChainStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start at {cell}: if it isn\'t {z}, it must be {a}.'**
+  String hintStepChainStart(String cell, int z, int a);
+
+  /// No description provided for @hintStepChainHop.
+  ///
+  /// In en, this message translates to:
+  /// **'Then {cell} can\'t be {carry}, so it must be {next}.'**
+  String hintStepChainHop(String cell, int carry, int next);
+
+  /// No description provided for @hintStepChainConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'So either the start is {z}, or the end is {z}. Any cell that sees both ends can\'t be {z}.'**
+  String hintStepChainConclusion(int z);
+
+  /// No description provided for @hintStepRemotePairIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Every cell in this chain holds the same pair: {a} and {b}.'**
+  String hintStepRemotePairIntro(int a, int b);
+
+  /// No description provided for @hintStepRemotePairAlternate.
+  ///
+  /// In en, this message translates to:
+  /// **'Neighbors see each other, so the values must alternate {a}, {b}, {a}, {b} along the chain.'**
+  String hintStepRemotePairAlternate(int a, int b);
+
+  /// No description provided for @hintStepRemotePairEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'The two ends are an odd number of hops apart, so one is {a} and the other is {b} — always.'**
+  String hintStepRemotePairEnds(int a, int b);
+
+  /// No description provided for @hintStepRemotePairConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Any cell that sees both ends can be neither {a} nor {b}.'**
+  String hintStepRemotePairConclusion(int a, int b);
+
+  /// No description provided for @hintStepSingleDigitStrong1.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} are the only two spots for {digit} in their unit — one of them must be {digit}.'**
+  String hintStepSingleDigitStrong1(int digit, String cell1, String cell2);
+
+  /// No description provided for @hintStepSingleDigitStrong2.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} are another only-two-spots pair, and the two middle cells see each other.'**
+  String hintStepSingleDigitStrong2(int digit, String cell1, String cell2);
+
+  /// No description provided for @hintStepSingleDigitForced.
+  ///
+  /// In en, this message translates to:
+  /// **'The middle cells can\'t both be {digit}, so at least one of the free ends {cell1} and {cell2} must be {digit}.'**
+  String hintStepSingleDigitForced(int digit, String cell1, String cell2);
+
+  /// No description provided for @hintStepSingleDigitConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Any cell that sees both free ends can\'t be {digit}.'**
+  String hintStepSingleDigitConclusion(int digit);
+
+  /// No description provided for @hintStepColoringChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Cells linked as the only two spots for {digit} form a chain — neighbors are opposites, so they split into two colors.'**
+  String hintStepColoringChain(int digit);
+
+  /// No description provided for @hintStepColoringRule1Clash.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} share a color AND see each other — a color can\'t hold {digit} twice, so that whole color is wrong.'**
+  String hintStepColoringRule1Clash(int digit, String cell1, String cell2);
+
+  /// No description provided for @hintStepColoringRule1Conclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Every cell of the wrong color loses {digit}.'**
+  String hintStepColoringRule1Conclusion(int digit);
+
+  /// No description provided for @hintStepColoringRule2Conclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'One of the two colors must be true. A cell that sees both colors can\'t be {digit} either way.'**
+  String hintStepColoringRule2Conclusion(int digit);
+
+  /// No description provided for @hintStepXWingLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} fits in only two spots in each of {linesDesc}.'**
+  String hintStepXWingLines(int digit, String linesDesc);
+
+  /// No description provided for @hintStepXWingRect.
+  ///
+  /// In en, this message translates to:
+  /// **'The four spots form a rectangle — however it resolves, {crossDesc} each get exactly one {digit} inside it.'**
+  String hintStepXWingRect(int digit, String crossDesc);
+
+  /// No description provided for @hintStepXWingConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'So the rest of those two {crossUnitName} can\'t hold {digit}.'**
+  String hintStepXWingConclusion(int digit, String crossUnitName);
+
+  /// No description provided for @hintStepFullHouseIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Only one cell in {unitDesc} is still empty.'**
+  String hintStepFullHouseIntro(String unitDesc);
+
+  /// No description provided for @hintStepNakedSingleIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Narrow down {cell}: cross off every digit already placed in its row, column, and box.'**
+  String hintStepNakedSingleIntro(String cell);
+
+  /// No description provided for @hintStepHiddenSingleIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'One area has only a single spot left where {digit} can go — the highlighted digits block every other cell.'**
+  String hintStepHiddenSingleIntro(int digit);
+
+  /// No description provided for @hintStepBugIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'If every empty cell kept exactly two candidates, the puzzle would end up with two solutions. Exactly one cell holds three — that cell is the way out.'**
+  String get hintStepBugIntro;
+
+  /// No description provided for @hintStepNakedSubsetIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'In {unitDesc}, the {count} highlighted cells hold only {digits} between them.'**
+  String hintStepNakedSubsetIntro(int count, String digits, String unitDesc);
+
+  /// No description provided for @hintStepHiddenSubsetIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'In {unitDesc}, {digits} can only go in the {count} highlighted cells.'**
+  String hintStepHiddenSubsetIntro(int count, String digits, String unitDesc);
+
+  /// No description provided for @hintStepPointingIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside {boxDesc}, every spot for {digit} sits on {lineDesc}.'**
+  String hintStepPointingIntro(int digit, String boxDesc, String lineDesc);
+
+  /// No description provided for @hintStepClaimingIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'In {lineDesc}, every spot for {digit} sits inside {boxDesc}.'**
+  String hintStepClaimingIntro(int digit, String lineDesc, String boxDesc);
+
+  /// No description provided for @hintStepFishIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Look at {linesDesc}: the spots where {digit} can go there are pinned to just a few crossing lines.'**
+  String hintStepFishIntro(int digit, String linesDesc);
+
+  /// No description provided for @hintStepURIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible.'**
+  String get hintStepURIntro;
 }
 
 class _AppLocalizationsDelegate

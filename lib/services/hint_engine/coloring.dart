@@ -129,6 +129,36 @@ extension HintEngineColoring on HintEngine {
     }
     if (eliminations.isEmpty) return null;
 
+    // Same link grammar as an XY-Chain (a remote pair IS one whose cells all
+    // share the same pair): each cell's own a=b is a strong link, the shared
+    // digit reaching the next cell a weak one. The path has an odd number of
+    // links, so the carry lands both ends on [a] — the overlay's convergence
+    // connectors then run from the two end cells to each eliminated
+    // candidate (of either digit) they both see.
+    HintCell cellAt(int i) => HintCell(path[i][0], path[i][1]);
+    final chainLinks = <HintChainLink>[
+      HintChainLink(
+        from: HintChainNode.single(cellAt(0), a),
+        to: HintChainNode.single(cellAt(0), b),
+        strong: true,
+      ),
+    ];
+    var carry = b;
+    for (var i = 0; i + 1 < path.length; i++) {
+      chainLinks.add(HintChainLink(
+        from: HintChainNode.single(cellAt(i), carry),
+        to: HintChainNode.single(cellAt(i + 1), carry),
+        strong: false,
+      ));
+      final other = carry == a ? b : a;
+      chainLinks.add(HintChainLink(
+        from: HintChainNode.single(cellAt(i + 1), carry),
+        to: HintChainNode.single(cellAt(i + 1), other),
+        strong: true,
+      ));
+      carry = other;
+    }
+
     return Hint(
       technique: HintTechnique.remotePair,
       type: HintType.eliminate,
@@ -147,6 +177,7 @@ extension HintEngineColoring on HintEngine {
       },
       primaryDigits: {a, b},
       eliminations: eliminations,
+      chainLinks: chainLinks,
     );
   }
 
@@ -166,26 +197,46 @@ extension HintEngineColoring on HintEngine {
     final resolvedL10n = _resolveL10n(l10n);
     for (var d = 1; d <= 9; d++) {
       final components = _colorComponentsForDigit(candidates, d);
-      for (final coloring in components) {
-        final hint = _simpleColoringRule1(candidates, coloring, d, resolvedL10n);
+      for (final (coloring, edges) in components) {
+        final hint =
+            _simpleColoringRule1(candidates, coloring, edges, d, resolvedL10n);
         if (hint != null) return hint;
       }
-      for (final coloring in components) {
-        final hint = _simpleColoringRule2(candidates, coloring, d, resolvedL10n);
+      for (final (coloring, edges) in components) {
+        final hint =
+            _simpleColoringRule2(candidates, coloring, edges, d, resolvedL10n);
         if (hint != null) return hint;
       }
     }
     return null;
   }
 
+  /// The component's conjugate edges as the strong links they are — one
+  /// per pair, all on [digit] — so the overlay draws the chain the coloring
+  /// argument actually walks.
+  List<HintChainLink> _conjugateEdgeLinks(List<(int, int)> edges, int digit) =>
+      [
+        for (final e in edges)
+          HintChainLink(
+            from: HintChainNode.single(HintCell(e.$1 ~/ 9, e.$1 % 9), digit),
+            to: HintChainNode.single(HintCell(e.$2 ~/ 9, e.$2 % 9), digit),
+            strong: true,
+          ),
+      ];
+
   /// All conjugate-pair-linked components (>= 2 cells) for [digit], each as
-  /// a cell-index (`row * 9 + col`) -> color (0/1) map, discovered in
-  /// deterministic row-major order of each component's first cell.
-  List<Map<int, int>> _colorComponentsForDigit(
+  /// a cell-index (`row * 9 + col`) -> color (0/1) map plus the conjugate
+  /// edges joining its cells (canonical `(min, max)` index pairs, deduped —
+  /// two cells alone in both a row AND their box are still one edge), so a
+  /// hint can draw the chain's actual links rather than just colored cells.
+  /// Discovered in deterministic row-major order of each component's first
+  /// cell.
+  List<(Map<int, int>, List<(int, int)>)> _colorComponentsForDigit(
     List<List<Set<int>>> candidates,
     int digit,
   ) {
     final adjacency = <int, Set<int>>{};
+    final edges = <(int, int)>{};
     for (final unit in _allUnits()) {
       final cellsWithDigit = unit.cells
           .where((rc) => candidates[rc[0]][rc[1]].contains(digit))
@@ -195,10 +246,11 @@ extension HintEngineColoring on HintEngine {
       final b = cellsWithDigit[1][0] * 9 + cellsWithDigit[1][1];
       adjacency.putIfAbsent(a, () => {}).add(b);
       adjacency.putIfAbsent(b, () => {}).add(a);
+      edges.add(a < b ? (a, b) : (b, a));
     }
 
     final visited = <int>{};
-    final components = <Map<int, int>>[];
+    final components = <(Map<int, int>, List<(int, int)>)>[];
     final startCells = adjacency.keys.toList()..sort();
     for (final start in startCells) {
       if (!visited.add(start)) continue;
@@ -212,7 +264,15 @@ extension HintEngineColoring on HintEngine {
           queue.add(neighbor);
         }
       }
-      if (coloring.length >= 2) components.add(coloring);
+      if (coloring.length >= 2) {
+        components.add((
+          coloring,
+          [
+            for (final e in edges)
+              if (coloring.containsKey(e.$1)) e,
+          ],
+        ));
+      }
     }
     return components;
   }
@@ -220,6 +280,7 @@ extension HintEngineColoring on HintEngine {
   Hint? _simpleColoringRule1(
     List<List<Set<int>>> candidates,
     Map<int, int> coloring,
+    List<(int, int)> edges,
     int digit,
     AppLocalizations l10n,
   ) {
@@ -258,6 +319,22 @@ extension HintEngineColoring on HintEngine {
             colorGroupA: contradictionCells,
             colorGroupB: otherColorCells,
             eliminations: eliminations,
+            // The chain the coloring walked, plus a weak link between the
+            // two same-colored cells that see each other — the "can't both
+            // be true" clash that wipes out their whole color.
+            chainLinks: [
+              ..._conjugateEdgeLinks(edges, digit),
+              HintChainLink(
+                from: HintChainNode.single(
+                    HintCell(cellsOfColor[i][0], cellsOfColor[i][1]), digit),
+                to: HintChainNode.single(
+                    HintCell(cellsOfColor[j][0], cellsOfColor[j][1]), digit),
+                strong: false,
+              ),
+            ],
+            // No convergence connectors: the eliminations land ON the
+            // contradictory color's own cells, not on outside onlookers.
+            elimSources: const [],
           );
         }
       }
@@ -268,6 +345,7 @@ extension HintEngineColoring on HintEngine {
   Hint? _simpleColoringRule2(
     List<List<Set<int>>> candidates,
     Map<int, int> coloring,
+    List<(int, int)> edges,
     int digit,
     AppLocalizations l10n,
   ) {
@@ -321,6 +399,14 @@ extension HintEngineColoring on HintEngine {
       colorGroupA: colorGroupA,
       colorGroupB: colorGroupB,
       eliminations: eliminations,
+      chainLinks: _conjugateEdgeLinks(edges, digit),
+      // Every chain cell is a potential convergence source; the overlay
+      // narrows these to the nearest one per color, drawing each trapped
+      // cell's "sees both colors" as exactly two connectors.
+      elimSources: [
+        for (final idx in coloring.keys)
+          HintChainNode.single(HintCell(idx ~/ 9, idx % 9), digit),
+      ],
     );
   }
 }

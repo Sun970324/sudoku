@@ -535,7 +535,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String explanationUniqueRectangleType3(
       String cellA, String cellB, String digitsDesc) {
-    return 'Combining the extra candidates of $cellA and $cellB, they form a set of only $digitsDesc together with other cells in that unit. So $digitsDesc can be removed from the rest of that unit\'s cells.';
+    return 'One of $cellA and $cellB must take an extra candidate (if both kept only the rectangle pair, the puzzle would have two solutions). Treating their extra candidates as one virtual cell, they form a set of only $digitsDesc with other cells in that unit — so $digitsDesc can be removed from the rest of that unit.';
   }
 
   @override
@@ -546,7 +546,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String noteRepairNotice(String explanation) {
-    return 'Notes needed to be corrected first. $explanation';
+    return 'Some cells\' notes didn\'t match the board, so they were corrected first. $explanation';
   }
 
   @override
@@ -798,4 +798,198 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retryAction => 'Retry';
+
+  @override
+  String get hintStepPrevAction => 'Back';
+
+  @override
+  String get hintStepNextAction => 'Next';
+
+  @override
+  String hintStepXYWingPivot(String pivot, int x, int y) {
+    return 'The pivot $pivot has only two candidates: $x and $y.';
+  }
+
+  @override
+  String hintStepWingCase(int digit, String wing, int z) {
+    return 'If the pivot is $digit, $wing loses $digit — so it must be $z.';
+  }
+
+  @override
+  String hintStepXYWingConclusion(int z) {
+    return 'Either way, one of the two wings is $z. Any cell that sees both wings can\'t be $z.';
+  }
+
+  @override
+  String hintStepXYZWingPivot(String pivot, String digits) {
+    return 'The pivot $pivot has three candidates: $digits.';
+  }
+
+  @override
+  String hintStepXYZWingPivotZ(int z) {
+    return 'And the pivot could be $z itself — that\'s the third case.';
+  }
+
+  @override
+  String hintStepXYZWingConclusion(int z) {
+    return 'In every case, one of the three cells is $z. Any cell that sees all three can\'t be $z.';
+  }
+
+  @override
+  String hintStepWWingPair(String cell1, String cell2, int a, int b) {
+    return '$cell1 and $cell2 hold exactly the same pair: $a and $b.';
+  }
+
+  @override
+  String hintStepWWingBridge(String unitDesc, int b) {
+    return 'In $unitDesc, $b fits in only two places — and each one sees one of the pair cells.';
+  }
+
+  @override
+  String hintStepWWingForced(int a, int b) {
+    return 'If both pair cells were $b, that unit would have nowhere left for $b. So at least one of them is $a.';
+  }
+
+  @override
+  String hintStepWWingConclusion(int a) {
+    return 'Any cell that sees both pair cells can\'t be $a.';
+  }
+
+  @override
+  String hintStepChainStart(String cell, int z, int a) {
+    return 'Start at $cell: if it isn\'t $z, it must be $a.';
+  }
+
+  @override
+  String hintStepChainHop(String cell, int carry, int next) {
+    return 'Then $cell can\'t be $carry, so it must be $next.';
+  }
+
+  @override
+  String hintStepChainConclusion(int z) {
+    return 'So either the start is $z, or the end is $z. Any cell that sees both ends can\'t be $z.';
+  }
+
+  @override
+  String hintStepRemotePairIntro(int a, int b) {
+    return 'Every cell in this chain holds the same pair: $a and $b.';
+  }
+
+  @override
+  String hintStepRemotePairAlternate(int a, int b) {
+    return 'Neighbors see each other, so the values must alternate $a, $b, $a, $b along the chain.';
+  }
+
+  @override
+  String hintStepRemotePairEnds(int a, int b) {
+    return 'The two ends are an odd number of hops apart, so one is $a and the other is $b — always.';
+  }
+
+  @override
+  String hintStepRemotePairConclusion(int a, int b) {
+    return 'Any cell that sees both ends can be neither $a nor $b.';
+  }
+
+  @override
+  String hintStepSingleDigitStrong1(int digit, String cell1, String cell2) {
+    return '$cell1 and $cell2 are the only two spots for $digit in their unit — one of them must be $digit.';
+  }
+
+  @override
+  String hintStepSingleDigitStrong2(int digit, String cell1, String cell2) {
+    return '$cell1 and $cell2 are another only-two-spots pair, and the two middle cells see each other.';
+  }
+
+  @override
+  String hintStepSingleDigitForced(int digit, String cell1, String cell2) {
+    return 'The middle cells can\'t both be $digit, so at least one of the free ends $cell1 and $cell2 must be $digit.';
+  }
+
+  @override
+  String hintStepSingleDigitConclusion(int digit) {
+    return 'Any cell that sees both free ends can\'t be $digit.';
+  }
+
+  @override
+  String hintStepColoringChain(int digit) {
+    return 'Cells linked as the only two spots for $digit form a chain — neighbors are opposites, so they split into two colors.';
+  }
+
+  @override
+  String hintStepColoringRule1Clash(int digit, String cell1, String cell2) {
+    return '$cell1 and $cell2 share a color AND see each other — a color can\'t hold $digit twice, so that whole color is wrong.';
+  }
+
+  @override
+  String hintStepColoringRule1Conclusion(int digit) {
+    return 'Every cell of the wrong color loses $digit.';
+  }
+
+  @override
+  String hintStepColoringRule2Conclusion(int digit) {
+    return 'One of the two colors must be true. A cell that sees both colors can\'t be $digit either way.';
+  }
+
+  @override
+  String hintStepXWingLines(int digit, String linesDesc) {
+    return 'Digit $digit fits in only two spots in each of $linesDesc.';
+  }
+
+  @override
+  String hintStepXWingRect(int digit, String crossDesc) {
+    return 'The four spots form a rectangle — however it resolves, $crossDesc each get exactly one $digit inside it.';
+  }
+
+  @override
+  String hintStepXWingConclusion(int digit, String crossUnitName) {
+    return 'So the rest of those two $crossUnitName can\'t hold $digit.';
+  }
+
+  @override
+  String hintStepFullHouseIntro(String unitDesc) {
+    return 'Only one cell in $unitDesc is still empty.';
+  }
+
+  @override
+  String hintStepNakedSingleIntro(String cell) {
+    return 'Narrow down $cell: cross off every digit already placed in its row, column, and box.';
+  }
+
+  @override
+  String hintStepHiddenSingleIntro(int digit) {
+    return 'One area has only a single spot left where $digit can go — the highlighted digits block every other cell.';
+  }
+
+  @override
+  String get hintStepBugIntro =>
+      'If every empty cell kept exactly two candidates, the puzzle would end up with two solutions. Exactly one cell holds three — that cell is the way out.';
+
+  @override
+  String hintStepNakedSubsetIntro(int count, String digits, String unitDesc) {
+    return 'In $unitDesc, the $count highlighted cells hold only $digits between them.';
+  }
+
+  @override
+  String hintStepHiddenSubsetIntro(int count, String digits, String unitDesc) {
+    return 'In $unitDesc, $digits can only go in the $count highlighted cells.';
+  }
+
+  @override
+  String hintStepPointingIntro(int digit, String boxDesc, String lineDesc) {
+    return 'Inside $boxDesc, every spot for $digit sits on $lineDesc.';
+  }
+
+  @override
+  String hintStepClaimingIntro(int digit, String lineDesc, String boxDesc) {
+    return 'In $lineDesc, every spot for $digit sits inside $boxDesc.';
+  }
+
+  @override
+  String hintStepFishIntro(int digit, String linesDesc) {
+    return 'Look at $linesDesc: the spots where $digit can go there are pinned to just a few crossing lines.';
+  }
+
+  @override
+  String get hintStepURIntro =>
+      'The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible.';
 }

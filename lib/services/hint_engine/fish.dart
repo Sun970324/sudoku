@@ -68,6 +68,28 @@ extension HintEngineFish on HintEngine {
             highlightedRows: {r1, r2},
             highlightedCols: {c1, c2},
             eliminations: eliminations,
+            // The two base rows are each a strong link (only two spots for
+            // d), drawn as two solid rails; the convergence connectors from
+            // the corners then show each column elimination facing the two
+            // corners above/below it.
+            chainLinks: [
+              HintChainLink(
+                from: HintChainNode.single(HintCell(r1, c1), d),
+                to: HintChainNode.single(HintCell(r1, c2), d),
+                strong: true,
+              ),
+              HintChainLink(
+                from: HintChainNode.single(HintCell(r2, c1), d),
+                to: HintChainNode.single(HintCell(r2, c2), d),
+                strong: true,
+              ),
+            ],
+            elimSources: [
+              HintChainNode.single(HintCell(r1, c1), d),
+              HintChainNode.single(HintCell(r1, c2), d),
+              HintChainNode.single(HintCell(r2, c1), d),
+              HintChainNode.single(HintCell(r2, c2), d),
+            ],
           );
         }
       }
@@ -133,6 +155,26 @@ extension HintEngineFish on HintEngine {
             highlightedRows: {r1, r2},
             highlightedCols: {c1, c2},
             eliminations: eliminations,
+            // Mirror of the row-based X-Wing: the two base columns are the
+            // strong rails, eliminations sit on the crossing rows.
+            chainLinks: [
+              HintChainLink(
+                from: HintChainNode.single(HintCell(r1, c1), d),
+                to: HintChainNode.single(HintCell(r2, c1), d),
+                strong: true,
+              ),
+              HintChainLink(
+                from: HintChainNode.single(HintCell(r1, c2), d),
+                to: HintChainNode.single(HintCell(r2, c2), d),
+                strong: true,
+              ),
+            ],
+            elimSources: [
+              HintChainNode.single(HintCell(r1, c1), d),
+              HintChainNode.single(HintCell(r2, c1), d),
+              HintChainNode.single(HintCell(r1, c2), d),
+              HintChainNode.single(HintCell(r2, c2), d),
+            ],
           );
         }
       }

@@ -426,7 +426,7 @@
       "c": {"type": "int"}
     }
   },
-  "explanationUniqueRectangleType3": "Combining the extra candidates of {cellA} and {cellB}, they form a set of only {digitsDesc} together with other cells in that unit. So {digitsDesc} can be removed from the rest of that unit's cells.",
+  "explanationUniqueRectangleType3": "One of {cellA} and {cellB} must take an extra candidate (if both kept only the rectangle pair, the puzzle would have two solutions). Treating their extra candidates as one virtual cell, they form a set of only {digitsDesc} with other cells in that unit — so {digitsDesc} can be removed from the rest of that unit.",
   "@explanationUniqueRectangleType3": {
     "placeholders": {
       "cellA": {"type": "String"},
@@ -443,7 +443,7 @@
       "otherDigit": {"type": "int"}
     }
   },
-  "noteRepairNotice": "Notes needed to be corrected first. {explanation}",
+  "noteRepairNotice": "Some cells' notes didn't match the board, so they were corrected first. {explanation}",
   "@noteRepairNotice": {
     "placeholders": {
       "explanation": {"type": "String"}
@@ -594,5 +594,264 @@
   "dailyReplayAction": "Play Again",
   "dailyNotRankedNotice": "Only your first clear is recorded.",
   "dailySubmitFailed": "Couldn't submit your result.",
-  "retryAction": "Retry"
+  "retryAction": "Retry",
+
+  "hintStepPrevAction": "Back",
+  "hintStepNextAction": "Next",
+  "hintStepXYWingPivot": "The pivot {pivot} has only two candidates: {x} and {y}.",
+  "@hintStepXYWingPivot": {
+    "placeholders": {
+      "pivot": {"type": "String"},
+      "x": {"type": "int"},
+      "y": {"type": "int"}
+    }
+  },
+  "hintStepWingCase": "If the pivot is {digit}, {wing} loses {digit} — so it must be {z}.",
+  "@hintStepWingCase": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "wing": {"type": "String"},
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepXYWingConclusion": "Either way, one of the two wings is {z}. Any cell that sees both wings can't be {z}.",
+  "@hintStepXYWingConclusion": {
+    "placeholders": {
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepXYZWingPivot": "The pivot {pivot} has three candidates: {digits}.",
+  "@hintStepXYZWingPivot": {
+    "placeholders": {
+      "pivot": {"type": "String"},
+      "digits": {"type": "String"}
+    }
+  },
+  "hintStepXYZWingPivotZ": "And the pivot could be {z} itself — that's the third case.",
+  "@hintStepXYZWingPivotZ": {
+    "placeholders": {
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepXYZWingConclusion": "In every case, one of the three cells is {z}. Any cell that sees all three can't be {z}.",
+  "@hintStepXYZWingConclusion": {
+    "placeholders": {
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepWWingPair": "{cell1} and {cell2} hold exactly the same pair: {a} and {b}.",
+  "@hintStepWWingPair": {
+    "placeholders": {
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepWWingBridge": "In {unitDesc}, {b} fits in only two places — and each one sees one of the pair cells.",
+  "@hintStepWWingBridge": {
+    "placeholders": {
+      "unitDesc": {"type": "String"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepWWingForced": "If both pair cells were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}.",
+  "@hintStepWWingForced": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepWWingConclusion": "Any cell that sees both pair cells can't be {a}.",
+  "@hintStepWWingConclusion": {
+    "placeholders": {
+      "a": {"type": "int"}
+    }
+  },
+  "hintStepChainStart": "Start at {cell}: if it isn't {z}, it must be {a}.",
+  "@hintStepChainStart": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "z": {"type": "int"},
+      "a": {"type": "int"}
+    }
+  },
+  "hintStepChainHop": "Then {cell} can't be {carry}, so it must be {next}.",
+  "@hintStepChainHop": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "carry": {"type": "int"},
+      "next": {"type": "int"}
+    }
+  },
+  "hintStepChainConclusion": "So either the start is {z}, or the end is {z}. Any cell that sees both ends can't be {z}.",
+  "@hintStepChainConclusion": {
+    "placeholders": {
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepRemotePairIntro": "Every cell in this chain holds the same pair: {a} and {b}.",
+  "@hintStepRemotePairIntro": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepRemotePairAlternate": "Neighbors see each other, so the values must alternate {a}, {b}, {a}, {b} along the chain.",
+  "@hintStepRemotePairAlternate": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepRemotePairEnds": "The two ends are an odd number of hops apart, so one is {a} and the other is {b} — always.",
+  "@hintStepRemotePairEnds": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepRemotePairConclusion": "Any cell that sees both ends can be neither {a} nor {b}.",
+  "@hintStepRemotePairConclusion": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepSingleDigitStrong1": "{cell1} and {cell2} are the only two spots for {digit} in their unit — one of them must be {digit}.",
+  "@hintStepSingleDigitStrong1": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "hintStepSingleDigitStrong2": "{cell1} and {cell2} are another only-two-spots pair, and the two middle cells see each other.",
+  "@hintStepSingleDigitStrong2": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "hintStepSingleDigitForced": "The middle cells can't both be {digit}, so at least one of the free ends {cell1} and {cell2} must be {digit}.",
+  "@hintStepSingleDigitForced": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "hintStepSingleDigitConclusion": "Any cell that sees both free ends can't be {digit}.",
+  "@hintStepSingleDigitConclusion": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepColoringChain": "Cells linked as the only two spots for {digit} form a chain — neighbors are opposites, so they split into two colors.",
+  "@hintStepColoringChain": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepColoringRule1Clash": "{cell1} and {cell2} share a color AND see each other — a color can't hold {digit} twice, so that whole color is wrong.",
+  "@hintStepColoringRule1Clash": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "hintStepColoringRule1Conclusion": "Every cell of the wrong color loses {digit}.",
+  "@hintStepColoringRule1Conclusion": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepColoringRule2Conclusion": "One of the two colors must be true. A cell that sees both colors can't be {digit} either way.",
+  "@hintStepColoringRule2Conclusion": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepXWingLines": "Digit {digit} fits in only two spots in each of {linesDesc}.",
+  "@hintStepXWingLines": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "linesDesc": {"type": "String"}
+    }
+  },
+  "hintStepXWingRect": "The four spots form a rectangle — however it resolves, {crossDesc} each get exactly one {digit} inside it.",
+  "@hintStepXWingRect": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "crossDesc": {"type": "String"}
+    }
+  },
+  "hintStepXWingConclusion": "So the rest of those two {crossUnitName} can't hold {digit}.",
+  "@hintStepXWingConclusion": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "crossUnitName": {"type": "String"}
+    }
+  },
+  "hintStepFullHouseIntro": "Only one cell in {unitDesc} is still empty.",
+  "@hintStepFullHouseIntro": {
+    "placeholders": {
+      "unitDesc": {"type": "String"}
+    }
+  },
+  "hintStepNakedSingleIntro": "Narrow down {cell}: cross off every digit already placed in its row, column, and box.",
+  "@hintStepNakedSingleIntro": {
+    "placeholders": {
+      "cell": {"type": "String"}
+    }
+  },
+  "hintStepHiddenSingleIntro": "One area has only a single spot left where {digit} can go — the highlighted digits block every other cell.",
+  "@hintStepHiddenSingleIntro": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepBugIntro": "If every empty cell kept exactly two candidates, the puzzle would end up with two solutions. Exactly one cell holds three — that cell is the way out.",
+  "hintStepNakedSubsetIntro": "In {unitDesc}, the {count} highlighted cells hold only {digits} between them.",
+  "@hintStepNakedSubsetIntro": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "digits": {"type": "String"},
+      "unitDesc": {"type": "String"}
+    }
+  },
+  "hintStepHiddenSubsetIntro": "In {unitDesc}, {digits} can only go in the {count} highlighted cells.",
+  "@hintStepHiddenSubsetIntro": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "digits": {"type": "String"},
+      "unitDesc": {"type": "String"}
+    }
+  },
+  "hintStepPointingIntro": "Inside {boxDesc}, every spot for {digit} sits on {lineDesc}.",
+  "@hintStepPointingIntro": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "boxDesc": {"type": "String"},
+      "lineDesc": {"type": "String"}
+    }
+  },
+  "hintStepClaimingIntro": "In {lineDesc}, every spot for {digit} sits inside {boxDesc}.",
+  "@hintStepClaimingIntro": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "lineDesc": {"type": "String"},
+      "boxDesc": {"type": "String"}
+    }
+  },
+  "hintStepFishIntro": "Look at {linesDesc}: the spots where {digit} can go there are pinned to just a few crossing lines.",
+  "@hintStepFishIntro": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "linesDesc": {"type": "String"}
+    }
+  },
+  "hintStepURIntro": "The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible."
 }

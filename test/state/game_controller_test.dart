@@ -1494,7 +1494,7 @@ void main() {
       final hint = testController.requestHintFromNotes();
 
       // Unlike requestHint, stage 1 does no repair: the explanation is
-      // returned verbatim (no "후보수가..." prefix) and the player's single
+      // returned verbatim (no note-repair prefix) and the player's single
       // note is left exactly as they set it.
       expect(hint, isNotNull);
       expect(hint!.explanation, placeholder.explanation);
@@ -1610,7 +1610,7 @@ void main() {
       // explanation gets a prepended note about the correction.
       expect(hint, isNotNull);
       expect(hint!.explanation,
-          '후보수가 정확하게 입력되어야 합니다. ${placeholder.explanation}');
+          '일부 칸의 후보 메모가 실제와 달라 먼저 자동으로 보정했어요. ${placeholder.explanation}');
       final trueCandidates =
           SudokuGrid(testController.boardSnapshot).candidatesAt(row, col);
       expect(testController.notesAt(row, col), trueCandidates);
@@ -1645,7 +1645,7 @@ void main() {
       // note), but that's orthogonal to what's under test here.
       expect(hint, isNotNull);
       expect(hint!.explanation,
-          '후보수가 정확하게 입력되어야 합니다. ${placeholder.explanation}');
+          '일부 칸의 후보 메모가 실제와 달라 먼저 자동으로 보정했어요. ${placeholder.explanation}');
       expect(testController.notesAt(row, col), beforeRequest);
     });
 
@@ -1786,7 +1786,7 @@ void main() {
       final gotEliminateHint = eliminateController.requestHint();
 
       expect(gotEliminateHint!.explanation,
-          '후보수가 정확하게 입력되어야 합니다. eliminate fake');
+          '일부 칸의 후보 메모가 실제와 달라 먼저 자동으로 보정했어요. eliminate fake');
     });
   });
 

@@ -635,6 +635,17 @@ void main() {
       expect(_hasElimination(hint, 6, 6, 7), isTrue);
       expect(hint.highlightedRows, {0, 3});
       expect(hint.highlightedCols, {2, 6});
+      // Two solid rails along the base rows; all four corners offered as
+      // convergence sources for the column eliminations.
+      expect(hint.chainLinks, hasLength(2));
+      expect(hint.chainLinks.every((l) => l.strong), isTrue);
+      expect(
+        hint.chainLinks
+            .expand((l) => [...l.from.cells, ...l.to.cells])
+            .toSet(),
+        hint.primaryCells,
+      );
+      expect(hint.elimSources, hasLength(4));
     });
 
     test('column-based: eliminates a digit confined to the same two rows '
@@ -832,6 +843,13 @@ void main() {
       expect(hint.colorGroupB, {const HintCell(0, 2)});
       expect(_hasElimination(hint, 0, 0, 9), isTrue);
       expect(_hasElimination(hint, 2, 2, 9), isTrue);
+      // The two conjugate edges drawn solid, plus one dashed link between
+      // the clashing same-colored pair — and no convergence connectors,
+      // since the eliminations land on the chain's own cells.
+      expect(hint.chainLinks, hasLength(3));
+      expect(hint.chainLinks.where((l) => l.strong), hasLength(2));
+      expect(hint.chainLinks.where((l) => !l.strong), hasLength(1));
+      expect(hint.elimSources, isEmpty);
     });
 
     test('Rule 2 (trap): a cell outside the chain that sees both colors '
@@ -854,6 +872,11 @@ void main() {
       expect(hint.colorGroupA, {const HintCell(0, 0)});
       expect(hint.colorGroupB, {const HintCell(0, 1)});
       expect(_hasElimination(hint, 2, 2, 9), isTrue);
+      // The single conjugate edge drawn solid; every chain cell offered as
+      // a convergence source (the overlay narrows to nearest-per-color).
+      expect(hint.chainLinks, hasLength(1));
+      expect(hint.chainLinks.single.strong, isTrue);
+      expect(hint.elimSources, hasLength(2));
     });
 
     test('returns null when no conjugate-pair chain of length >= 2 exists',
@@ -894,7 +917,13 @@ void main() {
       expect(_hasElimination(hint, 4, 4, 3), isTrue);
       expect(hint.eliminations, hasLength(1));
       expect(hint.primaryDigits, {1, 2});
-      expect(hint.chainLinks, isEmpty);
+      // A 3-cell XY-Chain in link form: wing z = wing's shared digit ~
+      // pivot ... ~ other wing ~ its z, both ends on z so the overlay's
+      // convergence connectors meet at the eliminated candidate.
+      _expectWellFormedChain(
+          hint.chainLinks, hint.primaryCells, const HintCell(4, 4));
+      expect(hint.chainLinks.first.from.digit, 3,
+          reason: 'the chain must start and end on z');
     });
 
     test('returns null when the pattern matches structurally but no cell '
@@ -1140,6 +1169,10 @@ void main() {
       expect(_hasElimination(hint, 0, 7, 2), isTrue);
       expect(hint.colorGroupA, isNotEmpty);
       expect(hint.colorGroupB, isNotEmpty);
+      // Same link grammar as an XY-Chain: in-cell strong pairs joined by
+      // weak shared-digit hops, both ends landing on the same digit.
+      _expectWellFormedChain(
+          hint.chainLinks, hint.primaryCells, const HintCell(0, 7));
     });
 
     test('returns null for cells whose pairs differ, since the alternation '
@@ -1185,6 +1218,21 @@ void main() {
       expect(hint.primaryDigits, {1, 2, 3});
       expect(_hasElimination(hint, 1, 1, 3), isTrue);
       expect(hint.eliminations, hasLength(1));
+      // Two branches rather than one chain — no link joins the trivalue
+      // pivot's own 1/2 (they're not a strong pair, the pivot could be 3):
+      // wing1's 3=1 ~ pivot's 1, then pivot's 2 ~ wing2's 2=3.
+      expect(hint.chainLinks, hasLength(4));
+      expect(hint.chainLinks.map((l) => l.strong).toList(),
+          [true, false, false, true]);
+      // All three z sources — both wings AND the pivot itself — converge on
+      // the eliminated cell; that's the "sees all three" requirement.
+      expect(hint.elimSources, hasLength(3));
+      for (final source in hint.elimSources!) {
+        expect(source.digit, 3);
+        for (final cell in source.cells) {
+          expect(_cellsSee(cell, const HintCell(1, 1)), isTrue);
+        }
+      }
     });
 
     test('returns null when the pattern is present but nothing sees all '

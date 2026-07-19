@@ -8,6 +8,7 @@ import 'package:sudoku/models/sudoku_puzzle.dart';
 import 'package:sudoku/services/hint_engine.dart';
 import 'package:sudoku/services/generation/sudoku_generator.dart';
 import 'package:sudoku/state/game_controller.dart';
+import 'package:sudoku/widgets/sudoku_cell_widget.dart';
 import 'package:sudoku/widgets/sudoku_grid_widget.dart';
 
 /// Returns an instant, trivial puzzle instead of actually generating one —
@@ -239,6 +240,55 @@ void main() {
         .widgetList<CustomPaint>(find.byType(CustomPaint))
         .where((w) => w.painter.runtimeType.toString().contains('Arrow'));
     expect(arrowPaints, isEmpty);
+  });
+
+  testWidgets(
+      'a step walkthrough shows the red elimination marks only at the '
+      'final step, and hides them again when paging back', (tester) async {
+    final controller = GameController(
+      generator: _InstantGenerator(),
+      hintEngine: _FixedChainHintEngine(),
+    );
+    controller.startNewGame(Difficulty.beginner);
+    _requestVisualizedHint(controller);
+
+    // The chain hint (Skyscraper) gets a walkthrough attached by
+    // requestHint, starting on its first step.
+    final steps = controller.hintSteps;
+    expect(steps, isNotEmpty);
+    expect(controller.currentHintStep, steps.first);
+
+    // Wrapped the same way GameScreen wires it (`ListenableBuilder` around
+    // the grid), so controller notifications actually rebuild the board.
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListenableBuilder(
+            listenable: controller,
+            builder: (_, __) => SudokuGridWidget(controller: controller),
+          ),
+        ),
+      ),
+    );
+
+    bool anyRedNotes() => tester
+        .widgetList<SudokuCellWidget>(find.byType(SudokuCellWidget))
+        .any((w) => w.hintRedNotes.isNotEmpty);
+    expect(anyRedNotes(), isFalse);
+
+    while (controller.hintStepIndex < steps.length - 1) {
+      controller.nextHintStep();
+    }
+    await tester.pump();
+    expect(controller.currentHintStep!.showConclusion, isTrue);
+    expect(anyRedNotes(), isTrue);
+    // Paging past the end is a no-op, not an error.
+    controller.nextHintStep();
+    expect(controller.hintStepIndex, steps.length - 1);
+
+    controller.prevHintStep();
+    await tester.pump();
+    expect(anyRedNotes(), isFalse);
   });
 
   testWidgets(

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
+import '../l10n/ko_josa.dart';
 import '../models/difficulty.dart';
 import '../models/game_snapshot.dart';
 import '../models/hint.dart';
@@ -532,6 +533,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // cell(s) remain visible while the explanation is showing.
     final isDark = AppPalette.isDark(context);
     final accent = BoardColors.hintArrow(isDark);
+    // Drives the step walkthrough's swipeable pager; the prev/next buttons
+    // animate it too, so every path shares the PageView's snap physics and
+    // lands in onPageChanged, the single place the controller is synced.
+    final stepPageController =
+        PageController(initialPage: _controller.hintStepIndex);
     showModalBottomSheet<void>(
       context: context,
       barrierColor: Colors.transparent,
@@ -595,7 +601,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 12),
                         Row(
                           children: [
                             Icon(Icons.lightbulb_rounded,
@@ -604,28 +610,136 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                             Expanded(
                               child: Text(
                                 hint.technique.label(context),
-                                style: Theme.of(sheetContext)
-                                    .textTheme
-                                    .titleLarge,
+                                style:
+                                    Theme.of(sheetContext).textTheme.titleLarge,
                               ),
                             ),
                           ],
                         ),
                         if (stage == 1 && hint.mainInfo != null) ...[
                           const SizedBox(height: 12),
-                          Text(hint.mainInfo!),
+                          Text(applyKoJosa(hint.mainInfo!)),
                         ],
-                        if (isFinal) ...[
+                        // Step walkthrough: one narrated slice of the
+                        // visualization at a time. The text lives in a
+                        // real PageView so swiping gets drag-follow and
+                        // snap physics; the invisible copies of every
+                        // step's text size the Stack to the tallest page,
+                        // so the sheet's height never jumps mid-swipe.
+                        // The board redraws through the controller's
+                        // notify (synced in onPageChanged); this sheet
+                        // through setSheetState.
+                        if (isFinal && _controller.hintSteps.isNotEmpty) ...[
                           const SizedBox(height: 12),
-                          Text(hint.explanation),
-                          const SizedBox(height: 8),
-                          Text(
-                            hint.actionSummary,
-                            style:
-                                Theme.of(sheetContext).textTheme.bodyMedium,
+                          Stack(
+                            children: [
+                              for (final step in _controller.hintSteps)
+                                Opacity(
+                                    opacity: 0,
+                                    child: Text(applyKoJosa(step.text))),
+                              Positioned.fill(
+                                child: PageView.builder(
+                                  controller: stepPageController,
+                                  itemCount: _controller.hintSteps.length,
+                                  onPageChanged: (i) => setSheetState(
+                                      () => _controller.setHintStep(i)),
+                                  itemBuilder: (_, i) => Text(applyKoJosa(
+                                      _controller.hintSteps[i].text)),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: _controller.hintStepIndex > 0
+                                    ? () => stepPageController.animateToPage(
+                                        _controller.hintStepIndex - 1,
+                                        duration:
+                                            const Duration(milliseconds: 250),
+                                        curve: Curves.easeOut)
+                                    : null,
+                                icon: const Icon(Icons.chevron_left_rounded),
+                                color: accent,
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                tooltip: l10n.hintStepPrevAction,
+                              ),
+                              Expanded(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      for (var i = 0;
+                                          i < _controller.hintSteps.length;
+                                          i++)
+                                        Container(
+                                          width: 8,
+                                          height: 8,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 3),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color:
+                                                i == _controller.hintStepIndex
+                                                    ? accent
+                                                    : accent.withValues(
+                                                        alpha: 0.25),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: _controller.hintStepIndex <
+                                        _controller.hintSteps.length - 1
+                                    ? () => stepPageController.animateToPage(
+                                        _controller.hintStepIndex + 1,
+                                        duration:
+                                            const Duration(milliseconds: 250),
+                                        curve: Curves.easeOut)
+                                    : null,
+                                icon: const Icon(Icons.chevron_right_rounded),
+                                color: accent,
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                tooltip: l10n.hintStepNextAction,
+                              ),
+                            ],
                           ),
                         ],
-                        const SizedBox(height: 20),
+                        // The full explanation is only for step-less hints —
+                        // a walkthrough's conclusion step already narrates
+                        // it, and repeating it made the sheet tall enough to
+                        // cover the board. The compact notation line still
+                        // joins a walkthrough at its final step.
+                        if (isFinal && _controller.hintSteps.isEmpty) ...[
+                          const SizedBox(height: 12),
+                          Text(applyKoJosa(hint.explanation)),
+                        ],
+                        if (isFinal) ...[
+                          const SizedBox(height: 8),
+                          // Always laid out at the final stage and only
+                          // *revealed* on the conclusion step (or for
+                          // step-less hints) — an appearing row would make
+                          // the sheet's height jump while paging steps.
+                          Opacity(
+                            opacity: _controller.hintSteps.isEmpty ||
+                                    _controller.hintStepIndex >=
+                                        _controller.hintSteps.length - 1
+                                ? 1
+                                : 0,
+                            child: Text(
+                              hint.actionSummary,
+                              style:
+                                  Theme.of(sheetContext).textTheme.bodyMedium,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 12),
                         Row(
                           children: [
                             Expanded(
@@ -685,6 +799,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         ),
       ),
     ).then((_) {
+      stepPageController.dispose();
       // Covers barrier-tap / drag-down dismissal, where neither action
       // button ran. No-op if applyHint() already cleared it.
       if (identical(_controller.activeHint, hint)) {

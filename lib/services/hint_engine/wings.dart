@@ -60,6 +60,11 @@ extension HintEngineWings on HintEngine {
             }
             if (eliminations.isEmpty) continue;
 
+            final pivotCell = HintCell(pr, pc);
+            final w1Cell = HintCell(w1[0], w1[1]);
+            final w2Cell = HintCell(w2[0], w2[1]);
+            final x = c1.firstWhere((d) => d != z);
+            final y = c2.firstWhere((d) => d != z);
             return Hint(
               technique: HintTechnique.xyzWing,
               type: HintType.eliminate,
@@ -70,15 +75,45 @@ extension HintEngineWings on HintEngine {
                 _cellDesc(w2[0], w2[1], resolvedL10n),
                 z,
               ),
-              primaryCells: {
-                HintCell(pr, pc),
-                HintCell(w1[0], w1[1]),
-                HintCell(w2[0], w2[1]),
-              },
+              primaryCells: {pivotCell, w1Cell, w2Cell},
               secondaryCells:
                   eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
               primaryDigits: pivot,
               eliminations: eliminations,
+              // Two branches rather than one chain — the trivalue pivot's
+              // x/y are NOT a strong pair (the pivot could be z itself), so
+              // no link joins them. Each branch reads "if the pivot takes
+              // this digit, that wing is forced to z".
+              chainLinks: [
+                HintChainLink(
+                  from: HintChainNode.single(w1Cell, z),
+                  to: HintChainNode.single(w1Cell, x),
+                  strong: true,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(w1Cell, x),
+                  to: HintChainNode.single(pivotCell, x),
+                  strong: false,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(pivotCell, y),
+                  to: HintChainNode.single(w2Cell, y),
+                  strong: false,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(w2Cell, y),
+                  to: HintChainNode.single(w2Cell, z),
+                  strong: true,
+                ),
+              ],
+              // The pivot's own z is the third way z can land, which is why
+              // an eliminated cell must see all THREE cells — chain ends
+              // alone would miss it.
+              elimSources: [
+                HintChainNode.single(w1Cell, z),
+                HintChainNode.single(w2Cell, z),
+                HintChainNode.single(pivotCell, z),
+              ],
             );
           }
         }
@@ -280,6 +315,9 @@ extension HintEngineWings on HintEngine {
             final w1Desc = _cellDesc(w1[0], w1[1], resolvedL10n);
             final w2Desc = _cellDesc(w2[0], w2[1], resolvedL10n);
 
+            final pivotCell = HintCell(pr, pc);
+            final w1Cell = HintCell(w1[0], w1[1]);
+            final w2Cell = HintCell(w2[0], w2[1]);
             return Hint(
               technique: HintTechnique.xyWing,
               type: HintType.eliminate,
@@ -293,15 +331,43 @@ extension HintEngineWings on HintEngine {
                 w2Desc,
                 otherPivotDigit,
               ),
-              primaryCells: {
-                HintCell(pr, pc),
-                HintCell(w1[0], w1[1]),
-                HintCell(w2[0], w2[1]),
-              },
+              primaryCells: {pivotCell, w1Cell, w2Cell},
               secondaryCells:
                   eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
               primaryDigits: {x, y},
               eliminations: eliminations,
+              // An XY-Wing is a 3-cell XY-Chain, and its links read the same
+              // way: each wing's own bivalue pair is a strong link, the
+              // shared digit with the pivot a weak one. Both ends land on z
+              // — the overlay's convergence connectors then show the two
+              // wings' z closing in on each eliminated candidate.
+              chainLinks: [
+                HintChainLink(
+                  from: HintChainNode.single(w1Cell, z),
+                  to: HintChainNode.single(w1Cell, sharedDigitW1),
+                  strong: true,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(w1Cell, sharedDigitW1),
+                  to: HintChainNode.single(pivotCell, sharedDigitW1),
+                  strong: false,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(pivotCell, sharedDigitW1),
+                  to: HintChainNode.single(pivotCell, otherPivotDigit),
+                  strong: true,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(pivotCell, otherPivotDigit),
+                  to: HintChainNode.single(w2Cell, otherPivotDigit),
+                  strong: false,
+                ),
+                HintChainLink(
+                  from: HintChainNode.single(w2Cell, otherPivotDigit),
+                  to: HintChainNode.single(w2Cell, z),
+                  strong: true,
+                ),
+              ],
             );
           }
         }

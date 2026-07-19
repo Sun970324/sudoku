@@ -471,17 +471,17 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String explanationLockedSubset(String lineDesc, String boxDesc,
       String cellsDesc, String digitsDesc, int size) {
-    return '$cellsDesc은 $lineDesc과 $boxDesc이 겹치는 자리에 있고, 이 칸들의 후보를 모두 합치면 $digitsDesc($size개)뿐이에요. 이 칸들이 $size개 숫자를 모두 가져가므로, $lineDesc의 나머지 칸과 $boxDesc의 나머지 칸 양쪽에서 $digitsDesc번을 후보에서 지울 수 있습니다.';
+    return '$cellsDesc은 $lineDesc과 $boxDesc이(가) 겹치는 자리에 있고, 이 칸들의 후보를 모두 합치면 $digitsDesc($size개)뿐이에요. 이 칸들이 $size개 숫자를 모두 가져가므로, $lineDesc의 나머지 칸과 $boxDesc의 나머지 칸 양쪽에서 $digitsDesc번을 후보에서 지울 수 있습니다.';
   }
 
   @override
   String explanationRemotePair(String chainDesc, int a, int b) {
-    return '$chainDesc은 모두 후보가 $a, $b 두 개뿐이고 서로 이어져 있어서 값이 번갈아 정해져요. 사슬의 양 끝은 홀수 칸 떨어져 있으므로 한쪽이 $a면 다른 쪽은 반드시 $b입니다. 그래서 양 끝을 모두 보는 칸에서는 $a번과 $b번을 모두 후보에서 지울 수 있습니다.';
+    return '$chainDesc은 모두 후보가 $a, $b 두 개뿐이고 서로 이어져 있어서 값이 번갈아 정해져요. 사슬의 양 끝은 홀수 칸 떨어져 있으므로 한쪽이 $a(이)면 다른 쪽은 반드시 $b입니다. 그래서 양 끝을 모두 보는 칸에서는 $a번과 $b번을 모두 후보에서 지울 수 있습니다.';
   }
 
   @override
   String explanationSimpleColoringRule1(int digit, String cellA, String cellB) {
-    return '숫자 $digit의 후보를 사슬로 연결해보면 같은 그룹으로 묶인 $cellA와 $cellB가 서로 같은 행·열·박스에 있어요. 둘 다 $digit번이 될 수는 없으므로 이 그룹 전체가 $digit일 수 없습니다. 그래서 이 그룹의 칸들에서는 $digit번을 후보에서 지울 수 있습니다.';
+    return '숫자 $digit의 후보를 사슬로 연결해보면 같은 그룹으로 묶인 $cellA과(와) $cellB이(가) 서로 같은 행·열·박스에 있어요. 둘 다 $digit번이 될 수는 없으므로 이 그룹 전체가 $digit일 수 없습니다. 그래서 이 그룹의 칸들에서는 $digit번을 후보에서 지울 수 있습니다.';
   }
 
   @override
@@ -492,19 +492,19 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String explanationXYWing(String pivotDesc, int x, int y, String w1Desc,
       int sharedDigitW1, int z, String w2Desc, int otherPivotDigit) {
-    return '피벗 칸 $pivotDesc의 후보는 $x, $y 두 개예요. 날개 칸 $w1Desc는 $sharedDigitW1 아니면 $z, $w2Desc는 $otherPivotDigit 아니면 $z예요. 피벗이 $sharedDigitW1이면 $w1Desc가, 피벗이 $otherPivotDigit이면 $w2Desc가 $z가 되므로, 어느 쪽이든 두 날개를 모두 보는 칸에서는 $z를 후보에서 지울 수 있습니다.';
+    return '피벗 칸 $pivotDesc의 후보는 $x, $y 두 개예요. 날개 칸 $w1Desc은(는) $sharedDigitW1 아니면 $z, $w2Desc은(는) $otherPivotDigit 아니면 $z(이)에요. 피벗이 $sharedDigitW1(이)면 $w1Desc이(가), 피벗이 $otherPivotDigit(이)면 $w2Desc이(가) $z이(가) 되므로, 어느 쪽이든 두 날개를 모두 보는 칸에서는 $z을(를) 후보에서 지울 수 있습니다.';
   }
 
   @override
   String explanationXYZWing(String pivotDesc, String pivotDigits, String w1Desc,
       String w2Desc, int z) {
-    return '피벗 칸 $pivotDesc의 후보는 $pivotDigits 세 개이고, 날개 칸 $w1Desc와 $w2Desc는 각각 $z번과 나머지 하나를 갖고 있어요. 피벗이 어느 숫자가 되든 $z번은 피벗이나 날개 중 한 곳에 들어가므로, 세 칸을 모두 보는 칸에서는 $z번을 후보에서 지울 수 있습니다.';
+    return '피벗 칸 $pivotDesc의 후보는 $pivotDigits 세 개이고, 날개 칸 $w1Desc과 $w2Desc은 각각 $z번과 나머지 하나를 갖고 있어요. 피벗이 어느 숫자가 되든 $z번은 피벗이나 날개 중 한 곳에 들어가므로, 세 칸을 모두 보는 칸에서는 $z번을 후보에서 지울 수 있습니다.';
   }
 
   @override
   String explanationWWing(
       String cell1, String cell2, int a, int b, String unitDesc) {
-    return '$cell1과 $cell2는 후보가 똑같이 $a, $b 두 개뿐이고, $unitDesc에는 $b번이 들어갈 자리가 두 곳뿐인데 그 두 곳이 각각 두 칸을 하나씩 보고 있어요. 만약 두 칸이 모두 $b번이면 $unitDesc에 $b번이 들어갈 자리가 없어집니다. 따라서 둘 중 적어도 하나는 $a번이고, 두 칸을 모두 보는 칸에서는 $a번을 후보에서 지울 수 있습니다.';
+    return '$cell1과(와) $cell2은(는) 후보가 똑같이 $a, $b 두 개뿐이고, $unitDesc에는 $b번이 들어갈 자리가 두 곳뿐인데 그 두 곳이 각각 두 칸을 하나씩 보고 있어요. 만약 두 칸이 모두 $b번이면 $unitDesc에 $b번이 들어갈 자리가 없어집니다. 따라서 둘 중 적어도 하나는 $a번이고, 두 칸을 모두 보는 칸에서는 $a번을 후보에서 지울 수 있습니다.';
   }
 
   @override
@@ -514,24 +514,24 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String explanationBugPlusOne(int row, int col, int value) {
-    return '$row행 $col열을 제외한 나머지 빈 칸이 모두 후보 숫자 2개씩만 남았어요. 이 칸이 $value가 아니라면 스도쿠 전체가 완전한 BUG(Bi-Value Universal Grave) 패턴이 되어버려서 정답이 하나로 정해지지 않아요. 그래서 이 칸은 $value로 확정됩니다.';
+    return '$row행 $col열을 제외한 나머지 빈 칸이 모두 후보 숫자 2개씩만 남았어요. 이 칸이 $value이(가) 아니라면 스도쿠 전체가 완전한 BUG(Bi-Value Universal Grave) 패턴이 되어버려서 정답이 하나로 정해지지 않아요. 그래서 이 칸은 $value(으)로 확정됩니다.';
   }
 
   @override
   String explanationUniqueRectangleType1(String cellsDesc, int a, int b) {
-    return '$cellsDesc은 유일사각형(2행 2열, 박스 2개)을 이루는데, 그중 세 칸이 후보 $a, $b뿐이에요. 나머지 한 칸도 이 둘뿐이라면 퍼즐 해가 두 개가 되어버리므로, 그 칸에서는 $a, $b를 후보에서 지울 수 있습니다.';
+    return '$cellsDesc은 유일사각형(2행 2열, 박스 2개)을 이루는데, 그중 세 칸이 후보 $a, $b뿐이에요. 나머지 한 칸도 이 둘뿐이라면 퍼즐 해가 두 개가 되어버리므로, 그 칸에서는 $a, $b을(를) 후보에서 지울 수 있습니다.';
   }
 
   @override
   String explanationUniqueRectangleType2(
       String cellA, String cellB, int a, int b, int c) {
-    return '$cellA과 $cellB은 후보가 $a, $b, $c 세 개씩이에요. 둘 다 $a, $b뿐이라면 퍼즐 해가 두 개가 되므로, 둘 중 하나는 반드시 $c여야 해요. 그래서 두 칸을 모두 보는 다른 칸에서는 $c를 후보에서 지울 수 있습니다.';
+    return '$cellA과 $cellB은 후보가 $a, $b, $c 세 개씩이에요. 둘 다 $a, $b뿐이라면 퍼즐 해가 두 개가 되므로, 둘 중 하나는 반드시 $c(이)어야 해요. 그래서 두 칸을 모두 보는 다른 칸에서는 $c을(를) 후보에서 지울 수 있습니다.';
   }
 
   @override
   String explanationUniqueRectangleType3(
       String cellA, String cellB, String digitsDesc) {
-    return '$cellA과 $cellB의 추가 후보를 하나로 합쳐서 보면, 다른 칸들과 함께 $digitsDesc만 남는 조합을 이뤄요. 그래서 같은 구역의 나머지 칸에서는 $digitsDesc번을 후보에서 지울 수 있습니다.';
+    return '$cellA과 $cellB 중 하나는 반드시 추가 후보 쪽이어야 해요(둘 다 사각형 쌍만 남으면 해가 두 개가 되니까요). 두 칸의 추가 후보를 한 칸처럼 합쳐서 보면 같은 구역의 다른 칸들과 함께 후보 $digitsDesc을(를) 나눠 갖는 묶음이 되므로, 그 구역의 나머지 칸에서는 $digitsDesc번을 후보에서 지울 수 있습니다.';
   }
 
   @override
@@ -542,7 +542,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String noteRepairNotice(String explanation) {
-    return '후보수가 정확하게 입력되어야 합니다. $explanation';
+    return '일부 칸의 후보 메모가 실제와 달라 먼저 자동으로 보정했어요. $explanation';
   }
 
   @override
@@ -792,4 +792,198 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get retryAction => '다시 시도';
+
+  @override
+  String get hintStepPrevAction => '이전';
+
+  @override
+  String get hintStepNextAction => '다음';
+
+  @override
+  String hintStepXYWingPivot(String pivot, int x, int y) {
+    return '피벗 $pivot의 후보는 $x과(와) $y 둘뿐이에요.';
+  }
+
+  @override
+  String hintStepWingCase(int digit, String wing, int z) {
+    return '피벗이 $digit(이)라면 $wing에서 $digit이(가) 빠져요 — 그럼 그 칸은 $z이(가) 됩니다.';
+  }
+
+  @override
+  String hintStepXYWingConclusion(int z) {
+    return '어느 쪽이든 두 날개 중 하나는 반드시 $z. 두 날개를 모두 보는 칸은 $z이(가) 될 수 없어요.';
+  }
+
+  @override
+  String hintStepXYZWingPivot(String pivot, String digits) {
+    return '피벗 $pivot의 후보는 $digits 셋이에요.';
+  }
+
+  @override
+  String hintStepXYZWingPivotZ(int z) {
+    return '피벗이 $z인 경우도 있어요 — 그땐 피벗 자신이 $z입니다.';
+  }
+
+  @override
+  String hintStepXYZWingConclusion(int z) {
+    return '어떤 경우든 세 칸 중 하나는 반드시 $z. 세 칸을 모두 보는 칸은 $z이(가) 될 수 없어요.';
+  }
+
+  @override
+  String hintStepWWingPair(String cell1, String cell2, int a, int b) {
+    return '$cell1과(와) $cell2은(는) 후보가 $a, $b(으)로 똑같은 쌍이에요.';
+  }
+
+  @override
+  String hintStepWWingBridge(String unitDesc, int b) {
+    return '$unitDesc에서 $b이(가) 들어갈 곳은 두 곳뿐인데, 그 두 곳이 각각 쌍 칸을 하나씩 보고 있어요.';
+  }
+
+  @override
+  String hintStepWWingForced(int a, int b) {
+    return '쌍 두 칸이 모두 $b(이)라면 그 줄엔 $b이(가) 들어갈 곳이 없어져요. 그래서 적어도 하나는 $a입니다.';
+  }
+
+  @override
+  String hintStepWWingConclusion(int a) {
+    return '두 쌍 칸을 모두 보는 칸은 $a이(가) 될 수 없어요.';
+  }
+
+  @override
+  String hintStepChainStart(String cell, int z, int a) {
+    return '$cell에서 시작해요. 이 칸이 $z이(가) 아니라면 남는 후보는 $a뿐이에요.';
+  }
+
+  @override
+  String hintStepChainHop(String cell, int carry, int next) {
+    return '그러면 $cell은(는) $carry이(가) 될 수 없으니 $next이(가) 됩니다.';
+  }
+
+  @override
+  String hintStepChainConclusion(int z) {
+    return '따라서 시작 칸이 $z(이)거나 끝 칸이 $z(이)에요. 양 끝을 모두 보는 칸은 $z이(가) 될 수 없습니다.';
+  }
+
+  @override
+  String hintStepRemotePairIntro(int a, int b) {
+    return '이 사슬의 칸들은 후보가 모두 $a, $b(으)로 똑같아요.';
+  }
+
+  @override
+  String hintStepRemotePairAlternate(int a, int b) {
+    return '이웃한 칸끼리 서로 보므로 값은 $a, $b, $a, $b… 번갈아 갈 수밖에 없어요.';
+  }
+
+  @override
+  String hintStepRemotePairEnds(int a, int b) {
+    return '양 끝은 홀수 번 떨어져 있어서 항상 서로 달라요 — 하나는 $a, 다른 하나는 $b입니다.';
+  }
+
+  @override
+  String hintStepRemotePairConclusion(int a, int b) {
+    return '양 끝을 모두 보는 칸은 $a도 $b도 될 수 없어요.';
+  }
+
+  @override
+  String hintStepSingleDigitStrong1(int digit, String cell1, String cell2) {
+    return '$cell1과(와) $cell2은(는) 그 줄에서 $digit이(가) 들어갈 수 있는 단 두 곳이에요 — 둘 중 하나는 반드시 $digit입니다.';
+  }
+
+  @override
+  String hintStepSingleDigitStrong2(int digit, String cell1, String cell2) {
+    return '$cell1과(와) $cell2도 단 두 곳 쌍이에요. 그리고 두 쌍의 가운데 칸끼리는 서로 봅니다.';
+  }
+
+  @override
+  String hintStepSingleDigitForced(int digit, String cell1, String cell2) {
+    return '가운데 두 칸이 동시에 $digit일 수는 없어요. 그래서 끝 칸 $cell1과(와) $cell2 중 적어도 하나는 $digit입니다.';
+  }
+
+  @override
+  String hintStepSingleDigitConclusion(int digit) {
+    return '두 끝 칸을 모두 보는 칸은 $digit이(가) 될 수 없어요.';
+  }
+
+  @override
+  String hintStepColoringChain(int digit) {
+    return '$digit이(가) 딱 두 곳에만 들어가는 줄로 이어진 사슬이에요. 이웃은 서로 반대라 두 색으로 나뉩니다.';
+  }
+
+  @override
+  String hintStepColoringRule1Clash(int digit, String cell1, String cell2) {
+    return '같은 색인 $cell1과(와) $cell2이(가) 서로 보고 있어요. 한 색이 $digit을(를) 두 번 가질 수는 없으니 이 색 전체가 틀렸습니다.';
+  }
+
+  @override
+  String hintStepColoringRule1Conclusion(int digit) {
+    return '틀린 색의 모든 칸에서 $digit을(를) 지울 수 있어요.';
+  }
+
+  @override
+  String hintStepColoringRule2Conclusion(int digit) {
+    return '두 색 중 하나는 반드시 참이에요. 양쪽 색을 모두 보는 칸은 어느 쪽이든 $digit이(가) 될 수 없습니다.';
+  }
+
+  @override
+  String hintStepXWingLines(int digit, String linesDesc) {
+    return '숫자 $digit은(는) $linesDesc에서 각각 딱 두 곳에만 들어갈 수 있어요.';
+  }
+
+  @override
+  String hintStepXWingRect(int digit, String crossDesc) {
+    return '네 곳이 직사각형을 이뤄요. 어떻게 놓이든 $crossDesc에는 그 안에서 $digit이(가) 하나씩 들어갑니다.';
+  }
+
+  @override
+  String hintStepXWingConclusion(int digit, String crossUnitName) {
+    return '그래서 그 두 $crossUnitName의 나머지 칸에는 $digit이(가) 올 수 없어요.';
+  }
+
+  @override
+  String hintStepFullHouseIntro(String unitDesc) {
+    return '$unitDesc에는 빈 칸이 딱 하나 남았어요.';
+  }
+
+  @override
+  String hintStepNakedSingleIntro(String cell) {
+    return '$cell의 후보를 좁혀 볼게요 — 같은 행·열·박스에 이미 놓인 숫자를 하나씩 지워 보세요.';
+  }
+
+  @override
+  String hintStepHiddenSingleIntro(int digit) {
+    return '숫자 $digit이(가) 들어갈 수 있는 자리가 한 칸뿐인 구역이 있어요. 강조된 숫자들이 다른 칸을 모두 막고 있거든요.';
+  }
+
+  @override
+  String get hintStepBugIntro =>
+      '빈 칸의 후보가 전부 2개씩이면 정답이 두 개가 되어 버려요. 후보가 3개인 칸이 딱 하나 있는데, 그 칸이 열쇠예요.';
+
+  @override
+  String hintStepNakedSubsetIntro(int count, String digits, String unitDesc) {
+    return '$unitDesc의 강조된 $count칸에는 후보가 $digits밖에 없어요.';
+  }
+
+  @override
+  String hintStepHiddenSubsetIntro(int count, String digits, String unitDesc) {
+    return '$unitDesc에서 $digits이(가) 들어갈 수 있는 곳은 강조된 $count칸뿐이에요.';
+  }
+
+  @override
+  String hintStepPointingIntro(int digit, String boxDesc, String lineDesc) {
+    return '$boxDesc 안에서 숫자 $digit이(가) 들어갈 자리는 전부 $lineDesc 위에 있어요.';
+  }
+
+  @override
+  String hintStepClaimingIntro(int digit, String lineDesc, String boxDesc) {
+    return '$lineDesc에서 숫자 $digit이(가) 들어갈 자리는 전부 $boxDesc 안에 있어요.';
+  }
+
+  @override
+  String hintStepFishIntro(int digit, String linesDesc) {
+    return '$linesDesc을(를) 보세요 — 숫자 $digit이(가) 들어갈 자리가 몇 개의 교차선에 몰려 있어요.';
+  }
+
+  @override
+  String get hintStepURIntro =>
+      '강조된 칸들이 같은 후보 쌍을 공유하는 직사각형을 이뤄요. 네 칸 모두 그 두 후보만 남으면 정답이 두 개가 되어 버립니다 — 그럴 수는 없죠.';
 }

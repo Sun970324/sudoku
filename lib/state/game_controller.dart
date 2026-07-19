@@ -9,6 +9,7 @@ import '../models/hint.dart';
 import '../models/sudoku_grid.dart';
 import '../models/sudoku_puzzle.dart';
 import '../services/hint_engine.dart';
+import '../services/hint_step_builder.dart';
 import '../services/generation/sudoku_generator.dart';
 
 enum GameStatus { playing, won, gameOver }
@@ -96,9 +97,16 @@ class GameController extends ChangeNotifier {
   /// The only place [_activeHint] is assigned, so every path that shows or
   /// drops a hint resets [_hintStage] with it. Does not notify — callers
   /// already do, and several set a hint mid-way through a larger mutation.
-  void _setActiveHint(Hint? hint) {
+  /// [steps] is the hint's walkthrough, kept beside the hint rather than on
+  /// it so [_activeHint] stays the exact instance the engine returned
+  /// (several callers and tests rely on that identity); only the two
+  /// request* entry points pass one — every hint-clearing path leaves the
+  /// default empty list.
+  void _setActiveHint(Hint? hint, [List<HintStep> steps = const []]) {
     _activeHint = hint;
+    _activeHintSteps = steps;
     _hintStage = 0;
+    _hintStepIndex = 0;
   }
 
   /// Advances the progressive reveal one step, up to the final stage. No-op
@@ -107,6 +115,41 @@ class GameController extends ChangeNotifier {
   void advanceHintStage() {
     if (_activeHint == null || _hintStage >= 2) return;
     _hintStage++;
+    notifyListeners();
+  }
+
+  /// The active hint's step-by-step walkthrough (see [buildHintSteps]) and
+  /// which of its steps the player is on. Only meaningful once [hintStage]
+  /// reaches 2 (the sheet's step pager isn't shown before that); reset
+  /// alongside the hint itself in [_setActiveHint].
+  List<HintStep> _activeHintSteps = const [];
+  List<HintStep> get hintSteps => _activeHintSteps;
+  int _hintStepIndex = 0;
+  int get hintStepIndex => _hintStepIndex;
+
+  /// The walkthrough step the board should draw right now, or null when
+  /// there's nothing step-wise to restrict — no visualized hint yet, or a
+  /// hint without step support — in which case the board draws the full
+  /// visualization as always.
+  HintStep? get currentHintStep {
+    if (visualizedHint == null || _activeHintSteps.isEmpty) return null;
+    return _activeHintSteps[
+        _hintStepIndex.clamp(0, _activeHintSteps.length - 1)];
+  }
+
+  /// Steps the walkthrough forward/backward. No-ops at the ends and when
+  /// the active hint has no steps, so the sheet can call these unguarded.
+  void nextHintStep() => setHintStep(_hintStepIndex + 1);
+
+  void prevHintStep() => setHintStep(_hintStepIndex - 1);
+
+  /// Jumps the walkthrough to [index] (clamped) — how the hint sheet's
+  /// swipeable step pager syncs its page changes back here.
+  void setHintStep(int index) {
+    if (_activeHintSteps.isEmpty) return;
+    final clamped = index.clamp(0, _activeHintSteps.length - 1);
+    if (clamped == _hintStepIndex) return;
+    _hintStepIndex = clamped;
     notifyListeners();
   }
 
@@ -408,10 +451,20 @@ class GameController extends ChangeNotifier {
         );
       }
     }
-    _setActiveHint(hint);
+    _setActiveHint(hint, _stepsFor(hint, l10n));
     notifyListeners();
     return hint;
   }
+
+  /// The step-by-step walkthrough for a hint about to be displayed (see
+  /// [buildHintSteps]) — only the two request* entry points build one;
+  /// generation and availability checks never show a hint, so they skip the
+  /// work. Resolves a missing [l10n] to Korean the same way the engine does
+  /// for [Hint.explanation].
+  List<HintStep> _stepsFor(Hint? hint, AppLocalizations? l10n) => hint == null
+      ? const []
+      : buildHintSteps(
+          hint, l10n ?? lookupAppLocalizations(const Locale('ko')));
 
   /// Stage 1 of the two-step hint flow (see `GameScreen._onHintPressed`):
   /// analyzes using ONLY the board's confirmed digits and the player's own
@@ -439,7 +492,7 @@ class GameController extends ChangeNotifier {
     // skips). Reveal hints read the board, not the notes, so they can't hit
     // this — but the check is cheap and covers them too.
     if (hint != null && !_agreesWithSolution(hint)) hint = null;
-    _setActiveHint(hint);
+    _setActiveHint(hint, _stepsFor(hint, l10n));
     notifyListeners();
     return hint;
   }

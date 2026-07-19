@@ -80,10 +80,15 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
   Widget build(BuildContext context) {
     final isDark = BoardColors.isDark(context);
     final hint = controller.visualizedHint;
-    final hasUnitHighlight = hint != null &&
-        (hint.highlightedRows.isNotEmpty ||
-            hint.highlightedCols.isNotEmpty ||
-            hint.highlightedBoxes.isNotEmpty);
+    // With a step walkthrough active, the current step decides which units
+    // are outlined (introducing them one at a time); otherwise the hint's
+    // full sets are shown at once, as before.
+    final step = controller.currentHintStep;
+    final unitRows = step?.rows ?? hint?.highlightedRows ?? const <int>{};
+    final unitCols = step?.cols ?? hint?.highlightedCols ?? const <int>{};
+    final unitBoxes = step?.boxes ?? hint?.highlightedBoxes ?? const <int>{};
+    final hasUnitHighlight =
+        unitRows.isNotEmpty || unitCols.isNotEmpty || unitBoxes.isNotEmpty;
     return AspectRatio(
       aspectRatio: 1,
       child: LayoutBuilder(
@@ -139,20 +144,23 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
                     child: IgnorePointer(
                       child: CustomPaint(
                         painter: _UnitHighlightPainter(
-                          rows: hint.highlightedRows,
-                          cols: hint.highlightedCols,
-                          boxes: hint.highlightedBoxes,
+                          rows: unitRows,
+                          cols: unitCols,
+                          boxes: unitBoxes,
                           color: BoardColors.unitHighlightBorder(isDark),
                         ),
                       ),
                     ),
                   ),
-                if (hint != null && hint.chainLinks.isNotEmpty)
+                if (hint != null &&
+                    (hint.chainLinks.isNotEmpty ||
+                        (step?.emphasisNodes.isNotEmpty ?? false)))
                   Positioned.fill(
                     child: IgnorePointer(
                       child: CustomPaint(
                         painter: _HintArrowPainter(
                           hint: hint,
+                          step: step,
                           color: BoardColors.hintArrow(isDark),
                         ),
                       ),
@@ -209,12 +217,20 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
     final selectedValue = hint == null ? controller.selectedValue : null;
     final cellValue = controller.valueAt(row, col);
 
+    // A reveal walkthrough introduces its reason cells first and holds the
+    // fill-target highlight back until the conclusion step; without steps
+    // everything shows at once, as before.
+    final revealStep = hint != null && hint.type == HintType.reveal
+        ? controller.currentHintStep
+        : null;
     final isHintFillTarget = hint != null &&
         hint.type == HintType.reveal &&
+        (revealStep == null || revealStep.showConclusion) &&
         hint.primaryCells.contains(cell);
     final isHintReasonCell = hint != null &&
         hint.type == HintType.reveal &&
         !isHintFillTarget &&
+        (revealStep == null || revealStep.cells.contains(cell)) &&
         hint.secondaryCells.contains(cell);
 
     final isSameValue =
@@ -228,10 +244,17 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
     var hintColorANotes = const <int>{};
     var hintColorBNotes = const <int>{};
     if (hint != null && hint.type == HintType.eliminate) {
-      hintRedNotes = {
-        for (final e in hint.eliminations)
-          if (e.row == row && e.col == col) e.digit,
-      };
+      // During a step walkthrough, the current step decides which cells'
+      // reason coloring is active and whether the red to-be-removed marks
+      // are shown yet; without steps everything is visible at once.
+      final step = controller.currentHintStep;
+      final cellActive = step == null || step.cells.contains(cell);
+      if (step == null || step.showConclusion) {
+        hintRedNotes = {
+          for (final e in hint.eliminations)
+            if (e.row == row && e.col == col) e.digit,
+        };
+      }
       final reasonDigits = {
         ...hint.eliminations.map((e) => e.digit),
         ...hint.primaryDigits,
@@ -239,9 +262,13 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
       final usesColorGroups =
           hint.colorGroupA.isNotEmpty || hint.colorGroupB.isNotEmpty;
       if (usesColorGroups) {
-        if (hint.colorGroupA.contains(cell)) hintColorANotes = reasonDigits;
-        if (hint.colorGroupB.contains(cell)) hintColorBNotes = reasonDigits;
-      } else if (hint.primaryCells.contains(cell)) {
+        if (cellActive && hint.colorGroupA.contains(cell)) {
+          hintColorANotes = reasonDigits;
+        }
+        if (cellActive && hint.colorGroupB.contains(cell)) {
+          hintColorBNotes = reasonDigits;
+        }
+      } else if (cellActive && hint.primaryCells.contains(cell)) {
         hintGreenNotes = reasonDigits;
       }
     }
@@ -364,19 +391,30 @@ class _UnitHighlightPainter extends CustomPainter {
 /// position (a single-digit chain routes to that digit's note slot; a
 /// multi-digit XY-Chain routes to cell centers), with **strong links solid
 /// and weak links dashed** ([Hint.chainStrongLinks]), a ring at each node,
-/// and a faint dashed connector from each chain end to the candidate(s) it
-/// helps eliminate. Same square [Size] as the other overlays, so
+/// and a faint dashed connector from each convergence source (the chain's
+/// two ends, unless [Hint.elimSources] overrides them) to the candidate(s)
+/// it helps eliminate. Same square [Size] as the other overlays, so
 /// `cellW = size.width / 9`, `cellH = size.height / 9` map identically.
 class _HintArrowPainter extends CustomPainter {
-  const _HintArrowPainter({required this.hint, required this.color});
+  const _HintArrowPainter({required this.hint, this.step, required this.color});
 
   final Hint hint;
+
+  /// The walkthrough step currently shown, or null to draw the whole hint
+  /// at once. A step limits the links to a prefix ([HintStep.visibleLinks]),
+  /// gates the convergence connectors behind [HintStep.showConclusion],
+  /// and adds bold emphasis rings at [HintStep.emphasisNodes].
+  final HintStep? step;
+
   final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final links = hint.chainLinks;
-    if (links.isEmpty) return;
+    final links = step == null
+        ? hint.chainLinks
+        : hint.chainLinks.take(step!.visibleLinks).toList();
+    final emphasis = step?.emphasisNodes ?? const <HintChainNode>[];
+    if (links.isEmpty && emphasis.isEmpty) return;
     final cellW = size.width / 9;
     final cellH = size.height / 9;
     // Kept under a sixth of a cell so a ring stays within its own candidate
@@ -430,19 +468,45 @@ class _HintArrowPainter extends CustomPainter {
       }
     }
 
+    // Convergence sources: the nodes whose "at least one of these is true"
+    // conclusion kills the eliminated candidates. A linear chain's are its
+    // two ends; hints whose sources aren't derivable that way (XYZ-Wing's
+    // pivot z, X-Wing's four corners) name them via [Hint.elimSources].
+    // Always derived from the FULL chain — a step's prefix slice must not
+    // change which nodes count as the conclusion's sources.
+    final sources = hint.elimSources ??
+        (hint.chainLinks.isEmpty
+            ? const <HintChainNode>[]
+            : [hint.chainLinks.first.from, hint.chainLinks.last.to]);
+    final showConclusion = step == null || step!.showConclusion;
+
     final ringPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2
       ..color = color;
     for (final n in {
       for (final link in links) ...[link.from, link.to],
+      if (showConclusion) ...sources,
     }) {
       canvas.drawCircle(node(n), radius, ringPaint);
     }
 
-    // Faint dashed connectors from the chain's two ends to each eliminated
-    // candidate they both see (the "both ends see this cell" conclusion).
-    final ends = {links.first.from, links.last.to};
+    // Bold rings on the step's "look here now" candidates, drawn over the
+    // regular ones.
+    if (emphasis.isNotEmpty) {
+      final emphasisPaint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.4
+        ..color = color;
+      for (final n in emphasis) {
+        canvas.drawCircle(node(n), radius * 1.15, emphasisPaint);
+      }
+    }
+
+    if (!showConclusion) return;
+
+    // Faint dashed connectors from the sources to each eliminated candidate
+    // they see (the "this cell sees them all" conclusion).
     final elimPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.6
@@ -450,12 +514,8 @@ class _HintArrowPainter extends CustomPainter {
       ..color = color.withValues(alpha: 0.55);
     for (final e in hint.eliminations) {
       final target = _candidateCenter(e.row, e.col, e.digit, cellW, cellH);
-      for (final end in ends) {
-        if (end.cells.any((c) => c.row == e.row && c.col == e.col)) continue;
-        if (!end.cells.every((c) => _sees(c.row, c.col, e.row, e.col))) {
-          continue;
-        }
-        final from = node(end);
+      for (final source in _sourcesFor(e, sources.toSet(), node, target)) {
+        final from = node(source);
         final dir = target - from;
         final len = dir.distance;
         if (len < radius + 3) continue;
@@ -469,6 +529,50 @@ class _HintArrowPainter extends CustomPainter {
         );
       }
     }
+  }
+
+  /// Which of [sources] get a convergence connector to elimination [e]. Only
+  /// nodes whose every cell sees [e]'s cell (and isn't it) qualify at all.
+  /// When the hint carries color groups (Simple Coloring), qualifying
+  /// sources collapse to the single nearest one per group — a Rule 2
+  /// elimination is seen by potentially the whole component, and one line
+  /// from each color says "sees both colors" without burying the board.
+  /// Sources in neither group (every other technique) are all kept.
+  Iterable<HintChainNode> _sourcesFor(
+    HintElimination e,
+    Set<HintChainNode> sources,
+    Offset Function(HintChainNode) node,
+    Offset target,
+  ) {
+    final seeing = sources.where((s) =>
+        !s.cells.any((c) => c.row == e.row && c.col == e.col) &&
+        s.cells.every((c) => _sees(c.row, c.col, e.row, e.col)));
+    if (hint.colorGroupA.isEmpty && hint.colorGroupB.isEmpty) return seeing;
+
+    HintChainNode? nearestA;
+    HintChainNode? nearestB;
+    final rest = <HintChainNode>[];
+    for (final s in seeing) {
+      final group = s.cells.every(hint.colorGroupA.contains)
+          ? hint.colorGroupA
+          : s.cells.every(hint.colorGroupB.contains)
+              ? hint.colorGroupB
+              : null;
+      if (group == null) {
+        rest.add(s);
+      } else if (identical(group, hint.colorGroupA)) {
+        if (nearestA == null ||
+            (node(s) - target).distance < (node(nearestA) - target).distance) {
+          nearestA = s;
+        }
+      } else {
+        if (nearestB == null ||
+            (node(s) - target).distance < (node(nearestB) - target).distance) {
+          nearestB = s;
+        }
+      }
+    }
+    return [if (nearestA != null) nearestA, if (nearestB != null) nearestB, ...rest];
   }
 
   /// Center of candidate [digit]'s slot in the cell's 3x3 notes grid
@@ -503,5 +607,5 @@ class _HintArrowPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _HintArrowPainter old) =>
-      old.hint != hint || old.color != color;
+      old.hint != hint || old.step != step || old.color != color;
 }

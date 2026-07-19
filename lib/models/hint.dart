@@ -311,6 +311,55 @@ class HintChainLink {
   int get hashCode => Object.hash(from, to, strong);
 }
 
+/// One stage of a hint's step-by-step walkthrough: the sentence narrating
+/// it plus the slice of the hint's visualization revealed at that point.
+/// The player pages through these with prev/next buttons in the hint sheet;
+/// the board only draws what the current step declares. Built by
+/// `buildHintSteps` when a hint is requested for display and kept on
+/// [GameController] beside the hint (never ON the [Hint] — engine results
+/// stay identical to what find* returned); a hint without steps is simply
+/// drawn all at once, as before.
+class HintStep {
+  const HintStep({
+    required this.text,
+    this.cells = const {},
+    this.rows = const {},
+    this.cols = const {},
+    this.boxes = const {},
+    this.visibleLinks = 0,
+    this.emphasisNodes = const [],
+    this.showConclusion = false,
+  });
+
+  /// The one-line narration shown in the hint sheet for this step.
+  final String text;
+
+  /// Cells whose hint note-coloring (green / color group) is active during
+  /// this step — a subset of the hint's own primary/color cells, so the
+  /// walkthrough can introduce them one group at a time.
+  final Set<HintCell> cells;
+
+  /// Unit outlines drawn during this step (same indexing as
+  /// [Hint.highlightedRows] and friends).
+  final Set<int> rows;
+  final Set<int> cols;
+  final Set<int> boxes;
+
+  /// How many of [Hint.chainLinks] (as a prefix) are drawn during this
+  /// step. Link lists are ordered so that every step's visible set IS a
+  /// prefix — branches that appear together are stored adjacently.
+  final int visibleLinks;
+
+  /// Candidates given an extra-bold ring this step — the "look here now"
+  /// marker (e.g. the wing digit a case just forced).
+  final List<HintChainNode> emphasisNodes;
+
+  /// Whether the hint's conclusion visuals are shown: the red to-be-removed
+  /// notes and convergence connectors of an eliminate hint, or the filled
+  /// target cell of a reveal hint. Typically only the final step.
+  final bool showConclusion;
+}
+
 /// A single hint found by [HintEngine]. Reveal-type hints (Full House,
 /// Naked Single, Hidden Single) point at one cell with a definite answer
 /// via [row]/[col]/[value]. Eliminate-type hints (Naked/Hidden
@@ -338,6 +387,7 @@ class Hint {
     this.value,
     this.eliminations = const [],
     this.chainLinks = const [],
+    this.elimSources,
   });
 
   final HintTechnique technique;
@@ -407,6 +457,16 @@ class Hint {
   /// `chainLinks.last.to`.
   final List<HintChainLink> chainLinks;
 
+  /// The nodes the overlay draws its faint "convergence" connectors from —
+  /// each one dashes toward every eliminated candidate its cells see, showing
+  /// WHY that candidate dies. Null (the default) means "derive them from the
+  /// chain": a linear chain's two ends, `chainLinks.first.from` and
+  /// `chainLinks.last.to`. Set explicitly when that derivation is wrong:
+  /// XYZ-Wing has THREE sources (both wings' z plus the pivot's own z),
+  /// X-Wing's are its four corners, and Simple Coloring Rule 1 sets `[]` to
+  /// draw none at all (its eliminations land ON the source cells themselves).
+  final List<HintChainNode>? elimSources;
+
   /// The hint's conclusion in standard sudoku notation, shown alongside the
   /// full [explanation] at the last stage of the progressive reveal: a reveal
   /// is `r4c7 = 5`, an elimination is `r4c258<>7` per digit (cells sharing a
@@ -471,5 +531,6 @@ class Hint {
         value: value,
         eliminations: eliminations,
         chainLinks: chainLinks,
+        elimSources: elimSources,
       );
 }
