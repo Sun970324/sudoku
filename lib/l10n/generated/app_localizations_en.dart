@@ -599,7 +599,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get copiedToClipboard => 'Copied to clipboard';
 
   @override
-  String get enterTextCodeHint => 'Paste text code';
+  String get enterTextCodeHint => 'Room code or puzzle code';
+
+  @override
+  String get roomJoinRequiresSignIn =>
+      'Sign in to join a friend match. You can sign in from the race lobby.';
 
   @override
   String get loadButton => 'Enter';

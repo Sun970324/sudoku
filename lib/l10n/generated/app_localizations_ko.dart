@@ -594,7 +594,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get copiedToClipboard => '클립보드에 복사했어요';
 
   @override
-  String get enterTextCodeHint => '텍스트 코드 붙여넣기';
+  String get enterTextCodeHint => '방 코드 또는 퍼즐 코드';
+
+  @override
+  String get roomJoinRequiresSignIn => '친구 대결 참가는 로그인이 필요해요. 대결 로비에서 로그인해 주세요.';
 
   @override
   String get loadButton => '입장하기';

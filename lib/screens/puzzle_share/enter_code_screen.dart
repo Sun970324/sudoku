@@ -2,14 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../../services/puzzle_queue_manager.dart';
 import '../../services/puzzle_share_service.dart';
+import '../../state/auth_controller.dart';
 import '../../theme/app_palette.dart';
 import '../../widgets/gradient_scaffold.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
+import '../race/friend_room_screen.dart';
 
+/// One input for both kinds of code a player might receive: a 6-char friend
+/// room code (joins a private race) or a longer puzzle share code (loads the
+/// puzzle to play solo). They can't collide — a room code is exactly 6 chars
+/// from a fixed uppercase alphabet, a share code is a much longer base62
+/// string — so which one was pasted is detected automatically.
 class EnterCodeScreen extends StatefulWidget {
-  const EnterCodeScreen({super.key});
+  const EnterCodeScreen({
+    super.key,
+    required this.auth,
+    required this.puzzleQueue,
+  });
+
+  final AuthController auth;
+  final PuzzleQueueManager puzzleQueue;
 
   @override
   State<EnterCodeScreen> createState() => _EnterCodeScreenState();
@@ -23,23 +38,47 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
   /// Bumped on every failed decode so the error shake replays each time.
   int _errorShakeTick = 0;
 
-  @override
-  void dispose() {
-    _textCodeController.dispose();
-    super.dispose();
+  /// A friend room code: exactly 6 chars from the room-code alphabet
+  /// (0/O/1/I/L excluded — see create_private_room). Matched case-
+  /// insensitively since codes are stored uppercase server-side.
+  static final _roomCodePattern = RegExp(r'^[2-9A-HJKMNP-Z]{6}$');
+
+  void _showError(String message) {
+    setState(() {
+      _errorMessage = message;
+      _errorShakeTick++;
+    });
   }
 
-  void _loadTextCode() {
+  void _submit() {
     setState(() => _errorMessage = null);
+    final raw = _textCodeController.text.trim();
+    final l10n = AppLocalizations.of(context)!;
+
+    if (_roomCodePattern.hasMatch(raw.toUpperCase())) {
+      if (!widget.auth.isSignedIn) {
+        _showError(l10n.roomJoinRequiresSignIn);
+        return;
+      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => FriendRoomScreen.join(
+            puzzleQueue: widget.puzzleQueue,
+            code: raw.toUpperCase(),
+          ),
+        ),
+      );
+      return;
+    }
+
+    // Not a room code — treat as a puzzle share code. Case is significant
+    // here (base62), so decode the raw trimmed text, not the uppercased one.
     try {
-      final puzzle = _service.decodeText(_textCodeController.text.trim());
+      final puzzle = _service.decodeText(raw);
       Navigator.pop(context, puzzle);
     } on PuzzleShareException {
-      final l10n = AppLocalizations.of(context)!;
-      setState(() {
-        _errorMessage = l10n.invalidTextCodeError;
-        _errorShakeTick++;
-      });
+      _showError(l10n.invalidTextCodeError);
     }
   }
 
@@ -82,7 +121,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
                 ],
                 const SizedBox(height: 16),
                 PopButton(
-                  onPressed: _loadTextCode,
+                  onPressed: _submit,
                   label: l10n.loadButton,
                   expanded: true,
                 ),

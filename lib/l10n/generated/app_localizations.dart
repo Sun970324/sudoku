@@ -1074,8 +1074,14 @@ abstract class AppLocalizations {
   /// No description provided for @enterTextCodeHint.
   ///
   /// In en, this message translates to:
-  /// **'Paste text code'**
+  /// **'Room code or puzzle code'**
   String get enterTextCodeHint;
+
+  /// No description provided for @roomJoinRequiresSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to join a friend match. You can sign in from the race lobby.'**
+  String get roomJoinRequiresSignIn;
 
   /// No description provided for @loadButton.
   ///

@@ -145,7 +145,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _onEnterCodePressed() async {
     final puzzle = await Navigator.push<SudokuPuzzle>(
       context,
-      MaterialPageRoute(builder: (_) => const EnterCodeScreen()),
+      MaterialPageRoute(
+          builder: (_) => EnterCodeScreen(
+                auth: widget.auth,
+                puzzleQueue: widget.puzzleQueue,
+              )),
     );
     if (puzzle == null) return;
     _openGame(

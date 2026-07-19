@@ -488,7 +488,8 @@
   "shareCodeTextLabel": "Text Code",
   "invalidTextCodeError": "That text code isn't valid.",
   "copiedToClipboard": "Copied to clipboard",
-  "enterTextCodeHint": "Paste text code",
+  "enterTextCodeHint": "Room code or puzzle code",
+  "roomJoinRequiresSignIn": "Sign in to join a friend match. You can sign in from the race lobby.",
   "loadButton": "Enter",
 
   "raceLobbyTitle": "Race",
