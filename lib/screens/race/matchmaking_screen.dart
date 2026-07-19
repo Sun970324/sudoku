@@ -183,7 +183,7 @@ class _ElapsedPill extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(fontFamily: 'Jua', color: scheme.primary),
+        style: TextStyle(fontFamily: 'Mulmaru', color: scheme.primary),
       ),
     );
   }

@@ -88,18 +88,22 @@ class _DailyCalendarCardState extends State<DailyCalendarCard> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     if (!widget.auth.isSignedIn) {
-      return PopCard(
-        padding: const EdgeInsets.all(20),
-        child: Text(l10n.dailyCalendarSignInHint,
-            textAlign: TextAlign.center),
+      // topCenter so the message card sizes to its content instead of being
+      // stretched to fill the flex slot the stats screen gives this widget.
+      return Align(
+        alignment: Alignment.topCenter,
+        child: PopCard(
+          padding: const EdgeInsets.all(20),
+          child:
+              Text(l10n.dailyCalendarSignInHint, textAlign: TextAlign.center),
+        ),
       );
     }
 
     final isDark = AppPalette.isDark(context);
     const teal = AppPalette.dailyTeal;
     final localeCode = Localizations.localeOf(context).languageCode;
-    final monthLabel =
-        DateFormat.yMMMM(localeCode).format(_month);
+    final monthLabel = DateFormat.yMMMM(localeCode).format(_month);
     final thisMonth = DateTime(DateTime.now().year, DateTime.now().month);
     final canGoNext = _month.isBefore(thisMonth);
     final days = _cache[_key(_month)] ?? const {};
@@ -117,7 +121,7 @@ class _DailyCalendarCardState extends State<DailyCalendarCard> {
                 onPressed: () => _changeMonth(-1),
               ),
               Text(monthLabel,
-                  style: const TextStyle(fontFamily: 'Jua', fontSize: 18)),
+                  style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 18)),
               IconButton(
                 icon: const Icon(Icons.chevron_right),
                 onPressed: canGoNext ? () => _changeMonth(1) : null,
@@ -133,20 +137,30 @@ class _DailyCalendarCardState extends State<DailyCalendarCard> {
           else ...[
             _WeekdayHeader(localeCode: localeCode),
             const SizedBox(height: 4),
-            _MonthGrid(
-              month: _month,
-              days: days,
-              teal: teal,
-              isDark: isDark,
-              selectedDay: _selected?.date.day,
-              onTapDay: (entry) => setState(() => _selected = entry),
-            ),
-            if (_loading)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: SizedBox(
-                    height: 2, child: LinearProgressIndicator(minHeight: 2)),
+            // Expanded so the grid soaks up whatever height the card's flex
+            // slot leaves; _MonthGrid sizes its rows to fit that space.
+            Expanded(
+              child: _MonthGrid(
+                month: _month,
+                days: days,
+                teal: teal,
+                isDark: isDark,
+                selectedDay: _selected?.date.day,
+                onTapDay: (entry) => setState(() => _selected = entry),
               ),
+            ),
+            // Reserved fixed-height slot: the progress bar shows only while
+            // loading but the space is always there, so it never shifts the
+            // grid the way a conditionally-inserted widget would.
+            SizedBox(
+              height: 10,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: _loading
+                    ? const LinearProgressIndicator(minHeight: 2)
+                    : null,
+              ),
+            ),
             if (_selected != null)
               Padding(
                 padding: const EdgeInsets.only(top: 12),
@@ -157,7 +171,7 @@ class _DailyCalendarCardState extends State<DailyCalendarCard> {
                     _formatTime(_selected!.elapsedSeconds),
                     _selected!.mistakes,
                   ),
-                  style: const TextStyle(fontFamily: 'Jua', color: teal),
+                  style: const TextStyle(fontFamily: 'Mulmaru', color: teal),
                 ),
               ),
           ],
@@ -224,29 +238,49 @@ class _MonthGrid extends StatelessWidget {
     final today = DateTime.now();
     final isThisMonth = today.year == month.year && today.month == month.month;
 
-    final cells = <Widget>[];
-    for (var i = 0; i < firstWeekday; i++) {
-      cells.add(const SizedBox.shrink());
-    }
-    for (var day = 1; day <= daysInMonth; day++) {
-      final entry = days[day];
-      final isToday = isThisMonth && today.day == day;
-      final isSelected = selectedDay == day;
-      cells.add(_DayCell(
-        day: day,
-        completed: entry != null,
-        isToday: isToday,
-        isSelected: isSelected,
-        teal: teal,
-        onTap: entry == null ? null : () => onTapDay(entry),
-      ));
-    }
+    // Always render a full 6-week grid so the layout is identical for every
+    // month (a 5-week month just gets a blank trailing row).
+    const rows = 6;
 
-    return GridView.count(
-      crossAxisCount: 7,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      children: cells,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Split the height the card gives us evenly across the 6 rows, and
+        // size the day circle to fit that row — this is what makes the
+        // calendar fit any device's viewport instead of a hard-coded height.
+        final rowExtent = constraints.maxHeight / rows;
+        final daySize = (rowExtent - 4).clamp(16.0, 36.0);
+
+        final cells = <Widget>[];
+        for (var i = 0; i < firstWeekday; i++) {
+          cells.add(const SizedBox.shrink());
+        }
+        for (var day = 1; day <= daysInMonth; day++) {
+          final entry = days[day];
+          final isToday = isThisMonth && today.day == day;
+          final isSelected = selectedDay == day;
+          cells.add(_DayCell(
+            day: day,
+            size: daySize,
+            completed: entry != null,
+            isToday: isToday,
+            isSelected: isSelected,
+            teal: teal,
+            onTap: entry == null ? null : () => onTapDay(entry),
+          ));
+        }
+        while (cells.length < rows * 7) {
+          cells.add(const SizedBox.shrink());
+        }
+
+        return GridView(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,
+            mainAxisExtent: rowExtent,
+          ),
+          physics: const NeverScrollableScrollPhysics(),
+          children: cells,
+        );
+      },
     );
   }
 }
@@ -254,6 +288,7 @@ class _MonthGrid extends StatelessWidget {
 class _DayCell extends StatelessWidget {
   const _DayCell({
     required this.day,
+    required this.size,
     required this.completed,
     required this.isToday,
     required this.isSelected,
@@ -262,6 +297,10 @@ class _DayCell extends StatelessWidget {
   });
 
   final int day;
+
+  /// Diameter of the day circle — scaled to the grid's row height so the
+  /// calendar fits the available viewport on any device.
+  final double size;
   final bool completed;
   final bool isToday;
   final bool isSelected;
@@ -274,24 +313,31 @@ class _DayCell extends StatelessWidget {
       onTap: onTap,
       child: Center(
         child: Container(
-          width: 34,
-          height: 34,
+          width: size,
+          height: size,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: completed ? teal : Colors.transparent,
             border: isToday || isSelected
-                ? Border.all(
-                    color: teal, width: isSelected ? 2.5 : 1.5)
+                ? Border.all(color: teal, width: isSelected ? 2.5 : 1.5)
                 : null,
           ),
-          child: Text(
-            '$day',
-            style: TextStyle(
-              color: completed
-                  ? Colors.white
-                  : Theme.of(context).colorScheme.onSurface,
-              fontWeight: completed ? FontWeight.bold : FontWeight.normal,
+          // FittedBox keeps the number legible even when size shrinks on a
+          // short screen.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Text(
+                '$day',
+                style: TextStyle(
+                  color: completed
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.onSurface,
+                  fontWeight: completed ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
             ),
           ),
         ),

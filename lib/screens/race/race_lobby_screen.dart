@@ -252,7 +252,7 @@ class _ProfileCard extends StatelessWidget {
       child: Column(
         children: [
           Text(profile.username,
-              style: const TextStyle(fontFamily: 'Jua', fontSize: 22)),
+              style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 22)),
           const SizedBox(height: 10),
           TierBadge(tier: profile.tier, large: true),
           const SizedBox(height: 10),

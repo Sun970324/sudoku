@@ -170,7 +170,7 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _formatTime(myTime),
-                  style: const TextStyle(fontFamily: 'Jua', fontSize: 44),
+                  style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 44),
                 ),
               ],
               if (_notRanked) ...[

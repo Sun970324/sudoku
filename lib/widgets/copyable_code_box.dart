@@ -5,7 +5,7 @@ import '../l10n/generated/app_localizations.dart';
 import '../theme/app_palette.dart';
 
 /// A tappable code display (room codes, puzzle share codes): monospace so
-/// 0/O and 1/l can't be misread — deliberately NOT Jua — with tap-to-copy
+/// 0/O and 1/l can't be misread — deliberately NOT Mulmaru — with tap-to-copy
 /// and the shared "copied" snackbar.
 class CopyableCodeBox extends StatelessWidget {
   const CopyableCodeBox({

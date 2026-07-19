@@ -91,13 +91,13 @@ class ResultScreen extends StatelessWidget {
                   child: Text(
                     difficulty.label(context),
                     style: TextStyle(
-                        fontFamily: 'Jua', fontSize: 16, color: accent),
+                        fontFamily: 'Mulmaru', fontSize: 16, color: accent),
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   _formatTime(elapsedSeconds),
-                  style: const TextStyle(fontFamily: 'Jua', fontSize: 56),
+                  style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 56),
                 )
                     .animate()
                     .scale(
@@ -128,7 +128,7 @@ class ResultScreen extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                                fontFamily: 'Jua', color: Colors.white),
+                                fontFamily: 'Mulmaru', color: Colors.white),
                           ),
                         ),
                       ],

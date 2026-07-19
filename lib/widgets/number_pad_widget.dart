@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../state/game_controller.dart';
+import '../theme/app_theme.dart';
 import '../theme/board_colors.dart';
 
 class NumberPadWidget extends StatelessWidget {
@@ -33,6 +34,7 @@ class NumberPadWidget extends StatelessWidget {
                   Text(
                     '$remaining',
                     style: TextStyle(
+                        fontFamily: AppTheme.systemFontFamily,
                         fontSize: 11,
                         color: BoardColors.remainingCountText(isDark)),
                   ),
@@ -135,6 +137,7 @@ class _NumberPadButtonState extends State<_NumberPadButton> {
           child: Text(
             '${widget.number}',
             style: TextStyle(
+              fontFamily: AppTheme.systemFontFamily,
               fontSize: 24,
               fontWeight: FontWeight.w600,
               color: textColor,

@@ -112,7 +112,7 @@ class _RaceResultScreenState extends State<RaceResultScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _formatTime(controller.game.elapsedSeconds),
-                  style: const TextStyle(fontFamily: 'Jua', fontSize: 24),
+                  style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 24),
                 ),
                 const SizedBox(height: 16),
                 // A friendly match never writes rating columns, so the
@@ -136,7 +136,7 @@ class _RaceResultScreenState extends State<RaceResultScreen> {
                         Text(
                           _formatDelta(selfDelta),
                           style: TextStyle(
-                            fontFamily: 'Jua',
+                            fontFamily: 'Mulmaru',
                             fontSize: 28,
                             color: selfDelta >= 0
                                 ? const Color(0xFF16A34A)

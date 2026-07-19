@@ -33,14 +33,10 @@ class AppPalette {
       switch (difficulty) {
         Difficulty.beginner => tierColor(Tier.bronze, d),
         Difficulty.easy => tierColor(Tier.silver, d),
-        Difficulty.medium =>
-          d ? const Color(0xFFFFB65C) : const Color(0xFFEA7A11),
-        Difficulty.hard =>
-          d ? const Color(0xFF7DB8FF) : const Color(0xFF2563EB),
-        Difficulty.master =>
-          d ? const Color(0xFFFF8A70) : const Color(0xFFE0492B),
-        Difficulty.expert =>
-          d ? const Color(0xFFD8A6FF) : const Color(0xFF9333EA),
+        Difficulty.medium => tierColor(Tier.gold, d),
+        Difficulty.hard => tierColor(Tier.diamond, d),
+        Difficulty.master => tierColor(Tier.master, d),
+        Difficulty.expert => tierColor(Tier.challenger, d),
       };
 
   /// Per-tier accent — [TierInfo.color] delegates here, so every existing

@@ -15,116 +15,129 @@ import '../theme/app_palette.dart';
 void showSettingsSheet(BuildContext context, SettingsController settings) {
   showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppPalette.cardSurface(AppPalette.isDark(context)),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-    ),
+    // Painted inside the AnimatedBuilder (not here) so it tracks the theme:
+    // a color captured at show-time would stay frozen when the user switches
+    // theme from within the sheet — only the background would fail to update.
+    backgroundColor: Colors.transparent,
     builder: (sheetContext) => AnimatedBuilder(
       animation: settings,
       builder: (context, _) {
         final l10n = AppLocalizations.of(context)!;
-        return SafeArea(
-          child: ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              _SectionTitle(l10n.themeSectionTitle),
-              _ChoiceRow<ThemeMode>(
-                value: settings.themeMode,
-                onChanged: (mode) => settings.setThemeMode(mode),
-                options: [
-                  (ThemeMode.system, l10n.followSystemTheme),
-                  (ThemeMode.light, l10n.lightTheme),
-                  (ThemeMode.dark, l10n.darkTheme),
-                ],
-              ),
-              const SizedBox(height: 16),
-              _SectionTitle(l10n.languageSectionTitle),
-              _ChoiceRow<Locale?>(
-                value: settings.localeOverride,
-                onChanged: settings.setLocaleOverride,
-                options: [
-                  (null, l10n.followSystemLanguage),
-                  (const Locale('ko'), l10n.koreanLanguage),
-                  (const Locale('en'), l10n.englishLanguage),
-                ],
-              ),
-              const SizedBox(height: 8),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.hapticsLabel),
-                value: settings.hapticsEnabled,
-                onChanged: (v) {
-                  settings.setHapticsEnabled(v);
-                  if (v) HapticService.selection();
-                },
-              ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.soundLabel),
-                value: settings.soundEnabled,
-                onChanged: (v) {
-                  settings.setSoundEnabled(v);
-                  if (v) SoundService.click();
-                },
-              ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.wrongNoteWarningLabel),
-                value: settings.wrongNoteWarningEnabled,
-                onChanged: settings.setWrongNoteWarningEnabled,
-              ),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(l10n.autoRemoveNotesLabel),
-                value: settings.autoRemoveNotesEnabled,
-                onChanged: settings.setAutoRemoveNotesEnabled,
-              ),
-              const Divider(),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.privacy_tip_outlined),
-                title: Text(l10n.privacyPolicyTitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PolicyScreen(
-                      title: l10n.privacyPolicyTitle,
-                      bodyKo: privacyPolicyKo,
-                      bodyEn: privacyPolicyEn,
+        // Material (not a plain Container) so the ListTiles/SwitchListTiles
+        // inside have a surface to paint their ink splashes on — an opaque
+        // Container between the sheet's Material and the tiles would hide
+        // them (Flutter warns about exactly this).
+        return Material(
+          color: AppPalette.cardSurface(AppPalette.isDark(context)),
+          clipBehavior: Clip.antiAlias,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: SafeArea(
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
-              ),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.description_outlined),
-                title: Text(l10n.termsOfServiceTitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PolicyScreen(
-                      title: l10n.termsOfServiceTitle,
-                      bodyKo: termsOfServiceKo,
-                      bodyEn: termsOfServiceEn,
+                _SectionTitle(l10n.themeSectionTitle),
+                _ChoiceRow<ThemeMode>(
+                  value: settings.themeMode,
+                  onChanged: (mode) => settings.setThemeMode(mode),
+                  options: [
+                    (ThemeMode.system, l10n.followSystemTheme),
+                    (ThemeMode.light, l10n.lightTheme),
+                    (ThemeMode.dark, l10n.darkTheme),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _SectionTitle(l10n.languageSectionTitle),
+                _ChoiceRow<Locale?>(
+                  value: settings.localeOverride,
+                  onChanged: settings.setLocaleOverride,
+                  options: [
+                    (null, l10n.followSystemLanguage),
+                    (const Locale('ko'), l10n.koreanLanguage),
+                    (const Locale('en'), l10n.englishLanguage),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.hapticsLabel),
+                  value: settings.hapticsEnabled,
+                  onChanged: (v) {
+                    settings.setHapticsEnabled(v);
+                    if (v) HapticService.selection();
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.soundLabel),
+                  value: settings.soundEnabled,
+                  onChanged: (v) {
+                    settings.setSoundEnabled(v);
+                    if (v) SoundService.click();
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.wrongNoteWarningLabel),
+                  subtitle: Text(l10n.wrongNoteWarningDescription),
+                  value: settings.wrongNoteWarningEnabled,
+                  onChanged: settings.setWrongNoteWarningEnabled,
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.autoRemoveNotesLabel),
+                  subtitle: Text(l10n.autoRemoveNotesDescription),
+                  value: settings.autoRemoveNotesEnabled,
+                  onChanged: settings.setAutoRemoveNotesEnabled,
+                ),
+                const Divider(),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.privacy_tip_outlined),
+                  title: Text(l10n.privacyPolicyTitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PolicyScreen(
+                        title: l10n.privacyPolicyTitle,
+                        bodyKo: privacyPolicyKo,
+                        bodyEn: privacyPolicyEn,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.description_outlined),
+                  title: Text(l10n.termsOfServiceTitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PolicyScreen(
+                        title: l10n.termsOfServiceTitle,
+                        bodyKo: termsOfServiceKo,
+                        bodyEn: termsOfServiceEn,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -142,7 +155,7 @@ class _SectionTitle extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 8),
         child: Text(
           text,
-          style: const TextStyle(fontFamily: 'Jua', fontSize: 17),
+          style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 17),
         ),
       );
 }

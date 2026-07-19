@@ -240,7 +240,7 @@ class _ProfileSection extends StatelessWidget {
                       ? '?'
                       : profile.username.characters.first.toUpperCase(),
                   style: TextStyle(
-                      fontFamily: 'Jua', fontSize: 26, color: tierColor),
+                      fontFamily: 'Mulmaru', fontSize: 26, color: tierColor),
                 ),
               ),
               const SizedBox(height: 12),
@@ -269,8 +269,8 @@ class _ProfileSection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(profile.username,
-                        style: const TextStyle(
-                            fontFamily: 'Jua', fontSize: 22)),
+                        style:
+                            const TextStyle(fontFamily: 'Mulmaru', fontSize: 22)),
                     IconButton(
                       icon: const Icon(Icons.edit, size: 18),
                       onPressed: onEditPressed,
@@ -288,7 +288,7 @@ class _ProfileSection extends StatelessWidget {
             children: [
               Text(
                 '${profile.rating}',
-                style: const TextStyle(fontFamily: 'Jua', fontSize: 36),
+                style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 36),
               ),
               const SizedBox(height: 4),
               Text(

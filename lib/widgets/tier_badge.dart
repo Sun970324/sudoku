@@ -42,7 +42,7 @@ class TierBadge extends StatelessWidget {
                 ? tier.label(context)
                 : '${tier.label(context)} · $rating',
             style: TextStyle(
-              fontFamily: 'Jua',
+              fontFamily: 'Mulmaru',
               fontSize: fontSize,
               color: color,
             ),

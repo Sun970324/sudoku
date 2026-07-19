@@ -142,7 +142,7 @@ class _FriendRoomScreenState extends State<FriendRoomScreen> {
     return GradientScaffold(
       appBar: AppBar(
           title: Text(
-              widget.isHost ? l10n.createRoomTitle : l10n.joinRoomTitle)),
+              widget.isHost ? l10n.waitingForFriendTitle : l10n.joinRoomTitle)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -150,8 +150,18 @@ class _FriendRoomScreenState extends State<FriendRoomScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (widget.isHost && joinCode != null) ...[
-                Text(l10n.roomCodeShareHint,
-                    style: Theme.of(context).textTheme.titleLarge),
+                // scaleDown keeps the hint on a single line in every locale
+                // (English is wider than Korean) by shrinking it to fit the
+                // width rather than wrapping or clipping.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.roomCodeShareHint,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
                 const SizedBox(height: 12),
                 CopyableCodeBox(code: joinCode),
                 const SizedBox(height: 32),
@@ -177,7 +187,7 @@ class _FriendRoomScreenState extends State<FriendRoomScreen> {
                 child: Text(
                   l10n.matchmakingElapsed(_formatElapsed(_elapsedSeconds)),
                   style: TextStyle(
-                      fontFamily: 'Jua',
+                      fontFamily: 'Mulmaru',
                       color: Theme.of(context).colorScheme.primary),
                 ),
               ),

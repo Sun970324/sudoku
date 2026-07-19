@@ -212,11 +212,23 @@ abstract class AppLocalizations {
   /// **'Warn on Wrong Notes'**
   String get wrongNoteWarningLabel;
 
+  /// No description provided for @wrongNoteWarningDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocks notes for a number already placed in the same row, column, or box.'**
+  String get wrongNoteWarningDescription;
+
   /// No description provided for @autoRemoveNotesLabel.
   ///
   /// In en, this message translates to:
   /// **'Auto-clear Notes on Confirm'**
   String get autoRemoveNotesLabel;
+
+  /// No description provided for @autoRemoveNotesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Placing a number clears matching notes in the same row, column, and box.'**
+  String get autoRemoveNotesDescription;
 
   /// No description provided for @languageSectionTitle.
   ///
@@ -1182,7 +1194,7 @@ abstract class AppLocalizations {
   /// No description provided for @createRoomAction.
   ///
   /// In en, this message translates to:
-  /// **'Make Room'**
+  /// **'Create Room'**
   String get createRoomAction;
 
   /// No description provided for @joinRoomTitle.
@@ -1190,6 +1202,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Join Room'**
   String get joinRoomTitle;
+
+  /// No description provided for @waitingForFriendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Friend'**
+  String get waitingForFriendTitle;
 
   /// No description provided for @joinRoomAction.
   ///

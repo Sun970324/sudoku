@@ -66,7 +66,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get wrongNoteWarningLabel => '틀린 메모 경고';
 
   @override
+  String get wrongNoteWarningDescription =>
+      '같은 줄·칸·박스에 이미 있는 숫자는 메모할 수 없게 막아요.';
+
+  @override
   String get autoRemoveNotesLabel => '숫자 확정 시 자동 메모 제거';
+
+  @override
+  String get autoRemoveNotesDescription =>
+      '숫자를 입력하면 같은 줄·칸·박스에 있는 해당 숫자 메모를 자동으로 지워요.';
 
   @override
   String get languageSectionTitle => '언어';
@@ -654,6 +662,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get joinRoomTitle => '방 참가';
+
+  @override
+  String get waitingForFriendTitle => '친구 대기 중';
 
   @override
   String get joinRoomAction => '참가하기';

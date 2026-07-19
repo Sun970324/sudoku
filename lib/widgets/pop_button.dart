@@ -108,7 +108,7 @@ class _PopButtonState extends State<PopButton> {
           Text(
             widget.label,
             style: TextStyle(
-              fontFamily: 'Jua',
+              fontFamily: 'Mulmaru',
               fontSize: widget.fontSize,
               color: foreground,
             ),

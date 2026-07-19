@@ -46,6 +46,7 @@ dependencies:
   crypto: ^3.0.7
   confetti: ^0.8.0
   flutter_animate: ^4.5.0
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -90,9 +91,9 @@ flutter:
     - assets/data/
 
   fonts:
-    - family: Jua
+    - family: Mulmaru
       fonts:
-        - asset: assets/fonts/Jua-Regular.ttf
+        - asset: assets/fonts/Mulmaru.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

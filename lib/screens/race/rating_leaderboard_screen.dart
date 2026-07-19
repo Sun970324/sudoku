@@ -146,7 +146,7 @@ class _RatingLeaderboardScreenState extends State<RatingLeaderboardScreen> {
           Text(
             '${entry.rating}',
             style: TextStyle(
-              fontFamily: 'Jua',
+              fontFamily: 'Mulmaru',
               fontFeatures: const [FontFeature.tabularFigures()],
               color: entry.tier.color(AppPalette.isDark(context)),
             ),

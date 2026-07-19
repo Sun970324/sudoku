@@ -225,15 +225,24 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.fromLTRB(20, 12, 12, 0),
           child: Row(
             children: [
-              Text(
-                l10n.appTitle,
-                style: TextStyle(
-                  fontFamily: 'Jua',
-                  fontSize: 26,
-                  color: Theme.of(context).colorScheme.primary,
+              Expanded(
+                // scaleDown shrinks the title to fit rather than truncating
+                // it — a longer locale (English "Sudoku League") stays fully
+                // readable; a short one renders at its natural 26.
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    l10n.appTitle,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontFamily: 'Mulmaru',
+                      fontSize: 26,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ),
               ),
-              const Spacer(),
               _RoundIconButton(
                 icon: Icons.bar_chart,
                 onPressed: () => _openGame(StatsScreen(auth: widget.auth)),
@@ -330,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Text(
                         difficulty.label(context),
                         style: TextStyle(
-                          fontFamily: isSelected ? 'Jua' : null,
+                          fontFamily: isSelected ? 'Mulmaru' : null,
                           fontSize: isSelected ? 20 : 16,
                           color: isSelected
                               ? AppPalette.difficultyColor(

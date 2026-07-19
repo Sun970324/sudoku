@@ -14,9 +14,12 @@ import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
 import '../state/game_controller.dart';
+import '../theme/app_palette.dart';
+import '../theme/app_theme.dart';
 import '../theme/board_colors.dart';
 import '../widgets/game_controls_row.dart';
 import '../widgets/number_pad_widget.dart';
+import '../widgets/pop_button.dart';
 import '../widgets/puzzle_share_dialog.dart';
 import '../widgets/sudoku_grid_widget.dart';
 import '../widgets/sudoku_preview_board.dart';
@@ -254,34 +257,111 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // A dialog (win/game-over) is already up and deciding the round's
     // outcome — don't stack a second one on top of it.
     if (_dialogShown) return;
+    // Pause the clock while the exit dialog is open — resumed only if the
+    // player picks "continue". Restart/end-game paths start their own timer
+    // (or leave the screen), so they never need this one resumed.
+    _timer?.cancel();
     final l10n = AppLocalizations.of(context)!;
+    final isDark = AppPalette.isDark(context);
+    // Restart/end-game manage the timer themselves; every other way the
+    // dialog closes (continue, tap-outside, system back) should resume it.
+    var handled = false;
     showDialog<void>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.exitDialogTitle),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(l10n.continueAction),
+      builder: (dialogContext) => Dialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+          decoration: BoxDecoration(
+            color: AppPalette.cardSurface(isDark),
+            borderRadius: BorderRadius.circular(AppDims.cardRadius),
+            border: isDark
+                ? Border.all(
+                    color: AppPalette.primaryGradient(isDark)
+                        .last
+                        .withValues(alpha: 0.4),
+                    width: 1.5,
+                  )
+                : null,
+            boxShadow: [
+              BoxShadow(
+                color: AppPalette.cardShadow(isDark),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              _restartGame();
-            },
-            child: Text(l10n.restartAction),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: AppPalette.primaryGradient(isDark),
+                  ),
+                ),
+                child: const Icon(Icons.pause_rounded,
+                    color: Colors.white, size: 32),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.exitDialogTitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Mulmaru',
+                  fontSize: 20,
+                  color: Theme.of(dialogContext).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 24),
+              PopButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                label: l10n.continueAction,
+                icon: Icons.play_arrow_rounded,
+                expanded: true,
+              ),
+              const SizedBox(height: 12),
+              PopButton(
+                onPressed: () {
+                  handled = true;
+                  Navigator.pop(dialogContext);
+                  _restartGame();
+                },
+                label: l10n.restartAction,
+                icon: Icons.refresh_rounded,
+                variant: PopButtonVariant.outline,
+                expanded: true,
+              ),
+              const SizedBox(height: 12),
+              PopButton(
+                onPressed: () {
+                  handled = true;
+                  Navigator.pop(dialogContext);
+                  _giveUp();
+                  _popToHome();
+                },
+                label: l10n.endGameAction,
+                icon: Icons.close_rounded,
+                color: AppPalette.raceCoral,
+                expanded: true,
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(dialogContext);
-              _giveUp();
-              _popToHome();
-            },
-            child: Text(l10n.endGameAction),
-          ),
-        ],
+        ),
       ),
-    );
+    ).then((_) {
+      // Resume the clock unless a restart/end-game action already took over
+      // (and only while the round is still in progress and on-screen).
+      if (handled || !mounted) return;
+      if (_controller.status == GameStatus.playing) _startTimer();
+    });
   }
 
   void _restartGame() {
@@ -450,76 +530,159 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // amber hint highlight no matter how light its barrier is. A bottom
     // sheet stays anchored below the grid instead, so the highlighted
     // cell(s) remain visible while the explanation is showing.
+    final isDark = AppPalette.isDark(context);
+    final accent = BoardColors.hintArrow(isDark);
     showModalBottomSheet<void>(
       context: context,
       barrierColor: Colors.transparent,
-      builder: (sheetContext) => StatefulBuilder(
-        builder: (sheetContext, setSheetState) {
-          final stage = _controller.hintStage;
-          final isFinal = stage >= 2;
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    hint.technique.label(context),
-                    style: Theme.of(sheetContext).textTheme.titleLarge,
+      // The card surface is drawn by the Container below, so the sheet frame
+      // itself is transparent (no double background / default rounded chrome).
+      backgroundColor: Colors.transparent,
+      // The hint explanation reads better in the system font than the pixel
+      // Mulmaru theme font. Override the family for the whole sheet subtree:
+      // Theme covers styled widgets (titleLarge, buttons), DefaultTextStyle
+      // covers the plain explanation Text.
+      builder: (sheetContext) => Theme(
+        data: Theme.of(sheetContext).copyWith(
+          textTheme: Theme.of(sheetContext)
+              .textTheme
+              .apply(fontFamily: AppTheme.systemFontFamily),
+        ),
+        child: DefaultTextStyle.merge(
+          style: TextStyle(fontFamily: AppTheme.systemFontFamily),
+          child: StatefulBuilder(
+            builder: (sheetContext, setSheetState) {
+              final stage = _controller.hintStage;
+              final isFinal = stage >= 2;
+              return Container(
+                decoration: BoxDecoration(
+                  color: AppPalette.cardSurface(isDark),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(AppDims.cardRadius),
                   ),
-                  if (stage == 1 && hint.mainInfo != null) ...[
-                    const SizedBox(height: 12),
-                    Text(hint.mainInfo!),
-                  ],
-                  if (isFinal) ...[
-                    const SizedBox(height: 12),
-                    Text(hint.explanation),
-                    const SizedBox(height: 8),
-                    Text(
-                      hint.actionSummary,
-                      style: Theme.of(sheetContext).textTheme.bodyMedium,
+                  border: isDark
+                      ? Border.all(
+                          color: accent.withValues(alpha: 0.4),
+                          width: 1.5,
+                        )
+                      : null,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppPalette.cardShadow(isDark),
+                      blurRadius: 24,
+                      offset: const Offset(0, -8),
                     ),
                   ],
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(sheetContext),
-                        child: Text(l10n.closeAction),
-                      ),
-                      if (isFinal)
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(sheetContext);
-                            _controller.applyHint();
-                            HapticService.medium();
-                            _saveProgress();
-                          },
-                          child: Text(l10n.applyAction),
-                        )
-                      else
-                        TextButton(
-                          // Skips the mainInfo stage for techniques that
-                          // don't supply one, so the button never reveals
-                          // nothing new.
-                          onPressed: () => setSheetState(() {
-                            _controller.advanceHintStage();
-                            if (_controller.hintStage == 1 &&
-                                hint.mainInfo == null) {
-                              _controller.advanceHintStage();
-                            }
-                          }),
-                          child: Text(l10n.hintRevealMoreAction),
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 40,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Theme.of(sheetContext)
+                                  .colorScheme
+                                  .onSurfaceVariant
+                                  .withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
                         ),
-                    ],
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Icon(Icons.lightbulb_rounded,
+                                color: accent, size: 24),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                hint.technique.label(context),
+                                style: Theme.of(sheetContext)
+                                    .textTheme
+                                    .titleLarge,
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (stage == 1 && hint.mainInfo != null) ...[
+                          const SizedBox(height: 12),
+                          Text(hint.mainInfo!),
+                        ],
+                        if (isFinal) ...[
+                          const SizedBox(height: 12),
+                          Text(hint.explanation),
+                          const SizedBox(height: 8),
+                          Text(
+                            hint.actionSummary,
+                            style:
+                                Theme.of(sheetContext).textTheme.bodyMedium,
+                          ),
+                        ],
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: PopButton(
+                                onPressed: () => Navigator.pop(sheetContext),
+                                label: l10n.closeAction,
+                                variant: PopButtonVariant.outline,
+                                fontSize: 16,
+                                expanded: true,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            if (isFinal)
+                              Expanded(
+                                child: PopButton(
+                                  onPressed: () {
+                                    Navigator.pop(sheetContext);
+                                    _controller.applyHint();
+                                    HapticService.medium();
+                                    _saveProgress();
+                                  },
+                                  label: l10n.applyAction,
+                                  icon: Icons.check_rounded,
+                                  color: accent,
+                                  fontSize: 16,
+                                  expanded: true,
+                                ),
+                              )
+                            else
+                              Expanded(
+                                child: PopButton(
+                                  // Skips the mainInfo stage for techniques
+                                  // that don't supply one, so the button never
+                                  // reveals nothing new.
+                                  onPressed: () => setSheetState(() {
+                                    _controller.advanceHintStage();
+                                    if (_controller.hintStage == 1 &&
+                                        hint.mainInfo == null) {
+                                      _controller.advanceHintStage();
+                                    }
+                                  }),
+                                  label: l10n.hintRevealMoreAction,
+                                  color: accent,
+                                  fontSize: 16,
+                                  expanded: true,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-          );
-        },
+                ),
+              );
+            },
+          ),
+        ),
       ),
     ).then((_) {
       // Covers barrier-tap / drag-down dismissal, where neither action
@@ -602,7 +765,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
           // appear at all. Always routes through the same exit-confirmation
           // dialog as every other back-navigation path.
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(Icons.pause_rounded),
             onPressed: _onBackPressed,
           ),
           actions: [
@@ -621,13 +784,22 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               padding: const EdgeInsets.only(right: 8),
               child: Row(
                 children: [
-                  Text(
-                    widget.isDaily
-                        ? AppLocalizations.of(context)!.dailyTitle
-                        : _controller.difficulty.label(context),
-                    style: const TextStyle(fontSize: 20),
+                  Expanded(
+                    // scaleDown shrinks the title to fit the space left by the
+                    // fixed-width timer/mistakes rather than truncating it, so
+                    // a longer locale (English "Daily Sudoku") stays whole.
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.isDaily
+                            ? AppLocalizations.of(context)!.dailyTitle
+                            : _controller.difficulty.label(context),
+                        maxLines: 1,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ),
                   ),
-                  const Spacer(),
                   ValueListenableBuilder<int>(
                     valueListenable: _controller.elapsedSecondsNotifier,
                     builder: (context, seconds, _) => SizedBox(
@@ -648,16 +820,23 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                   const SizedBox(width: 10),
                   SizedBox(
                     width: 90,
-                    child: Text(
-                      AppLocalizations.of(context)!.mistakesLabel(
-                        _controller.mistakes,
-                        GameController.maxMistakes,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontFeatures: [FontFeature.tabularFigures()],
+                    // scaleDown (like the title/timer) shrinks the longer
+                    // English "Mistakes: 0/3" to fit the fixed width instead of
+                    // clipping it with an ellipsis.
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        AppLocalizations.of(context)!.mistakesLabel(
+                          _controller.mistakes,
+                          GameController.maxMistakes,
+                        ),
+                        maxLines: 1,
+                        softWrap: false,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
                       ),
                     ),
                   ),

@@ -57,8 +57,10 @@ class _StatsScreenState extends State<StatsScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final isDark = AppPalette.isDark(context);
-    final difficulty = Difficulty.values[_tabController.index];
-    final accent = AppPalette.difficultyColor(difficulty, isDark);
+    // Colours the TabBar indicator/label with the selected difficulty's
+    // accent; the _tabController listener rebuilds this on every tab change.
+    final accent = AppPalette.difficultyColor(
+        Difficulty.values[_tabController.index], isDark);
 
     return GradientScaffold(
       appBar: AppBar(title: Text(l10n.statsTitle)),
@@ -68,32 +70,58 @@ class _StatsScreenState extends State<StatsScreen>
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final entry = snapshot.data!.byDifficulty[difficulty]!;
-          return ListView(
-            padding: const EdgeInsets.all(16),
+          final stats = snapshot.data!;
+          // Non-scrolling, viewport-fitting layout: the calendar and the
+          // difficulty card share the available height by flex, so the whole
+          // screen adapts to any device instead of overflowing. The calendar's
+          // grid rows scale to their slot (see _MonthGrid); the card page is a
+          // SingleChildScrollView purely as an overflow safety-net on very
+          // short screens — it doesn't scroll when the content already fits.
+          return Column(
             children: [
-              DailyCalendarCard(auth: widget.auth),
-              const SizedBox(height: 16),
-              TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                tabAlignment: TabAlignment.start,
-                dividerColor: Colors.transparent,
-                indicatorColor: accent,
-                labelColor: accent,
-                labelStyle: const TextStyle(fontFamily: 'Jua', fontSize: 15),
-                unselectedLabelColor:
-                    Theme.of(context).colorScheme.onSurfaceVariant,
-                tabs: [
-                  for (final d in Difficulty.values) Tab(text: d.label(context)),
-                ],
+              Expanded(
+                flex: 5,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: DailyCalendarCard(auth: widget.auth),
+                ),
               ),
-              const SizedBox(height: 16),
-              _DifficultyStatsCard(
-                difficulty: difficulty,
-                entry: entry,
-                accent: accent,
-                formatTime: _formatTime,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  dividerColor: Colors.transparent,
+                  indicatorColor: accent,
+                  labelColor: accent,
+                  labelStyle:
+                      const TextStyle(fontFamily: 'Mulmaru', fontSize: 15),
+                  unselectedLabelColor:
+                      Theme.of(context).colorScheme.onSurfaceVariant,
+                  tabs: [
+                    for (final d in Difficulty.values)
+                      Tab(text: d.label(context)),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    for (final d in Difficulty.values)
+                      SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: _DifficultyStatsCard(
+                          difficulty: d,
+                          entry: stats.byDifficulty[d]!,
+                          accent: AppPalette.difficultyColor(d, isDark),
+                          formatTime: _formatTime,
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ],
           );
@@ -158,10 +186,10 @@ class _DifficultyStatsCard extends StatelessWidget {
                 : 100 - estimateFasterThanPercent(difficulty, best),
           ),
           const SizedBox(height: 8),
-          Text(
-            l10n.mockDataDisclaimer,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
+          // Text(
+          //   l10n.mockDataDisclaimer,
+          //   style: Theme.of(context).textTheme.bodySmall,
+          // ),
         ],
       ),
     );
@@ -210,7 +238,7 @@ class _StatRow extends StatelessWidget {
             ),
           Text(
             value,
-            style: const TextStyle(fontFamily: 'Jua', fontSize: 18),
+            style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 18),
           ),
         ],
       ),

@@ -66,7 +66,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wrongNoteWarningLabel => 'Warn on Wrong Notes';
 
   @override
+  String get wrongNoteWarningDescription =>
+      'Blocks notes for a number already placed in the same row, column, or box.';
+
+  @override
   String get autoRemoveNotesLabel => 'Auto-clear Notes on Confirm';
+
+  @override
+  String get autoRemoveNotesDescription =>
+      'Placing a number clears matching notes in the same row, column, and box.';
 
   @override
   String get languageSectionTitle => 'Language';
@@ -656,10 +664,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createRoomTitle => 'Choose difficulty';
 
   @override
-  String get createRoomAction => 'Make Room';
+  String get createRoomAction => 'Create Room';
 
   @override
   String get joinRoomTitle => 'Join Room';
+
+  @override
+  String get waitingForFriendTitle => 'Waiting for Friend';
 
   @override
   String get joinRoomAction => 'Join';

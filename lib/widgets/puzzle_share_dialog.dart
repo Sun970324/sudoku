@@ -13,7 +13,7 @@ void showPuzzleShareDialog(BuildContext context, {required SudokuPuzzle puzzle})
     builder: (dialogContext) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(l10n.shareCodeTitle,
-          style: const TextStyle(fontFamily: 'Jua')),
+          style: const TextStyle(fontFamily: 'Mulmaru')),
       content: CopyableCodeBox(code: textCode, fontSize: 14, letterSpacing: 1),
       actions: [
         TextButton(
