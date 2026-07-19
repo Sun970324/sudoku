@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:flutter/widgets.dart';
 
@@ -34,10 +35,23 @@ class _Move {
   final List<List<Set<int>>> previousNotes;
 }
 
+/// How [GameController] runs its hint searches: [Isolate.run] in the app
+/// (the full technique sweep is far too slow for the UI thread when it comes
+/// up empty — only then does it reach the expensive DFS tail of XY-Chain /
+/// Remote Pair), and an inline runner in tests, which keeps fake engines'
+/// hint instances identical (an isolate returns a copy) and avoids real
+/// isolates inside the fake-async test zone.
+typedef HintSearchRunner = Future<R> Function<R>(
+    FutureOr<R> Function() computation);
+
 class GameController extends ChangeNotifier {
-  GameController({SudokuGenerator? generator, HintEngine? hintEngine})
-      : _generator = generator ?? SudokuGenerator(),
-        _hintEngine = hintEngine ?? HintEngine();
+  GameController({
+    SudokuGenerator? generator,
+    HintEngine? hintEngine,
+    HintSearchRunner? searchRunner,
+  })  : _generator = generator ?? SudokuGenerator(),
+        _hintEngine = hintEngine ?? HintEngine(),
+        _runSearch = searchRunner ?? Isolate.run;
 
   static const maxMistakes = 3;
 
@@ -48,6 +62,7 @@ class GameController extends ChangeNotifier {
 
   final SudokuGenerator _generator;
   final HintEngine _hintEngine;
+  final HintSearchRunner _runSearch;
 
   late SudokuPuzzle _puzzle;
   late List<List<int>> _board;
@@ -437,13 +452,49 @@ class GameController extends ChangeNotifier {
   /// notes were corrected; reveal-type hints never depend on notes, so
   /// their explanation is left alone even if some unrelated cell got
   /// repaired along the way.
-  Hint? requestHint({AppLocalizations? l10n}) {
+  Future<Hint?> requestHint({AppLocalizations? l10n}) async =>
+      applyPreparedHint(await prepareRepairedHint(l10n: l10n), l10n: l10n);
+
+  /// Runs [requestHint]'s repaired-notes search on a background isolate and
+  /// returns the result WITHOUT committing anything — no notes edit, no
+  /// history entry, no active hint. Lets the UI hold a completed search
+  /// while it asks the player to consent to auto-corrected candidates (see
+  /// `GameScreen._showAutoCandidatePrompt`), then commit via
+  /// [applyPreparedHint] — instead of searching once for the offer and
+  /// again on consent. Returns [PreparedHint.none] when a hint request
+  /// would be refused outright (not playing, or an unresolved mistake).
+  Future<PreparedHint> prepareRepairedHint({AppLocalizations? l10n}) async {
+    if (status != GameStatus.playing) return PreparedHint.none;
+    if (hasUnresolvedMistake) return PreparedHint.none;
+    final board = boardSnapshot;
+    // A clone, not [_notes] itself: the repair pass mutates the grid it's
+    // given, and with an inline [HintSearchRunner] (tests) there is no
+    // isolate message-copy to protect the live notes. Nothing may change
+    // until [applyPreparedHint] commits.
+    final notes = _cloneNotes();
+    final solution = _puzzle.solution.toJson();
+    final engine = _hintEngine;
+    final resolvedL10n = l10n ?? lookupAppLocalizations(const Locale('ko'));
+    final (hint, repairedNotes, repairedAny) = await _runSearch(() =>
+        searchHintInBackground(
+            engine, board, notes, solution, true, resolvedL10n));
+    return PreparedHint._(hint, repairedNotes, repairedAny);
+  }
+
+  /// Commits a [prepareRepairedHint] result: applies the repaired notes
+  /// (with an undoable history entry and the note-repair notice on an
+  /// eliminate hint's explanation, exactly as the old synchronous
+  /// [requestHint] did) and sets the active hint. The caller must not have
+  /// let the board or notes change since the prepare — the only gap in the
+  /// app is while the modal auto-candidates dialog is up, which blocks all
+  /// board input. No-op returning null for [PreparedHint.none].
+  Hint? applyPreparedHint(PreparedHint prepared, {AppLocalizations? l10n}) {
+    if (!prepared._searched) return null;
     if (status != GameStatus.playing) return null;
-    if (hasUnresolvedMistake) return null;
-    final notesBefore = _cloneNotes();
-    var (hint, repaired) = _findHintWithRepair(boardSnapshot, _notes, l10n);
-    if (repaired) {
-      _history.add(_Move.notesOnly(notesBefore));
+    var hint = prepared.hint;
+    if (prepared._repairedAny) {
+      _history.add(_Move.notesOnly(_cloneNotes()));
+      _notes = prepared._repairedNotes!;
       if (hint != null && hint.type == HintType.eliminate) {
         hint = hint.withExplanation(
           (l10n ?? lookupAppLocalizations(const Locale('ko')))
@@ -476,10 +527,15 @@ class GameController extends ChangeNotifier {
   /// Naked/Hidden Single is found regardless of notes — only eliminate-type
   /// techniques depend on what the player has actually pencilled in. Never
   /// edits [_notes], so unlike [requestHint] it pushes no history entry.
-  Hint? requestHintFromNotes({AppLocalizations? l10n}) {
+  Future<Hint?> requestHintFromNotes({AppLocalizations? l10n}) async {
     if (status != GameStatus.playing) return null;
     if (hasUnresolvedMistake) return null;
-    var hint = _hintEngine.findHint(boardSnapshot, _notes, l10n);
+    final board = boardSnapshot;
+    final notes = _notes;
+    final engine = _hintEngine;
+    final resolvedL10n = l10n ?? lookupAppLocalizations(const Locale('ko'));
+    var hint =
+        await _runSearch(() => engine.findHint(board, notes, resolvedL10n));
     // Safety net: a notes-only search trusts the player's pencil marks as a
     // COMPLETE candidate set. If they understate a cell (omit a digit the
     // cell actually needs), an otherwise-sound eliminate technique can
@@ -511,59 +567,13 @@ class GameController extends ChangeNotifier {
     return true;
   }
 
-  /// Whether [requestHint] would actually return a hint right now — lets
-  /// callers (e.g. gating a rewarded ad) check availability up front
-  /// without mutating [activeHint]/[_notes]/triggering a rebuild the way
-  /// [requestHint] itself does. Runs the same repair-and-retry search as
-  /// [requestHint] but against a throwaway clone of [_notes], so a stale
-  /// candidate that would otherwise get silently repaired doesn't change
-  /// the answer here. Also false whenever [hasUnresolvedMistake] is true,
-  /// matching [requestHint]'s own refusal.
-  bool get hasAvailableHint =>
-      status == GameStatus.playing &&
-      !hasUnresolvedMistake &&
-      _findHintWithRepair(boardSnapshot, _cloneNotes()).$1 != null;
-
-  /// Finds the next hint the same way [requestHint] does, but first makes
-  /// sure every empty cell's notes still contain that cell's true solution
-  /// digit — the one candidate a *correctly* applied technique, however
-  /// advanced, can never eliminate (doing so would mean proving the actual
-  /// answer isn't the answer). A cell that's merely narrower than the raw
-  /// row/column/box candidate set because the player validly reasoned
-  /// past basic exclusion (e.g. a correctly applied Naked Pair or
-  /// Pointing) is left completely untouched — only cells actually missing
-  /// their solution digit (never checked off, or lost somehow) count as
-  /// broken. This matters because an eliminate-type technique (Naked/
-  /// Hidden Pair, Pointing, X-Wing, ...) builds its pattern by scanning
-  /// for cells with a *specific* candidate count or content; a cell the
-  /// player left completely unnoted doesn't just look "narrower", it can
-  /// be invisible to that scan entirely — never appearing anywhere in the
-  /// returned [Hint] — so checking only the cells a hint happens to
-  /// reference can miss this. A single full-board pass is always enough:
-  /// broken cells get reset to the safe (if unrefined) [SudokuGrid.
-  /// candidatesAt] baseline, which is guaranteed to include the solution
-  /// digit as long as [hasUnresolvedMistake] is false (checked by
-  /// [requestHint] before this ever runs).
-  (Hint?, bool) _findHintWithRepair(
-    List<List<int>> board,
-    List<List<Set<int>>> notes, [
-    AppLocalizations? l10n,
-  ]) {
-    final grid = SudokuGrid(board);
-    var repairedAny = false;
-    for (var r = 0; r < 9; r++) {
-      for (var c = 0; c < 9; c++) {
-        if (board[r][c] != 0) continue;
-        final solutionDigit = _puzzle.solutionValue(r, c);
-        if (!notes[r][c].contains(solutionDigit)) {
-          notes[r][c] = grid.candidatesAt(r, c);
-          repairedAny = true;
-        }
-      }
-    }
-    final hint = _hintEngine.findHint(board, notes, l10n);
-    return (hint, repairedAny);
-  }
+  /// Whether [requestHint] would actually return a hint right now — checks
+  /// availability up front without mutating [activeHint]/[_notes] or
+  /// triggering a rebuild the way [requestHint] itself does. Also false
+  /// whenever [hasUnresolvedMistake] is true, matching [requestHint]'s own
+  /// refusal.
+  Future<bool> hasAvailableHint() async =>
+      (await prepareRepairedHint()).hint != null;
 
   /// Discards the active hint without applying it.
   void dismissHint() {
@@ -713,4 +723,80 @@ class GameController extends ChangeNotifier {
     elapsedSecondsNotifier.dispose();
     super.dispose();
   }
+}
+
+/// A repaired-notes hint search that finished on the background isolate but
+/// hasn't been committed — see [GameController.prepareRepairedHint] /
+/// [GameController.applyPreparedHint]. [none] marks a request that was
+/// refused before searching (not playing, unresolved mistake): applying it
+/// is a no-op, matching the old synchronous requestHint's early return.
+class PreparedHint {
+  const PreparedHint._(this.hint, this._repairedNotes, this._repairedAny)
+      : _searched = true;
+
+  const PreparedHint._none()
+      : hint = null,
+        _repairedNotes = null,
+        _repairedAny = false,
+        _searched = false;
+
+  static const none = PreparedHint._none();
+
+  final Hint? hint;
+  final List<List<Set<int>>>? _repairedNotes;
+  final bool _repairedAny;
+  final bool _searched;
+}
+
+/// The hint search [GameController] hands to its [HintSearchRunner] — a
+/// top-level function over plain data, so the [Isolate.run] closure captures
+/// only sendable values and never the controller itself.
+///
+/// With [repair], first makes sure every empty cell's notes still contain
+/// that cell's true solution digit — the one candidate a *correctly* applied
+/// technique, however advanced, can never eliminate (doing so would mean
+/// proving the actual answer isn't the answer). A cell that's merely
+/// narrower than the raw row/column/box candidate set because the player
+/// validly reasoned past basic exclusion (e.g. a correctly applied Naked
+/// Pair or Pointing) is left completely untouched — only cells actually
+/// missing their solution digit (never checked off, or lost somehow) count
+/// as broken. This matters because an eliminate-type technique (Naked/
+/// Hidden Pair, Pointing, X-Wing, ...) builds its pattern by scanning for
+/// cells with a *specific* candidate count or content; a cell the player
+/// left completely unnoted doesn't just look "narrower", it can be
+/// invisible to that scan entirely — never appearing anywhere in the
+/// returned [Hint] — so checking only the cells a hint happens to reference
+/// can miss this. A single full-board pass is always enough: broken cells
+/// get reset to the safe (if unrefined) [SudokuGrid.candidatesAt] baseline,
+/// which is guaranteed to include the solution digit as long as
+/// [GameController.hasUnresolvedMistake] was false when the request was
+/// made.
+///
+/// Mutates and returns [notes] — on the isolate that's its own message
+/// copy; the caller's grid is never touched until [GameController.
+/// applyPreparedHint] commits the returned one.
+@visibleForTesting
+(Hint?, List<List<Set<int>>>, bool) searchHintInBackground(
+  HintEngine engine,
+  List<List<int>> board,
+  List<List<Set<int>>> notes,
+  List<List<int>> solution,
+  bool repair,
+  AppLocalizations l10n,
+) {
+  var repairedAny = false;
+  if (repair) {
+    final grid = SudokuGrid(board);
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        if (board[r][c] != 0) continue;
+        if (!notes[r][c].contains(solution[r][c])) {
+          notes[r][c] = grid.candidatesAt(r, c);
+          repairedAny = true;
+        }
+      }
+    }
+  }
+  final hint = engine.findHint(board, notes, l10n);
+  return (hint, notes, repairedAny);
 }

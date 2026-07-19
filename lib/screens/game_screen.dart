@@ -447,7 +447,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 
-  void _onHintPressed() {
+  /// True while a background hint search is running — blocks all board
+  /// input via the overlay in [build] (so the board can't change under a
+  /// search in flight) and re-entrant hint taps here.
+  bool _hintSearching = false;
+
+  Future<void> _onHintPressed() async {
+    if (_hintSearching) return;
     final l10n = AppLocalizations.of(context)!;
     if (_controller.hasUnresolvedMistake) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -455,46 +461,39 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       );
       return;
     }
-    if (!_controller.hasAvailableHint) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.noHintAvailable)),
-      );
-      return;
+    setState(() => _hintSearching = true);
+    try {
+      // Stage 1: analyze using only the board and the player's own notes.
+      final hint = await _controller.requestHintFromNotes(l10n: l10n);
+      if (!mounted) return;
+      if (hint != null) {
+        _showHintDialog(hint);
+        return;
+      }
+      // Stage 2, searched up front but NOT committed: the repaired-notes
+      // result is held while the player decides whether to accept
+      // auto-corrected candidates, then applied on consent — one search
+      // instead of an availability probe plus a re-search.
+      final prepared = await _controller.prepareRepairedHint(l10n: l10n);
+      if (!mounted) return;
+      if (prepared.hint == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.noHintAvailable)),
+        );
+        return;
+      }
+      _showAutoCandidatePrompt(l10n, prepared);
+    } finally {
+      if (mounted) setState(() => _hintSearching = false);
     }
-    // requestHint() (which sets activeHint and draws the highlight on the
-    // board) only runs once the reward is actually earned — never before
-    // or during the ad — so backing out mid-ad leaves no hint highlighted
-    // with no explanatory sheet to match it.
-    final hint = _controller.requestHintFromNotes(l10n: l10n);
-    if (hint != null) {
-      _showHintDialog(hint);
-    } else {
-      _showAutoCandidatePrompt(l10n);
-    }
-    // AdService.instance.showRewardedAd(
-    //   onUserEarnedReward: () {
-    //     if (!mounted) return;
-    //     // Stage 1: analyze using only the board and the player's own notes.
-    //     final hint = _controller.requestHintFromNotes(l10n: l10n);
-    //     if (hint != null) {
-    //       _showHintDialog(hint);
-    //     } else {
-    //       _showAutoCandidatePrompt(l10n);
-    //     }
-    //   },
-    //   onAdUnavailable: () {
-    //     if (!mounted) return;
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text(l10n.adNotLoaded)),
-    //     );
-    //   },
-    // );
   }
 
   /// Shown when a stage-1 (notes-only) hint search comes up empty: offers to
-  /// auto-generate candidates and re-run the search (stage 2) — no second ad,
-  /// since the reward was already earned for this hint request.
-  void _showAutoCandidatePrompt(AppLocalizations l10n) {
+  /// accept auto-generated candidates. The stage-2 search already ran in the
+  /// background ([prepared] holds its result and is known to carry a hint);
+  /// consenting only commits it — the modal dialog blocks all board input in
+  /// between, so the prepared result can't go stale.
+  void _showAutoCandidatePrompt(AppLocalizations l10n, PreparedHint prepared) {
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -508,7 +507,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              final hint = _controller.requestHint(l10n: l10n);
+              final hint = _controller.applyPreparedHint(prepared, l10n: l10n);
               if (!mounted) return;
               if (hint != null) {
                 _showHintDialog(hint);
@@ -960,124 +959,141 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             ),
           ),
         ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: Theme.of(context).brightness == Brightness.dark
-                  ? const [Color(0xFF15102C), Color(0xFF0D0B1E)]
-                  : const [Color(0xFFF6F5FF), Color(0xFFECE9FF)],
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                // Expanded (instead of a fixed height fraction) so the grid
-                // claims all vertical space left over after the controls/
-                // number pads below — it grows as large as the screen
-                // allows, capped only by width via the AspectRatio inside
-                // SudokuGridWidget. Without this, the AspectRatio's loose
-                // height constraint inside a plain Column lets it size up to
-                // the full screen WIDTH as its height too, overflowing the
-                // Column on any screen where that exceeds the actual
-                // available height.
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-                    // Top-aligned (not centered) so leftover space collects
-                    // below the grid instead of splitting evenly — keeps the
-                    // grid sitting close to the app bar.
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      // The real, interactive grid is always present and
-                      // never itself Hero-tagged, so taps register from the
-                      // first frame. A separate, non-interactive clone
-                      // (paired with the same tag on SudokuPreviewBoard in
-                      // HomeScreen) is stacked on top purely for the
-                      // entrance grow animation, and is removed once that
-                      // push transition completes (see
-                      // _onEntranceAnimationStatus).
-                      child: Stack(
-                        alignment: Alignment.topCenter,
-                        children: [
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(11),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: BoardColors.outerBorder(
-                                          BoardColors.isDark(context))
-                                      .withValues(alpha: 0.28),
-                                  blurRadius: 18,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: _buildGrid(),
-                          ),
-                          if (_showEntranceHero)
-                            IgnorePointer(
-                              child: Hero(
-                                tag: 'sudoku-board',
-                                child: SudokuPreviewBoard(
-                                    puzzle: _controller.puzzle),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
+        body: Stack(
+          children: [
+            _buildBody(context),
+            // Blocks every board interaction while a hint search runs on
+            // the background isolate — the search reads a snapshot of the
+            // board/notes, so nothing may change until it resolves.
+            if (_hintSearching)
+              const Positioned.fill(
+                child: AbsorbPointer(
+                  child: ColoredBox(
+                    color: Colors.black26,
+                    child: Center(child: CircularProgressIndicator()),
                   ),
                 ),
-                ListenableBuilder(
-                  listenable: _controller,
-                  builder: (context, _) => GameControlsRow(
-                    canUndo: _controller.canUndo,
-                    onUndo: _onUndo,
-                    canErase: _controller.canErase,
-                    onErase: _onErase,
-                    isNoteMode: _controller.isNoteMode,
-                    onToggleNoteMode: _controller.toggleNoteMode,
-                    onHint: _onHintPressed,
-                    canAutoFillNotes: _controller.canAutoFillNotes,
-                    onAutoFillNotes: _onAutoFillNotesPressed,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ListenableBuilder(
-                  listenable: _controller,
-                  builder: (context, _) => NumberPadWidget(
-                    controller: _controller,
-                    isNotePad: false,
-                    onNumberSelected: _onNumberSelected,
-                  ),
-                ),
-                const SizedBox(height: 28),
-                // The notes pad always reserves its layout space and only
-                // fades in/out — unlike a height-collapsing animation, this
-                // keeps the total height below the grid constant regardless of
-                // note mode, so the Expanded grid above never resizes/shifts.
-                ListenableBuilder(
-                  listenable: _controller,
-                  builder: (context, _) => AnimatedOpacity(
-                    opacity: _controller.isNoteMode ? 1 : 0,
-                    duration: const Duration(milliseconds: 250),
-                    child: IgnorePointer(
-                      ignoring: !_controller.isNoteMode,
-                      child: NumberPadWidget(
-                        controller: _controller,
-                        isNotePad: true,
-                        onNumberSelected: _onNoteNumberSelected,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
-          ),
+              ),
+          ],
         ),
       ),
     );
   }
+
+  Widget _buildBody(BuildContext context) => Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: Theme.of(context).brightness == Brightness.dark
+              ? const [Color(0xFF15102C), Color(0xFF0D0B1E)]
+              : const [Color(0xFFF6F5FF), Color(0xFFECE9FF)],
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Expanded (instead of a fixed height fraction) so the grid
+            // claims all vertical space left over after the controls/
+            // number pads below — it grows as large as the screen
+            // allows, capped only by width via the AspectRatio inside
+            // SudokuGridWidget. Without this, the AspectRatio's loose
+            // height constraint inside a plain Column lets it size up to
+            // the full screen WIDTH as its height too, overflowing the
+            // Column on any screen where that exceeds the actual
+            // available height.
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
+                // Top-aligned (not centered) so leftover space collects
+                // below the grid instead of splitting evenly — keeps the
+                // grid sitting close to the app bar.
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  // The real, interactive grid is always present and
+                  // never itself Hero-tagged, so taps register from the
+                  // first frame. A separate, non-interactive clone
+                  // (paired with the same tag on SudokuPreviewBoard in
+                  // HomeScreen) is stacked on top purely for the
+                  // entrance grow animation, and is removed once that
+                  // push transition completes (see
+                  // _onEntranceAnimationStatus).
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(11),
+                          boxShadow: [
+                            BoxShadow(
+                              color: BoardColors.outerBorder(
+                                      BoardColors.isDark(context))
+                                  .withValues(alpha: 0.28),
+                              blurRadius: 18,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: _buildGrid(),
+                      ),
+                      if (_showEntranceHero)
+                        IgnorePointer(
+                          child: Hero(
+                            tag: 'sudoku-board',
+                            child:
+                                SudokuPreviewBoard(puzzle: _controller.puzzle),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            ListenableBuilder(
+              listenable: _controller,
+              builder: (context, _) => GameControlsRow(
+                canUndo: _controller.canUndo,
+                onUndo: _onUndo,
+                canErase: _controller.canErase,
+                onErase: _onErase,
+                isNoteMode: _controller.isNoteMode,
+                onToggleNoteMode: _controller.toggleNoteMode,
+                onHint: _onHintPressed,
+                canAutoFillNotes: _controller.canAutoFillNotes,
+                onAutoFillNotes: _onAutoFillNotesPressed,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ListenableBuilder(
+              listenable: _controller,
+              builder: (context, _) => NumberPadWidget(
+                controller: _controller,
+                isNotePad: false,
+                onNumberSelected: _onNumberSelected,
+              ),
+            ),
+            const SizedBox(height: 28),
+            // The notes pad always reserves its layout space and only
+            // fades in/out — unlike a height-collapsing animation, this
+            // keeps the total height below the grid constant regardless of
+            // note mode, so the Expanded grid above never resizes/shifts.
+            ListenableBuilder(
+              listenable: _controller,
+              builder: (context, _) => AnimatedOpacity(
+                opacity: _controller.isNoteMode ? 1 : 0,
+                duration: const Duration(milliseconds: 250),
+                child: IgnorePointer(
+                  ignoring: !_controller.isNoteMode,
+                  child: NumberPadWidget(
+                    controller: _controller,
+                    isNotePad: true,
+                    onNumberSelected: _onNoteNumberSelected,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
+      ));
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/l10n/generated/app_localizations.dart';
@@ -118,12 +120,19 @@ class _FixedChainHintEngine extends HintEngine {
       hint;
 }
 
+/// Runs hint searches inline instead of on a background isolate — keeps a
+/// fake engine's hint instance identical (an isolate returns a copy) and
+/// completes within the widget test's fake-async zone, which a real
+/// isolate never would.
+Future<R> _inlineSearch<R>(FutureOr<R> Function() computation) async =>
+    await computation();
+
 /// Requests a hint and drives the progressive reveal to its final stage —
 /// the board deliberately draws nothing until then (see
 /// [GameController.visualizedHint]), so every test that asserts on the
 /// overlay layers has to get there first.
-void _requestVisualizedHint(GameController controller) {
-  controller.requestHint();
+Future<void> _requestVisualizedHint(GameController controller) async {
+  await controller.requestHint();
   while (controller.hintStage < 2) {
     controller.advanceHintStage();
   }
@@ -134,11 +143,12 @@ void main() {
       'a hint with highlighted units renders a unit-highlight CustomPaint '
       'layer', (tester) async {
     final controller = GameController(
+      searchRunner: _inlineSearch,
       generator: _InstantGenerator(),
       hintEngine: _FixedHintEngine(),
     );
     controller.startNewGame(Difficulty.beginner);
-    _requestVisualizedHint(controller);
+    await _requestVisualizedHint(controller);
     expect(controller.activeHint?.highlightedRows, {0, 3});
 
     await tester.pumpWidget(
@@ -157,7 +167,7 @@ void main() {
 
   testWidgets('no active hint renders no unit-highlight CustomPaint layer',
       (tester) async {
-    final controller = GameController(generator: _InstantGenerator());
+    final controller = GameController(searchRunner: _inlineSearch, generator: _InstantGenerator());
     controller.startNewGame(Difficulty.beginner);
     expect(controller.activeHint, isNull);
 
@@ -178,11 +188,12 @@ void main() {
   testWidgets('a chain hint renders a hint-arrow CustomPaint layer',
       (tester) async {
     final controller = GameController(
+      searchRunner: _inlineSearch,
       generator: _InstantGenerator(),
       hintEngine: _FixedChainHintEngine(),
     );
     controller.startNewGame(Difficulty.beginner);
-    _requestVisualizedHint(controller);
+    await _requestVisualizedHint(controller);
     expect(controller.activeHint?.chainLinks, isNotEmpty);
 
     await tester.pumpWidget(
@@ -201,11 +212,12 @@ void main() {
       'a non-chain eliminate hint (X-Wing) renders no hint-arrow layer',
       (tester) async {
     final controller = GameController(
+      searchRunner: _inlineSearch,
       generator: _InstantGenerator(),
       hintEngine: _FixedHintEngine(),
     );
     controller.startNewGame(Difficulty.beginner);
-    _requestVisualizedHint(controller);
+    await _requestVisualizedHint(controller);
     expect(controller.activeHint?.type, HintType.eliminate);
     expect(controller.activeHint?.chainLinks, isEmpty);
 
@@ -223,11 +235,12 @@ void main() {
 
   testWidgets('a reveal hint renders no hint-arrow layer', (tester) async {
     final controller = GameController(
+      searchRunner: _inlineSearch,
       generator: _InstantGenerator(),
       hintEngine: _FixedRevealHintEngine(),
     );
     controller.startNewGame(Difficulty.beginner);
-    _requestVisualizedHint(controller);
+    await _requestVisualizedHint(controller);
     expect(controller.activeHint?.type, HintType.reveal);
 
     await tester.pumpWidget(
@@ -246,11 +259,12 @@ void main() {
       'a step walkthrough shows the red elimination marks only at the '
       'final step, and hides them again when paging back', (tester) async {
     final controller = GameController(
+      searchRunner: _inlineSearch,
       generator: _InstantGenerator(),
       hintEngine: _FixedChainHintEngine(),
     );
     controller.startNewGame(Difficulty.beginner);
-    _requestVisualizedHint(controller);
+    await _requestVisualizedHint(controller);
 
     // The chain hint (Skyscraper) gets a walkthrough attached by
     // requestHint, starting on its first step.
@@ -294,7 +308,7 @@ void main() {
   testWidgets(
       'dragging across the grid updates the selected cell to follow the '
       'finger, without waiting for a release', (tester) async {
-    final controller = GameController(generator: _InstantGenerator());
+    final controller = GameController(searchRunner: _inlineSearch, generator: _InstantGenerator());
     controller.startNewGame(Difficulty.beginner);
 
     await tester.pumpWidget(
