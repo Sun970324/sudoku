@@ -175,13 +175,10 @@ class _RaceScreenState extends State<RaceScreen> {
                 onErase: () => setState(() => game.eraseSelected()),
                 isNoteMode: game.isNoteMode,
                 onToggleNoteMode: () => setState(() => game.toggleNoteMode()),
-                // Hints/auto-fill aren't offered in races (no AdService
-                // wiring here) — GameControlsRow always renders both
-                // buttons, so these are no-ops rather than a new
-                // hide-this-button flag on a widget every other screen uses.
-                onHint: () {},
-                canAutoFillNotes: false,
-                onAutoFillNotes: () {},
+                // Races offer no hint/auto-fill (no rewarded-ad wiring), so
+                // hide those assist buttons entirely rather than show a dead
+                // hint button and a misleading ad badge.
+                showAssists: false,
               ),
               const SizedBox(height: 16),
               NumberPadWidget(

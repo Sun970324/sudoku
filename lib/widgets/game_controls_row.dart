@@ -12,9 +12,10 @@ class GameControlsRow extends StatelessWidget {
     required this.onErase,
     required this.isNoteMode,
     required this.onToggleNoteMode,
-    required this.onHint,
-    required this.canAutoFillNotes,
-    required this.onAutoFillNotes,
+    this.onHint,
+    this.canAutoFillNotes = false,
+    this.onAutoFillNotes,
+    this.showAssists = true,
   });
 
   final bool canUndo;
@@ -23,9 +24,14 @@ class GameControlsRow extends StatelessWidget {
   final VoidCallback onErase;
   final bool isNoteMode;
   final VoidCallback onToggleNoteMode;
-  final VoidCallback onHint;
+  final VoidCallback? onHint;
   final bool canAutoFillNotes;
-  final VoidCallback onAutoFillNotes;
+  final VoidCallback? onAutoFillNotes;
+
+  /// The rewarded-ad assist actions (auto-fill notes + hint). Hidden in
+  /// races, which offer neither — leaving them visible showed a dead hint
+  /// button and a misleading "plays an ad" badge.
+  final bool showAssists;
 
   @override
   Widget build(BuildContext context) {
@@ -53,18 +59,20 @@ class GameControlsRow extends StatelessWidget {
           bold: isNoteMode,
           noteModeBadge: isNoteMode,
         ),
-        _ControlButton(
-          icon: Icons.auto_fix_high,
-          label: l10n.autoFillLabel,
-          onPressed: canAutoFillNotes ? onAutoFillNotes : null,
-          showAdBadge: true,
-        ),
-        _ControlButton(
-          icon: Icons.lightbulb_outline,
-          label: l10n.hintLabel,
-          onPressed: onHint,
-          showAdBadge: true,
-        ),
+        if (showAssists) ...[
+          _ControlButton(
+            icon: Icons.auto_fix_high,
+            label: l10n.autoFillLabel,
+            onPressed: canAutoFillNotes ? onAutoFillNotes : null,
+            showAdBadge: true,
+          ),
+          _ControlButton(
+            icon: Icons.lightbulb_outline,
+            label: l10n.hintLabel,
+            onPressed: onHint,
+            showAdBadge: true,
+          ),
+        ],
       ],
     );
   }
