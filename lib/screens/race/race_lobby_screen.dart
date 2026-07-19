@@ -19,6 +19,7 @@ import '../../widgets/tier_badge.dart';
 import '../game_screen.dart';
 import 'friend_match_screen.dart';
 import 'matchmaking_screen.dart';
+import 'rating_leaderboard_screen.dart';
 
 /// Entry hub for all racing: shows the player's own standing (username,
 /// tier, rating/record) and branches into ranked matchmaking or the
@@ -86,6 +87,15 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
           auth: widget.auth,
           puzzleQueue: widget.puzzleQueue,
         ),
+      ),
+    );
+  }
+
+  void _onLeaderboardPressed() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RatingLeaderboardScreen(auth: widget.auth),
       ),
     );
   }
@@ -176,6 +186,14 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
                   onPressed: _onRankedPressed,
                   icon: Icons.military_tech,
                   label: l10n.rankedMatchButton,
+                  expanded: true,
+                ),
+                const SizedBox(height: 16),
+                PopButton(
+                  onPressed: _onLeaderboardPressed,
+                  icon: Icons.leaderboard,
+                  variant: PopButtonVariant.outline,
+                  label: l10n.leaderboardButton,
                   expanded: true,
                 ),
                 if (_historyFuture != null) ...[

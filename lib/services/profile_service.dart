@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/rating_leaderboard.dart';
 import '../models/user_profile.dart';
 
 class ProfileService {
@@ -12,6 +13,11 @@ class ProfileService {
     final row =
         await _client.from('profiles').select().eq('id', userId).single();
     return UserProfile.fromJson(row);
+  }
+
+  Future<RatingLeaderboard> fetchLeaderboard() async {
+    final result = await _client.rpc('get_rating_leaderboard');
+    return RatingLeaderboard.fromJson((result as Map).cast<String, dynamic>());
   }
 
   /// Throws [PostgrestException] (code 23505) if [username] is already taken

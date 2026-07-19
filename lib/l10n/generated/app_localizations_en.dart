@@ -627,6 +627,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rankedMatchButton => 'Ranked Match';
 
   @override
+  String get leaderboardButton => 'Ranking';
+
+  @override
+  String get leaderboardTitle => 'Ranking';
+
+  @override
+  String leaderboardMyRankLabel(int rank, int total) {
+    return 'Your rank: #$rank of $total';
+  }
+
+  @override
+  String get leaderboardMyRankUnranked => 'No ranked record yet';
+
+  @override
+  String get leaderboardEmpty => 'No ranked players yet.';
+
+  @override
+  String get leaderboardLoadFailed => 'Couldn\'t load the ranking.';
+
+  @override
   String get friendMatchTitle => 'Play with a Friend';
 
   @override

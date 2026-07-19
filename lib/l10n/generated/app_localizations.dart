@@ -1125,6 +1125,42 @@ abstract class AppLocalizations {
   /// **'Ranked Match'**
   String get rankedMatchButton;
 
+  /// No description provided for @leaderboardButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranking'**
+  String get leaderboardButton;
+
+  /// No description provided for @leaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranking'**
+  String get leaderboardTitle;
+
+  /// No description provided for @leaderboardMyRankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rank: #{rank} of {total}'**
+  String leaderboardMyRankLabel(int rank, int total);
+
+  /// No description provided for @leaderboardMyRankUnranked.
+  ///
+  /// In en, this message translates to:
+  /// **'No ranked record yet'**
+  String get leaderboardMyRankUnranked;
+
+  /// No description provided for @leaderboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No ranked players yet.'**
+  String get leaderboardEmpty;
+
+  /// No description provided for @leaderboardLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the ranking.'**
+  String get leaderboardLoadFailed;
+
   /// No description provided for @friendMatchTitle.
   ///
   /// In en, this message translates to:

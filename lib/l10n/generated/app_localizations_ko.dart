@@ -621,6 +621,26 @@ class AppLocalizationsKo extends AppLocalizations {
   String get rankedMatchButton => '랭크대전';
 
   @override
+  String get leaderboardButton => '랭킹';
+
+  @override
+  String get leaderboardTitle => '랭킹';
+
+  @override
+  String leaderboardMyRankLabel(int rank, int total) {
+    return '내 순위 $rank위 / $total명';
+  }
+
+  @override
+  String get leaderboardMyRankUnranked => '아직 랭크 기록이 없어요';
+
+  @override
+  String get leaderboardEmpty => '아직 랭크된 플레이어가 없어요.';
+
+  @override
+  String get leaderboardLoadFailed => '랭킹을 불러오지 못했어요.';
+
+  @override
   String get friendMatchTitle => '친구와 대결하기';
 
   @override

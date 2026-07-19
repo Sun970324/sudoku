@@ -498,6 +498,18 @@
   "raceLobbyTitle": "Race",
   "friendMatchButton": "Play with a Friend",
   "rankedMatchButton": "Ranked Match",
+  "leaderboardButton": "Ranking",
+  "leaderboardTitle": "Ranking",
+  "leaderboardMyRankLabel": "Your rank: #{rank} of {total}",
+  "@leaderboardMyRankLabel": {
+    "placeholders": {
+      "rank": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "leaderboardMyRankUnranked": "No ranked record yet",
+  "leaderboardEmpty": "No ranked players yet.",
+  "leaderboardLoadFailed": "Couldn't load the ranking.",
   "friendMatchTitle": "Play with a Friend",
   "createRoomTitle": "Choose difficulty",
   "createRoomAction": "Make Room",
