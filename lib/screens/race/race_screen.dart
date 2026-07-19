@@ -28,7 +28,6 @@ class _RaceScreenState extends State<RaceScreen> {
   /// (and popping straight back to Home) is the only other terminal path,
   /// and it still owns (and must dispose) the controller in that case.
   bool _handedOff = false;
-  bool _opponentLeftDialogShown = false;
 
   @override
   void initState() {
@@ -55,36 +54,12 @@ class _RaceScreenState extends State<RaceScreen> {
       _timer?.cancel();
       Navigator.pop(context);
     } else {
-      if (widget.controller.opponentLeft && !_opponentLeftDialogShown) {
-        _opponentLeftDialogShown = true;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) _showOpponentLeftDialog();
-        });
-      }
+      // Opponent disconnect is now handled non-modally: a countdown banner
+      // (below) plus an automatic server-verified win claim in the
+      // controller — no dialog, and crucially no "give up" option (which
+      // used to make the still-present player lose).
       setState(() {});
     }
-  }
-
-  Future<void> _showOpponentLeftDialog() async {
-    final l10n = AppLocalizations.of(context)!;
-    final leave = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        content: Text(l10n.opponentLeftBanner),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: Text(l10n.continueAction),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, true),
-            child: Text(l10n.giveUpAction),
-          ),
-        ],
-      ),
-    );
-    if (leave == true) await widget.controller.abort();
   }
 
   void _onGameChanged() => setState(() {});
@@ -154,7 +129,9 @@ class _RaceScreenState extends State<RaceScreen> {
                   color: Theme.of(context).colorScheme.errorContainer,
                   padding: const EdgeInsets.all(8),
                   child: Text(
-                    l10n.opponentLeftBanner,
+                    l10n.opponentDisconnectedCountdown(
+                        widget.controller.disconnectSeconds ??
+                            RaceController.graceSeconds),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onErrorContainer),

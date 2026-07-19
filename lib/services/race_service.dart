@@ -134,6 +134,22 @@ class RaceService {
     await _client.rpc('abort_race', params: {'p_race_id': raceId});
   }
 
+  /// Refreshes the caller's own liveness marker so the opponent can't claim
+  /// a disconnect win against them. Sent periodically while racing.
+  Future<void> heartbeat(String raceId) async {
+    await _client.rpc('race_heartbeat', params: {'p_race_id': raceId});
+  }
+
+  /// Claims the win when the opponent's heartbeat has gone stale. Returns
+  /// true only if the server agreed the opponent is genuinely gone and the
+  /// race was still in progress — false means keep playing (opponent is
+  /// still live, or the race was already decided).
+  Future<bool> claimDisconnectWin(String raceId) async {
+    final result = await _client
+        .rpc('claim_disconnect_win', params: {'p_race_id': raceId});
+    return result as bool;
+  }
+
   /// The caller's finished races, most recent first. RLS already limits
   /// `races` rows to ones naming the caller as a player, so no extra
   /// filter is needed beyond status — the embedded profile selects use the

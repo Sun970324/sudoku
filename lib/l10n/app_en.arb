@@ -532,7 +532,12 @@
   "matchmakingPreparingPuzzle": "Preparing puzzle...",
   "matchmakingReadyCheck": "Checking readiness...",
   "raceAbortConfirmTitle": "Give up the race?",
-  "opponentLeftBanner": "Opponent disconnected",
+  "opponentDisconnectedCountdown": "Opponent disconnected — you win in {seconds}s",
+  "@opponentDisconnectedCountdown": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
   "opponentProgressLabel": "Opponent",
   "raceResultTitle": "Race Result",
   "raceWon": "You Won!",

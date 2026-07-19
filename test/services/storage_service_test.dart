@@ -71,6 +71,37 @@ void main() {
     expect(await storage.loadInProgressGame(), isNull);
   });
 
+  test('loadRaceProgress returns null when nothing has been saved', () async {
+    final storage = StorageService();
+    expect(await storage.loadRaceProgress(), isNull);
+  });
+
+  test('saveRaceProgress/loadRaceProgress round-trips the race id and board',
+      () async {
+    final storage = StorageService();
+    final snapshot = buildSnapshot(elapsedSeconds: 73, mistakes: 2);
+
+    await storage.saveRaceProgress('race-abc', snapshot);
+    final loaded = await storage.loadRaceProgress();
+
+    expect(loaded, isNotNull);
+    expect(loaded!.raceId, 'race-abc');
+    expect(loaded.snapshot.elapsedSeconds, 73);
+    expect(loaded.snapshot.mistakes, 2);
+    expect(loaded.snapshot.board, snapshot.board);
+    expect(loaded.snapshot.puzzle.solution.cells,
+        snapshot.puzzle.solution.cells);
+  });
+
+  test('clearRaceProgress removes the saved race board', () async {
+    final storage = StorageService();
+    await storage.saveRaceProgress('race-abc', buildSnapshot());
+
+    await storage.clearRaceProgress();
+
+    expect(await storage.loadRaceProgress(), isNull);
+  });
+
   test('getStats starts empty for every difficulty', () async {
     final storage = StorageService();
     final stats = await storage.getStats();

@@ -694,7 +694,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get raceAbortConfirmTitle => '레이스를 포기할까요?';
 
   @override
-  String get opponentLeftBanner => '상대방 연결이 끊겼어요';
+  String opponentDisconnectedCountdown(int seconds) {
+    return '상대방 연결 끊김 — $seconds초 후 승리 처리';
+  }
 
   @override
   String get opponentProgressLabel => '상대방';

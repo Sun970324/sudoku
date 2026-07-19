@@ -8,6 +8,7 @@ import '../models/race.dart';
 import '../models/sudoku_puzzle.dart';
 import '../services/puzzle_queue_manager.dart';
 import '../services/race_service.dart';
+import '../services/storage_service.dart';
 import '../state/auth_controller.dart';
 import '../state/settings_controller.dart';
 import '../theme/app_palette.dart';
@@ -22,6 +23,7 @@ import 'my_page_screen.dart';
 import 'puzzle_share/enter_code_screen.dart';
 import 'race/race_lobby_screen.dart';
 import 'race/race_result_screen.dart';
+import 'race/race_screen.dart';
 import 'stats_screen.dart';
 import '../state/race_controller.dart';
 
@@ -93,21 +95,39 @@ class _HomeScreenState extends State<HomeScreen> {
         return;
       }
       if (race.status != RaceStatus.inProgress) return;
-      await service.abortRace(race.id);
+
+      // Resume an in-progress race from the locally-saved board (persisted
+      // every second while racing) instead of forfeiting it. Only when the
+      // saved snapshot is for this exact race — otherwise there's nothing to
+      // resume from, so fall back to the old forfeit-and-show-result path.
+      final saved = await StorageService().loadRaceProgress();
       final controller = RaceController(
         difficulty: race.difficulty,
         puzzleQueue: widget.puzzleQueue,
         raceService: service,
       );
-      await controller.restore(race.id);
+      final canResume = saved != null && saved.raceId == race.id;
+      if (canResume) {
+        await controller.restore(race.id, board: saved.snapshot);
+      } else {
+        await service.abortRace(race.id);
+        await controller.restore(race.id);
+      }
       if (!mounted) {
         controller.dispose();
         return;
       }
+      // If the race was decided while the app was away (or we forfeited it
+      // just now), go straight to the result; otherwise resume play.
+      final resumable = canResume &&
+          controller.phase != RacePhase.finished &&
+          controller.phase != RacePhase.aborted;
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => RaceResultScreen(controller: controller),
+          builder: (_) => resumable
+              ? RaceScreen(controller: controller)
+              : RaceResultScreen(controller: controller),
         ),
       );
     } catch (_) {
@@ -327,7 +347,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
         const SizedBox(height: 16),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 48),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: PopButton(
             onPressed: canStart ? _onStartPressed : null,
             label: canStart ? l10n.startGame : l10n.generatingPuzzle,

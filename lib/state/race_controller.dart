@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/difficulty.dart';
+import '../models/game_snapshot.dart';
 import '../models/race.dart';
 import '../models/sudoku_puzzle.dart';
 import '../models/user_profile.dart';
@@ -12,6 +13,7 @@ import '../services/generation/sudoku_generator.dart';
 import '../services/profile_service.dart';
 import '../services/puzzle_queue_manager.dart';
 import '../services/race_service.dart';
+import '../services/storage_service.dart';
 import 'game_controller.dart';
 
 /// Off-thread fallback for a race whose provider found its puzzle queue
@@ -48,15 +50,25 @@ class RaceController extends ChangeNotifier {
     required PuzzleQueueManager puzzleQueue,
     RaceService? raceService,
     ProfileService? profileService,
+    StorageService? storage,
   })  : _difficulty = difficulty,
         _puzzleQueue = puzzleQueue,
         _raceService = raceService ?? RaceService(),
-        _profileService = profileService ?? ProfileService();
+        _profileService = profileService ?? ProfileService(),
+        _storage = storage ?? StorageService();
+
+  /// Grace period after the opponent's realtime presence drops before their
+  /// disconnect is claimed as a win — long enough to ride out a brief
+  /// background/network blip (the server's own staleness threshold is looser
+  /// still, at 30s, so a claim fired at 0 reliably passes). See
+  /// [claim_disconnect_win] / [race_heartbeat] in migration 0015.
+  static const graceSeconds = 45;
 
   final Difficulty _difficulty;
   final PuzzleQueueManager _puzzleQueue;
   final RaceService _raceService;
   final ProfileService _profileService;
+  final StorageService _storage;
 
   final GameController game = GameController();
 
@@ -69,7 +81,15 @@ class RaceController extends ChangeNotifier {
   Race? _race;
   UserProfile? opponentProfile;
   UserProfile? selfProfile;
+
+  /// True while the opponent's realtime presence is dropped and the grace
+  /// countdown ([disconnectSeconds]) is running. Cleared if they return
+  /// before it elapses.
   bool opponentLeft = false;
+
+  /// Seconds left before the opponent's disconnect is claimed as a win —
+  /// non-null only while [opponentLeft] is true.
+  int? disconnectSeconds;
   int opponentFilledCount = 0;
   int opponentMistakes = 0;
 
@@ -112,10 +132,16 @@ class RaceController extends ChangeNotifier {
   // with no other signal that anything changed server-side.
   Timer? _matchPollTimer;
   Timer? _racePollTimer;
+  Timer? _heartbeatTimer;
+  Timer? _disconnectTimer;
   bool _attached = false;
   bool _puzzleProvided = false;
   bool _startRequested = false;
   bool _initialProfilesRequested = false;
+
+  /// Set by [restore] so the racing transition resumes this board instead of
+  /// starting a fresh one — the reconnect-after-app-kill path.
+  GameSnapshot? _resumeSnapshot;
 
   Future<void> start() async {
     final raceId = await _raceService.enqueue(_difficulty);
@@ -161,8 +187,13 @@ class RaceController extends ChangeNotifier {
     });
   }
 
-  /// Restores a race resolved while the app was not running.
-  Future<void> restore(String raceId) async {
+  /// Restores a race the app was in when it was last closed. [board], when
+  /// given (a locally-persisted snapshot for this same [raceId]), resumes
+  /// play from where the player left off instead of a fresh board — the
+  /// reconnect path. A still-in-progress race thus continues rather than
+  /// being forfeited.
+  Future<void> restore(String raceId, {GameSnapshot? board}) async {
+    _resumeSnapshot = board;
     _attachToRace(raceId);
     await _onRaceUpdate(await _raceService.fetchRace(raceId));
   }
@@ -215,13 +246,26 @@ class RaceController extends ChangeNotifier {
       case RaceStatus.inProgress:
         if (phase != RacePhase.racing) {
           phase = RacePhase.racing;
-          game.startNewGame(race.difficulty, puzzle: race.puzzle);
+          final resume = _resumeSnapshot;
+          if (resume != null) {
+            game.resumeFrom(resume);
+            _resumeSnapshot = null;
+          } else {
+            game.startNewGame(race.difficulty, puzzle: race.puzzle);
+          }
           game.addListener(_onGameChanged);
+          // A cold restore lands straight in inProgress without passing
+          // through the ready branch, so join the channel here too (no-op
+          // if already joined) — otherwise presence/disconnect detection
+          // wouldn't work on a resumed race.
+          _joinRaceChannel(race.id);
           _startProgressTimer();
+          _startHeartbeat(race.id);
         }
       case RaceStatus.finished:
         phase = RacePhase.finished;
         _cleanupRealtime();
+        unawaited(_storage.clearRaceProgress());
         // Both a normal win and a forfeit-loss (see abort_race) update
         // rating/tier server-side — refetch so the result screen can show
         // the before/after delta via selfRatingDelta/opponentRatingDelta.
@@ -229,6 +273,7 @@ class RaceController extends ChangeNotifier {
       case RaceStatus.aborted:
         phase = RacePhase.aborted;
         _cleanupRealtime();
+        unawaited(_storage.clearRaceProgress());
     }
     notifyListeners();
   }
@@ -265,7 +310,7 @@ class RaceController extends ChangeNotifier {
   void _joinRaceChannel(String raceId) {
     if (_channel != null) return;
     final channel = _raceService.raceChannel(raceId)
-      ..onPresenceSync((_) => _checkBothReady(raceId))
+      ..onPresenceSync((_) => _onPresenceSync(raceId))
       ..onPresenceLeave((_) => _onOpponentLeft())
       ..onBroadcast(event: 'progress', callback: _onOpponentProgress);
     channel.subscribe((status, error) {
@@ -276,6 +321,17 @@ class RaceController extends ChangeNotifier {
     _channel = channel;
   }
 
+  void _onPresenceSync(String raceId) {
+    final count = _channel?.presenceState().length ?? 0;
+    if (phase == RacePhase.readyCheck) {
+      _checkBothReady(raceId);
+    } else if (phase == RacePhase.racing && opponentLeft && count >= 2) {
+      // Opponent's presence came back before the grace ran out — abort the
+      // pending disconnect claim and carry on racing.
+      _cancelDisconnectCountdown();
+    }
+  }
+
   void _checkBothReady(String raceId) {
     if (_startRequested) return;
     if ((_channel?.presenceState().length ?? 0) >= 2) {
@@ -284,9 +340,61 @@ class RaceController extends ChangeNotifier {
     }
   }
 
+  void _startHeartbeat(String raceId) {
+    _heartbeatTimer?.cancel();
+    unawaited(_raceService.heartbeat(raceId));
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 10),
+        (_) => unawaited(_raceService.heartbeat(raceId)));
+  }
+
+  /// Opponent's realtime presence dropped — start the grace countdown. If it
+  /// reaches zero, claim the win (server-verified against their heartbeat).
   void _onOpponentLeft() {
+    if (opponentLeft || phase != RacePhase.racing) return;
     opponentLeft = true;
+    disconnectSeconds = graceSeconds;
     notifyListeners();
+    _disconnectTimer?.cancel();
+    _disconnectTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final remaining = (disconnectSeconds ?? 0) - 1;
+      if (remaining <= 0) {
+        disconnectSeconds = 0;
+        _disconnectTimer?.cancel();
+        _disconnectTimer = null;
+        notifyListeners();
+        unawaited(_claimDisconnectWin());
+      } else {
+        disconnectSeconds = remaining;
+        notifyListeners();
+      }
+    });
+  }
+
+  void _cancelDisconnectCountdown() {
+    _disconnectTimer?.cancel();
+    _disconnectTimer = null;
+    opponentLeft = false;
+    disconnectSeconds = null;
+    notifyListeners();
+  }
+
+  Future<void> _claimDisconnectWin() async {
+    final race = _race;
+    if (race == null) return;
+    try {
+      final won = await _raceService.claimDisconnectWin(race.id);
+      if (won) {
+        // Reflect the server's decision promptly rather than waiting on the
+        // 3s poll; _onRaceUpdate then drives the transition to the result.
+        unawaited(_onRaceUpdate(await _raceService.fetchRace(race.id)));
+      } else {
+        // Opponent was actually still alive (or the race was already
+        // decided) — clear the banner and keep playing.
+        _cancelDisconnectCountdown();
+      }
+    } catch (_) {
+      _cancelDisconnectCountdown();
+    }
   }
 
   void _onOpponentProgress(Map<String, dynamic> payload) {
@@ -297,8 +405,18 @@ class RaceController extends ChangeNotifier {
 
   void _startProgressTimer() {
     _progressTimer?.cancel();
-    _progressTimer =
-        Timer.periodic(const Duration(seconds: 1), (_) => _broadcastProgress());
+    _progressTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _broadcastProgress();
+      _persistRaceProgress();
+    });
+  }
+
+  /// Snapshots the live board to disk (keyed by race id) so a killed app can
+  /// resume this race — see [restore] and StorageService.saveRaceProgress.
+  void _persistRaceProgress() {
+    final race = _race;
+    if (race == null) return;
+    unawaited(_storage.saveRaceProgress(race.id, game.toSnapshot()));
   }
 
   void _broadcastProgress() {
@@ -354,6 +472,8 @@ class RaceController extends ChangeNotifier {
   void _cleanupRealtime() {
     _progressTimer?.cancel();
     _racePollTimer?.cancel();
+    _heartbeatTimer?.cancel();
+    _disconnectTimer?.cancel();
     final channel = _channel;
     if (channel != null) {
       _raceService.leaveChannel(channel);

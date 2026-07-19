@@ -1263,11 +1263,11 @@ abstract class AppLocalizations {
   /// **'Give up the race?'**
   String get raceAbortConfirmTitle;
 
-  /// No description provided for @opponentLeftBanner.
+  /// No description provided for @opponentDisconnectedCountdown.
   ///
   /// In en, this message translates to:
-  /// **'Opponent disconnected'**
-  String get opponentLeftBanner;
+  /// **'Opponent disconnected — you win in {seconds}s'**
+  String opponentDisconnectedCountdown(int seconds);
 
   /// No description provided for @opponentProgressLabel.
   ///

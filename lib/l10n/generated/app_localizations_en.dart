@@ -700,7 +700,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get raceAbortConfirmTitle => 'Give up the race?';
 
   @override
-  String get opponentLeftBanner => 'Opponent disconnected';
+  String opponentDisconnectedCountdown(int seconds) {
+    return 'Opponent disconnected — you win in ${seconds}s';
+  }
 
   @override
   String get opponentProgressLabel => 'Opponent';

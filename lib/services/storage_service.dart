@@ -18,6 +18,7 @@ class StorageService {
   static const _wrongNoteWarningEnabledKey = 'wrong_note_warning_enabled';
   static const _autoRemoveNotesEnabledKey = 'auto_remove_notes_enabled';
   static const _puzzleQueueKey = 'puzzle_queue';
+  static const _raceProgressKey = 'race_in_progress';
 
   Future<void> saveInProgressGame(GameSnapshot snapshot) async {
     final prefs = await SharedPreferences.getInstance();
@@ -34,6 +35,34 @@ class StorageService {
   Future<void> clearInProgressGame() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_inProgressKey);
+  }
+
+  /// Persists the current race's board so a killed-and-relaunched app can
+  /// resume it (see RaceController) instead of forfeiting. Keyed by race id
+  /// so a stale snapshot from a different, already-finished race is never
+  /// resumed by mistake.
+  Future<void> saveRaceProgress(String raceId, GameSnapshot snapshot) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        _raceProgressKey,
+        jsonEncode({'raceId': raceId, 'snapshot': snapshot.toJson()}));
+  }
+
+  Future<({String raceId, GameSnapshot snapshot})?> loadRaceProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_raceProgressKey);
+    if (raw == null) return null;
+    final json = jsonDecode(raw) as Map<String, dynamic>;
+    return (
+      raceId: json['raceId'] as String,
+      snapshot:
+          GameSnapshot.fromJson(json['snapshot'] as Map<String, dynamic>),
+    );
+  }
+
+  Future<void> clearRaceProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_raceProgressKey);
   }
 
   Future<Stats> getStats() async {
