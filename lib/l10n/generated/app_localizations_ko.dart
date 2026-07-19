@@ -576,6 +576,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tierTopReached => '최고 티어예요';
 
   @override
+  String get ratingTrendTitle => '레이팅 추이';
+
+  @override
   String get linkAccountPrompt => '게스트 계정으로 로그인 중입니다. 계정을 연동하면 기록이 유지됩니다.';
 
   @override

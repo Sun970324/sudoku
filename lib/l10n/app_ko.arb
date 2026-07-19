@@ -165,6 +165,7 @@
   "winRateLabel": "대결 승률 {percent}%",
   "tierPromotionRemaining": "{nextTier} 승급까지 {points}점",
   "tierTopReached": "최고 티어예요",
+  "ratingTrendTitle": "레이팅 추이",
   "linkAccountPrompt": "게스트 계정으로 로그인 중입니다. 계정을 연동하면 기록이 유지됩니다.",
   "linkGoogleAction": "Google 계정 연동",
   "linkAppleAction": "Apple 계정 연동",

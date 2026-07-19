@@ -2,19 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../l10n/generated/app_localizations.dart';
+import '../models/rating_history.dart';
 import '../models/tier.dart';
 import '../models/user_profile.dart';
+import '../services/profile_service.dart';
 import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
 import '../widgets/gradient_scaffold.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/pop_card.dart';
+import '../widgets/rating_trend_chart.dart';
 import '../widgets/tier_badge.dart';
 
 class MyPageScreen extends StatefulWidget {
-  const MyPageScreen({super.key, required this.auth});
+  const MyPageScreen({super.key, required this.auth, this.profileService});
 
   final AuthController auth;
+
+  /// Injectable for tests; defaults to a real [ProfileService].
+  final ProfileService? profileService;
 
   @override
   State<MyPageScreen> createState() => _MyPageScreenState();
@@ -23,9 +29,32 @@ class MyPageScreen extends StatefulWidget {
 class _MyPageScreenState extends State<MyPageScreen> {
   final _usernameController = TextEditingController();
   bool _editingUsername = false;
+  late final ProfileService _profileService =
+      widget.profileService ?? ProfileService();
+
+  /// Fetched once (not per auth-notify rebuild) — the rating trend only
+  /// changes between races, not while this screen is open.
+  Future<List<RatingHistoryPoint>>? _ratingHistory;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.auth.addListener(_onAuthChanged);
+    if (widget.auth.isSignedIn) {
+      _ratingHistory = _profileService.fetchRatingHistory();
+    }
+  }
+
+  void _onAuthChanged() {
+    if (widget.auth.isSignedIn && _ratingHistory == null) {
+      _ratingHistory = _profileService.fetchRatingHistory();
+    }
+    if (mounted) setState(() {});
+  }
 
   @override
   void dispose() {
+    widget.auth.removeListener(_onAuthChanged);
     _usernameController.dispose();
     super.dispose();
   }
@@ -55,6 +84,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 _ProfileSection(
                   auth: widget.auth,
                   profile: profile,
+                  ratingHistory: _ratingHistory,
                   editing: _editingUsername,
                   usernameController: _usernameController,
                   onEditPressed: () {
@@ -77,6 +107,49 @@ class _MyPageScreenState extends State<MyPageScreen> {
           );
         },
       ),
+    );
+  }
+}
+
+/// Rating-over-time card, shown only once the caller has at least one
+/// ranked result. Prepends the pre-first-race baseline so the trend starts
+/// from where the player began. Silently absent while loading, on error, or
+/// with no ranked games — no empty-state clutter on the profile.
+class _RatingTrendCard extends StatelessWidget {
+  const _RatingTrendCard({required this.future, required this.color});
+
+  final Future<List<RatingHistoryPoint>>? future;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    if (future == null) return const SizedBox.shrink();
+    return FutureBuilder<List<RatingHistoryPoint>>(
+      future: future,
+      builder: (context, snapshot) {
+        final points = snapshot.data;
+        if (points == null || points.isEmpty) return const SizedBox.shrink();
+        final l10n = AppLocalizations.of(context)!;
+        final values = <int>[
+          points.first.ratingBefore,
+          for (final p in points) p.rating,
+        ];
+        return Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: PopCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.ratingTrendTitle,
+                    style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 12),
+                RatingTrendChart(values: values, color: color),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -121,6 +194,7 @@ class _ProfileSection extends StatelessWidget {
   const _ProfileSection({
     required this.auth,
     required this.profile,
+    required this.ratingHistory,
     required this.editing,
     required this.usernameController,
     required this.onEditPressed,
@@ -130,6 +204,7 @@ class _ProfileSection extends StatelessWidget {
 
   final AuthController auth;
   final UserProfile profile;
+  final Future<List<RatingHistoryPoint>>? ratingHistory;
   final bool editing;
   final TextEditingController usernameController;
   final VoidCallback onEditPressed;
@@ -253,6 +328,7 @@ class _ProfileSection extends StatelessWidget {
             ],
           ),
         ),
+        _RatingTrendCard(future: ratingHistory, color: tierColor),
         const SizedBox(height: 16),
         PopCard(
           padding: const EdgeInsets.all(20),

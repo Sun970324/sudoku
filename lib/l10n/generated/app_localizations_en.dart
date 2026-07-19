@@ -580,6 +580,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tierTopReached => 'Top tier reached';
 
   @override
+  String get ratingTrendTitle => 'Rating Trend';
+
+  @override
   String get linkAccountPrompt =>
       'You\'re signed in as a guest. Link an account to keep your progress.';
 

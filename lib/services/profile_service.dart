@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/rating_history.dart';
 import '../models/rating_leaderboard.dart';
 import '../models/user_profile.dart';
 
@@ -18,6 +19,14 @@ class ProfileService {
   Future<RatingLeaderboard> fetchLeaderboard() async {
     final result = await _client.rpc('get_rating_leaderboard');
     return RatingLeaderboard.fromJson((result as Map).cast<String, dynamic>());
+  }
+
+  Future<List<RatingHistoryPoint>> fetchRatingHistory() async {
+    final result = await _client.rpc('get_my_rating_history');
+    return (result as List)
+        .map((e) =>
+            RatingHistoryPoint.fromJson((e as Map).cast<String, dynamic>()))
+        .toList();
   }
 
   /// Throws [PostgrestException] (code 23505) if [username] is already taken

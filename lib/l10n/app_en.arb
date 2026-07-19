@@ -481,6 +481,7 @@
     }
   },
   "tierTopReached": "Top tier reached",
+  "ratingTrendTitle": "Rating Trend",
   "linkAccountPrompt": "You're signed in as a guest. Link an account to keep your progress.",
   "linkGoogleAction": "Link Google Account",
   "linkAppleAction": "Link Apple Account",

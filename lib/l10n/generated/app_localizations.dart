@@ -1035,6 +1035,12 @@ abstract class AppLocalizations {
   /// **'Top tier reached'**
   String get tierTopReached;
 
+  /// No description provided for @ratingTrendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating Trend'**
+  String get ratingTrendTitle;
+
   /// No description provided for @linkAccountPrompt.
   ///
   /// In en, this message translates to:
