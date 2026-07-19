@@ -15,6 +15,8 @@ class StorageService {
   static const _localeOverrideKey = 'locale_override';
   static const _hapticsEnabledKey = 'haptics_enabled';
   static const _soundEnabledKey = 'sound_enabled';
+  static const _wrongNoteWarningEnabledKey = 'wrong_note_warning_enabled';
+  static const _autoRemoveNotesEnabledKey = 'auto_remove_notes_enabled';
   static const _puzzleQueueKey = 'puzzle_queue';
 
   Future<void> saveInProgressGame(GameSnapshot snapshot) async {
@@ -118,6 +120,26 @@ class StorageService {
   Future<bool> loadSoundEnabled() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_soundEnabledKey) ?? true;
+  }
+
+  Future<void> saveWrongNoteWarningEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_wrongNoteWarningEnabledKey, enabled);
+  }
+
+  Future<bool> loadWrongNoteWarningEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_wrongNoteWarningEnabledKey) ?? true;
+  }
+
+  Future<void> saveAutoRemoveNotesEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_autoRemoveNotesEnabledKey, enabled);
+  }
+
+  Future<bool> loadAutoRemoveNotesEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_autoRemoveNotesEnabledKey) ?? true;
   }
 
   Future<void> savePuzzleQueue(Map<Difficulty, List<SudokuPuzzle>> queues) async {

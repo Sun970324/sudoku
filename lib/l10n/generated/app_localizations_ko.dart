@@ -33,6 +33,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get startGame => '시작하기';
 
   @override
+  String get generatingPuzzle => '생성 중...';
+
+  @override
   String get privacyPolicyTitle => '개인정보처리방침';
 
   @override
@@ -58,6 +61,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get soundLabel => '효과음';
+
+  @override
+  String get wrongNoteWarningLabel => '틀린 메모 경고';
+
+  @override
+  String get autoRemoveNotesLabel => '숫자 확정 시 자동 메모 제거';
 
   @override
   String get languageSectionTitle => '언어';

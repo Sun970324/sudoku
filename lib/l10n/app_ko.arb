@@ -10,6 +10,7 @@
   "cancelAction": "취소",
 
   "startGame": "시작하기",
+  "generatingPuzzle": "생성 중...",
   "privacyPolicyTitle": "개인정보처리방침",
   "termsOfServiceTitle": "이용약관",
   "raceButton": "대결하기",
@@ -19,6 +20,8 @@
   "darkTheme": "다크 모드",
   "hapticsLabel": "진동",
   "soundLabel": "효과음",
+  "wrongNoteWarningLabel": "틀린 메모 경고",
+  "autoRemoveNotesLabel": "숫자 확정 시 자동 메모 제거",
   "languageSectionTitle": "언어",
   "followSystemLanguage": "시스템 설정 따르기",
   "koreanLanguage": "한국어",

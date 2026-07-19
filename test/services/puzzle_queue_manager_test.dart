@@ -221,4 +221,20 @@ void main() {
       expect(reloaded.countFor(difficulty), PuzzleQueueManager.capacity);
     }
   });
+
+  test(
+      'loadFromDisk falls back to the bundled seed asset for tiers still '
+      'empty after the disk load — e.g. the very first launch', () async {
+    final manager = PuzzleQueueManager(
+      storage: StorageService(),
+      generateBatch: _ImmediateBatchGenerator().call,
+    );
+
+    await manager.loadFromDisk();
+
+    for (final difficulty in Difficulty.values) {
+      expect(manager.countFor(difficulty), greaterThan(0));
+      expect(manager.peek(difficulty)!.difficulty, difficulty);
+    }
+  });
 }

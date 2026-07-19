@@ -20,11 +20,16 @@ class PopButton extends StatefulWidget {
     this.variant = PopButtonVariant.primary,
     this.expanded = false,
     this.fontSize = 18,
+    this.loading = false,
   });
 
   final VoidCallback? onPressed;
   final String label;
   final IconData? icon;
+
+  /// Shows a small spinner in place of [icon] — e.g. while a puzzle queue
+  /// tier is empty and being refilled in the background.
+  final bool loading;
 
   /// Overrides the variant's fill (e.g. a difficulty/tier accent).
   /// Ignored by [PopButtonVariant.outline].
@@ -86,7 +91,17 @@ class _PopButtonState extends State<PopButton> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (widget.icon != null) ...[
+          if (widget.loading) ...[
+            SizedBox(
+              width: widget.fontSize,
+              height: widget.fontSize,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: foreground,
+              ),
+            ),
+            const SizedBox(width: 8),
+          ] else if (widget.icon != null) ...[
             Icon(widget.icon, color: foreground, size: widget.fontSize + 4),
             const SizedBox(width: 8),
           ],

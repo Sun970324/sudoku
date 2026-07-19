@@ -146,6 +146,12 @@ abstract class AppLocalizations {
   /// **'Start'**
   String get startGame;
 
+  /// No description provided for @generatingPuzzle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating...'**
+  String get generatingPuzzle;
+
   /// No description provided for @privacyPolicyTitle.
   ///
   /// In en, this message translates to:
@@ -199,6 +205,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sound Effects'**
   String get soundLabel;
+
+  /// No description provided for @wrongNoteWarningLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn on Wrong Notes'**
+  String get wrongNoteWarningLabel;
+
+  /// No description provided for @autoRemoveNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-clear Notes on Confirm'**
+  String get autoRemoveNotesLabel;
 
   /// No description provided for @languageSectionTitle.
   ///

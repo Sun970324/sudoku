@@ -33,6 +33,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startGame => 'Start';
 
   @override
+  String get generatingPuzzle => 'Generating...';
+
+  @override
   String get privacyPolicyTitle => 'Privacy Policy';
 
   @override
@@ -58,6 +61,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get soundLabel => 'Sound Effects';
+
+  @override
+  String get wrongNoteWarningLabel => 'Warn on Wrong Notes';
+
+  @override
+  String get autoRemoveNotesLabel => 'Auto-clear Notes on Confirm';
 
   @override
   String get languageSectionTitle => 'Language';

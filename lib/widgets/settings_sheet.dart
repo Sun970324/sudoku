@@ -79,6 +79,18 @@ void showSettingsSheet(BuildContext context, SettingsController settings) {
                   if (v) SoundService.click();
                 },
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.wrongNoteWarningLabel),
+                value: settings.wrongNoteWarningEnabled,
+                onChanged: settings.setWrongNoteWarningEnabled,
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.autoRemoveNotesLabel),
+                value: settings.autoRemoveNotesEnabled,
+                onChanged: settings.setAutoRemoveNotesEnabled,
+              ),
               const Divider(),
               ListTile(
                 contentPadding: EdgeInsets.zero,

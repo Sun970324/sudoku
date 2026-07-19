@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
+import 'game_controller.dart';
 
 class SettingsController extends ChangeNotifier {
   SettingsController({StorageService? storage})
@@ -13,6 +14,8 @@ class SettingsController extends ChangeNotifier {
   Locale? _localeOverride;
   bool _hapticsEnabled = true;
   bool _soundEnabled = true;
+  bool _wrongNoteWarningEnabled = true;
+  bool _autoRemoveNotesEnabled = true;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -20,14 +23,20 @@ class SettingsController extends ChangeNotifier {
   Locale? get localeOverride => _localeOverride;
   bool get hapticsEnabled => _hapticsEnabled;
   bool get soundEnabled => _soundEnabled;
+  bool get wrongNoteWarningEnabled => _wrongNoteWarningEnabled;
+  bool get autoRemoveNotesEnabled => _autoRemoveNotesEnabled;
 
   Future<void> load() async {
     _themeMode = await _storage.loadThemeMode();
     _localeOverride = await _storage.loadLocaleOverride();
     _hapticsEnabled = await _storage.loadHapticsEnabled();
     _soundEnabled = await _storage.loadSoundEnabled();
+    _wrongNoteWarningEnabled = await _storage.loadWrongNoteWarningEnabled();
+    _autoRemoveNotesEnabled = await _storage.loadAutoRemoveNotesEnabled();
     HapticService.enabled = _hapticsEnabled;
     SoundService.enabled = _soundEnabled;
+    GameController.wrongNoteWarningEnabled = _wrongNoteWarningEnabled;
+    GameController.autoRemoveNotesEnabled = _autoRemoveNotesEnabled;
     notifyListeners();
   }
 
@@ -59,5 +68,21 @@ class SettingsController extends ChangeNotifier {
     SoundService.enabled = enabled;
     notifyListeners();
     await _storage.saveSoundEnabled(enabled);
+  }
+
+  Future<void> setWrongNoteWarningEnabled(bool enabled) async {
+    if (enabled == _wrongNoteWarningEnabled) return;
+    _wrongNoteWarningEnabled = enabled;
+    GameController.wrongNoteWarningEnabled = enabled;
+    notifyListeners();
+    await _storage.saveWrongNoteWarningEnabled(enabled);
+  }
+
+  Future<void> setAutoRemoveNotesEnabled(bool enabled) async {
+    if (enabled == _autoRemoveNotesEnabled) return;
+    _autoRemoveNotesEnabled = enabled;
+    GameController.autoRemoveNotesEnabled = enabled;
+    notifyListeners();
+    await _storage.saveAutoRemoveNotesEnabled(enabled);
   }
 }

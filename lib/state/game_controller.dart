@@ -40,6 +40,11 @@ class GameController extends ChangeNotifier {
 
   static const maxMistakes = 3;
 
+  /// Settings-driven gates, pushed by [SettingsController] — see
+  /// [toggleNote] and [inputValue].
+  static bool wrongNoteWarningEnabled = true;
+  static bool autoRemoveNotesEnabled = true;
+
   final SudokuGenerator _generator;
   final HintEngine _hintEngine;
 
@@ -205,7 +210,8 @@ class GameController extends ChangeNotifier {
       return;
     }
 
-    if (!SudokuGrid(_board).isValidPlacement(row, col, value)) {
+    if (wrongNoteWarningEnabled &&
+        !SudokuGrid(_board).isValidPlacement(row, col, value)) {
       _flashConflictCells(row, col, value);
       return;
     }
@@ -313,7 +319,9 @@ class GameController extends ChangeNotifier {
     _history.add(_Move.value(row, col, _board[row][col], _cloneNotes()));
     _board[row][col] = value;
     _notes[row][col].clear();
-    if (value != 0 && value == _puzzle.solutionValue(row, col)) {
+    if (autoRemoveNotesEnabled &&
+        value != 0 &&
+        value == _puzzle.solutionValue(row, col)) {
       _removeNoteFromPeers(row, col, value);
     }
 
@@ -540,7 +548,7 @@ class GameController extends ChangeNotifier {
     // every other still-blank cell with pencil marks the player never
     // asked for (same principle as _applyEliminateHint).
     _notes[row][col].clear();
-    _removeNoteFromPeers(row, col, value);
+    if (autoRemoveNotesEnabled) _removeNoteFromPeers(row, col, value);
     selectedRow = row;
     selectedCol = col;
     if (_isBoardComplete()) status = GameStatus.won;

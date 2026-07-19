@@ -167,192 +167,215 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final selectedDifficulty = Difficulty.values[_selectedIndex];
-    final previewPuzzle = widget.puzzleQueue.peek(selectedDifficulty);
 
     return GradientScaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 12, 0),
-              child: Row(
-                children: [
-                  Text(
-                    l10n.appTitle,
-                    style: TextStyle(
-                      fontFamily: 'Jua',
-                      fontSize: 26,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const Spacer(),
-                  _RoundIconButton(
-                    icon: Icons.bar_chart,
-                    onPressed: () => _openGame(StatsScreen(auth: widget.auth)),
-                  ),
-                  _RoundIconButton(
-                    icon: Icons.qr_code,
-                    onPressed: _onEnterCodePressed,
-                  ),
-                  _RoundIconButton(
-                    icon: Icons.person,
-                    onPressed: () => _openGame(MyPageScreen(auth: widget.auth)),
-                  ),
-                  _RoundIconButton(
-                    icon: Icons.settings,
-                    onPressed: () =>
-                        showSettingsSheet(context, widget.settings),
-                  ),
-                ],
-              ).animate().fadeIn(duration: 250.ms),
-            ),
-            AnimatedBuilder(
-              animation: widget.auth,
-              builder: (context, _) {
-                final profile = widget.auth.profile;
-                if (profile == null) return const SizedBox.shrink();
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: GestureDetector(
-                    onTap: () => _openGame(MyPageScreen(auth: widget.auth)),
-                    child:
-                        TierBadge(tier: profile.tier, rating: profile.rating),
-                  ),
-                )
-                    .animate()
-                    .fadeIn(delay: 60.ms, duration: 250.ms)
-                    .slideY(begin: 0.08, curve: Curves.easeOutCubic);
-              },
-            ),
-            Expanded(
-              child: Padding(
-                // Matches GameScreen's grid padding/alignment exactly. Width
-                // is also pinned explicitly (rather than left to whatever
-                // height Expanded happens to have left after the wheel and
-                // buttons below) so this preview always renders at the same
-                // size and top position as the real grid it Hero's into,
-                // regardless of this screen's other content.
-                padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: SizedBox(
-                    width: MediaQuery.sizeOf(context).width - 8,
-                    child: Hero(
-                      // Paired with the same tag on SudokuGridWidget in
-                      // GameScreen so pushing into the game animates this
-                      // preview board growing into the real one.
-                      tag: 'sudoku-board',
-                      child: SudokuPreviewBoard(puzzle: previewPuzzle),
-                    ),
-                  ),
+        child: ListenableBuilder(
+          listenable: widget.puzzleQueue,
+          builder: (context, _) {
+            final previewPuzzle = widget.puzzleQueue.peek(selectedDifficulty);
+            final canStart =
+                widget.puzzleQueue.countFor(selectedDifficulty) > 0;
+            if (!canStart) {
+              widget.puzzleQueue.ensureRefillScheduled(selectedDifficulty);
+            }
+            return _buildContent(
+              context,
+              l10n,
+              selectedDifficulty,
+              previewPuzzle,
+              canStart,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    AppLocalizations l10n,
+    Difficulty selectedDifficulty,
+    SudokuPuzzle? previewPuzzle,
+    bool canStart,
+  ) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 12, 12, 0),
+          child: Row(
+            children: [
+              Text(
+                l10n.appTitle,
+                style: TextStyle(
+                  fontFamily: 'Jua',
+                  fontSize: 26,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const Spacer(),
+              _RoundIconButton(
+                icon: Icons.bar_chart,
+                onPressed: () => _openGame(StatsScreen(auth: widget.auth)),
+              ),
+              _RoundIconButton(
+                icon: Icons.qr_code,
+                onPressed: _onEnterCodePressed,
+              ),
+              _RoundIconButton(
+                icon: Icons.person,
+                onPressed: () => _openGame(MyPageScreen(auth: widget.auth)),
+              ),
+              _RoundIconButton(
+                icon: Icons.settings,
+                onPressed: () => showSettingsSheet(context, widget.settings),
+              ),
+            ],
+          ).animate().fadeIn(duration: 250.ms),
+        ),
+        AnimatedBuilder(
+          animation: widget.auth,
+          builder: (context, _) {
+            final profile = widget.auth.profile;
+            if (profile == null) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: GestureDetector(
+                onTap: () => _openGame(MyPageScreen(auth: widget.auth)),
+                child: TierBadge(tier: profile.tier, rating: profile.rating),
+              ),
+            )
+                .animate()
+                .fadeIn(delay: 60.ms, duration: 250.ms)
+                .slideY(begin: 0.08, curve: Curves.easeOutCubic);
+          },
+        ),
+        Expanded(
+          child: Padding(
+            // Matches GameScreen's grid padding/alignment exactly. Width
+            // is also pinned explicitly (rather than left to whatever
+            // height Expanded happens to have left after the wheel and
+            // buttons below) so this preview always renders at the same
+            // size and top position as the real grid it Hero's into,
+            // regardless of this screen's other content.
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: SizedBox(
+                width: MediaQuery.sizeOf(context).width - 8,
+                child: Hero(
+                  // Paired with the same tag on SudokuGridWidget in
+                  // GameScreen so pushing into the game animates this
+                  // preview board growing into the real one.
+                  tag: 'sudoku-board',
+                  child: SudokuPreviewBoard(puzzle: previewPuzzle),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 140,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Center selection band the wheel scrolls behind.
-                  IgnorePointer(
-                    child: Container(
-                      height: 44,
-                      margin: const EdgeInsets.symmetric(horizontal: 72),
-                      decoration: BoxDecoration(
-                        color: AppPalette.difficultyColor(
-                                selectedDifficulty, AppPalette.isDark(context))
-                            .withValues(alpha: 0.14),
-                        borderRadius: BorderRadius.circular(999),
+          ),
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 140,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Center selection band the wheel scrolls behind.
+              IgnorePointer(
+                child: Container(
+                  height: 44,
+                  margin: const EdgeInsets.symmetric(horizontal: 72),
+                  decoration: BoxDecoration(
+                    color: AppPalette.difficultyColor(
+                            selectedDifficulty, AppPalette.isDark(context))
+                        .withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+              ),
+              ListWheelScrollView(
+                controller: _wheelController,
+                itemExtent: 44,
+                diameterRatio: 1.8,
+                physics: const FixedExtentScrollPhysics(),
+                onSelectedItemChanged: (index) =>
+                    setState(() => _selectedIndex = index),
+                children: Difficulty.values.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final difficulty = entry.value;
+                  final isSelected = difficulty == selectedDifficulty;
+                  return GestureDetector(
+                    onTap: () => _selectDifficulty(index),
+                    child: Center(
+                      child: Text(
+                        difficulty.label(context),
+                        style: TextStyle(
+                          fontFamily: isSelected ? 'Jua' : null,
+                          fontSize: isSelected ? 20 : 16,
+                          color: isSelected
+                              ? AppPalette.difficultyColor(
+                                  difficulty, AppPalette.isDark(context))
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
-                  ),
-                  ListWheelScrollView(
-                    controller: _wheelController,
-                    itemExtent: 44,
-                    diameterRatio: 1.8,
-                    physics: const FixedExtentScrollPhysics(),
-                    onSelectedItemChanged: (index) =>
-                        setState(() => _selectedIndex = index),
-                    children: Difficulty.values.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final difficulty = entry.value;
-                      final isSelected = difficulty == selectedDifficulty;
-                      return GestureDetector(
-                        onTap: () => _selectDifficulty(index),
-                        child: Center(
-                          child: Text(
-                            difficulty.label(context),
-                            style: TextStyle(
-                              fontFamily: isSelected ? 'Jua' : null,
-                              fontSize: isSelected ? 20 : 16,
-                              color: isSelected
-                                  ? AppPalette.difficultyColor(
-                                      difficulty, AppPalette.isDark(context))
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
+                  );
+                }).toList(),
               ),
-            ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48),
-              child: PopButton(
-                onPressed: _onStartPressed,
-                label: l10n.startGame,
-                fontSize: 20,
-                expanded: true,
+            ],
+          ),
+        ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48),
+          child: PopButton(
+            onPressed: canStart ? _onStartPressed : null,
+            label: canStart ? l10n.startGame : l10n.generatingPuzzle,
+            loading: !canStart,
+            fontSize: 20,
+            expanded: true,
+          ),
+        )
+            .animate()
+            .fadeIn(delay: 180.ms, duration: 250.ms)
+            .slideY(begin: 0.08, curve: Curves.easeOutCubic),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            children: [
+              Expanded(
+                child: PopButton(
+                  onPressed: _onRacePressed,
+                  label: l10n.raceButton,
+                  icon: Icons.sports_esports,
+                  color: AppPalette.raceCoral,
+                  variant: PopButtonVariant.secondary,
+                  fontSize: 16,
+                  expanded: true,
+                ),
               ),
-            )
-                .animate()
-                .fadeIn(delay: 180.ms, duration: 250.ms)
-                .slideY(begin: 0.08, curve: Curves.easeOutCubic),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: PopButton(
-                      onPressed: _onRacePressed,
-                      label: l10n.raceButton,
-                      icon: Icons.sports_esports,
-                      color: AppPalette.raceCoral,
-                      variant: PopButtonVariant.secondary,
-                      fontSize: 16,
-                      expanded: true,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: PopButton(
-                      onPressed: () => _openGame(DailyEntryScreen(
-                          auth: widget.auth, puzzleQueue: widget.puzzleQueue)),
-                      label: l10n.dailyButton,
-                      icon: Icons.today,
-                      color: AppPalette.dailyTeal,
-                      variant: PopButtonVariant.secondary,
-                      fontSize: 16,
-                      expanded: true,
-                    ),
-                  ),
-                ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: PopButton(
+                  onPressed: () => _openGame(DailyEntryScreen(
+                      auth: widget.auth, puzzleQueue: widget.puzzleQueue)),
+                  label: l10n.dailyButton,
+                  icon: Icons.today,
+                  color: AppPalette.dailyTeal,
+                  variant: PopButtonVariant.secondary,
+                  fontSize: 16,
+                  expanded: true,
+                ),
               ),
-            )
-                .animate()
-                .fadeIn(delay: 240.ms, duration: 250.ms)
-                .slideY(begin: 0.08, curve: Curves.easeOutCubic),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
+            ],
+          ),
+        )
+            .animate()
+            .fadeIn(delay: 240.ms, duration: 250.ms)
+            .slideY(begin: 0.08, curve: Curves.easeOutCubic),
+        const SizedBox(height: 16),
+      ],
     );
   }
 

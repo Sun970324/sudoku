@@ -10,6 +10,7 @@
   "cancelAction": "Cancel",
 
   "startGame": "Start",
+  "generatingPuzzle": "Generating...",
   "privacyPolicyTitle": "Privacy Policy",
   "termsOfServiceTitle": "Terms of Service",
   "raceButton": "Race",
@@ -19,6 +20,8 @@
   "darkTheme": "Dark Mode",
   "hapticsLabel": "Vibration",
   "soundLabel": "Sound Effects",
+  "wrongNoteWarningLabel": "Warn on Wrong Notes",
+  "autoRemoveNotesLabel": "Auto-clear Notes on Confirm",
   "languageSectionTitle": "Language",
   "followSystemLanguage": "Follow System",
   "koreanLanguage": "한국어",
