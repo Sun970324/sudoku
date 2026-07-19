@@ -4,18 +4,22 @@ import 'package:flutter/material.dart';
 
 /// A compact single-series line chart of a player's rating over time.
 /// Single series, so no legend — the card title names it; only the first
-/// and last values are directly labelled (never every point). [values] is
-/// the full chronological series including the pre-first-race baseline, and
-/// must hold at least two points.
+/// and last points are directly labelled (never every point): each end's
+/// rating above, and the earliest/latest race date below. [values] is the
+/// full chronological series including the pre-first-race baseline, and must
+/// hold at least two points. [dates] is aligned with [values] (same length),
+/// with a null for the baseline point, which precedes any real race.
 class RatingTrendChart extends StatelessWidget {
   const RatingTrendChart({
     super.key,
     required this.values,
+    required this.dates,
     required this.color,
     this.height = 140,
   });
 
   final List<int> values;
+  final List<DateTime?> dates;
   final Color color;
   final double height;
 
@@ -28,6 +32,7 @@ class RatingTrendChart extends StatelessWidget {
       child: CustomPaint(
         painter: _RatingTrendPainter(
           values: values,
+          dates: dates,
           color: color,
           labelColor: labelColor,
         ),
@@ -39,11 +44,13 @@ class RatingTrendChart extends StatelessWidget {
 class _RatingTrendPainter extends CustomPainter {
   _RatingTrendPainter({
     required this.values,
+    required this.dates,
     required this.color,
     required this.labelColor,
   });
 
   final List<int> values;
+  final List<DateTime?> dates;
   final Color color;
   final Color labelColor;
 
@@ -113,6 +120,22 @@ class _RatingTrendPainter extends CustomPainter {
     // Direct labels: first value above its dot, last value above its dot.
     _drawLabel(canvas, '${values.first}', points.first, size, alignEnd: false);
     _drawLabel(canvas, '${values.last}', points.last, size, alignEnd: true);
+
+    // X-axis dates: earliest race date bottom-left, latest bottom-right (the
+    // baseline point carries no date). One race → just the single date.
+    final firstDate = dates.firstWhere((d) => d != null, orElse: () => null);
+    final lastDate = dates.lastWhere((d) => d != null, orElse: () => null);
+    if (firstDate != null) {
+      _drawBottomLabel(canvas, _formatDate(firstDate), size, alignEnd: false);
+    }
+    if (lastDate != null && lastDate != firstDate) {
+      _drawBottomLabel(canvas, _formatDate(lastDate), size, alignEnd: true);
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    final local = date.toLocal();
+    return '${local.month}.${local.day}';
   }
 
   void _drawLabel(Canvas canvas, String text, Offset at, Size size,
@@ -136,7 +159,23 @@ class _RatingTrendPainter extends CustomPainter {
     tp.paint(canvas, Offset(dx, dy));
   }
 
+  void _drawBottomLabel(Canvas canvas, String text, Size size,
+      {required bool alignEnd}) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(color: labelColor, fontSize: 11),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    final dx = alignEnd ? size.width - tp.width : 0.0;
+    tp.paint(canvas, Offset(dx, size.height - tp.height));
+  }
+
   @override
   bool shouldRepaint(_RatingTrendPainter old) =>
-      old.values != values || old.color != color || old.labelColor != labelColor;
+      old.values != values ||
+      old.dates != dates ||
+      old.color != color ||
+      old.labelColor != labelColor;
 }

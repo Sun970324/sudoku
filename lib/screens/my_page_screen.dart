@@ -134,6 +134,10 @@ class _RatingTrendCard extends StatelessWidget {
           points.first.ratingBefore,
           for (final p in points) p.rating,
         ];
+        final dates = <DateTime?>[
+          null,
+          for (final p in points) p.finishedAt,
+        ];
         return Padding(
           padding: const EdgeInsets.only(top: 16),
           child: PopCard(
@@ -144,7 +148,7 @@ class _RatingTrendCard extends StatelessWidget {
                 Text(l10n.ratingTrendTitle,
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
-                RatingTrendChart(values: values, color: color),
+                RatingTrendChart(values: values, dates: dates, color: color),
               ],
             ),
           ),
