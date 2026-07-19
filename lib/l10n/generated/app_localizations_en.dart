@@ -165,6 +165,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsTitle => 'Stats';
 
   @override
+  String get dailyCalendarSignInHint =>
+      'Sign in to see your daily sudoku history.';
+
+  @override
+  String get dailyCalendarLoadError => 'Couldn\'t load your daily history.';
+
+  @override
+  String dailyCalendarDayDetail(int month, int day, String time, int mistakes) {
+    return '$month/$day · $time · $mistakes mistakes';
+  }
+
+  @override
   String get statsCompletedLabel => 'Completed';
 
   @override

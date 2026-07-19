@@ -84,6 +84,17 @@
   },
 
   "statsTitle": "Stats",
+  "dailyCalendarSignInHint": "Sign in to see your daily sudoku history.",
+  "dailyCalendarLoadError": "Couldn't load your daily history.",
+  "dailyCalendarDayDetail": "{month}/{day} · {time} · {mistakes} mistakes",
+  "@dailyCalendarDayDetail": {
+    "placeholders": {
+      "month": {"type": "int"},
+      "day": {"type": "int"},
+      "time": {"type": "String"},
+      "mistakes": {"type": "int"}
+    }
+  },
   "statsCompletedLabel": "Completed",
   "statsPerfectLabel": "Perfect clears",
   "statsAverageLabel": "Average time",

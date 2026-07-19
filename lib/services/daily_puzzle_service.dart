@@ -54,4 +54,24 @@ class DailyPuzzleService {
     final result = await _client.rpc('get_daily_leaderboard');
     return DailyLeaderboard.fromJson((result as Map).cast<String, dynamic>());
   }
+
+  /// The caller's own completions in [from]..[to] (inclusive), for the
+  /// calendar. Dates are sent as `yyyy-MM-dd`; the server caps the range.
+  Future<List<DailyHistoryEntry>> fetchMyHistory({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    String ymd(DateTime d) =>
+        '${d.year.toString().padLeft(4, '0')}-'
+        '${d.month.toString().padLeft(2, '0')}-'
+        '${d.day.toString().padLeft(2, '0')}';
+    final result = await _client.rpc('get_my_daily_history', params: {
+      'p_from': ymd(from),
+      'p_to': ymd(to),
+    });
+    return (result as List)
+        .map((e) =>
+            DailyHistoryEntry.fromJson((e as Map).cast<String, dynamic>()))
+        .toList();
+  }
 }

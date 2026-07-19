@@ -162,6 +162,17 @@ class AppLocalizationsKo extends AppLocalizations {
   String get statsTitle => '기록';
 
   @override
+  String get dailyCalendarSignInHint => '로그인하면 데일리 스도쿠 기록이 표시됩니다.';
+
+  @override
+  String get dailyCalendarLoadError => '데일리 기록을 불러오지 못했어요.';
+
+  @override
+  String dailyCalendarDayDetail(int month, int day, String time, int mistakes) {
+    return '$month월 $day일 · $time · 실수 $mistakes';
+  }
+
+  @override
   String get statsCompletedLabel => '완료 횟수';
 
   @override

@@ -70,3 +70,25 @@ class DailyLeaderboard {
 
   bool get completedToday => myRank != null;
 }
+
+/// One past daily completion by the caller, from `get_my_daily_history` —
+/// powers the completion calendar. [date] is the puzzle's KST date, mapped
+/// verbatim (no timezone conversion — the server's date is authoritative).
+class DailyHistoryEntry {
+  const DailyHistoryEntry({
+    required this.date,
+    required this.elapsedSeconds,
+    required this.mistakes,
+  });
+
+  factory DailyHistoryEntry.fromJson(Map<String, dynamic> json) =>
+      DailyHistoryEntry(
+        date: DateTime.parse(json['puzzle_date'] as String),
+        elapsedSeconds: json['elapsed_seconds'] as int,
+        mistakes: json['mistakes'] as int,
+      );
+
+  final DateTime date;
+  final int elapsedSeconds;
+  final int mistakes;
+}

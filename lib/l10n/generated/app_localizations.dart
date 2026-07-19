@@ -380,6 +380,24 @@ abstract class AppLocalizations {
   /// **'Stats'**
   String get statsTitle;
 
+  /// No description provided for @dailyCalendarSignInHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see your daily sudoku history.'**
+  String get dailyCalendarSignInHint;
+
+  /// No description provided for @dailyCalendarLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your daily history.'**
+  String get dailyCalendarLoadError;
+
+  /// No description provided for @dailyCalendarDayDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{month}/{day} · {time} · {mistakes} mistakes'**
+  String dailyCalendarDayDetail(int month, int day, String time, int mistakes);
+
   /// No description provided for @statsCompletedLabel.
   ///
   /// In en, this message translates to:

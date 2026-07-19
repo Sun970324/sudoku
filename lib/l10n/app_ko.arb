@@ -52,6 +52,9 @@
   "techniqueUsageCount": "{count}회",
 
   "statsTitle": "기록",
+  "dailyCalendarSignInHint": "로그인하면 데일리 스도쿠 기록이 표시됩니다.",
+  "dailyCalendarLoadError": "데일리 기록을 불러오지 못했어요.",
+  "dailyCalendarDayDetail": "{month}월 {day}일 · {time} · 실수 {mistakes}",
   "statsCompletedLabel": "완료 횟수",
   "statsPerfectLabel": "퍼펙트 횟수",
   "statsAverageLabel": "평균 기록",

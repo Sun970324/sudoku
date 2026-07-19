@@ -9,6 +9,7 @@ import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
 import '../widgets/gradient_scaffold.dart';
 import '../widgets/pop_card.dart';
+import 'stats/daily_calendar_card.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key, required this.auth});
@@ -71,6 +72,8 @@ class _StatsScreenState extends State<StatsScreen>
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              DailyCalendarCard(auth: widget.auth),
+              const SizedBox(height: 16),
               TabBar(
                 controller: _tabController,
                 isScrollable: true,
