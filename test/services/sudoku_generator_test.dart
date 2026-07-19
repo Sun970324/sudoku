@@ -109,6 +109,18 @@ void main() {
           expect(givenCount, lessThanOrEqualTo(81));
         });
 
+        if (difficulty == Difficulty.expert) {
+          test('expert is held to a sparser givens cap (require.md #5) — '
+              'at most 23, via the acceptance condition in '
+              '_generateByTechnique', () {
+            final givenCount = puzzle.puzzle.cells
+                .expand((row) => row)
+                .where((value) => value != 0)
+                .length;
+            expect(givenCount, lessThanOrEqualTo(23));
+          });
+        }
+
         test('the returned puzzle is conditionally minimal — no remaining '
             'given can be removed without either breaking uniqueness or '
             'exceeding the target difficulty', () {
