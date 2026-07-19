@@ -262,23 +262,24 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ).animate().fadeIn(duration: 250.ms),
         ),
-        AnimatedBuilder(
-          animation: widget.auth,
-          builder: (context, _) {
-            final profile = widget.auth.profile;
-            if (profile == null) return const SizedBox.shrink();
-            return Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: GestureDetector(
-                onTap: () => _openGame(MyPageScreen(auth: widget.auth)),
-                child: TierBadge(tier: profile.tier, rating: profile.rating),
-              ),
-            )
-                .animate()
-                .fadeIn(delay: 60.ms, duration: 250.ms)
-                .slideY(begin: 0.08, curve: Curves.easeOutCubic);
-          },
-        ),
+        const SizedBox(height: 12),
+        // AnimatedBuilder(
+        //   animation: widget.auth,
+        //   builder: (context, _) {
+        //     final profile = widget.auth.profile;
+        //     if (profile == null) return const SizedBox.shrink();
+        //     return Padding(
+        //       padding: const EdgeInsets.only(top: 8),
+        //       child: GestureDetector(
+        //         onTap: () => _openGame(MyPageScreen(auth: widget.auth)),
+        //         child: TierBadge(tier: profile.tier, rating: profile.rating),
+        //       ),
+        //     )
+        //         .animate()
+        //         .fadeIn(delay: 60.ms, duration: 250.ms)
+        //         .slideY(begin: 0.08, curve: Curves.easeOutCubic);
+        //   },
+        // ),
         Expanded(
           child: Padding(
             // Matches GameScreen's grid padding/alignment exactly. Width
@@ -297,13 +298,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   // GameScreen so pushing into the game animates this
                   // preview board growing into the real one.
                   tag: 'sudoku-board',
+                  // During the flight the board is reparented into the
+                  // Overlay, losing the Material/DefaultTextStyle ancestor
+                  // that supplies the cell text style — so the number Texts
+                  // fall back to the framework default (yellow underline,
+                  // visible in release too). Re-supplying a transparent
+                  // Material restores a proper text style. Defined only here
+                  // yet covers both directions: on push GameScreen's Hero has
+                  // no shuttle builder, so the flight falls back to this one.
+                  flightShuttleBuilder: (flightContext, animation,
+                      flightDirection, fromHeroContext, toHeroContext) {
+                    return Material(
+                      type: MaterialType.transparency,
+                      child: toHeroContext.widget,
+                    );
+                  },
                   child: SudokuPreviewBoard(puzzle: previewPuzzle),
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 16),
         SizedBox(
           height: 140,
           child: Stack(
