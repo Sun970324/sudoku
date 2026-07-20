@@ -14,10 +14,10 @@ Tier tierFromName(String name) =>
 extension TierInfo on Tier {
   /// The minimum rating at which this tier's band begins, mirroring the
   /// server's `tier_for_rating` thresholds (supabase migration 0008) — keep
-  /// the two in sync. Note `challenger` is NOT reachable by rating alone
-  /// server-side (it's leaderboard-gated: only kept while already challenger
-  /// and rating >= 1900), so 1900 here is purely the challenger score line
-  /// used to show "points remaining" for a master, not an auto-promotion.
+  /// the two in sync. Note `challenger` is NOT reachable by rating alone:
+  /// a daily server job (migration 0019) crowns the top 10 players at
+  /// rating >= 1900, so 1900 here is the qualifying line shown to a master,
+  /// not an automatic promotion threshold.
   int get minRating => switch (this) {
         Tier.bronze => 0,
         Tier.silver => 1100,

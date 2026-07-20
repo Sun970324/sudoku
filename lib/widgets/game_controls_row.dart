@@ -17,6 +17,8 @@ class GameControlsRow extends StatelessWidget {
     this.canAutoFillNotes = false,
     this.onAutoFillNotes,
     this.showAssists = true,
+    this.noteButtonKey,
+    this.hintButtonKey,
   });
 
   final bool canUndo;
@@ -28,6 +30,10 @@ class GameControlsRow extends StatelessWidget {
   final VoidCallback? onHint;
   final bool canAutoFillNotes;
   final VoidCallback? onAutoFillNotes;
+
+  /// Tutorial coach-mark anchors for the note-mode toggle and hint button.
+  final Key? noteButtonKey;
+  final Key? hintButtonKey;
 
   /// The rewarded-ad assist actions (auto-fill notes + hint). Hidden in
   /// races, which offer neither — leaving them visible showed a dead hint
@@ -53,6 +59,7 @@ class GameControlsRow extends StatelessWidget {
           onPressed: canErase ? onErase : null,
         ),
         _ControlButton(
+          key: noteButtonKey,
           icon: PixelIcons.editNote,
           label: l10n.noteLabel,
           onPressed: onToggleNoteMode,
@@ -68,6 +75,7 @@ class GameControlsRow extends StatelessWidget {
             showAdBadge: true,
           ),
           _ControlButton(
+            key: hintButtonKey,
             icon: PixelIcons.lightbulb,
             label: l10n.hintLabel,
             onPressed: onHint,
@@ -81,6 +89,7 @@ class GameControlsRow extends StatelessWidget {
 
 class _ControlButton extends StatelessWidget {
   const _ControlButton({
+    super.key,
     required this.icon,
     required this.label,
     required this.onPressed,
@@ -154,7 +163,7 @@ class _ControlButton extends StatelessWidget {
                           color: BoardColors.adBadgeBorder(isDark), width: 1.5),
                     ),
                     child: const Icon(
-                      PixelIcons.play,
+                      PixelIcons.ad,
                       size: 10,
                       color: Colors.white,
                     ),

@@ -140,6 +140,198 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancelAction;
 
+  /// No description provided for @tutorialNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get tutorialNext;
+
+  /// No description provided for @tutorialSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get tutorialSkip;
+
+  /// No description provided for @tutorialDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get tutorialDone;
+
+  /// No description provided for @tutorialReplayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay tutorial'**
+  String get tutorialReplayLabel;
+
+  /// No description provided for @tutorialHomeDifficultyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a difficulty'**
+  String get tutorialHomeDifficultyTitle;
+
+  /// No description provided for @tutorialHomeDifficultyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Spin this wheel to choose how hard your puzzle will be.'**
+  String get tutorialHomeDifficultyBody;
+
+  /// No description provided for @tutorialHomeStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start playing'**
+  String get tutorialHomeStartTitle;
+
+  /// No description provided for @tutorialHomeStartBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to begin a new puzzle at the difficulty you picked.'**
+  String get tutorialHomeStartBody;
+
+  /// No description provided for @tutorialHomeIconsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top menu'**
+  String get tutorialHomeIconsTitle;
+
+  /// No description provided for @tutorialHomeIconsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'These icons open stats, enter a shared puzzle code, your profile, and settings.'**
+  String get tutorialHomeIconsBody;
+
+  /// No description provided for @tutorialHomeRaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race'**
+  String get tutorialHomeRaceTitle;
+
+  /// No description provided for @tutorialHomeRaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Take on a friend or other players in a real-time sudoku match.'**
+  String get tutorialHomeRaceBody;
+
+  /// No description provided for @tutorialHomeDailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get tutorialHomeDailyTitle;
+
+  /// No description provided for @tutorialHomeDailyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve today\'s puzzle and check where you rank.'**
+  String get tutorialHomeDailyBody;
+
+  /// No description provided for @tutorialGameGridTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The board'**
+  String get tutorialGameGridTitle;
+
+  /// No description provided for @tutorialGameGridBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap an empty cell to select it, then choose a number to fill it in.'**
+  String get tutorialGameGridBody;
+
+  /// No description provided for @tutorialGameNumbersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter numbers'**
+  String get tutorialGameNumbersTitle;
+
+  /// No description provided for @tutorialGameNumbersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a number here to place it in the selected cell.'**
+  String get tutorialGameNumbersBody;
+
+  /// No description provided for @tutorialGameNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Note mode'**
+  String get tutorialGameNoteTitle;
+
+  /// No description provided for @tutorialGameNoteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn this on to pencil in small candidate numbers before committing.'**
+  String get tutorialGameNoteBody;
+
+  /// No description provided for @tutorialGameHintTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Need a hand?'**
+  String get tutorialGameHintTitle;
+
+  /// No description provided for @tutorialGameHintBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Stuck? Get a hint by watching a short ad — the badge marks ad-gated helpers.'**
+  String get tutorialGameHintBody;
+
+  /// No description provided for @tutorialGameMistakesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mistake limit'**
+  String get tutorialGameMistakesTitle;
+
+  /// No description provided for @tutorialGameMistakesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The game ends after 3 mistakes, so place each number carefully.'**
+  String get tutorialGameMistakesBody;
+
+  /// No description provided for @tutorialRaceProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your standing'**
+  String get tutorialRaceProfileTitle;
+
+  /// No description provided for @tutorialRaceProfileBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tier, rating, and win-loss record show up here.'**
+  String get tutorialRaceProfileBody;
+
+  /// No description provided for @tutorialRaceFriendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play a friend'**
+  String get tutorialRaceFriendTitle;
+
+  /// No description provided for @tutorialRaceFriendBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a room code to race a friend one-on-one.'**
+  String get tutorialRaceFriendBody;
+
+  /// No description provided for @tutorialRaceRankedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked match'**
+  String get tutorialRaceRankedTitle;
+
+  /// No description provided for @tutorialRaceRankedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Get matched with a similar opponent — your tier sets the difficulty.'**
+  String get tutorialRaceRankedBody;
+
+  /// No description provided for @tutorialRaceLeaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get tutorialRaceLeaderboardTitle;
+
+  /// No description provided for @tutorialRaceLeaderboardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'See how you rank against everyone else.'**
+  String get tutorialRaceLeaderboardBody;
+
   /// No description provided for @startGame.
   ///
   /// In en, this message translates to:
@@ -335,8 +527,68 @@ abstract class AppLocalizations {
   /// No description provided for @perfectClearBadge.
   ///
   /// In en, this message translates to:
-  /// **'No Mistakes! Perfect Clear'**
+  /// **'Perfect Clear'**
   String get perfectClearBadge;
+
+  /// No description provided for @perfectClearFlavor1.
+  ///
+  /// In en, this message translates to:
+  /// **'Hint? What\'s that? 😎'**
+  String get perfectClearFlavor1;
+
+  /// No description provided for @perfectClearFlavor2.
+  ///
+  /// In en, this message translates to:
+  /// **'You didn\'t even give yourself a chance to mess up.'**
+  String get perfectClearFlavor2;
+
+  /// No description provided for @perfectClearFlavor3.
+  ///
+  /// In en, this message translates to:
+  /// **'The numbers practically lined themselves up.'**
+  String get perfectClearFlavor3;
+
+  /// No description provided for @perfectClearFlavor4.
+  ///
+  /// In en, this message translates to:
+  /// **'Was 9×9 too easy for you?'**
+  String get perfectClearFlavor4;
+
+  /// No description provided for @perfectClearFlavor5.
+  ///
+  /// In en, this message translates to:
+  /// **'The puzzle never stood a chance. 🏆'**
+  String get perfectClearFlavor5;
+
+  /// No description provided for @perfectClearFlavor6.
+  ///
+  /// In en, this message translates to:
+  /// **'Okay, that\'s almost unfair.'**
+  String get perfectClearFlavor6;
+
+  /// No description provided for @perfectClearFlavor7.
+  ///
+  /// In en, this message translates to:
+  /// **'The numbers were on your side today.'**
+  String get perfectClearFlavor7;
+
+  /// No description provided for @perfectClearFlavor8.
+  ///
+  /// In en, this message translates to:
+  /// **'9 numbers. 81 cells. 0 mistakes.'**
+  String get perfectClearFlavor8;
+
+  /// No description provided for @perfectClearFlavor9.
+  ///
+  /// In en, this message translates to:
+  /// **'The hint button is out of a job today.'**
+  String get perfectClearFlavor9;
+
+  /// No description provided for @perfectClearFlavor10.
+  ///
+  /// In en, this message translates to:
+  /// **'Certified Sudoku Master! 👑'**
+  String get perfectClearFlavor10;
 
   /// No description provided for @mistakesAndHints.
   ///
@@ -1179,6 +1431,54 @@ abstract class AppLocalizations {
   /// **'Couldn\'t load the ranking.'**
   String get leaderboardLoadFailed;
 
+  /// No description provided for @seasonName.
+  ///
+  /// In en, this message translates to:
+  /// **'Season {number}'**
+  String seasonName(int number);
+
+  /// No description provided for @seasonDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'D-{days}'**
+  String seasonDaysLeft(int days);
+
+  /// No description provided for @pastSeasonsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Seasons'**
+  String get pastSeasonsTitle;
+
+  /// No description provided for @seasonStandingDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'#{rank} · {wins}W {losses}L'**
+  String seasonStandingDetail(int rank, int wins, int losses);
+
+  /// No description provided for @placementProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Placements {played}/{total}'**
+  String placementProgress(int played, int total);
+
+  /// No description provided for @seasonEndedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Season {number} Complete!'**
+  String seasonEndedTitle(int number);
+
+  /// No description provided for @seasonEndedNewStart.
+  ///
+  /// In en, this message translates to:
+  /// **'A new season has begun — you restart at rating {rating}!'**
+  String seasonEndedNewStart(int rating);
+
+  /// No description provided for @okAction.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get okAction;
+
   /// No description provided for @friendMatchTitle.
   ///
   /// In en, this message translates to:
@@ -1274,6 +1574,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Checking readiness...'**
   String get matchmakingReadyCheck;
+
+  /// No description provided for @matchmakingTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve today\'s Daily puzzle and check where you rank.'**
+  String get matchmakingTip1;
+
+  /// No description provided for @matchmakingTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish a puzzle with no hints and no mistakes for a Perfect Clear.'**
+  String get matchmakingTip2;
+
+  /// No description provided for @matchmakingTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'In ranked matches, the puzzle difficulty is set by your tier.'**
+  String get matchmakingTip3;
+
+  /// No description provided for @matchmakingTip4.
+  ///
+  /// In en, this message translates to:
+  /// **'Use note mode to pencil in candidate numbers and solve faster.'**
+  String get matchmakingTip4;
+
+  /// No description provided for @matchmakingTip5.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a room code to race a friend one-on-one.'**
+  String get matchmakingTip5;
+
+  /// No description provided for @matchmakingTip6.
+  ///
+  /// In en, this message translates to:
+  /// **'Win races to raise your rating and climb to a higher tier.'**
+  String get matchmakingTip6;
 
   /// No description provided for @raceAbortConfirmTitle.
   ///

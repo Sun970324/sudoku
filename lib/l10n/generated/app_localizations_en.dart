@@ -30,6 +30,116 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelAction => 'Cancel';
 
   @override
+  String get tutorialNext => 'Next';
+
+  @override
+  String get tutorialSkip => 'Skip';
+
+  @override
+  String get tutorialDone => 'Got it';
+
+  @override
+  String get tutorialReplayLabel => 'Replay tutorial';
+
+  @override
+  String get tutorialHomeDifficultyTitle => 'Pick a difficulty';
+
+  @override
+  String get tutorialHomeDifficultyBody =>
+      'Spin this wheel to choose how hard your puzzle will be.';
+
+  @override
+  String get tutorialHomeStartTitle => 'Start playing';
+
+  @override
+  String get tutorialHomeStartBody =>
+      'Tap here to begin a new puzzle at the difficulty you picked.';
+
+  @override
+  String get tutorialHomeIconsTitle => 'Top menu';
+
+  @override
+  String get tutorialHomeIconsBody =>
+      'These icons open stats, enter a shared puzzle code, your profile, and settings.';
+
+  @override
+  String get tutorialHomeRaceTitle => 'Race';
+
+  @override
+  String get tutorialHomeRaceBody =>
+      'Take on a friend or other players in a real-time sudoku match.';
+
+  @override
+  String get tutorialHomeDailyTitle => 'Daily';
+
+  @override
+  String get tutorialHomeDailyBody =>
+      'Solve today\'s puzzle and check where you rank.';
+
+  @override
+  String get tutorialGameGridTitle => 'The board';
+
+  @override
+  String get tutorialGameGridBody =>
+      'Tap an empty cell to select it, then choose a number to fill it in.';
+
+  @override
+  String get tutorialGameNumbersTitle => 'Enter numbers';
+
+  @override
+  String get tutorialGameNumbersBody =>
+      'Tap a number here to place it in the selected cell.';
+
+  @override
+  String get tutorialGameNoteTitle => 'Note mode';
+
+  @override
+  String get tutorialGameNoteBody =>
+      'Turn this on to pencil in small candidate numbers before committing.';
+
+  @override
+  String get tutorialGameHintTitle => 'Need a hand?';
+
+  @override
+  String get tutorialGameHintBody =>
+      'Stuck? Get a hint by watching a short ad — the badge marks ad-gated helpers.';
+
+  @override
+  String get tutorialGameMistakesTitle => 'Mistake limit';
+
+  @override
+  String get tutorialGameMistakesBody =>
+      'The game ends after 3 mistakes, so place each number carefully.';
+
+  @override
+  String get tutorialRaceProfileTitle => 'Your standing';
+
+  @override
+  String get tutorialRaceProfileBody =>
+      'Your tier, rating, and win-loss record show up here.';
+
+  @override
+  String get tutorialRaceFriendTitle => 'Play a friend';
+
+  @override
+  String get tutorialRaceFriendBody =>
+      'Share a room code to race a friend one-on-one.';
+
+  @override
+  String get tutorialRaceRankedTitle => 'Ranked match';
+
+  @override
+  String get tutorialRaceRankedBody =>
+      'Get matched with a similar opponent — your tier sets the difficulty.';
+
+  @override
+  String get tutorialRaceLeaderboardTitle => 'Leaderboard';
+
+  @override
+  String get tutorialRaceLeaderboardBody =>
+      'See how you rank against everyone else.';
+
+  @override
   String get startGame => 'Start';
 
   @override
@@ -133,7 +243,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resultTitle => 'Result';
 
   @override
-  String get perfectClearBadge => 'No Mistakes! Perfect Clear';
+  String get perfectClearBadge => 'Perfect Clear';
+
+  @override
+  String get perfectClearFlavor1 => 'Hint? What\'s that? 😎';
+
+  @override
+  String get perfectClearFlavor2 =>
+      'You didn\'t even give yourself a chance to mess up.';
+
+  @override
+  String get perfectClearFlavor3 =>
+      'The numbers practically lined themselves up.';
+
+  @override
+  String get perfectClearFlavor4 => 'Was 9×9 too easy for you?';
+
+  @override
+  String get perfectClearFlavor5 => 'The puzzle never stood a chance. 🏆';
+
+  @override
+  String get perfectClearFlavor6 => 'Okay, that\'s almost unfair.';
+
+  @override
+  String get perfectClearFlavor7 => 'The numbers were on your side today.';
+
+  @override
+  String get perfectClearFlavor8 => '9 numbers. 81 cells. 0 mistakes.';
+
+  @override
+  String get perfectClearFlavor9 => 'The hint button is out of a job today.';
+
+  @override
+  String get perfectClearFlavor10 => 'Certified Sudoku Master! 👑';
 
   @override
   String mistakesAndHints(int mistakes, int hints) {
@@ -658,6 +800,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get leaderboardLoadFailed => 'Couldn\'t load the ranking.';
 
   @override
+  String seasonName(int number) {
+    return 'Season $number';
+  }
+
+  @override
+  String seasonDaysLeft(int days) {
+    return 'D-$days';
+  }
+
+  @override
+  String get pastSeasonsTitle => 'Past Seasons';
+
+  @override
+  String seasonStandingDetail(int rank, int wins, int losses) {
+    return '#$rank · ${wins}W ${losses}L';
+  }
+
+  @override
+  String placementProgress(int played, int total) {
+    return 'Placements $played/$total';
+  }
+
+  @override
+  String seasonEndedTitle(int number) {
+    return 'Season $number Complete!';
+  }
+
+  @override
+  String seasonEndedNewStart(int rating) {
+    return 'A new season has begun — you restart at rating $rating!';
+  }
+
+  @override
+  String get okAction => 'OK';
+
+  @override
   String get friendMatchTitle => 'Play with a Friend';
 
   @override
@@ -706,6 +884,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get matchmakingReadyCheck => 'Checking readiness...';
+
+  @override
+  String get matchmakingTip1 =>
+      'Solve today\'s Daily puzzle and check where you rank.';
+
+  @override
+  String get matchmakingTip2 =>
+      'Finish a puzzle with no hints and no mistakes for a Perfect Clear.';
+
+  @override
+  String get matchmakingTip3 =>
+      'In ranked matches, the puzzle difficulty is set by your tier.';
+
+  @override
+  String get matchmakingTip4 =>
+      'Use note mode to pencil in candidate numbers and solve faster.';
+
+  @override
+  String get matchmakingTip5 =>
+      'Share a room code to race a friend one-on-one.';
+
+  @override
+  String get matchmakingTip6 =>
+      'Win races to raise your rating and climb to a higher tier.';
 
   @override
   String get raceAbortConfirmTitle => 'Give up the race?';

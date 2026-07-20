@@ -36,9 +36,10 @@ class NumberPadWidget extends StatelessWidget {
                     style: TextStyle(
                         fontFamily: AppTheme.systemFontFamily,
                         fontSize: 11,
+                        // fontWeight: FontWeight.w600,
                         color: BoardColors.remainingCountText(isDark)),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                 ],
                 _NumberPadButton(
                   number: number,

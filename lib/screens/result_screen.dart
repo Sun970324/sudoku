@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
@@ -22,7 +24,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 /// reference — so it stays valid even after the game screen that produced
 /// it is disposed.
 class ResultScreen extends StatelessWidget {
-  const ResultScreen({
+  ResultScreen({
     super.key,
     required this.difficulty,
     required this.elapsedSeconds,
@@ -32,7 +34,7 @@ class ResultScreen extends StatelessWidget {
     required this.isNewBest,
     required this.previousBestSeconds,
     required this.puzzle,
-  });
+  }) : _flavorIndex = Random().nextInt(_perfectFlavorCount);
 
   final Difficulty difficulty;
   final int elapsedSeconds;
@@ -42,6 +44,27 @@ class ResultScreen extends StatelessWidget {
   final bool isNewBest;
   final int? previousBestSeconds;
   final SudokuPuzzle puzzle;
+
+  /// Number of random flavor lines shown on a perfect clear — must match the
+  /// perfectClearFlavor1..N keys in the arb files.
+  static const int _perfectFlavorCount = 10;
+
+  /// Picked once at construction (one per completed game) so the phrase stays
+  /// stable across rebuilds instead of reshuffling on every repaint.
+  final int _flavorIndex;
+
+  List<String> _perfectFlavors(AppLocalizations l10n) => [
+        l10n.perfectClearFlavor1,
+        l10n.perfectClearFlavor2,
+        l10n.perfectClearFlavor3,
+        l10n.perfectClearFlavor4,
+        l10n.perfectClearFlavor5,
+        l10n.perfectClearFlavor6,
+        l10n.perfectClearFlavor7,
+        l10n.perfectClearFlavor8,
+        l10n.perfectClearFlavor9,
+        l10n.perfectClearFlavor10,
+      ];
 
   static String _formatTime(int seconds) {
     final minutes = seconds ~/ 60;
@@ -64,6 +87,9 @@ class ResultScreen extends StatelessWidget {
           .compareTo(humanSolverTechniqueOrder.indexOf(b.key)));
 
     final accent = AppPalette.difficultyColor(difficulty, isDark);
+    final isPerfect = mistakes == 0 && hintsUsed == 0;
+    final perfectFlavor =
+        isPerfect ? _perfectFlavors(l10n)[_flavorIndex] : null;
     return GradientScaffold(
       appBar: AppBar(
         title: Text(l10n.resultTitle),
@@ -75,84 +101,96 @@ class ResultScreen extends StatelessWidget {
         ],
       ),
       body: CelebrationOverlay(
-        big: mistakes == 0,
+        big: isPerfect,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-          Center(
-            child: Column(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    difficulty.label(context),
-                    style: TextStyle(
-                        fontFamily: 'Mulmaru', fontSize: 16, color: accent),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _formatTime(elapsedSeconds),
-                  style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 56),
-                )
-                    .animate()
-                    .scale(
-                        begin: const Offset(0.8, 0.8),
-                        curve: Curves.elasticOut,
-                        duration: 600.ms),
-                if (mistakes == 0) ...[
-                  const SizedBox(height: 8),
+            Center(
+              child: Column(
+                children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [
-                        Color(0xFFFFD24A),
-                        Color(0xFFFFA726),
-                      ]),
+                      color: accent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(999),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(PixelIcons.star,
-                            size: 18, color: Colors.white),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            l10n.perfectClearBadge,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontFamily: 'Mulmaru', color: Colors.white),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      difficulty.label(context),
+                      style: TextStyle(
+                          fontFamily: 'Mulmaru', fontSize: 16, color: accent),
                     ),
-                  )
-                      .animate()
-                      .scale(
-                          begin: const Offset(0.6, 0.6),
-                          delay: 250.ms,
-                          curve: Curves.elasticOut,
-                          duration: 600.ms),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _formatTime(elapsedSeconds),
+                    style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 56),
+                  ).animate().scale(
+                      begin: const Offset(0.8, 0.8),
+                      curve: Curves.elasticOut,
+                      duration: 600.ms),
+                  if (isPerfect) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 10),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [
+                          Color(0xFFFFD24A),
+                          Color(0xFFFFA726),
+                        ]),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(PixelIcons.star,
+                                  size: 18, color: Colors.white),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  perfectFlavor!,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                      fontFamily: 'Mulmaru',
+                                      color: Colors.white,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            l10n.perfectClearBadge,
+                            style: TextStyle(
+                              fontFamily: 'Mulmaru',
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 12,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ).animate().scale(
+                        begin: const Offset(0.6, 0.6),
+                        delay: 250.ms,
+                        curve: Curves.elasticOut,
+                        duration: 600.ms),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          PopCard(
-            child: Text(l10n.mistakesAndHints(mistakes, hintsUsed)),
-          ),
-          const SizedBox(height: 12),
-          PopCard(
-            tint: const Color(0xFF6E56FF),
-            child: Column(
+            const SizedBox(height: 16),
+            PopCard(
+              child: Text(l10n.mistakesAndHints(mistakes, hintsUsed)),
+            ),
+            const SizedBox(height: 12),
+            PopCard(
+              tint: const Color(0xFF6E56FF),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.personalBestTitle,
@@ -166,11 +204,11 @@ class ResultScreen extends StatelessWidget {
                     Text(l10n.currentBest(_formatTime(previousBestSeconds!))),
                 ],
               ),
-          ),
-          const SizedBox(height: 12),
-          PopCard(
-            tint: const Color(0xFF2563EB),
-            child: Column(
+            ),
+            const SizedBox(height: 12),
+            PopCard(
+              tint: const Color(0xFF2563EB),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.comparisonTitle,
@@ -200,10 +238,10 @@ class ResultScreen extends StatelessWidget {
                   ),
                 ],
               ),
-          ),
-          const SizedBox(height: 12),
-          PopCard(
-            child: Column(
+            ),
+            const SizedBox(height: 12),
+            PopCard(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(l10n.techniquesUsedTitle,
@@ -219,8 +257,7 @@ class ResultScreen extends StatelessWidget {
                           Text(l10n.highestTechniqueLabel),
                           Chip(
                             label: Text(
-                              difficultyResult.highestTechnique!
-                                  .label(context),
+                              difficultyResult.highestTechnique!.label(context),
                             ),
                             backgroundColor: _difficultyColor(
                                     difficultyResult.highestDifficulty, isDark)
@@ -257,17 +294,17 @@ class ResultScreen extends StatelessWidget {
                   }),
                 ],
               ),
-          ),
-          const SizedBox(height: 20),
-          PopButton(
-            onPressed: () => Navigator.pop(context),
-            label: l10n.homeButton,
-            expanded: true,
-          ),
-        ]
-            .animate(interval: 60.ms)
-            .fadeIn(duration: 250.ms)
-            .slideY(begin: 0.08, curve: Curves.easeOutCubic),
+            ),
+            const SizedBox(height: 20),
+            PopButton(
+              onPressed: () => Navigator.pop(context),
+              label: l10n.homeButton,
+              expanded: true,
+            ),
+          ]
+              .animate(interval: 60.ms)
+              .fadeIn(duration: 250.ms)
+              .slideY(begin: 0.08, curve: Curves.easeOutCubic),
         ),
       ),
     );

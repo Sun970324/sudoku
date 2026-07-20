@@ -28,6 +28,7 @@ abstract final class PixelIcons {
   static const editNote = IconData(0xf2e9, fontFamily: _family); // notebook
   static const pause = IconData(0xf2f2, fontFamily: _family); // pause
   static const play = IconData(0xf2fd, fontFamily: _family); // play
+  static const ad = IconData(0xf24b, fontFamily: _family); // ad
   static const refresh = IconData(0xf308, fontFamily: _family); // refresh
   static const lightbulb = IconData(0xf2d8, fontFamily: _family); // lightbulb
   static const copy = IconData(0xf29d, fontFamily: _family); // copy

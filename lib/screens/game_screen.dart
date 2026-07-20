@@ -18,6 +18,7 @@ import '../state/game_controller.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_theme.dart';
 import '../theme/board_colors.dart';
+import '../widgets/coach_mark.dart';
 import '../widgets/game_controls_row.dart';
 import '../widgets/number_pad_widget.dart';
 import '../widgets/pixel_icon.dart';
@@ -90,6 +91,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   bool _showEntranceHero = true;
   Animation<double>? _entranceAnimation;
 
+  // Coach-mark anchors + one-shot guard for the first-entry game tutorial.
+  final _gridKey = GlobalKey();
+  final _numberPadKey = GlobalKey();
+  final _noteButtonKey = GlobalKey();
+  final _hintButtonKey = GlobalKey();
+  final _mistakesKey = GlobalKey();
+  bool _tutorialChecked = false;
+
   @override
   void initState() {
     super.initState();
@@ -124,7 +133,62 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   void _onEntranceAnimationStatus(AnimationStatus status) {
     if (status == AnimationStatus.completed && mounted) {
       setState(() => _showEntranceHero = false);
+      _maybeShowTutorial();
     }
+  }
+
+  /// Spotlights the board, number pad, note toggle, hint, and mistake
+  /// counter on the player's first real game. Runs once, after the entrance
+  /// animation settles so the highlight rects are final; resumed games are
+  /// skipped (the player has already played that board).
+  Future<void> _maybeShowTutorial() async {
+    if (_tutorialChecked || widget.resumeSnapshot != null) return;
+    _tutorialChecked = true;
+    if (await _storage.loadSeenGameTutorial()) return;
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    // Freeze the clock while the tutorial is up so the intro doesn't count
+    // against the player's solve time — resumed in onDone.
+    _timer?.cancel();
+    showCoachMark(
+      context,
+      steps: [
+        CoachMarkStep(
+          targetKey: _gridKey,
+          title: l10n.tutorialGameGridTitle,
+          body: l10n.tutorialGameGridBody,
+          align: ContentAlign.bottom,
+        ),
+        CoachMarkStep(
+          targetKey: _numberPadKey,
+          title: l10n.tutorialGameNumbersTitle,
+          body: l10n.tutorialGameNumbersBody,
+          align: ContentAlign.top,
+        ),
+        CoachMarkStep(
+          targetKey: _noteButtonKey,
+          title: l10n.tutorialGameNoteTitle,
+          body: l10n.tutorialGameNoteBody,
+          align: ContentAlign.top,
+        ),
+        CoachMarkStep(
+          targetKey: _hintButtonKey,
+          title: l10n.tutorialGameHintTitle,
+          body: l10n.tutorialGameHintBody,
+          align: ContentAlign.top,
+        ),
+        CoachMarkStep(
+          targetKey: _mistakesKey,
+          title: l10n.tutorialGameMistakesTitle,
+          body: l10n.tutorialGameMistakesBody,
+          align: ContentAlign.bottom,
+        ),
+      ],
+      onDone: () {
+        _storage.saveSeenGameTutorial(true);
+        if (mounted) _startTimer();
+      },
+    );
   }
 
   void _startTimer() {
@@ -214,6 +278,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       won: true,
       finishTimeSeconds: elapsedSeconds,
       mistakes: mistakes,
+      hintsUsed: hintsUsed,
     );
 
     final solveResult = HumanSolver().solve(_controller.puzzle.puzzle.toJson());
@@ -309,8 +374,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                     colors: AppPalette.primaryGradient(isDark),
                   ),
                 ),
-                child: const Icon(PixelIcons.pause,
-                    color: Colors.white, size: 32),
+                child:
+                    const Icon(PixelIcons.pause, color: Colors.white, size: 32),
               ),
               const SizedBox(height: 16),
               Text(
@@ -468,7 +533,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       final hint = await _controller.requestHintFromNotes(l10n: l10n);
       if (!mounted) return;
       if (hint != null) {
-        _showHintDialog(hint);
+        _revealHintWithAd(() => _showHintDialog(hint));
+        // _showHintDialog(hint);
         return;
       }
       // Stage 2, searched up front but NOT committed: the repaired-notes
@@ -487,6 +553,23 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     } finally {
       if (mounted) setState(() => _hintSearching = false);
     }
+  }
+
+  /// Gates a hint reveal behind a rewarded ad. Called only once a hint is
+  /// known to be available, so an ad is never spent on a "no hint" outcome.
+  /// If no ad is loaded yet the hint is shown for free rather than punishing
+  /// the player for a failed ad load — [AdService.showRewardedAd] routes that
+  /// case to [onAdUnavailable]. Backing out before earning the reward fires
+  /// neither callback, so no hint is revealed.
+  void _revealHintWithAd(VoidCallback onReveal) {
+    AdService.instance.showRewardedAd(
+      onUserEarnedReward: () {
+        if (mounted) onReveal();
+      },
+      onAdUnavailable: () {
+        if (mounted) onReveal();
+      },
+    );
   }
 
   /// Shown when a stage-1 (notes-only) hint search comes up empty: offers to
@@ -508,15 +591,18 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              final hint = _controller.applyPreparedHint(prepared, l10n: l10n);
-              if (!mounted) return;
-              if (hint != null) {
-                _showHintDialog(hint);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.noHintAvailable)),
-                );
-              }
+              _revealHintWithAd(() {
+                final hint =
+                    _controller.applyPreparedHint(prepared, l10n: l10n);
+                if (!mounted) return;
+                if (hint != null) {
+                  _showHintDialog(hint);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.noHintAvailable)),
+                  );
+                }
+              });
             },
             child: Text(l10n.continueAction),
           ),
@@ -604,8 +690,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            Icon(PixelIcons.lightbulb,
-                                color: accent, size: 24),
+                            Icon(PixelIcons.lightbulb, color: accent, size: 24),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -660,7 +745,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                                             const Duration(milliseconds: 250),
                                         curve: Curves.easeOut)
                                     : null,
-                                icon: Icon(PixelIcons.chevronLeft, color: accent),
+                                icon:
+                                    Icon(PixelIcons.chevronLeft, color: accent),
                                 color: accent,
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.zero,
@@ -702,7 +788,8 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                                             const Duration(milliseconds: 250),
                                         curve: Curves.easeOut)
                                     : null,
-                                icon: Icon(PixelIcons.chevronRight, color: accent),
+                                icon: Icon(PixelIcons.chevronRight,
+                                    color: accent),
                                 color: accent,
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.zero,
@@ -934,6 +1021,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                   ),
                   const SizedBox(width: 10),
                   SizedBox(
+                    key: _mistakesKey,
                     width: 90,
                     // scaleDown (like the title/timer) shrinks the longer
                     // English "Mistakes: 0/3" to fit the fixed width instead of
@@ -1023,6 +1111,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                     alignment: Alignment.topCenter,
                     children: [
                       DecoratedBox(
+                        key: _gridKey,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(11),
                           boxShadow: [
@@ -1062,10 +1151,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                 onHint: _onHintPressed,
                 canAutoFillNotes: _controller.canAutoFillNotes,
                 onAutoFillNotes: _onAutoFillNotesPressed,
+                noteButtonKey: _noteButtonKey,
+                hintButtonKey: _hintButtonKey,
               ),
             ),
             const SizedBox(height: 24),
             ListenableBuilder(
+              key: _numberPadKey,
               listenable: _controller,
               builder: (context, _) => NumberPadWidget(
                 controller: _controller,

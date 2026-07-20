@@ -5,6 +5,7 @@ import '../l10n/generated/app_localizations.dart';
 import '../screens/policy_screen.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
+import '../services/storage_service.dart';
 import '../state/settings_controller.dart';
 import '../theme/app_palette.dart';
 import 'pixel_icon.dart';
@@ -13,7 +14,11 @@ import 'pixel_icon.dart';
 /// out of an inline method on HomeScreen. Selection rows are pill chips in
 /// a [Wrap] rather than segmented buttons, so the longer English labels
 /// ("Follow System") flow to a new line instead of overflowing.
-void showSettingsSheet(BuildContext context, SettingsController settings) {
+void showSettingsSheet(
+  BuildContext context,
+  SettingsController settings, {
+  VoidCallback? onReplayTutorial,
+}) {
   showModalBottomSheet<void>(
     context: context,
     // Painted inside the AnimatedBuilder (not here) so it tracks the theme:
@@ -105,6 +110,19 @@ void showSettingsSheet(BuildContext context, SettingsController settings) {
                   onChanged: settings.setAutoRemoveNotesEnabled,
                 ),
                 const Divider(),
+                if (onReplayTutorial != null)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(PixelIcons.lightbulb),
+                    title: Text(l10n.tutorialReplayLabel),
+                    trailing: const Icon(PixelIcons.chevronRight),
+                    onTap: () async {
+                      await StorageService().resetTutorials();
+                      if (!sheetContext.mounted) return;
+                      Navigator.pop(sheetContext);
+                      onReplayTutorial();
+                    },
+                  ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(PixelIcons.shield),

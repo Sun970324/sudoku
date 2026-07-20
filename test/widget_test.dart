@@ -43,9 +43,14 @@ AuthController _testAuthController() {
 }
 
 void main() {
-  // The queue's background refill persists to SharedPreferences.
+  // The queue's background refill persists to SharedPreferences. The
+  // tutorial seen-flags are pre-set so the first-entry coach marks (whose
+  // PulseRing repeats forever) don't keep pumpAndSettle from settling.
   setUp(() {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({
+      'seen_home_tutorial': true,
+      'seen_game_tutorial': true,
+    });
   });
 
   // flutter_test's default test locale is en_US, which our supportedLocales

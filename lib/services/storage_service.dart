@@ -19,6 +19,10 @@ class StorageService {
   static const _autoRemoveNotesEnabledKey = 'auto_remove_notes_enabled';
   static const _puzzleQueueKey = 'puzzle_queue';
   static const _raceProgressKey = 'race_in_progress';
+  static const _seenHomeTutorialKey = 'seen_home_tutorial';
+  static const _seenGameTutorialKey = 'seen_game_tutorial';
+  static const _seenRaceTutorialKey = 'seen_race_tutorial';
+  static const _celebratedSeasonKey = 'celebrated_season_id';
 
   Future<void> saveInProgressGame(GameSnapshot snapshot) async {
     final prefs = await SharedPreferences.getInstance();
@@ -77,6 +81,7 @@ class StorageService {
     required bool won,
     int? finishTimeSeconds,
     int? mistakes,
+    int? hintsUsed,
   }) async {
     final stats = await getStats();
     final current = stats.byDifficulty[difficulty]!;
@@ -84,7 +89,7 @@ class StorageService {
         finishTimeSeconds != null &&
         (current.bestTimeSeconds == null ||
             finishTimeSeconds < current.bestTimeSeconds!);
-    final isPerfectWin = won && mistakes == 0;
+    final isPerfectWin = won && mistakes == 0 && hintsUsed == 0;
     final isTimedWin = won && finishTimeSeconds != null;
 
     stats.byDifficulty[difficulty] = DifficultyStats(
@@ -178,6 +183,58 @@ class StorageService {
         entry.key.name: entry.value.map((p) => p.toJson()).toList(),
     };
     await prefs.setString(_puzzleQueueKey, jsonEncode(json));
+  }
+
+  Future<void> saveSeenHomeTutorial(bool seen) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_seenHomeTutorialKey, seen);
+  }
+
+  Future<bool> loadSeenHomeTutorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_seenHomeTutorialKey) ?? false;
+  }
+
+  Future<void> saveSeenGameTutorial(bool seen) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_seenGameTutorialKey, seen);
+  }
+
+  Future<bool> loadSeenGameTutorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_seenGameTutorialKey) ?? false;
+  }
+
+  Future<void> saveSeenRaceTutorial(bool seen) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_seenRaceTutorialKey, seen);
+  }
+
+  Future<bool> loadSeenRaceTutorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_seenRaceTutorialKey) ?? false;
+  }
+
+  /// The highest archived season id whose end-of-season summary dialog has
+  /// already been shown (0 = never shown) — so the race lobby celebrates
+  /// each closed season exactly once.
+  Future<void> saveCelebratedSeasonId(int seasonId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_celebratedSeasonKey, seasonId);
+  }
+
+  Future<int> loadCelebratedSeasonId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_celebratedSeasonKey) ?? 0;
+  }
+
+  /// Clears all first-entry tutorial flags so they re-trigger on next visit —
+  /// used by the "replay tutorial" action in the settings sheet.
+  Future<void> resetTutorials() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_seenHomeTutorialKey);
+    await prefs.remove(_seenGameTutorialKey);
+    await prefs.remove(_seenRaceTutorialKey);
   }
 
   Future<Map<Difficulty, List<SudokuPuzzle>>> loadPuzzleQueue() async {

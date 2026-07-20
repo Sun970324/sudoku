@@ -14,10 +14,10 @@ import '../state/settings_controller.dart';
 import '../theme/app_palette.dart';
 import '../widgets/gradient_scaffold.dart';
 import '../widgets/pixel_icon.dart';
+import '../widgets/coach_mark.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/settings_sheet.dart';
 import '../widgets/sudoku_preview_board.dart';
-import '../widgets/tier_badge.dart';
 import 'daily/daily_entry_screen.dart';
 import 'game_screen.dart';
 import 'my_page_screen.dart';
@@ -58,6 +58,13 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _checkedForUnfinishedRace = false;
 
+  // Coach-mark anchors for the first-entry tutorial.
+  final _menuKey = GlobalKey();
+  final _wheelKey = GlobalKey();
+  final _startKey = GlobalKey();
+  final _raceKey = GlobalKey();
+  final _dailyKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +74,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (!mounted) return;
         _openGame(GameScreen.resume(resumeSnapshot: snapshot));
       });
+    } else {
+      // Only a genuine first entry (no game to resume) gets the tutorial.
+      WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowTutorial());
     }
     widget.auth.addListener(_recoverUnfinishedRace);
     _recoverUnfinishedRace();
@@ -77,6 +87,60 @@ class _HomeScreenState extends State<HomeScreen> {
     widget.auth.removeListener(_recoverUnfinishedRace);
     _wheelController.dispose();
     super.dispose();
+  }
+
+  Future<void> _maybeShowTutorial() async {
+    if (!mounted) return;
+    if (await StorageService().loadSeenHomeTutorial()) return;
+    _showTutorial();
+  }
+
+  /// Spotlights the difficulty wheel, start button, top menu, and game-mode
+  /// buttons. Also invoked from the settings sheet's "replay tutorial".
+  void _showTutorial() {
+    // Let the staggered entrance animations settle so the highlight rects
+    // line up with the widgets' final positions (the last button finishes
+    // its slide at ~430ms).
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      showCoachMark(
+        context,
+        steps: [
+          CoachMarkStep(
+            targetKey: _menuKey,
+            title: l10n.tutorialHomeIconsTitle,
+            body: l10n.tutorialHomeIconsBody,
+            align: ContentAlign.bottom,
+          ),
+          CoachMarkStep(
+            targetKey: _wheelKey,
+            title: l10n.tutorialHomeDifficultyTitle,
+            body: l10n.tutorialHomeDifficultyBody,
+            align: ContentAlign.top,
+          ),
+          CoachMarkStep(
+            targetKey: _startKey,
+            title: l10n.tutorialHomeStartTitle,
+            body: l10n.tutorialHomeStartBody,
+            align: ContentAlign.top,
+          ),
+          CoachMarkStep(
+            targetKey: _raceKey,
+            title: l10n.tutorialHomeRaceTitle,
+            body: l10n.tutorialHomeRaceBody,
+            align: ContentAlign.top,
+          ),
+          CoachMarkStep(
+            targetKey: _dailyKey,
+            title: l10n.tutorialHomeDailyTitle,
+            body: l10n.tutorialHomeDailyBody,
+            align: ContentAlign.top,
+          ),
+        ],
+        onDone: () => StorageService().saveSeenHomeTutorial(true),
+      );
+    });
   }
 
   Future<void> _recoverUnfinishedRace() async {
@@ -225,6 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 12, 12, 0),
           child: Row(
+            key: _menuKey,
             children: [
               Expanded(
                 // scaleDown shrinks the title to fit rather than truncating
@@ -258,7 +323,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               _RoundIconButton(
                 icon: PixelIcons.settings,
-                onPressed: () => showSettingsSheet(context, widget.settings),
+                onPressed: () => showSettingsSheet(
+                  context,
+                  widget.settings,
+                  onReplayTutorial: _showTutorial,
+                ),
               ),
             ],
           ).animate().fadeIn(duration: 250.ms),
@@ -321,6 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SizedBox(
+          key: _wheelKey,
           height: 140,
           child: Stack(
             alignment: Alignment.center,
@@ -372,6 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ).animate().fadeIn(delay: 120.ms, duration: 250.ms),
         const SizedBox(height: 16),
         Padding(
+          key: _startKey,
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: PopButton(
             onPressed: canStart ? _onStartPressed : null,
@@ -391,6 +462,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Expanded(
                 child: PopButton(
+                  key: _raceKey,
                   onPressed: _onRacePressed,
                   label: l10n.raceButton,
                   icon: PixelIcons.gameController,
@@ -403,6 +475,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: PopButton(
+                  key: _dailyKey,
                   onPressed: () => _openGame(DailyEntryScreen(
                       auth: widget.auth, puzzleQueue: widget.puzzleQueue)),
                   label: l10n.dailyButton,

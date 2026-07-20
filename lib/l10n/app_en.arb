@@ -9,6 +9,39 @@
   "continueAction": "Continue",
   "cancelAction": "Cancel",
 
+  "tutorialNext": "Next",
+  "tutorialSkip": "Skip",
+  "tutorialDone": "Got it",
+  "tutorialReplayLabel": "Replay tutorial",
+  "tutorialHomeDifficultyTitle": "Pick a difficulty",
+  "tutorialHomeDifficultyBody": "Spin this wheel to choose how hard your puzzle will be.",
+  "tutorialHomeStartTitle": "Start playing",
+  "tutorialHomeStartBody": "Tap here to begin a new puzzle at the difficulty you picked.",
+  "tutorialHomeIconsTitle": "Top menu",
+  "tutorialHomeIconsBody": "These icons open stats, enter a shared puzzle code, your profile, and settings.",
+  "tutorialHomeRaceTitle": "Race",
+  "tutorialHomeRaceBody": "Take on a friend or other players in a real-time sudoku match.",
+  "tutorialHomeDailyTitle": "Daily",
+  "tutorialHomeDailyBody": "Solve today's puzzle and check where you rank.",
+  "tutorialGameGridTitle": "The board",
+  "tutorialGameGridBody": "Tap an empty cell to select it, then choose a number to fill it in.",
+  "tutorialGameNumbersTitle": "Enter numbers",
+  "tutorialGameNumbersBody": "Tap a number here to place it in the selected cell.",
+  "tutorialGameNoteTitle": "Note mode",
+  "tutorialGameNoteBody": "Turn this on to pencil in small candidate numbers before committing.",
+  "tutorialGameHintTitle": "Need a hand?",
+  "tutorialGameHintBody": "Stuck? Get a hint by watching a short ad — the badge marks ad-gated helpers.",
+  "tutorialGameMistakesTitle": "Mistake limit",
+  "tutorialGameMistakesBody": "The game ends after 3 mistakes, so place each number carefully.",
+  "tutorialRaceProfileTitle": "Your standing",
+  "tutorialRaceProfileBody": "Your tier, rating, and win-loss record show up here.",
+  "tutorialRaceFriendTitle": "Play a friend",
+  "tutorialRaceFriendBody": "Share a room code to race a friend one-on-one.",
+  "tutorialRaceRankedTitle": "Ranked match",
+  "tutorialRaceRankedBody": "Get matched with a similar opponent — your tier sets the difficulty.",
+  "tutorialRaceLeaderboardTitle": "Leaderboard",
+  "tutorialRaceLeaderboardBody": "See how you rank against everyone else.",
+
   "startGame": "Start",
   "generatingPuzzle": "Generating...",
   "privacyPolicyTitle": "Privacy Policy",
@@ -49,7 +82,17 @@
   "adNotLoaded": "The ad hasn't loaded yet. Please try again in a moment.",
 
   "resultTitle": "Result",
-  "perfectClearBadge": "No Mistakes! Perfect Clear",
+  "perfectClearBadge": "Perfect Clear",
+  "perfectClearFlavor1": "Hint? What's that? 😎",
+  "perfectClearFlavor2": "You didn't even give yourself a chance to mess up.",
+  "perfectClearFlavor3": "The numbers practically lined themselves up.",
+  "perfectClearFlavor4": "Was 9×9 too easy for you?",
+  "perfectClearFlavor5": "The puzzle never stood a chance. 🏆",
+  "perfectClearFlavor6": "Okay, that's almost unfair.",
+  "perfectClearFlavor7": "The numbers were on your side today.",
+  "perfectClearFlavor8": "9 numbers. 81 cells. 0 mistakes.",
+  "perfectClearFlavor9": "The hint button is out of a job today.",
+  "perfectClearFlavor10": "Certified Sudoku Master! 👑",
   "mistakesAndHints": "Mistakes: {mistakes} · Hints used: {hints}",
   "@mistakesAndHints": {
     "placeholders": {
@@ -513,6 +556,47 @@
   "leaderboardMyRankUnranked": "No ranked record yet",
   "leaderboardEmpty": "No ranked players yet.",
   "leaderboardLoadFailed": "Couldn't load the ranking.",
+  "seasonName": "Season {number}",
+  "@seasonName": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "seasonDaysLeft": "D-{days}",
+  "@seasonDaysLeft": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "pastSeasonsTitle": "Past Seasons",
+  "seasonStandingDetail": "#{rank} · {wins}W {losses}L",
+  "@seasonStandingDetail": {
+    "placeholders": {
+      "rank": {"type": "int"},
+      "wins": {"type": "int"},
+      "losses": {"type": "int"}
+    }
+  },
+  "placementProgress": "Placements {played}/{total}",
+  "@placementProgress": {
+    "placeholders": {
+      "played": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "seasonEndedTitle": "Season {number} Complete!",
+  "@seasonEndedTitle": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "seasonEndedNewStart": "A new season has begun — you restart at rating {rating}!",
+  "@seasonEndedNewStart": {
+    "placeholders": {
+      "rating": {"type": "int"}
+    }
+  },
+  "okAction": "OK",
   "friendMatchTitle": "Play with a Friend",
   "createRoomTitle": "Choose difficulty",
   "createRoomAction": "Create Room",
@@ -534,6 +618,12 @@
   "matchmakingSearching": "Searching for an opponent...",
   "matchmakingPreparingPuzzle": "Preparing puzzle...",
   "matchmakingReadyCheck": "Checking readiness...",
+  "matchmakingTip1": "Solve today's Daily puzzle and check where you rank.",
+  "matchmakingTip2": "Finish a puzzle with no hints and no mistakes for a Perfect Clear.",
+  "matchmakingTip3": "In ranked matches, the puzzle difficulty is set by your tier.",
+  "matchmakingTip4": "Use note mode to pencil in candidate numbers and solve faster.",
+  "matchmakingTip5": "Share a room code to race a friend one-on-one.",
+  "matchmakingTip6": "Win races to raise your rating and climb to a higher tier.",
   "raceAbortConfirmTitle": "Give up the race?",
   "opponentDisconnectedCountdown": "Opponent disconnected — you win in {seconds}s",
   "@opponentDisconnectedCountdown": {

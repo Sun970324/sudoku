@@ -157,12 +157,14 @@ void main() {
       () async {
     final storage = StorageService();
 
-    // Perfect win (0 mistakes): counts toward perfectWins and the average.
+    // Perfect win (0 mistakes, 0 hints): counts toward perfectWins and the
+    // average.
     await storage.recordGameResult(
       difficulty: Difficulty.easy,
       won: true,
       finishTimeSeconds: 100,
       mistakes: 0,
+      hintsUsed: 0,
     );
     // Won with mistakes: average yes, perfect no.
     await storage.recordGameResult(
@@ -170,6 +172,7 @@ void main() {
       won: true,
       finishTimeSeconds: 200,
       mistakes: 2,
+      hintsUsed: 0,
     );
     // Loss: touches none of the new fields.
     await storage.recordGameResult(

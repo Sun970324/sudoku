@@ -30,6 +30,105 @@ class AppLocalizationsKo extends AppLocalizations {
   String get cancelAction => '취소';
 
   @override
+  String get tutorialNext => '다음';
+
+  @override
+  String get tutorialSkip => '건너뛰기';
+
+  @override
+  String get tutorialDone => '확인';
+
+  @override
+  String get tutorialReplayLabel => '튜토리얼 다시 보기';
+
+  @override
+  String get tutorialHomeDifficultyTitle => '난이도 고르기';
+
+  @override
+  String get tutorialHomeDifficultyBody => '이 휠을 돌려 퍼즐의 난이도를 골라요.';
+
+  @override
+  String get tutorialHomeStartTitle => '게임 시작';
+
+  @override
+  String get tutorialHomeStartBody => '여기를 누르면 고른 난이도로 새 퍼즐이 시작돼요.';
+
+  @override
+  String get tutorialHomeIconsTitle => '상단 메뉴';
+
+  @override
+  String get tutorialHomeIconsBody =>
+      '이 아이콘들로 통계, 공유 퍼즐 코드 입력, 내 프로필, 설정을 열 수 있어요.';
+
+  @override
+  String get tutorialHomeRaceTitle => '대결하기';
+
+  @override
+  String get tutorialHomeRaceBody => '친구나 다른 플레이어와 실시간으로 스도쿠 대결을 해보세요.';
+
+  @override
+  String get tutorialHomeDailyTitle => '오늘의 스도쿠';
+
+  @override
+  String get tutorialHomeDailyBody => '매일 주어지는 오늘의 스도쿠를 풀고 순위를 확인해 보세요.';
+
+  @override
+  String get tutorialGameGridTitle => '게임판';
+
+  @override
+  String get tutorialGameGridBody => '빈 칸을 눌러 선택한 뒤, 숫자를 골라 채워 넣어요.';
+
+  @override
+  String get tutorialGameNumbersTitle => '숫자 입력';
+
+  @override
+  String get tutorialGameNumbersBody => '여기서 숫자를 누르면 선택한 칸에 입력돼요.';
+
+  @override
+  String get tutorialGameNoteTitle => '메모 모드';
+
+  @override
+  String get tutorialGameNoteBody => '메모를 켜면 확정하기 전에 후보 숫자를 작게 적어둘 수 있어요.';
+
+  @override
+  String get tutorialGameHintTitle => '도움이 필요하면';
+
+  @override
+  String get tutorialGameHintBody =>
+      '막히면 짧은 광고를 보고 힌트를 받을 수 있어요. 배지는 광고가 필요한 기능을 뜻해요.';
+
+  @override
+  String get tutorialGameMistakesTitle => '실수 제한';
+
+  @override
+  String get tutorialGameMistakesBody => '실수가 3번 쌓이면 게임이 끝나요. 한 칸씩 신중하게 입력해요.';
+
+  @override
+  String get tutorialRaceProfileTitle => '내 정보';
+
+  @override
+  String get tutorialRaceProfileBody => '티어와 레이팅, 전적을 여기서 확인할 수 있어요.';
+
+  @override
+  String get tutorialRaceFriendTitle => '친구와 대결';
+
+  @override
+  String get tutorialRaceFriendBody => '방 코드를 공유해 친구와 1:1로 겨뤄요.';
+
+  @override
+  String get tutorialRaceRankedTitle => '랭크 대전';
+
+  @override
+  String get tutorialRaceRankedBody =>
+      '실력이 비슷한 상대와 자동으로 매칭돼요. 티어에 따라 난이도가 정해져요.';
+
+  @override
+  String get tutorialRaceLeaderboardTitle => '리더보드';
+
+  @override
+  String get tutorialRaceLeaderboardBody => '전체 순위에서 내 위치를 확인할 수 있어요.';
+
+  @override
   String get startGame => '시작하기';
 
   @override
@@ -48,7 +147,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get themeSectionTitle => '테마';
 
   @override
-  String get followSystemTheme => '시스템 설정 따르기';
+  String get followSystemTheme => '시스템 설정';
 
   @override
   String get lightTheme => '라이트 모드';
@@ -80,7 +179,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get languageSectionTitle => '언어';
 
   @override
-  String get followSystemLanguage => '시스템 설정 따르기';
+  String get followSystemLanguage => '시스템 설정';
 
   @override
   String get koreanLanguage => '한국어';
@@ -130,7 +229,37 @@ class AppLocalizationsKo extends AppLocalizations {
   String get resultTitle => '결과';
 
   @override
-  String get perfectClearBadge => '노미스 완료! Perfect Clear';
+  String get perfectClearBadge => 'Perfect Clear';
+
+  @override
+  String get perfectClearFlavor1 => '힌트? 그게 뭐죠? 😎';
+
+  @override
+  String get perfectClearFlavor2 => '실수할 틈도 안 주셨네요.';
+
+  @override
+  String get perfectClearFlavor3 => '숫자들이 알아서 줄을 섰네요.';
+
+  @override
+  String get perfectClearFlavor4 => '9×9가 너무 작았나요?';
+
+  @override
+  String get perfectClearFlavor5 => '퍼즐이 졌습니다. 🏆';
+
+  @override
+  String get perfectClearFlavor6 => '이건 좀 반칙인데요?';
+
+  @override
+  String get perfectClearFlavor7 => '오늘은 숫자들이 당신 편이네요.';
+
+  @override
+  String get perfectClearFlavor8 => '9개의 숫자, 81개의 칸, 0개의 실수.';
+
+  @override
+  String get perfectClearFlavor9 => '힌트 버튼이 오늘도 한가하네요.';
+
+  @override
+  String get perfectClearFlavor10 => '스도쿠 장인 인정! 👑';
 
   @override
   String mistakesAndHints(int mistakes, int hints) {
@@ -652,6 +781,42 @@ class AppLocalizationsKo extends AppLocalizations {
   String get leaderboardLoadFailed => '랭킹을 불러오지 못했어요.';
 
   @override
+  String seasonName(int number) {
+    return '시즌 $number';
+  }
+
+  @override
+  String seasonDaysLeft(int days) {
+    return 'D-$days';
+  }
+
+  @override
+  String get pastSeasonsTitle => '지난 시즌 기록';
+
+  @override
+  String seasonStandingDetail(int rank, int wins, int losses) {
+    return '$rank위 · $wins승 $losses패';
+  }
+
+  @override
+  String placementProgress(int played, int total) {
+    return '배치 $played/$total';
+  }
+
+  @override
+  String seasonEndedTitle(int number) {
+    return '시즌 $number 종료!';
+  }
+
+  @override
+  String seasonEndedNewStart(int rating) {
+    return '새 시즌이 시작됐어요. 레이팅 $rating에서 다시 출발해요!';
+  }
+
+  @override
+  String get okAction => '확인';
+
+  @override
   String get friendMatchTitle => '친구와 대결하기';
 
   @override
@@ -700,6 +865,24 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get matchmakingReadyCheck => '상대 확인 중...';
+
+  @override
+  String get matchmakingTip1 => '오늘의 스도쿠를 풀고 순위를 확인해보세요.';
+
+  @override
+  String get matchmakingTip2 => '힌트와 실수 없이 스도쿠를 완료하면 Perfect Clear가 됩니다.';
+
+  @override
+  String get matchmakingTip3 => '랭크 대전의 스도쿠 난이도는 티어에 따라 정해집니다.';
+
+  @override
+  String get matchmakingTip4 => '메모 기능으로 후보 숫자를 적어두면 더 쉽게 풀 수 있어요.';
+
+  @override
+  String get matchmakingTip5 => '방 코드를 공유하면 친구와 1:1로 대결할 수 있어요.';
+
+  @override
+  String get matchmakingTip6 => '대결에서 이기면 레이팅이 올라 더 높은 티어로 승급해요.';
 
   @override
   String get raceAbortConfirmTitle => '레이스를 포기할까요?';

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -9,6 +10,7 @@ import '../../services/puzzle_queue_manager.dart';
 import '../../state/auth_controller.dart';
 import '../../state/race_controller.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_icon.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pulse_ring.dart';
 import '../../widgets/sign_in_prompt.dart';
@@ -131,6 +133,15 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
                     _ElapsedPill(
                         text: l10n.matchmakingElapsed(
                             _formatElapsed(_elapsedSeconds))),
+                    const SizedBox(height: 28),
+                    _RotatingTip(tips: [
+                      l10n.matchmakingTip1,
+                      l10n.matchmakingTip2,
+                      l10n.matchmakingTip3,
+                      l10n.matchmakingTip4,
+                      l10n.matchmakingTip5,
+                      l10n.matchmakingTip6,
+                    ]),
                     const SizedBox(height: 32),
                     PopButton(
                       onPressed: _cancel,
@@ -163,6 +174,74 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
       case null:
         return l10n.matchmakingSearching;
     }
+  }
+}
+
+/// Cycles through info tips while the player waits, fading between them
+/// every few seconds so the wait feels shorter and teaches the game.
+class _RotatingTip extends StatefulWidget {
+  const _RotatingTip({required this.tips});
+
+  final List<String> tips;
+
+  @override
+  State<_RotatingTip> createState() => _RotatingTipState();
+}
+
+class _RotatingTipState extends State<_RotatingTip> {
+  // Random start so repeated waits don't always open on the same tip.
+  late int _index = Random().nextInt(widget.tips.length);
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (mounted) {
+        setState(() => _index = (_index + 1) % widget.tips.length);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return SizedBox(
+      height: 40,
+      child: Center(
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          // scaleDown shrinks the whole row to fit the width so a long tip
+          // stays on a single line and is never clipped.
+          child: FittedBox(
+            key: ValueKey(_index),
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(PixelIcons.lightbulb, size: 16, color: scheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  widget.tips[_index],
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
