@@ -209,7 +209,7 @@ abstract class AppLocalizations {
   /// No description provided for @wrongNoteWarningLabel.
   ///
   /// In en, this message translates to:
-  /// **'Warn on Wrong Notes'**
+  /// **'Prevent on Wrong Notes'**
   String get wrongNoteWarningLabel;
 
   /// No description provided for @wrongNoteWarningDescription.

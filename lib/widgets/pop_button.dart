@@ -102,7 +102,7 @@ class _PopButtonState extends State<PopButton> {
             ),
             const SizedBox(width: 8),
           ] else if (widget.icon != null) ...[
-            Icon(widget.icon, color: foreground, size: widget.fontSize + 4),
+            Icon(widget.icon!, color: foreground, size: widget.fontSize + 4),
             const SizedBox(width: 8),
           ],
           Text(

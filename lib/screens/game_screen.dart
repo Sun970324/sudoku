@@ -20,6 +20,7 @@ import '../theme/app_theme.dart';
 import '../theme/board_colors.dart';
 import '../widgets/game_controls_row.dart';
 import '../widgets/number_pad_widget.dart';
+import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/puzzle_share_dialog.dart';
 import '../widgets/sudoku_grid_widget.dart';
@@ -308,7 +309,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                     colors: AppPalette.primaryGradient(isDark),
                   ),
                 ),
-                child: const Icon(Icons.pause_rounded,
+                child: const Icon(PixelIcons.pause,
                     color: Colors.white, size: 32),
               ),
               const SizedBox(height: 16),
@@ -325,7 +326,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               PopButton(
                 onPressed: () => Navigator.pop(dialogContext),
                 label: l10n.continueAction,
-                icon: Icons.play_arrow_rounded,
+                icon: PixelIcons.play,
                 expanded: true,
               ),
               const SizedBox(height: 12),
@@ -336,7 +337,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                   _restartGame();
                 },
                 label: l10n.restartAction,
-                icon: Icons.refresh_rounded,
+                icon: PixelIcons.refresh,
                 variant: PopButtonVariant.outline,
                 expanded: true,
               ),
@@ -349,7 +350,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                   _popToHome();
                 },
                 label: l10n.endGameAction,
-                icon: Icons.close_rounded,
+                icon: PixelIcons.close,
                 color: AppPalette.raceCoral,
                 expanded: true,
               ),
@@ -603,7 +604,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            Icon(Icons.lightbulb_rounded,
+                            Icon(PixelIcons.lightbulb,
                                 color: accent, size: 24),
                             const SizedBox(width: 8),
                             Expanded(
@@ -659,7 +660,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                                             const Duration(milliseconds: 250),
                                         curve: Curves.easeOut)
                                     : null,
-                                icon: const Icon(Icons.chevron_left_rounded),
+                                icon: Icon(PixelIcons.chevronLeft, color: accent),
                                 color: accent,
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.zero,
@@ -701,7 +702,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                                             const Duration(milliseconds: 250),
                                         curve: Curves.easeOut)
                                     : null,
-                                icon: const Icon(Icons.chevron_right_rounded),
+                                icon: Icon(PixelIcons.chevronRight, color: accent),
                                 color: accent,
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.zero,
@@ -761,7 +762,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                                     _saveProgress();
                                   },
                                   label: l10n.applyAction,
-                                  icon: Icons.check_rounded,
+                                  icon: PixelIcons.check,
                                   color: accent,
                                   fontSize: 16,
                                   expanded: true,
@@ -879,12 +880,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
           // appear at all. Always routes through the same exit-confirmation
           // dialog as every other back-navigation path.
           leading: IconButton(
-            icon: const Icon(Icons.pause_rounded),
+            icon: const Icon(PixelIcons.pause),
             onPressed: _onBackPressed,
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.ios_share),
+              icon: const Icon(PixelIcons.share),
               onPressed: () => showPuzzleShareDialog(
                 context,
                 puzzle: _controller.puzzle,

@@ -12,6 +12,7 @@ import '../../services/race_service.dart';
 import '../../state/auth_controller.dart';
 import '../../theme/app_palette.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_icon.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
 import '../../widgets/sign_in_prompt.dart';
@@ -128,7 +129,7 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
           ),
         ),
         leading: Icon(
-          entry.won ? Icons.emoji_events : Icons.sentiment_dissatisfied,
+          entry.won ? PixelIcons.trophy : PixelIcons.sadFace,
           color:
               entry.won ? Colors.amber : Theme.of(context).colorScheme.outline,
         ),
@@ -175,7 +176,7 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
                 const SizedBox(height: 24),
                 PopButton(
                   onPressed: _onFriendMatchPressed,
-                  icon: Icons.group,
+                  icon: PixelIcons.group,
                   color: const Color(0xFFD99A06),
                   variant: PopButtonVariant.secondary,
                   label: l10n.friendMatchButton,
@@ -184,14 +185,14 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
                 const SizedBox(height: 16),
                 PopButton(
                   onPressed: _onRankedPressed,
-                  icon: Icons.military_tech,
+                  icon: PixelIcons.medal,
                   label: l10n.rankedMatchButton,
                   expanded: true,
                 ),
                 const SizedBox(height: 16),
                 PopButton(
                   onPressed: _onLeaderboardPressed,
-                  icon: Icons.leaderboard,
+                  icon: PixelIcons.leaderboard,
                   variant: PopButtonVariant.outline,
                   label: l10n.leaderboardButton,
                   expanded: true,

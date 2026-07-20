@@ -63,7 +63,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundLabel => 'Sound Effects';
 
   @override
-  String get wrongNoteWarningLabel => 'Warn on Wrong Notes';
+  String get wrongNoteWarningLabel => 'Prevent on Wrong Notes';
 
   @override
   String get wrongNoteWarningDescription =>

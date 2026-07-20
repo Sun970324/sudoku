@@ -6,6 +6,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../state/race_controller.dart';
 import '../../widgets/game_controls_row.dart';
 import '../../widgets/number_pad_widget.dart';
+import '../../widgets/pixel_icon.dart';
 import '../../widgets/sudoku_grid_widget.dart';
 import 'race_result_screen.dart';
 
@@ -115,7 +116,7 @@ class _RaceScreenState extends State<RaceScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(PixelIcons.arrowBack),
             onPressed: _confirmAbort,
           ),
           title: Text(_formatTime(game.elapsedSeconds)),

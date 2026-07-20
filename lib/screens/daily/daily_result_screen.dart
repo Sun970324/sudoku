@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/celebration_overlay.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_icon.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
 import '../../models/daily.dart';
@@ -153,7 +154,7 @@ class _DailyResultScreenState extends State<DailyResultScreen> {
                   ]),
                 ),
                 child:
-                    const Icon(Icons.today, size: 48, color: Colors.white),
+                    const Icon(PixelIcons.calendar, size: 48, color: Colors.white),
               )
                   .animate()
                   .scale(

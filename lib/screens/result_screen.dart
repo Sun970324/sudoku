@@ -10,6 +10,7 @@ import '../services/percentile_estimator.dart';
 import '../theme/app_palette.dart';
 import '../widgets/celebration_overlay.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/pop_card.dart';
 import '../widgets/puzzle_share_dialog.dart';
@@ -68,7 +69,7 @@ class ResultScreen extends StatelessWidget {
         title: Text(l10n.resultTitle),
         actions: [
           IconButton(
-            icon: const Icon(Icons.ios_share),
+            icon: const Icon(PixelIcons.share),
             onPressed: () => showPuzzleShareDialog(context, puzzle: puzzle),
           ),
         ],
@@ -119,7 +120,7 @@ class ResultScreen extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star,
+                        const Icon(PixelIcons.star,
                             size: 18, color: Colors.white),
                         const SizedBox(width: 6),
                         Flexible(

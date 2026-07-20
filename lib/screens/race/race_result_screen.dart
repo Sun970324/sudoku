@@ -8,6 +8,7 @@ import '../../services/generation/human_solver.dart';
 import '../../state/race_controller.dart';
 import '../../widgets/celebration_overlay.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_icon.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
 
@@ -96,7 +97,7 @@ class _RaceResultScreenState extends State<RaceResultScreen> {
                           ]),
                   ),
                   child: Icon(
-                    won ? Icons.emoji_events : Icons.sentiment_dissatisfied,
+                    won ? PixelIcons.trophy : PixelIcons.sadFace,
                     size: 52,
                     color: Colors.white,
                   ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,6 +15,17 @@ import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Attribution for the bundled Pixel Icon Library font (CC BY 4.0); shows up
+  // in the standard showLicensePage().
+  LicenseRegistry.addLicense(() async* {
+    yield const LicenseEntryWithLineBreaks(
+      ['Pixel Icon Library'],
+      'Pixel Icon Library by HackerNoon\n'
+      'https://pixeliconlibrary.com\n\n'
+      'Icons licensed under CC BY 4.0 '
+      '(https://creativecommons.org/licenses/by/4.0/).',
+    );
+  });
   SupabaseConfig.assertConfigured();
   await Supabase.initialize(
     url: SupabaseConfig.url,

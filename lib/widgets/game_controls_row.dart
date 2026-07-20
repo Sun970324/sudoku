@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../theme/board_colors.dart';
+import 'pixel_icon.dart';
 
 class GameControlsRow extends StatelessWidget {
   const GameControlsRow({
@@ -42,17 +43,17 @@ class GameControlsRow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _ControlButton(
-          icon: Icons.undo,
+          icon: PixelIcons.undo,
           label: l10n.undoLabel,
           onPressed: canUndo ? onUndo : null,
         ),
         _ControlButton(
-          icon: Icons.backspace_outlined,
+          icon: PixelIcons.backspace,
           label: l10n.eraseLabel,
           onPressed: canErase ? onErase : null,
         ),
         _ControlButton(
-          icon: Icons.edit_note,
+          icon: PixelIcons.editNote,
           label: l10n.noteLabel,
           onPressed: onToggleNoteMode,
           color: noteColor,
@@ -61,13 +62,13 @@ class GameControlsRow extends StatelessWidget {
         ),
         if (showAssists) ...[
           _ControlButton(
-            icon: Icons.auto_fix_high,
+            icon: PixelIcons.magicWand,
             label: l10n.autoFillLabel,
             onPressed: canAutoFillNotes ? onAutoFillNotes : null,
             showAdBadge: true,
           ),
           _ControlButton(
-            icon: Icons.lightbulb_outline,
+            icon: PixelIcons.lightbulb,
             label: l10n.hintLabel,
             onPressed: onHint,
             showAdBadge: true,
@@ -153,7 +154,7 @@ class _ControlButton extends StatelessWidget {
                           color: BoardColors.adBadgeBorder(isDark), width: 1.5),
                     ),
                     child: const Icon(
-                      Icons.play_arrow,
+                      PixelIcons.play,
                       size: 10,
                       color: Colors.white,
                     ),

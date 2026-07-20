@@ -7,6 +7,7 @@ import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../state/settings_controller.dart';
 import '../theme/app_palette.dart';
+import 'pixel_icon.dart';
 
 /// The settings bottom sheet (theme / language / haptics / sound) — grew
 /// out of an inline method on HomeScreen. Selection rows are pill chips in
@@ -106,9 +107,9 @@ void showSettingsSheet(BuildContext context, SettingsController settings) {
                 const Divider(),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.privacy_tip_outlined),
+                  leading: const Icon(PixelIcons.shield),
                   title: Text(l10n.privacyPolicyTitle),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const Icon(PixelIcons.chevronRight),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -122,9 +123,9 @@ void showSettingsSheet(BuildContext context, SettingsController settings) {
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.description_outlined),
+                  leading: const Icon(PixelIcons.document),
                   title: Text(l10n.termsOfServiceTitle),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const Icon(PixelIcons.chevronRight),
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -134,6 +135,20 @@ void showSettingsSheet(BuildContext context, SettingsController settings) {
                         bodyEn: termsOfServiceEn,
                       ),
                     ),
+                  ),
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(PixelIcons.creativeCommons),
+                  title: Text(
+                    Localizations.localeOf(context).languageCode == 'ko'
+                        ? '오픈소스 라이선스'
+                        : 'Open source licenses',
+                  ),
+                  trailing: const Icon(PixelIcons.chevronRight),
+                  onTap: () => showLicensePage(
+                    context: context,
+                    applicationName: l10n.appTitle,
                   ),
                 ),
               ],

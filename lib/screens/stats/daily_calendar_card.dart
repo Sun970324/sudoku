@@ -6,6 +6,7 @@ import '../../models/daily.dart';
 import '../../services/daily_puzzle_service.dart';
 import '../../state/auth_controller.dart';
 import '../../theme/app_palette.dart';
+import '../../widgets/pixel_icon.dart';
 import '../../widgets/pop_card.dart';
 
 /// A month-grid calendar of the player's daily-sudoku completions, shown at
@@ -117,13 +118,13 @@ class _DailyCalendarCardState extends State<DailyCalendarCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
-                icon: const Icon(Icons.chevron_left),
+                icon: const Icon(PixelIcons.chevronLeft),
                 onPressed: () => _changeMonth(-1),
               ),
               Text(monthLabel,
                   style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 18)),
               IconButton(
-                icon: const Icon(Icons.chevron_right),
+                icon: const Icon(PixelIcons.chevronRight),
                 onPressed: canGoNext ? () => _changeMonth(1) : null,
               ),
             ],

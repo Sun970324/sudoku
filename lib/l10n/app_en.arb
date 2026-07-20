@@ -20,7 +20,7 @@
   "darkTheme": "Dark Mode",
   "hapticsLabel": "Vibration",
   "soundLabel": "Sound Effects",
-  "wrongNoteWarningLabel": "Warn on Wrong Notes",
+  "wrongNoteWarningLabel": "Prevent on Wrong Notes",
   "wrongNoteWarningDescription": "Blocks notes for a number already placed in the same row, column, or box.",
   "autoRemoveNotesLabel": "Auto-clear Notes on Confirm",
   "autoRemoveNotesDescription": "Placing a number clears matching notes in the same row, column, and box.",

@@ -104,6 +104,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
                     controller: _textCodeController,
                     decoration: InputDecoration(
                       hintText: l10n.enterTextCodeHint,
+                      hintStyle: const TextStyle(fontFamily: 'Mulmaru'),
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius:

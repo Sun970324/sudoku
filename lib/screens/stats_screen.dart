@@ -8,6 +8,7 @@ import '../services/storage_service.dart';
 import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/pixel_icon.dart';
 import '../widgets/pop_card.dart';
 import 'stats/daily_calendar_card.dart';
 
@@ -156,19 +157,19 @@ class _DifficultyStatsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _StatRow(
-            icon: Icons.check_circle_outline,
+            icon: PixelIcons.checkCircle,
             label: l10n.statsCompletedLabel,
             value: '${entry.won} / ${entry.played}',
             accent: accent,
           ),
           _StatRow(
-            icon: Icons.star_outline,
+            icon: PixelIcons.star,
             label: l10n.statsPerfectLabel,
             value: '${entry.perfectWins}',
             accent: accent,
           ),
           _StatRow(
-            icon: Icons.timelapse,
+            icon: PixelIcons.timelapse,
             label: l10n.statsAverageLabel,
             value: average == null ? l10n.statsNoRecord : formatTime(average),
             accent: accent,
@@ -177,7 +178,7 @@ class _DifficultyStatsCard extends StatelessWidget {
                 : 100 - estimateFasterThanPercent(difficulty, average),
           ),
           _StatRow(
-            icon: Icons.emoji_events_outlined,
+            icon: PixelIcons.trophy,
             label: l10n.statsBestLabel,
             value: best == null ? l10n.statsNoRecord : formatTime(best),
             accent: accent,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/tier.dart';
 import '../theme/app_palette.dart';
+import 'pixel_icon.dart';
 
 /// Pill badge for a player's tier (optionally with their rating) — the
 /// shared rendering behind the home header, race lobby profile, and my
@@ -35,7 +36,7 @@ class TierBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.military_tech, size: fontSize + 2, color: color),
+          Icon(PixelIcons.medal, size: fontSize + 2, color: color),
           const SizedBox(width: 4),
           Text(
             rating == null

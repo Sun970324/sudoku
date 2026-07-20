@@ -9,7 +9,9 @@ import '../services/profile_service.dart';
 import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
+import '../widgets/sign_in_prompt.dart';
 import '../widgets/pop_card.dart';
 import '../widgets/rating_trend_chart.dart';
 import '../widgets/tier_badge.dart';
@@ -171,16 +173,14 @@ class _SignInSection extends StatelessWidget {
       children: [
         Text(l10n.signInPromptTitle, textAlign: TextAlign.center),
         const SizedBox(height: 24),
-        PopButton(
+        GoogleAuthButton(
           onPressed: auth.signInWithGoogle,
           label: l10n.signInWithGoogle,
-          expanded: true,
         ),
-        const SizedBox(height: 16),
-        PopButton(
+        const SizedBox(height: 12),
+        AppleAuthButton(
           onPressed: auth.signInWithApple,
           label: l10n.signInWithApple,
-          expanded: true,
         ),
         const SizedBox(height: 16),
         PopButton(
@@ -255,11 +255,11 @@ class _ProfileSection extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.check),
+                      icon: const Icon(PixelIcons.check),
                       onPressed: onSavePressed,
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(PixelIcons.close),
                       onPressed: onCancelPressed,
                     ),
                   ],
@@ -272,7 +272,7 @@ class _ProfileSection extends StatelessWidget {
                         style:
                             const TextStyle(fontFamily: 'Mulmaru', fontSize: 22)),
                     IconButton(
-                      icon: const Icon(Icons.edit, size: 18),
+                      icon: const Icon(PixelIcons.edit, size: 18),
                       onPressed: onEditPressed,
                     ),
                   ],
@@ -342,16 +342,14 @@ class _ProfileSection extends StatelessWidget {
               if (auth.isAnonymous) ...[
                 Text(l10n.linkAccountPrompt, textAlign: TextAlign.center),
                 const SizedBox(height: 12),
-                PopButton(
+                GoogleAuthButton(
                   onPressed: auth.linkGoogle,
                   label: l10n.linkGoogleAction,
-                  expanded: true,
                 ),
-                const SizedBox(height: 16),
-                PopButton(
+                const SizedBox(height: 12),
+                AppleAuthButton(
                   onPressed: auth.linkApple,
                   label: l10n.linkAppleAction,
-                  expanded: true,
                 ),
                 const SizedBox(height: 16),
               ],

@@ -13,6 +13,7 @@ import '../state/auth_controller.dart';
 import '../state/settings_controller.dart';
 import '../theme/app_palette.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/settings_sheet.dart';
 import '../widgets/sudoku_preview_board.dart';
@@ -244,25 +245,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               _RoundIconButton(
-                icon: Icons.bar_chart,
+                icon: PixelIcons.barChart,
                 onPressed: () => _openGame(StatsScreen(auth: widget.auth)),
               ),
               _RoundIconButton(
-                icon: Icons.qr_code,
+                icon: PixelIcons.qrCode,
                 onPressed: _onEnterCodePressed,
               ),
               _RoundIconButton(
-                icon: Icons.person,
+                icon: PixelIcons.person,
                 onPressed: () => _openGame(MyPageScreen(auth: widget.auth)),
               ),
               _RoundIconButton(
-                icon: Icons.settings,
+                icon: PixelIcons.settings,
                 onPressed: () => showSettingsSheet(context, widget.settings),
               ),
             ],
           ).animate().fadeIn(duration: 250.ms),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 24),
         // AnimatedBuilder(
         //   animation: widget.auth,
         //   builder: (context, _) {
@@ -392,7 +393,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: PopButton(
                   onPressed: _onRacePressed,
                   label: l10n.raceButton,
-                  icon: Icons.sports_esports,
+                  icon: PixelIcons.gameController,
                   color: AppPalette.raceCoral,
                   variant: PopButtonVariant.secondary,
                   fontSize: 16,
@@ -405,7 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () => _openGame(DailyEntryScreen(
                       auth: widget.auth, puzzleQueue: widget.puzzleQueue)),
                   label: l10n.dailyButton,
-                  icon: Icons.today,
+                  icon: PixelIcons.calendar,
                   color: AppPalette.dailyTeal,
                   variant: PopButtonVariant.secondary,
                   fontSize: 16,
@@ -418,7 +419,6 @@ class _HomeScreenState extends State<HomeScreen> {
             .animate()
             .fadeIn(delay: 240.ms, duration: 250.ms)
             .slideY(begin: 0.08, curve: Curves.easeOutCubic),
-        const SizedBox(height: 16),
       ],
     );
   }

@@ -94,6 +94,10 @@ flutter:
     - family: Mulmaru
       fonts:
         - asset: assets/fonts/Mulmaru.ttf
+    # Pixel Icon Library by HackerNoon (CC BY 4.0) — https://pixeliconlibrary.com
+    - family: PixelIcon
+      fonts:
+        - asset: assets/fonts/pixel_icon.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

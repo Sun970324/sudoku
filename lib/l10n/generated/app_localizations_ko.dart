@@ -63,7 +63,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get soundLabel => '효과음';
 
   @override
-  String get wrongNoteWarningLabel => '틀린 메모 경고';
+  String get wrongNoteWarningLabel => '틀린 메모 방지';
 
   @override
   String get wrongNoteWarningDescription =>
@@ -557,7 +557,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get signInPromptTitle => '로그인하고 다른 플레이어와 대결해보세요';
 
   @override
-  String get signInWithGoogle => 'Google로 로그인';
+  String get signInWithGoogle => 'Google 계정으로 로그인';
 
   @override
   String get signInWithApple => 'Apple로 로그인';

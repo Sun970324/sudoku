@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../theme/app_palette.dart';
+import 'pixel_icon.dart';
 
 /// A tappable code display (room codes, puzzle share codes): monospace so
 /// 0/O and 1/l can't be misread — deliberately NOT Mulmaru — with tap-to-copy
@@ -57,7 +58,7 @@ class CopyableCodeBox extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Icon(Icons.copy, size: 20, color: accent),
+              Icon(PixelIcons.copy, size: 20, color: accent),
             ],
           ),
         ),
