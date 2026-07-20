@@ -181,6 +181,91 @@ void main() {
     expect(controller.selectedCol, col);
   });
 
+  group('quick input (digit-first) state', () {
+    tearDown(() {
+      // Static default leaks across tests otherwise — setUp's new games
+      // would start in quick mode after any test that enabled it.
+      GameController.quickInputDefault = false;
+    });
+
+    test('setQuickInputMode flips the flag, clears activeDigit, and updates '
+        'the remembered default', () {
+      controller.setQuickInputMode(true);
+      controller.selectActiveDigit(5, asNote: false);
+      expect(controller.activeDigit, 5);
+
+      controller.setQuickInputMode(false);
+      expect(controller.quickInputMode, isFalse);
+      expect(controller.activeDigit, isNull);
+      expect(GameController.quickInputDefault, isFalse);
+
+      controller.setQuickInputMode(true);
+      expect(GameController.quickInputDefault, isTrue);
+    });
+
+    test('selectActiveDigit picks the digit and re-tapping the same pad '
+        'clears it', () {
+      controller.setQuickInputMode(true);
+      controller.selectActiveDigit(3, asNote: false);
+      expect(controller.activeDigit, 3);
+      controller.selectActiveDigit(7, asNote: false);
+      expect(controller.activeDigit, 7);
+      controller.selectActiveDigit(7, asNote: false);
+      expect(controller.activeDigit, isNull);
+    });
+
+    test('value vs note pad sets activeDigitIsNote (not isNoteMode), and only '
+        'one digit is ever active across the two pads', () {
+      controller.setQuickInputMode(true);
+      final noteModeBefore = controller.isNoteMode;
+
+      controller.selectActiveDigit(6, asNote: false);
+      expect(controller.activeDigit, 6);
+      expect(controller.activeDigitIsNote, isFalse);
+
+      // Picking on the notes pad replaces the value selection and flips the
+      // pinned digit's note-ness — never two active digits at once. The
+      // notes-pad-visibility flag (isNoteMode) is left untouched throughout.
+      controller.selectActiveDigit(3, asNote: true);
+      expect(controller.activeDigit, 3);
+      expect(controller.activeDigitIsNote, isTrue);
+
+      // Same digit, but the other pad, is a distinct selection (not a
+      // clear): it re-fixes 3 as a value.
+      controller.selectActiveDigit(3, asNote: false);
+      expect(controller.activeDigit, 3);
+      expect(controller.activeDigitIsNote, isFalse);
+
+      // Re-tapping the digit on its own pad clears it.
+      controller.selectActiveDigit(3, asNote: false);
+      expect(controller.activeDigit, isNull);
+
+      expect(controller.isNoteMode, noteModeBefore);
+    });
+
+    test('selectedValue follows activeDigit in quick mode with no cell '
+        'selected, and falls back to the selected cell otherwise', () {
+      expect(controller.selectedValue, isNull);
+
+      controller.setQuickInputMode(true);
+      controller.selectActiveDigit(4, asNote: false);
+      expect(controller.selectedRow, isNull);
+      expect(controller.selectedValue, 4);
+
+      controller.setQuickInputMode(false);
+      expect(controller.selectedValue, isNull);
+    });
+
+    test('a new game starts in the remembered mode with no active digit', () {
+      controller.setQuickInputMode(true);
+      controller.selectActiveDigit(6, asNote: false);
+
+      controller.startNewGame(Difficulty.easy);
+      expect(controller.quickInputMode, isTrue);
+      expect(controller.activeDigit, isNull);
+    });
+  });
+
   test(
       'selectCellForDrag selects a cell without toggling it off when '
       'called again with the same cell', () async {

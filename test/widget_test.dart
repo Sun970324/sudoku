@@ -50,6 +50,7 @@ void main() {
     SharedPreferences.setMockInitialValues({
       'seen_home_tutorial': true,
       'seen_game_tutorial': true,
+      'seen_quick_input_tutorial': true,
     });
   });
 

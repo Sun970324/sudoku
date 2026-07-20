@@ -17,11 +17,13 @@ class StorageService {
   static const _soundEnabledKey = 'sound_enabled';
   static const _wrongNoteWarningEnabledKey = 'wrong_note_warning_enabled';
   static const _autoRemoveNotesEnabledKey = 'auto_remove_notes_enabled';
+  static const _quickInputEnabledKey = 'quick_input_enabled';
   static const _puzzleQueueKey = 'puzzle_queue';
   static const _raceProgressKey = 'race_in_progress';
   static const _seenHomeTutorialKey = 'seen_home_tutorial';
   static const _seenGameTutorialKey = 'seen_game_tutorial';
   static const _seenRaceTutorialKey = 'seen_race_tutorial';
+  static const _seenQuickInputTutorialKey = 'seen_quick_input_tutorial';
   static const _celebratedSeasonKey = 'celebrated_season_id';
 
   Future<void> saveInProgressGame(GameSnapshot snapshot) async {
@@ -166,6 +168,16 @@ class StorageService {
     return prefs.getBool(_wrongNoteWarningEnabledKey) ?? true;
   }
 
+  Future<void> saveQuickInputEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_quickInputEnabledKey, enabled);
+  }
+
+  Future<bool> loadQuickInputEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_quickInputEnabledKey) ?? false;
+  }
+
   Future<void> saveAutoRemoveNotesEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_autoRemoveNotesEnabledKey, enabled);
@@ -215,6 +227,16 @@ class StorageService {
     return prefs.getBool(_seenRaceTutorialKey) ?? false;
   }
 
+  Future<void> saveSeenQuickInputTutorial(bool seen) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_seenQuickInputTutorialKey, seen);
+  }
+
+  Future<bool> loadSeenQuickInputTutorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_seenQuickInputTutorialKey) ?? false;
+  }
+
   /// The highest archived season id whose end-of-season summary dialog has
   /// already been shown (0 = never shown) — so the race lobby celebrates
   /// each closed season exactly once.
@@ -235,6 +257,7 @@ class StorageService {
     await prefs.remove(_seenHomeTutorialKey);
     await prefs.remove(_seenGameTutorialKey);
     await prefs.remove(_seenRaceTutorialKey);
+    await prefs.remove(_seenQuickInputTutorialKey);
   }
 
   Future<Map<Difficulty, List<SudokuPuzzle>>> loadPuzzleQueue() async {

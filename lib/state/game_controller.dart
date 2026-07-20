@@ -60,6 +60,10 @@ class GameController extends ChangeNotifier {
   static bool wrongNoteWarningEnabled = true;
   static bool autoRemoveNotesEnabled = true;
 
+  /// Remembered default for [quickInputMode], pushed by [SettingsController]
+  /// so a new game inherits the player's last-used input mode.
+  static bool quickInputDefault = false;
+
   final SudokuGenerator _generator;
   final HintEngine _hintEngine;
   final HintSearchRunner _runSearch;
@@ -88,6 +92,21 @@ class GameController extends ChangeNotifier {
 
   int hintsUsed = 0;
   bool isNoteMode = true;
+
+  /// Quick-input (digit-first) state. When [quickInputMode] is on, the number
+  /// pad selects [activeDigit] instead of placing into a cell, and tapping
+  /// cells places [activeDigit] (see [selectActiveDigit] and
+  /// SudokuGridWidget). Both are transient UI state — never persisted in a
+  /// snapshot; the mode's remembered default is [quickInputDefault].
+  bool quickInputMode = quickInputDefault;
+  int? activeDigit;
+
+  /// Whether [activeDigit] was picked from the notes pad (so cell taps write
+  /// it as a pencil mark) rather than the value pad. Independent of
+  /// [isNoteMode]: that only governs whether the notes pad is shown at all —
+  /// picking a quick-input digit never toggles it.
+  bool activeDigitIsNote = false;
+
   GameStatus status = GameStatus.playing;
 
   /// The hint currently being shown to the player, if any. Transient UI
@@ -204,6 +223,9 @@ class GameController extends ChangeNotifier {
     selectedRow = null;
     selectedCol = null;
     isNoteMode = true;
+    quickInputMode = quickInputDefault;
+    activeDigit = null;
+    activeDigitIsNote = false;
     status = GameStatus.playing;
     _history.clear();
     notifyListeners();
@@ -234,6 +256,9 @@ class GameController extends ChangeNotifier {
     elapsedSecondsNotifier.value = 0;
     hintsUsed = 0;
     isNoteMode = true;
+    quickInputMode = quickInputDefault;
+    activeDigit = null;
+    activeDigitIsNote = false;
     status = GameStatus.playing;
     _history.clear();
     notifyListeners();
@@ -245,6 +270,46 @@ class GameController extends ChangeNotifier {
 
   void toggleNoteMode() {
     isNoteMode = !isNoteMode;
+    // Hiding the notes pad drops a quick-input digit that was pinned to it,
+    // so nothing stays active without a visible pad to show it.
+    if (!isNoteMode && activeDigitIsNote) {
+      activeDigit = null;
+      activeDigitIsNote = false;
+    }
+    notifyListeners();
+  }
+
+  /// Switches between cell-first and digit-first (quick) input. Clears
+  /// [activeDigit] both ways so a digit picked in quick mode can't leak
+  /// into a later re-entry, and also updates [quickInputDefault] so the
+  /// choice carries over to the next game (persisted by the caller via
+  /// SettingsController).
+  void setQuickInputMode(bool enabled) {
+    if (enabled == quickInputMode) return;
+    quickInputMode = enabled;
+    quickInputDefault = enabled;
+    activeDigit = null;
+    activeDigitIsNote = false;
+    notifyListeners();
+  }
+
+  /// Picks [value] as the digit that cell taps will place while in quick
+  /// input mode, and whether taps write it as a committed value ([asNote]
+  /// false, from the value pad) or a pencil mark ([asNote] true, from the
+  /// notes pad) — recorded in [activeDigitIsNote]. [isNoteMode] (notes-pad
+  /// visibility) is deliberately left untouched; the two are independent.
+  /// Only ever one digit is active: picking on either pad replaces whatever
+  /// the other held. Re-tapping the digit already active on the same pad
+  /// clears it back to plain selection. Also drops any showing hint, matching
+  /// [selectCell]'s behavior for the equivalent cell-first interaction.
+  void selectActiveDigit(int value, {required bool asNote}) {
+    _setActiveHint(null);
+    if (activeDigit == value && activeDigitIsNote == asNote) {
+      activeDigit = null;
+    } else {
+      activeDigit = value;
+      activeDigitIsNote = asNote;
+    }
     notifyListeners();
   }
 
@@ -357,8 +422,11 @@ class GameController extends ChangeNotifier {
 
   /// The digit occupying the selected cell, or null if nothing is selected
   /// or the selected cell is empty. Used to highlight every other cell that
-  /// shares this value.
+  /// shares this value. In quick input mode the [activeDigit] takes over:
+  /// the pad-picked digit highlights its placements without any cell being
+  /// selected, showing where it can still go.
   int? get selectedValue {
+    if (quickInputMode && activeDigit != null) return activeDigit;
     final row = selectedRow;
     final col = selectedCol;
     if (row == null || col == null) return null;

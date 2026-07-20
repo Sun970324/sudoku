@@ -37,6 +37,11 @@ class SettingsController extends ChangeNotifier {
     SoundService.enabled = _soundEnabled;
     GameController.wrongNoteWarningEnabled = _wrongNoteWarningEnabled;
     GameController.autoRemoveNotesEnabled = _autoRemoveNotesEnabled;
+    // No field/setter of its own: the quick-input toggle lives on the game
+    // screen (not the settings sheet), which persists changes directly via
+    // StorageService — load-time push into the static default is all that's
+    // needed here.
+    GameController.quickInputDefault = await _storage.loadQuickInputEnabled();
     notifyListeners();
   }
 

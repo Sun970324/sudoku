@@ -31,6 +31,7 @@ abstract final class PixelIcons {
   static const ad = IconData(0xf24b, fontFamily: _family); // ad
   static const refresh = IconData(0xf308, fontFamily: _family); // refresh
   static const lightbulb = IconData(0xf2d8, fontFamily: _family); // lightbulb
+  static const bolt = IconData(0xf26a, fontFamily: _family); // bolt-solid
   static const copy = IconData(0xf29d, fontFamily: _family); // copy
   static const undo =
       IconData(0xf25b, fontFamily: _family); // arrow-circle-left

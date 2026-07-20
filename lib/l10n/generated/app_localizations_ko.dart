@@ -104,6 +104,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tutorialGameMistakesBody => '실수가 3번 쌓이면 게임이 끝나요. 한 칸씩 신중하게 입력해요.';
 
   @override
+  String get tutorialQuickInputTitle => '빠른 입력';
+
+  @override
+  String get tutorialQuickInputBody =>
+      '이 버튼을 켜면 숫자를 먼저 고른 뒤 여러 칸을 눌러 빠르게 채울 수 있어요. 메모 숫자도 같은 방식으로 입력돼요.';
+
+  @override
   String get tutorialRaceProfileTitle => '내 정보';
 
   @override
@@ -374,6 +381,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get hintLabel => '힌트';
+
+  @override
+  String get inputModeQuick => '빠른입력';
 
   @override
   String get difficultyBeginner => '브론즈';

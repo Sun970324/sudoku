@@ -33,6 +33,8 @@
   "tutorialGameHintBody": "Stuck? Get a hint by watching a short ad — the badge marks ad-gated helpers.",
   "tutorialGameMistakesTitle": "Mistake limit",
   "tutorialGameMistakesBody": "The game ends after 3 mistakes, so place each number carefully.",
+  "tutorialQuickInputTitle": "Quick input",
+  "tutorialQuickInputBody": "Turn this on to pick a number first, then tap cells to fill them fast. Memo digits work the same way.",
   "tutorialRaceProfileTitle": "Your standing",
   "tutorialRaceProfileBody": "Your tier, rating, and win-loss record show up here.",
   "tutorialRaceFriendTitle": "Play a friend",
@@ -177,6 +179,7 @@
   "noteLabel": "Notes",
   "autoFillLabel": "Auto Notes",
   "hintLabel": "Hint",
+  "inputModeQuick": "Quick",
 
   "difficultyBeginner": "Bronze",
   "difficultyEasy": "Silver",

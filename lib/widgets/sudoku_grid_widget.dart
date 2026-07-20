@@ -55,9 +55,15 @@ Offset curveControlPoint(
 }
 
 class SudokuGridWidget extends StatefulWidget {
-  const SudokuGridWidget({super.key, required this.controller});
+  const SudokuGridWidget({super.key, required this.controller, this.onQuickInput});
 
   final GameController controller;
+
+  /// Called instead of the normal select/double-tap handling when a cell is
+  /// tapped while quick input mode has an active digit — the digit-first
+  /// flow, where the tapped cell receives [GameController.activeDigit]. The
+  /// tapped cell is already selected when this fires.
+  final ValueChanged<int>? onQuickInput;
 
   @override
   State<SudokuGridWidget> createState() => _SudokuGridWidgetState();
@@ -200,13 +206,16 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
     final hint = controller.visualizedHint;
     final cell = HintCell(row, col);
 
-    // While a hint is showing, selection-driven highlighting (selected
-    // cell, its peers, same-value cells, same-value note highlights) is
-    // suppressed entirely so only the hint's own red/green cues are
-    // visible — otherwise a leftover selection blends confusingly with
-    // the hint's coloring.
-    final selectedRow = hint == null ? controller.selectedRow : null;
-    final selectedCol = hint == null ? controller.selectedCol : null;
+    // While a hint is showing, selection-driven highlighting (selected cell
+    // and its peers) is suppressed so only the hint's own red/green cues
+    // show — otherwise a leftover selection blends confusingly with the
+    // hint's coloring. Quick input suppresses it the same way: there you
+    // place the active digit into whatever cell you tap, so there's no
+    // meaningful selected cell or row/column/box peer highlight — only the
+    // same-number highlight (the active digit) remains.
+    final hideSelection = hint != null || controller.quickInputMode;
+    final selectedRow = hideSelection ? null : controller.selectedRow;
+    final selectedCol = hideSelection ? null : controller.selectedCol;
     final isSelected = selectedRow == row && selectedCol == col;
     final isPeer = !isSelected &&
         selectedRow != null &&
@@ -303,6 +312,22 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
   /// every single tap wait out the double-tap disambiguation window before
   /// firing. Plain taps must stay instant.
   void _onCellTap(int row, int col, Set<int> notes) {
+    // Digit-first flow: with a pad-picked digit active, a cell tap places
+    // that digit (or toggles it as a note) instead of selecting. Selection
+    // still moves to the tapped cell — via selectCellForDrag, never
+    // toggle-off — so the existing input path and its highlights behave
+    // exactly as in select-then-type. Feedback (haptic/sound) is left to
+    // the input handler, which already distinguishes correct/wrong.
+    final activeDigit = controller.activeDigit;
+    final onQuickInput = widget.onQuickInput;
+    if (controller.quickInputMode &&
+        activeDigit != null &&
+        onQuickInput != null) {
+      controller.selectCellForDrag(row, col);
+      onQuickInput(activeDigit);
+      return;
+    }
+
     final now = DateTime.now();
     final isDoubleTap = row == _lastTapRow &&
         col == _lastTapCol &&

@@ -284,6 +284,18 @@ abstract class AppLocalizations {
   /// **'The game ends after 3 mistakes, so place each number carefully.'**
   String get tutorialGameMistakesBody;
 
+  /// No description provided for @tutorialQuickInputTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick input'**
+  String get tutorialQuickInputTitle;
+
+  /// No description provided for @tutorialQuickInputBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn this on to pick a number first, then tap cells to fill them fast. Memo digits work the same way.'**
+  String get tutorialQuickInputBody;
+
   /// No description provided for @tutorialRaceProfileTitle.
   ///
   /// In en, this message translates to:
@@ -781,6 +793,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hint'**
   String get hintLabel;
+
+  /// No description provided for @inputModeQuick.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick'**
+  String get inputModeQuick;
 
   /// No description provided for @difficultyBeginner.
   ///

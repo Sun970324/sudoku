@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
+import '../../services/storage_service.dart';
 import '../../state/race_controller.dart';
 import '../../widgets/game_controls_row.dart';
 import '../../widgets/number_pad_widget.dart';
 import '../../widgets/pixel_icon.dart';
+import '../../widgets/quick_input_toggle.dart';
 import '../../widgets/sudoku_grid_widget.dart';
 import 'race_result_screen.dart';
 
@@ -23,6 +25,7 @@ class RaceScreen extends StatefulWidget {
 
 class _RaceScreenState extends State<RaceScreen> {
   Timer? _timer;
+  final StorageService _storage = StorageService();
 
   /// True once this screen has handed the controller off to
   /// [RaceResultScreen] — dispose() must then leave it alone. Aborting
@@ -64,6 +67,44 @@ class _RaceScreenState extends State<RaceScreen> {
   }
 
   void _onGameChanged() => setState(() {});
+
+  // Quick-input (digit-first) handlers, mirroring the solo game screen. The
+  // game controller's notifyListeners drives the rebuild via _onGameChanged,
+  // so these just mutate. The bolt toggle, pads, and grid are all wired below.
+  void _onQuickInput(int digit) {
+    final game = widget.controller.game;
+    if (game.activeDigitIsNote) {
+      game.toggleNote(digit);
+      return;
+    }
+    final row = game.selectedRow;
+    final col = game.selectedCol;
+    // Re-tapping a cell already holding the active digit erases it.
+    if (row != null && col != null && game.valueAt(row, col) == digit) {
+      game.eraseSelected();
+      return;
+    }
+    game.inputValue(digit);
+    // Drop the active digit once it's fully placed so further taps aren't
+    // guaranteed wrong placements of a depleted digit.
+    if (game.activeDigit == digit && game.remainingCount(digit) <= 0) {
+      game.selectActiveDigit(digit, asNote: false);
+    }
+  }
+
+  void _onQuickValuePadTap(int value) =>
+      widget.controller.game.selectActiveDigit(value, asNote: false);
+
+  void _onQuickNotePadTap(int value) =>
+      widget.controller.game.selectActiveDigit(value, asNote: true);
+
+  void _setQuickInputMode(bool enabled) {
+    final game = widget.controller.game;
+    if (enabled == game.quickInputMode) return;
+    game.setQuickInputMode(enabled);
+    // Same shared preference as the solo screen — the choice carries across.
+    _storage.saveQuickInputEnabled(enabled);
+  }
 
   Future<void> _confirmAbort() async {
     final l10n = AppLocalizations.of(context)!;
@@ -162,9 +203,23 @@ class _RaceScreenState extends State<RaceScreen> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: SudokuGridWidget(controller: game),
+                  child: Column(
+                    children: [
+                      Flexible(
+                        child: SudokuGridWidget(
+                            controller: game, onQuickInput: _onQuickInput),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          QuickInputToggle(
+                            active: game.quickInputMode,
+                            onToggle: _setQuickInputMode,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -185,7 +240,13 @@ class _RaceScreenState extends State<RaceScreen> {
               NumberPadWidget(
                 controller: game,
                 isNotePad: false,
-                onNumberSelected: (value) => setState(() => game.inputValue(value)),
+                onNumberSelected: game.quickInputMode
+                    ? _onQuickValuePadTap
+                    : (value) => setState(() => game.inputValue(value)),
+                selectedNumber:
+                    game.quickInputMode && !game.activeDigitIsNote
+                        ? game.activeDigit
+                        : null,
               ),
               const SizedBox(height: 8),
               AnimatedOpacity(
@@ -196,8 +257,13 @@ class _RaceScreenState extends State<RaceScreen> {
                   child: NumberPadWidget(
                     controller: game,
                     isNotePad: true,
-                    onNumberSelected: (value) =>
-                        setState(() => game.toggleNote(value)),
+                    onNumberSelected: game.quickInputMode
+                        ? _onQuickNotePadTap
+                        : (value) => setState(() => game.toggleNote(value)),
+                    selectedNumber:
+                        game.quickInputMode && game.activeDigitIsNote
+                            ? game.activeDigit
+                            : null,
                   ),
                 ),
               ),

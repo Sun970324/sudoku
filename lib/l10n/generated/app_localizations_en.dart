@@ -112,6 +112,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'The game ends after 3 mistakes, so place each number carefully.';
 
   @override
+  String get tutorialQuickInputTitle => 'Quick input';
+
+  @override
+  String get tutorialQuickInputBody =>
+      'Turn this on to pick a number first, then tap cells to fill them fast. Memo digits work the same way.';
+
+  @override
   String get tutorialRaceProfileTitle => 'Your standing';
 
   @override
@@ -391,6 +398,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hintLabel => 'Hint';
+
+  @override
+  String get inputModeQuick => 'Quick';
 
   @override
   String get difficultyBeginner => 'Bronze';

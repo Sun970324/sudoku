@@ -24,6 +24,7 @@ import '../widgets/number_pad_widget.dart';
 import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/puzzle_share_dialog.dart';
+import '../widgets/quick_input_toggle.dart';
 import '../widgets/sudoku_grid_widget.dart';
 import '../widgets/sudoku_preview_board.dart';
 import 'daily/daily_result_screen.dart';
@@ -97,6 +98,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   final _noteButtonKey = GlobalKey();
   final _hintButtonKey = GlobalKey();
   final _mistakesKey = GlobalKey();
+  final _quickInputKey = GlobalKey();
   bool _tutorialChecked = false;
 
   @override
@@ -144,11 +146,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   Future<void> _maybeShowTutorial() async {
     if (_tutorialChecked || widget.resumeSnapshot != null) return;
     _tutorialChecked = true;
+    if (!mounted) return;
     if (await _storage.loadSeenGameTutorial()) return;
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
     // Freeze the clock while the tutorial is up so the intro doesn't count
-    // against the player's solve time — resumed in onDone.
+    // against the player's solve time — resumed once the whole walkthrough
+    // (game steps, then the chained quick-input tip) finishes.
     _timer?.cancel();
     showCoachMark(
       context,
@@ -186,6 +190,40 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       ],
       onDone: () {
         _storage.saveSeenGameTutorial(true);
+        // Chain straight into the quick-input tip (keeps the clock frozen
+        // until it too is done, which restarts the timer).
+        _maybeShowQuickInputTutorial();
+      },
+    );
+  }
+
+  /// One-shot spotlight on the quick-input toggle, chained on right after the
+  /// game tutorial's last step (see [_maybeShowTutorial]). Its own "seen" flag
+  /// keeps it to a single showing and lets the settings "replay" re-trigger it
+  /// alongside the game tutorial. Restarts the clock when dismissed.
+  Future<void> _maybeShowQuickInputTutorial() async {
+    if (!mounted) return;
+    if (await _storage.loadSeenQuickInputTutorial()) {
+      // Nothing to show — make sure the clock is running again (it may have
+      // been frozen by a game tutorial that chained here).
+      if (mounted) _startTimer();
+      return;
+    }
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    _timer?.cancel();
+    showCoachMark(
+      context,
+      steps: [
+        CoachMarkStep(
+          targetKey: _quickInputKey,
+          title: l10n.tutorialQuickInputTitle,
+          body: l10n.tutorialQuickInputBody,
+          align: ContentAlign.top,
+        ),
+      ],
+      onDone: () {
+        _storage.saveSeenQuickInputTutorial(true);
         if (mounted) _startTimer();
       },
     );
@@ -460,9 +498,27 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     return hours > 0 ? '$hours:$mm:$ss' : '$mm:$ss';
   }
 
+  /// The cell-first / digit-first switch shown right above the number pad —
+  /// a single bolt icon that lights up while quick (digit-first) input is on.
+  /// Right-aligned: it sits inside the same horizontal padding as the grid, so
+  /// its right edge lines up with the board's right edge.
+  Widget _buildQuickInputToggle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        QuickInputToggle(
+          key: _quickInputKey,
+          active: _controller.quickInputMode,
+          onToggle: _setQuickInputMode,
+        ),
+      ],
+    );
+  }
+
   Widget _buildGrid() => ListenableBuilder(
         listenable: _controller,
-        builder: (context, _) => SudokuGridWidget(controller: _controller),
+        builder: (context, _) => SudokuGridWidget(
+            controller: _controller, onQuickInput: _onQuickInput),
       );
 
   void _showGameOverDialog() {
@@ -940,6 +996,56 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _saveProgress();
   }
 
+  /// Quick-input dispatch: fired by the grid when a cell is tapped while a
+  /// pad digit is active (the cell is already selected). Routes into the
+  /// exact cell-first handlers so correctness feedback and progress saving
+  /// stay identical to select-then-type.
+  void _onQuickInput(int digit) {
+    if (_controller.activeDigitIsNote) {
+      _onNoteNumberSelected(digit);
+      return;
+    }
+    final row = _controller.selectedRow;
+    final col = _controller.selectedCol;
+    // Digit-first convention: re-tapping a cell already holding the active
+    // digit erases it. Givens and locked-correct cells no-op via canErase.
+    if (row != null && col != null && _controller.valueAt(row, col) == digit) {
+      _onErase();
+      return;
+    }
+    _onNumberSelected(digit);
+    // The pad button disables once a digit is fully placed; drop it as the
+    // active digit too, otherwise every further tap would be a guaranteed
+    // wrong placement of a digit with none left to place.
+    if (_controller.activeDigit == digit &&
+        _controller.remainingCount(digit) <= 0) {
+      _controller.selectActiveDigit(digit, asNote: false);
+    }
+  }
+
+  /// Value-pad tap in quick input mode: fixes the digit for value placement
+  /// (or re-tap clears it) instead of writing into a cell.
+  void _onQuickValuePadTap(int value) {
+    HapticService.selection();
+    SoundService.click();
+    _controller.selectActiveDigit(value, asNote: false);
+  }
+
+  /// Notes-pad tap in quick input mode: fixes the digit for memo placement.
+  void _onQuickNotePadTap(int value) {
+    HapticService.selection();
+    SoundService.click();
+    _controller.selectActiveDigit(value, asNote: true);
+  }
+
+  void _setQuickInputMode(bool enabled) {
+    if (enabled == _controller.quickInputMode) return;
+    HapticService.selection();
+    SoundService.click();
+    _controller.setQuickInputMode(enabled);
+    _storage.saveQuickInputEnabled(enabled);
+  }
+
   void _onErase() {
     _controller.eraseSelected();
     _saveProgress();
@@ -1094,51 +1200,63 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-                // Top-aligned (not centered) so leftover space collects
-                // below the grid instead of splitting evenly — keeps the
-                // grid sitting close to the app bar.
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  // The real, interactive grid is always present and
-                  // never itself Hero-tagged, so taps register from the
-                  // first frame. A separate, non-interactive clone
-                  // (paired with the same tag on SudokuPreviewBoard in
-                  // HomeScreen) is stacked on top purely for the
-                  // entrance grow animation, and is removed once that
-                  // push transition completes (see
-                  // _onEntranceAnimationStatus).
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      DecoratedBox(
-                        key: _gridKey,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(11),
-                          boxShadow: [
-                            BoxShadow(
-                              color: BoardColors.outerBorder(
-                                      BoardColors.isDark(context))
-                                  .withValues(alpha: 0.28),
-                              blurRadius: 18,
-                              spreadRadius: 2,
+                // Board + quick-input toggle as one top-aligned group. The
+                // board is Flexible so it still caps to the available height
+                // (shrinking on short screens instead of overflowing), while
+                // leftover vertical space now collects *below* the toggle
+                // rather than between the board and it — keeping the toggle
+                // tucked right under the grid.
+                child: Column(
+                  children: [
+                    Flexible(
+                      // The real, interactive grid is always present and
+                      // never itself Hero-tagged, so taps register from the
+                      // first frame. A separate, non-interactive clone
+                      // (paired with the same tag on SudokuPreviewBoard in
+                      // HomeScreen) is stacked on top purely for the
+                      // entrance grow animation, and is removed once that
+                      // push transition completes (see
+                      // _onEntranceAnimationStatus).
+                      child: Stack(
+                        alignment: Alignment.topCenter,
+                        children: [
+                          DecoratedBox(
+                            key: _gridKey,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(11),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: BoardColors.outerBorder(
+                                          BoardColors.isDark(context))
+                                      .withValues(alpha: 0.28),
+                                  blurRadius: 18,
+                                  spreadRadius: 2,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: _buildGrid(),
-                      ),
-                      if (_showEntranceHero)
-                        IgnorePointer(
-                          child: Hero(
-                            tag: 'sudoku-board',
-                            child:
-                                SudokuPreviewBoard(puzzle: _controller.puzzle),
+                            child: _buildGrid(),
                           ),
-                        ),
-                    ],
-                  ),
+                          if (_showEntranceHero)
+                            IgnorePointer(
+                              child: Hero(
+                                tag: 'sudoku-board',
+                                child: SudokuPreviewBoard(
+                                    puzzle: _controller.puzzle),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    ListenableBuilder(
+                      listenable: _controller,
+                      builder: (context, _) => _buildQuickInputToggle(),
+                    ),
+                  ],
                 ),
               ),
             ),
+            const SizedBox(height: 12),
             ListenableBuilder(
               listenable: _controller,
               builder: (context, _) => GameControlsRow(
@@ -1155,35 +1273,58 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                 hintButtonKey: _hintButtonKey,
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
             ListenableBuilder(
               key: _numberPadKey,
               listenable: _controller,
+              // In quick input mode this pad fixes the active value digit
+              // (cells are then tapped to place it); it's highlighted only
+              // while the active digit was picked from the value pad.
               builder: (context, _) => NumberPadWidget(
                 controller: _controller,
                 isNotePad: false,
-                onNumberSelected: _onNumberSelected,
+                onNumberSelected: _controller.quickInputMode
+                    ? _onQuickValuePadTap
+                    : _onNumberSelected,
+                selectedNumber:
+                    _controller.quickInputMode && !_controller.activeDigitIsNote
+                        ? _controller.activeDigit
+                        : null,
               ),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 24),
             // The notes pad always reserves its layout space and only
             // fades in/out — unlike a height-collapsing animation, this
             // keeps the total height below the grid constant regardless of
             // note mode, so the Expanded grid above never resizes/shifts.
+            // The notes pad's visibility is governed by note mode alone (the
+            // memo control button) in both cell-first and quick input — the
+            // two are independent of which pad a quick-input digit was picked
+            // from. In quick input it's the memo half of the picker, and it
+            // highlights its digit only while the active one was picked here.
             ListenableBuilder(
               listenable: _controller,
-              builder: (context, _) => AnimatedOpacity(
-                opacity: _controller.isNoteMode ? 1 : 0,
-                duration: const Duration(milliseconds: 250),
-                child: IgnorePointer(
-                  ignoring: !_controller.isNoteMode,
-                  child: NumberPadWidget(
-                    controller: _controller,
-                    isNotePad: true,
-                    onNumberSelected: _onNoteNumberSelected,
+              builder: (context, _) {
+                final showNotesPad = _controller.isNoteMode;
+                return AnimatedOpacity(
+                  opacity: showNotesPad ? 1 : 0,
+                  duration: const Duration(milliseconds: 250),
+                  child: IgnorePointer(
+                    ignoring: !showNotesPad,
+                    child: NumberPadWidget(
+                      controller: _controller,
+                      isNotePad: true,
+                      onNumberSelected: _controller.quickInputMode
+                          ? _onQuickNotePadTap
+                          : _onNoteNumberSelected,
+                      selectedNumber: _controller.quickInputMode &&
+                              _controller.activeDigitIsNote
+                          ? _controller.activeDigit
+                          : null,
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(height: 24),
           ],

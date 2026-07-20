@@ -10,11 +10,16 @@ class NumberPadWidget extends StatelessWidget {
     required this.controller,
     required this.isNotePad,
     required this.onNumberSelected,
+    this.selectedNumber,
   });
 
   final GameController controller;
   final bool isNotePad;
   final ValueChanged<int> onNumberSelected;
+
+  /// The digit rendered as active — quick input mode's pad-picked digit.
+  /// Null (always, in cell-first mode) renders no button as active.
+  final int? selectedNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +50,7 @@ class NumberPadWidget extends StatelessWidget {
                   number: number,
                   enabled: !isComplete,
                   isNotePad: isNotePad,
+                  isActive: number == selectedNumber,
                   onTap: () => onNumberSelected(number),
                 ),
               ],
@@ -61,12 +67,14 @@ class _NumberPadButton extends StatefulWidget {
     required this.number,
     required this.enabled,
     required this.isNotePad,
+    required this.isActive,
     required this.onTap,
   });
 
   final int number;
   final bool enabled;
   final bool isNotePad;
+  final bool isActive;
   final VoidCallback onTap;
 
   @override
@@ -84,9 +92,12 @@ class _NumberPadButtonState extends State<_NumberPadButton> {
   @override
   Widget build(BuildContext context) {
     final isDark = BoardColors.isDark(context);
+    final primary = Theme.of(context).colorScheme.primary;
     final Color textColor;
     if (!widget.enabled) {
       textColor = BoardColors.padTextDisabled(isDark);
+    } else if (widget.isActive) {
+      textColor = Colors.white;
     } else if (widget.isNotePad) {
       textColor = BoardColors.padTextNote(isDark);
     } else {
@@ -95,6 +106,8 @@ class _NumberPadButtonState extends State<_NumberPadButton> {
     final Color backgroundColor;
     if (!widget.enabled) {
       backgroundColor = BoardColors.padBgDisabled(isDark);
+    } else if (widget.isActive) {
+      backgroundColor = primary;
     } else if (widget.isNotePad) {
       backgroundColor = BoardColors.padBgNote(isDark);
     } else {
@@ -116,10 +129,12 @@ class _NumberPadButtonState extends State<_NumberPadButton> {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: widget.enabled
-                  ? (widget.isNotePad
-                      ? Colors.white.withValues(alpha: 0.10)
-                      : BoardColors.padTextValue(isDark)
-                          .withValues(alpha: 0.35))
+                  ? (widget.isActive
+                      ? Colors.white.withValues(alpha: 0.45)
+                      : widget.isNotePad
+                          ? Colors.white.withValues(alpha: 0.10)
+                          : BoardColors.padTextValue(isDark)
+                              .withValues(alpha: 0.35))
                   : Colors.transparent,
             ),
             boxShadow: widget.enabled
