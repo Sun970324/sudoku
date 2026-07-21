@@ -315,7 +315,9 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
     if (!PremiumController.instance.isPremium) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const PremiumLockScreen()),
+        MaterialPageRoute(
+            builder: (_) =>
+                PremiumLockScreen(description: l10n.replayPremiumBody)),
       );
       return;
     }

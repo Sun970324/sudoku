@@ -10,6 +10,7 @@ import '../services/profile_service.dart';
 import '../services/season_service.dart';
 import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
+import 'favorites/favorites_screen.dart';
 import '../widgets/gradient_scaffold.dart';
 import '../widgets/pixel_back_button.dart';
 import '../widgets/pixel_icon.dart';
@@ -421,6 +422,17 @@ class _ProfileSection extends StatelessWidget {
         ),
         _RatingTrendCard(future: ratingHistory, color: tierColor),
         _PastSeasonsCard(future: pastSeasons),
+        const SizedBox(height: 16),
+        PopButton(
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+          ),
+          label: l10n.favoritesTitle,
+          icon: PixelIcons.star,
+          variant: PopButtonVariant.outline,
+          expanded: true,
+        ),
         const SizedBox(height: 16),
         PopCard(
           padding: const EdgeInsets.all(20),

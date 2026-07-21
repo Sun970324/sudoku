@@ -920,6 +920,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Win races to raise your rating and climb to a higher tier.';
 
   @override
+  String get matchmakingTip7 =>
+      'Tiers go Bronze > Silver > Gold > Diamond > Master > Challenger. Aim for Challenger.';
+
+  @override
   String get raceAbortConfirmTitle => 'Give up the race?';
 
   @override
@@ -1212,7 +1216,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get replayEmpty => 'No games to replay yet.';
 
   @override
-  String get replayPremiumTitle => 'Premium feature';
+  String get premiumTitle => 'Premium';
+
+  @override
+  String get premiumLockTitle => 'Premium feature';
 
   @override
   String get replayPremiumBody =>
@@ -1224,4 +1231,25 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get raceReplayUnavailable =>
       'No replay saved for this game on this device.';
+
+  @override
+  String get favoritesTitle => 'Favorites';
+
+  @override
+  String get favoritePremiumBody =>
+      'Save puzzles to your favorites and replay them fresh whenever you like.';
+
+  @override
+  String get favoritesEmpty => 'No saved puzzles yet.';
+
+  @override
+  String get favoriteSaved => 'Saved to favorites.';
+
+  @override
+  String get favoriteRemoved => 'Removed from favorites.';
+
+  @override
+  String favoriteFull(int count) {
+    return 'Favorites are full (max $count).';
+  }
 }

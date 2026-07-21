@@ -267,6 +267,7 @@
   "matchmakingTip4": "메모 기능으로 후보 숫자를 적어두면 더 쉽게 풀 수 있어요.",
   "matchmakingTip5": "방 코드를 공유하면 친구와 1:1로 대결할 수 있어요.",
   "matchmakingTip6": "대결에서 이기면 레이팅이 올라 더 높은 티어로 승급해요.",
+  "matchmakingTip7": "티어는 브론즈 > 실버 > 골드 > 다이아몬드 > 마스터 > 챌린저가 있습니다. 챌린저까지 도전해보세요.",
   "raceAbortConfirmTitle": "레이스를 포기할까요?",
   "opponentDisconnectedCountdown": "상대방 연결 끊김 — {seconds}초 후 승리 처리",
   "opponentProgressLabel": "상대방",
@@ -340,8 +341,16 @@
 
   "replayTitle": "리플레이",
   "replayEmpty": "아직 리플레이할 기록이 없어요.",
-  "replayPremiumTitle": "프리미엄 전용 기능",
+  "premiumTitle": "프리미엄",
+  "premiumLockTitle": "프리미엄 전용 기능",
   "replayPremiumBody": "최근 게임을 한 수씩 복기하고 다시 풀어보세요 — 입력·메모한 순서를 그대로 되돌려 봅니다.",
   "replayResumeFromHere": "여기서부터 풀기",
-  "raceReplayUnavailable": "이 기기에 저장된 리플레이 기록이 없어요."
+  "raceReplayUnavailable": "이 기기에 저장된 리플레이 기록이 없어요.",
+
+  "favoritesTitle": "즐겨찾기",
+  "favoritePremiumBody": "마음에 드는 스도쿠를 즐겨찾기에 저장해두고 원할 때 새로 풀어보세요.",
+  "favoritesEmpty": "저장한 스도쿠가 없어요.",
+  "favoriteSaved": "즐겨찾기에 저장했어요.",
+  "favoriteRemoved": "즐겨찾기에서 제거했어요.",
+  "favoriteFull": "즐겨찾기가 가득 찼어요 (최대 {count}개)."
 }

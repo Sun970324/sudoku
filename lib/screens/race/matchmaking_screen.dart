@@ -143,6 +143,7 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
                       l10n.matchmakingTip4,
                       l10n.matchmakingTip5,
                       l10n.matchmakingTip6,
+                      l10n.matchmakingTip7,
                     ]),
                     const SizedBox(height: 32),
                     PopButton(
@@ -215,31 +216,34 @@ class _RotatingTipState extends State<_RotatingTip> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return SizedBox(
-      height: 40,
+      // Fixed height for up to 2 lines so the layout doesn't jump between tips.
+      height: 44,
       child: Center(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 500),
-          // scaleDown shrinks the whole row to fit the width so a long tip
-          // stays on a single line and is never clipped.
-          child: FittedBox(
+          child: Row(
             key: ValueKey(_index),
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(PixelIcons.lightbulb, size: 16, color: scheme.primary),
-                const SizedBox(width: 8),
-                Text(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Icon(PixelIcons.lightbulb, size: 16, color: scheme.primary),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
                   widget.tips[_index],
-                  maxLines: 1,
-                  softWrap: false,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
                     color: scheme.onSurfaceVariant,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

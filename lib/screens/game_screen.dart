@@ -20,6 +20,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_theme.dart';
 import '../theme/board_colors.dart';
 import '../widgets/coach_mark.dart';
+import '../widgets/favorite_button.dart';
 import '../widgets/game_controls_row.dart';
 import '../widgets/number_pad_widget.dart';
 import '../widgets/pixel_icon.dart';
@@ -349,9 +350,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // point until their first completion.
     if (widget.isDaily) return;
     _abandoningGame = true;
-    // Save the replay for every give-up — a mid-game exit and a game-over both
-    // leave a game worth reviewing, so both are recorded (as a loss).
-    await _storage.saveReplay(_controller.toReplay(won: false));
+    // Save the replay for a mid-game exit or game-over (as a loss) — but only
+    // if a move was actually made; leaving an untouched board records nothing.
+    if (_controller.eventLog.isNotEmpty) {
+      await _storage.saveReplay(_controller.toReplay(won: false));
+    }
     await _storage.clearInProgressGame();
     await _storage.recordGameResult(
       difficulty: _controller.difficulty,
@@ -1092,6 +1095,18 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             onPressed: _onBackPressed,
           ),
           actions: [
+            FavoriteButton(
+              puzzle: _controller.puzzle,
+              // A free user tapping favorite opens the upsell over the game —
+              // freeze the clock while it's up, resume on return (if still
+              // playing).
+              onPause: () => _timer?.cancel(),
+              onResume: () {
+                if (mounted && _controller.status == GameStatus.playing) {
+                  _startTimer();
+                }
+              },
+            ),
             IconButton(
               icon: const Icon(PixelIcons.share),
               onPressed: () => showPuzzleShareDialog(

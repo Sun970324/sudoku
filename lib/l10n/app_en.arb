@@ -627,6 +627,7 @@
   "matchmakingTip4": "Use note mode to pencil in candidate numbers and solve faster.",
   "matchmakingTip5": "Share a room code to race a friend one-on-one.",
   "matchmakingTip6": "Win races to raise your rating and climb to a higher tier.",
+  "matchmakingTip7": "Tiers go Bronze > Silver > Gold > Diamond > Master > Challenger. Aim for Challenger.",
   "raceAbortConfirmTitle": "Give up the race?",
   "opponentDisconnectedCountdown": "Opponent disconnected — you win in {seconds}s",
   "@opponentDisconnectedCountdown": {
@@ -950,8 +951,21 @@
 
   "replayTitle": "Replay",
   "replayEmpty": "No games to replay yet.",
-  "replayPremiumTitle": "Premium feature",
+  "premiumTitle": "Premium",
+  "premiumLockTitle": "Premium feature",
   "replayPremiumBody": "Replay your recent games move by move and pick up solving again — retrace every entry and note in the exact order you made them.",
   "replayResumeFromHere": "Solve from here",
-  "raceReplayUnavailable": "No replay saved for this game on this device."
+  "raceReplayUnavailable": "No replay saved for this game on this device.",
+
+  "favoritesTitle": "Favorites",
+  "favoritePremiumBody": "Save puzzles to your favorites and replay them fresh whenever you like.",
+  "favoritesEmpty": "No saved puzzles yet.",
+  "favoriteSaved": "Saved to favorites.",
+  "favoriteRemoved": "Removed from favorites.",
+  "favoriteFull": "Favorites are full (max {count}).",
+  "@favoriteFull": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
 }

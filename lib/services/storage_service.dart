@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/difficulty.dart';
+import '../models/favorite_puzzle.dart';
 import '../models/game_replay.dart';
 import '../models/game_snapshot.dart';
 import '../models/stats.dart';
@@ -13,10 +14,15 @@ class StorageService {
   static const _inProgressKey = 'in_progress_game';
   static const _replaysKey = 'game_replays';
   static const _raceReplaysKey = 'race_replays';
+  static const _favoritesKey = 'favorite_puzzles';
 
   /// How many finished solo games are kept for replay — newest first, oldest
   /// pruned past this. Premium-only feature; see [PremiumController].
   static const maxReplays = 10;
+
+  /// Cap on saved favorite puzzles. Unlike replays these are user-curated, so
+  /// the cap blocks new saves rather than evicting an existing favorite.
+  static const maxFavorites = 30;
   static const _statsKey = 'stats';
   static const _themeModeKey = 'theme_mode';
   static const _localeOverrideKey = 'locale_override';
@@ -124,6 +130,54 @@ class StorageService {
     return (jsonDecode(raw) as List<dynamic>)
         .map((e) => GameReplay.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  /// Identity of a puzzle for favorites dedup/lookup — its givens grid, which
+  /// uniquely pins the puzzle (the same givens always have the same solution).
+  static String _puzzleKey(SudokuPuzzle puzzle) =>
+      jsonEncode(puzzle.puzzle.toJson());
+
+  Future<List<FavoritePuzzle>> loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_favoritesKey);
+    if (raw == null) return [];
+    return (jsonDecode(raw) as List<dynamic>)
+        .map((e) => FavoritePuzzle.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<void> _writeFavorites(List<FavoritePuzzle> favorites) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        _favoritesKey, jsonEncode(favorites.map((f) => f.toJson()).toList()));
+  }
+
+  /// Saves [puzzle] to favorites (newest first). Returns false without saving
+  /// when already at [maxFavorites] and [puzzle] isn't among them — the user
+  /// must remove one first (curated list, nothing auto-evicted). Already-saved
+  /// puzzles are a no-op returning true.
+  Future<bool> saveFavorite(SudokuPuzzle puzzle) async {
+    final favorites = await loadFavorites();
+    final key = _puzzleKey(puzzle);
+    if (favorites.any((f) => _puzzleKey(f.puzzle) == key)) return true;
+    if (favorites.length >= maxFavorites) return false;
+    favorites.insert(
+        0, FavoritePuzzle(puzzle: puzzle, savedAt: DateTime.now()));
+    await _writeFavorites(favorites);
+    return true;
+  }
+
+  Future<void> removeFavorite(SudokuPuzzle puzzle) async {
+    final favorites = await loadFavorites();
+    final key = _puzzleKey(puzzle);
+    favorites.removeWhere((f) => _puzzleKey(f.puzzle) == key);
+    await _writeFavorites(favorites);
+  }
+
+  Future<bool> isFavorite(SudokuPuzzle puzzle) async {
+    final favorites = await loadFavorites();
+    final key = _puzzleKey(puzzle);
+    return favorites.any((f) => _puzzleKey(f.puzzle) == key);
   }
 
   Future<Stats> getStats() async {

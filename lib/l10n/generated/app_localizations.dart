@@ -1629,6 +1629,12 @@ abstract class AppLocalizations {
   /// **'Win races to raise your rating and climb to a higher tier.'**
   String get matchmakingTip6;
 
+  /// No description provided for @matchmakingTip7.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiers go Bronze > Silver > Gold > Diamond > Master > Challenger. Aim for Challenger.'**
+  String get matchmakingTip7;
+
   /// No description provided for @raceAbortConfirmTitle.
   ///
   /// In en, this message translates to:
@@ -2044,11 +2050,17 @@ abstract class AppLocalizations {
   /// **'No games to replay yet.'**
   String get replayEmpty;
 
-  /// No description provided for @replayPremiumTitle.
+  /// No description provided for @premiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get premiumTitle;
+
+  /// No description provided for @premiumLockTitle.
   ///
   /// In en, this message translates to:
   /// **'Premium feature'**
-  String get replayPremiumTitle;
+  String get premiumLockTitle;
 
   /// No description provided for @replayPremiumBody.
   ///
@@ -2067,6 +2079,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No replay saved for this game on this device.'**
   String get raceReplayUnavailable;
+
+  /// No description provided for @favoritesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesTitle;
+
+  /// No description provided for @favoritePremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Save puzzles to your favorites and replay them fresh whenever you like.'**
+  String get favoritePremiumBody;
+
+  /// No description provided for @favoritesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved puzzles yet.'**
+  String get favoritesEmpty;
+
+  /// No description provided for @favoriteSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to favorites.'**
+  String get favoriteSaved;
+
+  /// No description provided for @favoriteRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from favorites.'**
+  String get favoriteRemoved;
+
+  /// No description provided for @favoriteFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites are full (max {count}).'**
+  String favoriteFull(int count);
 }
 
 class _AppLocalizationsDelegate

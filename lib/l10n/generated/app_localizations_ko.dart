@@ -895,6 +895,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get matchmakingTip6 => '대결에서 이기면 레이팅이 올라 더 높은 티어로 승급해요.';
 
   @override
+  String get matchmakingTip7 =>
+      '티어는 브론즈 > 실버 > 골드 > 다이아몬드 > 마스터 > 챌린저가 있습니다. 챌린저까지 도전해보세요.';
+
+  @override
   String get raceAbortConfirmTitle => '레이스를 포기할까요?';
 
   @override
@@ -1187,7 +1191,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get replayEmpty => '아직 리플레이할 기록이 없어요.';
 
   @override
-  String get replayPremiumTitle => '프리미엄 전용 기능';
+  String get premiumTitle => '프리미엄';
+
+  @override
+  String get premiumLockTitle => '프리미엄 전용 기능';
 
   @override
   String get replayPremiumBody =>
@@ -1198,4 +1205,24 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get raceReplayUnavailable => '이 기기에 저장된 리플레이 기록이 없어요.';
+
+  @override
+  String get favoritesTitle => '즐겨찾기';
+
+  @override
+  String get favoritePremiumBody => '마음에 드는 스도쿠를 즐겨찾기에 저장해두고 원할 때 새로 풀어보세요.';
+
+  @override
+  String get favoritesEmpty => '저장한 스도쿠가 없어요.';
+
+  @override
+  String get favoriteSaved => '즐겨찾기에 저장했어요.';
+
+  @override
+  String get favoriteRemoved => '즐겨찾기에서 제거했어요.';
+
+  @override
+  String favoriteFull(int count) {
+    return '즐겨찾기가 가득 찼어요 (최대 $count개).';
+  }
 }

@@ -277,7 +277,7 @@ class RaceController extends ChangeNotifier {
         // Save my move log for replay (premium), win or loss — but only if the
         // board actually loaded this session, and only once across repeated
         // `finished` updates.
-        if (_gameStarted && !_replaySaved) {
+        if (_gameStarted && !_replaySaved && game.eventLog.isNotEmpty) {
           _replaySaved = true;
           unawaited(_storage.saveRaceReplay(
               game.toReplay(won: race.winnerId == selfId, raceId: race.id)));

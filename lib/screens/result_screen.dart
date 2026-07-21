@@ -11,6 +11,7 @@ import '../services/generation/human_solver.dart';
 import '../services/percentile_estimator.dart';
 import '../theme/app_palette.dart';
 import '../widgets/celebration_overlay.dart';
+import '../widgets/favorite_button.dart';
 import '../widgets/gradient_scaffold.dart';
 import '../widgets/pixel_back_button.dart';
 import '../widgets/pixel_icon.dart';
@@ -96,6 +97,7 @@ class ResultScreen extends StatelessWidget {
         leading: const PixelBackButton(),
         title: Text(l10n.resultTitle),
         actions: [
+          FavoriteButton(puzzle: puzzle),
           IconButton(
             icon: const Icon(PixelIcons.share),
             onPressed: () => showPuzzleShareDialog(context, puzzle: puzzle),

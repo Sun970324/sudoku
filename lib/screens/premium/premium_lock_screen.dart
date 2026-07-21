@@ -7,10 +7,14 @@ import '../../widgets/gradient_scaffold.dart';
 import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pixel_icon.dart';
 
-/// The premium upsell shown where a premium-only feature is gated — used inline
-/// as a body ([PremiumLockView]) or as a full page ([PremiumLockScreen]).
+/// The premium upsell shown where a premium-only feature is gated.
+/// [description] is the feature-specific pitch (replay, favorites, ...) so each
+/// entry point reads in context. Used inline as a body ([PremiumLockView]) or
+/// as a full page ([PremiumLockScreen]).
 class PremiumLockView extends StatelessWidget {
-  const PremiumLockView({super.key});
+  const PremiumLockView({super.key, required this.description});
+
+  final String description;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +29,13 @@ class PremiumLockView extends StatelessWidget {
             Icon(PixelIcons.star, size: 56, color: color),
             const SizedBox(height: 20),
             Text(
-              l10n.replayPremiumTitle,
+              l10n.premiumLockTitle,
               textAlign: TextAlign.center,
               style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 20),
             ),
             const SizedBox(height: 12),
             Text(
-              l10n.replayPremiumBody,
+              description,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
@@ -43,15 +47,17 @@ class PremiumLockView extends StatelessWidget {
 }
 
 class PremiumLockScreen extends StatelessWidget {
-  const PremiumLockScreen({super.key});
+  const PremiumLockScreen({super.key, required this.description});
+
+  final String description;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return GradientScaffold(
       appBar: AppBar(
-          leading: const PixelBackButton(), title: Text(l10n.replayTitle)),
-      body: const PremiumLockView(),
+          leading: const PixelBackButton(), title: Text(l10n.premiumTitle)),
+      body: PremiumLockView(description: description),
     );
   }
 }

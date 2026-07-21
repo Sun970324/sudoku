@@ -314,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () => _openGame(StatsScreen(auth: widget.auth)),
               ),
               _RoundIconButton(
-                icon: PixelIcons.qrCode,
+                icon: Icons.qr_code,
                 onPressed: _onEnterCodePressed,
               ),
               _RoundIconButton(
