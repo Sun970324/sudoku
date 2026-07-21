@@ -201,6 +201,11 @@ class HumanSolver {
           _hintEngine.findUniqueRectangleType3(board, candidates),
         HintTechnique.uniqueRectangleType4 =>
           _hintEngine.findUniqueRectangleType4(board, candidates),
+        // Hint-only: never in humanSolverTechniqueOrder, so unreachable here,
+        // but the switch must stay exhaustive over HintTechnique.
+        HintTechnique.xChain =>
+          _hintEngine.findXChain(board, candidates),
+        HintTechnique.aic => _hintEngine.findAic(board, candidates),
       };
       if (hint != null) return hint;
     }

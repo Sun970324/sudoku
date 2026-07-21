@@ -1429,6 +1429,71 @@ void main() {
     });
   });
 
+  group('findXChain', () {
+    test('a four-node single-digit chain (two conjugate pairs joined by a '
+        'weak link) eliminates the digit from a cell seeing both ends', () {
+      // The same shape a Skyscraper has — an X-Chain generalizes it. Rows 0
+      // and 8 are conjugate pairs on 4; (0,0)~(8,0) is the weak bridge; the
+      // ends (0,3) and (8,5) mean (1,5), seeing both, loses 4.
+      final candidates = candidatesFrom({
+        [0, 0]: {4},
+        [0, 3]: {4},
+        [8, 0]: {4},
+        [8, 5]: {4},
+        [1, 5]: {4, 7},
+      });
+
+      final hint = engine.findXChain(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.xChain);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.eliminations, isNotEmpty);
+      // Single digit throughout.
+      expect(hint.primaryDigits, {4});
+      // Alternating strong/weak links, endpoints on the same digit — that
+      // (not a fixed eliminated cell — this fixture admits several valid
+      // chains) is what defines an X-Chain.
+      expect(hint.chainLinks, isNotEmpty);
+      for (var i = 0; i + 1 < hint.chainLinks.length; i++) {
+        expect(hint.chainLinks[i].strong,
+            isNot(hint.chainLinks[i + 1].strong));
+      }
+      expect(hint.chainLinks.first.from.digit,
+          hint.chainLinks.last.to.digit);
+      // Whichever chain it picked, every eliminated candidate must be 4.
+      expect(hint.eliminations.every((e) => e.digit == 4), isTrue);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findXChain(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findAic', () {
+    test('the general chain also solves the single-digit case (X-Chain is a '
+        'restriction of it)', () {
+      final candidates = candidatesFrom({
+        [0, 0]: {4},
+        [0, 3]: {4},
+        [8, 0]: {4},
+        [8, 5]: {4},
+        [1, 5]: {4, 7},
+      });
+
+      final hint = engine.findAic(_emptyBoard(), candidates);
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.aic);
+      expect(hint.eliminations, isNotEmpty);
+      expect(hint.chainLinks, isNotEmpty);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findAic(_emptyBoard()), isNull);
+    });
+  });
+
   // Hand-built fixtures can only show that a technique fires where it should.
   // They cannot show it stays silent everywhere it shouldn't — and an
   // over-permissive elimination rule doesn't throw, it quietly removes digits
@@ -1461,6 +1526,8 @@ void main() {
           engine.findXYZWing(puzzle),
           engine.findWWing(puzzle),
           engine.findRemotePair(puzzle),
+          engine.findXChain(puzzle),
+          engine.findAic(puzzle),
         ]) {
           if (hint == null) continue;
           found[hint.technique] = (found[hint.technique] ?? 0) + 1;
@@ -1482,6 +1549,8 @@ void main() {
         HintTechnique.xyzWing,
         HintTechnique.wWing,
         HintTechnique.remotePair,
+        HintTechnique.xChain,
+        HintTechnique.aic,
       ]) {
         expect(found[technique] ?? 0, greaterThan(0),
             reason: '$technique never fired across 150 real boards — either '
@@ -1989,6 +2058,8 @@ void main() {
         HintTechnique.uniqueRectangleType2,
         HintTechnique.uniqueRectangleType3,
         HintTechnique.uniqueRectangleType4,
+        HintTechnique.xChain,
+        HintTechnique.aic,
       ]);
     });
 

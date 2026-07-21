@@ -523,6 +523,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueUniqueRectangleType4 => 'Unique Rectangle Type 4';
 
   @override
+  String get techniqueXChain => 'X-Chain';
+
+  @override
+  String get techniqueAic => 'AIC';
+
+  @override
   String unitRow(int row) {
     return 'Row $row';
   }
@@ -661,6 +667,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String explanationWWing(
       String cell1, String cell2, int a, int b, String unitDesc) {
     return '$cell1 and $cell2 both hold only $a and $b, and $unitDesc has just two places for $b — one seeing each of them. If both were $b, that unit would have nowhere left for $b. So at least one of them is $a, and any cell seeing both can have $a removed.';
+  }
+
+  @override
+  String explanationXChain(String chainDesc, int digit) {
+    return 'Digit $digit forms an alternating chain along $chainDesc. Because the strong links guarantee at least one end is $digit, any cell that sees both ends can have $digit removed.';
+  }
+
+  @override
+  String explanationAic(String chainDesc) {
+    return 'The alternating inference chain $chainDesc forces at least one of its two ends to be true, so any candidate that conflicts with both ends can be removed.';
   }
 
   @override
@@ -1080,6 +1096,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String hintStepChainHop(String cell, int carry, int next) {
     return 'Then $cell can\'t be $carry, so it must be $next.';
   }
+
+  @override
+  String get hintStepAicChain =>
+      'The links alternate strong and weak, so at least one of the chain\'s two ends must be true.';
+
+  @override
+  String get hintStepAicConclusion =>
+      'Any candidate that sees both ends can be removed.';
 
   @override
   String hintStepChainConclusion(int z) {

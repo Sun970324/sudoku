@@ -27,6 +27,8 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.turbotFish,
     HintTechnique.simpleColoring,
     HintTechnique.xWing,
+    HintTechnique.xChain,
+    HintTechnique.aic,
   };
   if (chainTechniques.contains(hint.technique) && hint.chainLinks.isEmpty) {
     return const [];
@@ -36,6 +38,7 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.xyzWing => _xyzWingSteps(hint, l10n),
     HintTechnique.wWing => _wWingSteps(hint, l10n),
     HintTechnique.xyChain => _xyChainSteps(hint, l10n),
+    HintTechnique.xChain || HintTechnique.aic => _aicSteps(hint, l10n),
     HintTechnique.remotePair => _remotePairSteps(hint, l10n),
     HintTechnique.skyscraper ||
     HintTechnique.twoStringKite ||
@@ -333,6 +336,29 @@ List<HintStep> _xyChainSteps(Hint hint, AppLocalizations l10n) {
     showConclusion: true,
   ));
   return steps;
+}
+
+/// X-Chain / general AIC. Unlike XY-Chain the strong links can start
+/// between cells (bilocation), so the per-hop XY narration doesn't apply —
+/// this shows the whole alternating chain, then the conclusion.
+List<HintStep> _aicSteps(Hint hint, AppLocalizations l10n) {
+  final links = hint.chainLinks;
+  final ends = [links.first.from, links.last.to];
+  return [
+    HintStep(
+      text: l10n.hintStepAicChain,
+      cells: hint.primaryCells,
+      visibleLinks: links.length,
+      emphasisNodes: ends,
+    ),
+    HintStep(
+      text: l10n.hintStepAicConclusion,
+      cells: hint.primaryCells,
+      visibleLinks: links.length,
+      emphasisNodes: ends,
+      showConclusion: true,
+    ),
+  ];
 }
 
 /// Same link layout as an XY-Chain, but the narrative leans on the shared

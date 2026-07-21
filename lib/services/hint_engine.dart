@@ -13,6 +13,7 @@ part 'hint_engine/coloring.dart';
 part 'hint_engine/wings.dart';
 part 'hint_engine/unique_rectangles.dart';
 part 'hint_engine/uniqueness.dart';
+part 'hint_engine/aic.dart';
 
 enum _UnitType { row, col, box }
 
@@ -250,6 +251,8 @@ class HintEngine {
           findUniqueRectangleType3(board, resolved, resolvedL10n),
         HintTechnique.uniqueRectangleType4 =>
           findUniqueRectangleType4(board, resolved, resolvedL10n),
+        HintTechnique.xChain => findXChain(board, resolved, resolvedL10n),
+        HintTechnique.aic => findAic(board, resolved, resolvedL10n),
         HintTechnique.xyChain => findXYChain(board, resolved, resolvedL10n),
       };
       if (hint != null) return hint;

@@ -1040,6 +1040,18 @@ abstract class AppLocalizations {
   /// **'Unique Rectangle Type 4'**
   String get techniqueUniqueRectangleType4;
 
+  /// No description provided for @techniqueXChain.
+  ///
+  /// In en, this message translates to:
+  /// **'X-Chain'**
+  String get techniqueXChain;
+
+  /// No description provided for @techniqueAic.
+  ///
+  /// In en, this message translates to:
+  /// **'AIC'**
+  String get techniqueAic;
+
   /// No description provided for @unitRow.
   ///
   /// In en, this message translates to:
@@ -1211,6 +1223,18 @@ abstract class AppLocalizations {
   /// **'{cell1} and {cell2} both hold only {a} and {b}, and {unitDesc} has just two places for {b} — one seeing each of them. If both were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}, and any cell seeing both can have {a} removed.'**
   String explanationWWing(
       String cell1, String cell2, int a, int b, String unitDesc);
+
+  /// No description provided for @explanationXChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms an alternating chain along {chainDesc}. Because the strong links guarantee at least one end is {digit}, any cell that sees both ends can have {digit} removed.'**
+  String explanationXChain(String chainDesc, int digit);
+
+  /// No description provided for @explanationAic.
+  ///
+  /// In en, this message translates to:
+  /// **'The alternating inference chain {chainDesc} forces at least one of its two ends to be true, so any candidate that conflicts with both ends can be removed.'**
+  String explanationAic(String chainDesc);
 
   /// No description provided for @explanationXYChain.
   ///
@@ -1881,6 +1905,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Then {cell} can\'t be {carry}, so it must be {next}.'**
   String hintStepChainHop(String cell, int carry, int next);
+
+  /// No description provided for @hintStepAicChain.
+  ///
+  /// In en, this message translates to:
+  /// **'The links alternate strong and weak, so at least one of the chain\'s two ends must be true.'**
+  String get hintStepAicChain;
+
+  /// No description provided for @hintStepAicConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Any candidate that sees both ends can be removed.'**
+  String get hintStepAicConclusion;
 
   /// No description provided for @hintStepChainConclusion.
   ///

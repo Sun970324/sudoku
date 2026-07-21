@@ -506,6 +506,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get techniqueUniqueRectangleType4 => '유일사각형 Type 4';
 
   @override
+  String get techniqueXChain => 'X-사슬';
+
+  @override
+  String get techniqueAic => 'AIC 사슬';
+
+  @override
   String unitRow(int row) {
     return '$row행';
   }
@@ -644,6 +650,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String explanationWWing(
       String cell1, String cell2, int a, int b, String unitDesc) {
     return '$cell1과(와) $cell2은(는) 후보가 똑같이 $a, $b 두 개뿐이고, $unitDesc에는 $b번이 들어갈 자리가 두 곳뿐인데 그 두 곳이 각각 두 칸을 하나씩 보고 있어요. 만약 두 칸이 모두 $b번이면 $unitDesc에 $b번이 들어갈 자리가 없어집니다. 따라서 둘 중 적어도 하나는 $a번이고, 두 칸을 모두 보는 칸에서는 $a번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationXChain(String chainDesc, int digit) {
+    return '숫자 $digit번이 $chainDesc를 따라 교대 사슬을 이뤄요. 강한 연결이 양 끝 중 하나는 반드시 $digit임을 보장하므로, 두 끝을 모두 보는 칸에서는 $digit번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationAic(String chainDesc) {
+    return '$chainDesc 교차 추론 사슬은 양 끝 중 적어도 하나가 참이 되도록 강제해요. 그래서 양 끝과 모두 충돌하는 후보를 지울 수 있습니다.';
   }
 
   @override
@@ -1055,6 +1071,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String hintStepChainHop(String cell, int carry, int next) {
     return '그러면 $cell은(는) $carry이(가) 될 수 없으니 $next이(가) 됩니다.';
   }
+
+  @override
+  String get hintStepAicChain =>
+      '강한 연결과 약한 연결이 번갈아 이어져, 사슬 양 끝 중 적어도 하나는 반드시 참이에요.';
+
+  @override
+  String get hintStepAicConclusion => '양 끝을 모두 보는 후보는 지울 수 있어요.';
 
   @override
   String hintStepChainConclusion(int z) {

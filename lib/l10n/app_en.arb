@@ -222,6 +222,8 @@
   "techniqueUniqueRectangleType2": "Unique Rectangle Type 2",
   "techniqueUniqueRectangleType3": "Unique Rectangle Type 3",
   "techniqueUniqueRectangleType4": "Unique Rectangle Type 4",
+  "techniqueXChain": "X-Chain",
+  "techniqueAic": "AIC",
 
   "unitRow": "Row {row}",
   "@unitRow": {
@@ -439,7 +441,20 @@
       "unitDesc": {"type": "String"}
     }
   },
-  "explanationXYChain": "The cells chained in order {chainDesc} each have only two candidates, so if one end of the chain isn't {z}, the other end must be. So {z} can be removed from cells that see both ends of the chain.",
+  "explanationXChain": "Digit {digit} forms an alternating chain along {chainDesc}. Because the strong links guarantee at least one end is {digit}, any cell that sees both ends can have {digit} removed.",
+  "@explanationXChain": {
+    "placeholders": {
+      "chainDesc": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "explanationAic": "The alternating inference chain {chainDesc} forces at least one of its two ends to be true, so any candidate that conflicts with both ends can be removed.",
+  "@explanationAic": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+    "explanationXYChain": "The cells chained in order {chainDesc} each have only two candidates, so if one end of the chain isn't {z}, the other end must be. So {z} can be removed from cells that see both ends of the chain.",
   "@explanationXYChain": {
     "placeholders": {
       "chainDesc": {"type": "String"},
@@ -778,6 +793,8 @@
       "next": {"type": "int"}
     }
   },
+  "hintStepAicChain": "The links alternate strong and weak, so at least one of the chain's two ends must be true.",
+  "hintStepAicConclusion": "Any candidate that sees both ends can be removed.",
   "hintStepChainConclusion": "So either the start is {z}, or the end is {z}. Any cell that sees both ends can't be {z}.",
   "@hintStepChainConclusion": {
     "placeholders": {
