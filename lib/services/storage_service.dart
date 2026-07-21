@@ -7,6 +7,7 @@ import '../models/difficulty.dart';
 import '../models/favorite_puzzle.dart';
 import '../models/game_replay.dart';
 import '../models/game_snapshot.dart';
+import '../models/hint.dart';
 import '../models/stats.dart';
 import '../models/sudoku_puzzle.dart';
 
@@ -40,6 +41,7 @@ class StorageService {
   static const _seenQuickInputTutorialKey = 'seen_quick_input_tutorial';
   static const _celebratedSeasonKey = 'celebrated_season_id';
   static const _themePackKey = 'theme_pack';
+  static const _techniqueCodexKey = 'technique_codex';
 
   Future<void> saveInProgressGame(GameSnapshot snapshot) async {
     final prefs = await SharedPreferences.getInstance();
@@ -179,6 +181,49 @@ class StorageService {
     final favorites = await loadFavorites();
     final key = _puzzleKey(puzzle);
     return favorites.any((f) => _puzzleKey(f.puzzle) == key);
+  }
+
+  /// Merges one solved puzzle's technique counts into the cumulative codex:
+  /// per technique, `uses` grows by that puzzle's count and `puzzles` by one.
+  /// Called on a solo win, where the counts are already computed for the
+  /// result screen (see GameScreen._onWin) — so recording costs nothing extra.
+  Future<void> recordTechniqueCounts(Map<HintTechnique, int> counts) async {
+    if (counts.isEmpty) return;
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_techniqueCodexKey);
+    final json = raw == null
+        ? <String, dynamic>{}
+        : jsonDecode(raw) as Map<String, dynamic>;
+    for (final entry in counts.entries) {
+      final existing = json[entry.key.name] as Map<String, dynamic>?;
+      json[entry.key.name] = {
+        'u': (existing?['u'] as int? ?? 0) + entry.value,
+        'p': (existing?['p'] as int? ?? 0) + 1,
+      };
+    }
+    await prefs.setString(_techniqueCodexKey, jsonEncode(json));
+  }
+
+  /// The cumulative technique codex: total uses and number of solved puzzles
+  /// each technique appeared in. Techniques never encountered are absent.
+  /// Unknown stored names (a removed technique) are skipped, not fatal.
+  Future<Map<HintTechnique, ({int uses, int puzzles})>>
+      loadTechniqueCodex() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_techniqueCodexKey);
+    if (raw == null) return {};
+    final json = jsonDecode(raw) as Map<String, dynamic>;
+    final result = <HintTechnique, ({int uses, int puzzles})>{};
+    for (final entry in json.entries) {
+      final technique = HintTechnique.values
+          .where((t) => t.name == entry.key)
+          .firstOrNull;
+      if (technique == null) continue;
+      final value = entry.value as Map<String, dynamic>;
+      result[technique] =
+          (uses: value['u'] as int? ?? 0, puzzles: value['p'] as int? ?? 0);
+    }
+    return result;
   }
 
   Future<Stats> getStats() async {

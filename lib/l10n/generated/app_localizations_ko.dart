@@ -1250,4 +1250,20 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get themePremiumBody =>
       '프리미엄 테마 팩으로 보드와 앱 전체의 분위기를 바꿔보세요 — 5가지 스타일 중에서 고를 수 있어요.';
+
+  @override
+  String get codexTitle => '기법 도감';
+
+  @override
+  String codexProgress(int met, int total) {
+    return '발견한 기법 $met / $total';
+  }
+
+  @override
+  String codexUsage(int uses, int puzzles) {
+    return '$uses회 · $puzzles판';
+  }
+
+  @override
+  String get codexUndiscovered => '미발견';
 }

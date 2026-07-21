@@ -13,6 +13,7 @@ import '../widgets/pixel_icon.dart';
 import '../widgets/pop_card.dart';
 import 'replay/replay_list_screen.dart';
 import 'stats/daily_calendar_card.dart';
+import 'stats/technique_codex_screen.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key, required this.auth});
@@ -70,6 +71,15 @@ class _StatsScreenState extends State<StatsScreen>
         leading: const PixelBackButton(),
         title: Text(l10n.statsTitle),
         actions: [
+          IconButton(
+            icon: const Icon(PixelIcons.document),
+            tooltip: l10n.codexTitle,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const TechniqueCodexScreen()),
+            ),
+          ),
           IconButton(
             icon: const Icon(PixelIcons.play),
             tooltip: l10n.replayTitle,

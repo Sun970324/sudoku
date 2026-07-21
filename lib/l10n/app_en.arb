@@ -976,5 +976,22 @@
   "themePackMonochrome": "Monochrome",
   "themePackForest": "Forest",
   "themePackOcean": "Ocean",
-  "themePremiumBody": "Restyle the board and the whole app with premium theme packs — five distinct looks to choose from."
+  "themePremiumBody": "Restyle the board and the whole app with premium theme packs — five distinct looks to choose from.",
+
+  "codexTitle": "Technique Codex",
+  "codexProgress": "Discovered {met} / {total}",
+  "@codexProgress": {
+    "placeholders": {
+      "met": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "codexUsage": "{uses}× · {puzzles} puzzles",
+  "@codexUsage": {
+    "placeholders": {
+      "uses": {"type": "int"},
+      "puzzles": {"type": "int"}
+    }
+  },
+  "codexUndiscovered": "Not yet"
 }

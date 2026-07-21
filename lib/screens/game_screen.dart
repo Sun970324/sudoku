@@ -325,6 +325,9 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
 
     final solveResult = HumanSolver().solve(_controller.puzzle.puzzle.toJson());
     final difficultyResult = DifficultyEvaluator().evaluate(solveResult);
+    // Feed the technique codex (premium stats) — the counts are already
+    // computed for the result screen, so this is pure bookkeeping.
+    await _storage.recordTechniqueCounts(difficultyResult.techniqueCounts);
 
     if (!mounted) return;
     Navigator.pushReplacement(

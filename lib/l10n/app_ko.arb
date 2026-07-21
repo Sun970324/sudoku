@@ -361,5 +361,10 @@
   "themePackMonochrome": "모노크롬",
   "themePackForest": "포레스트",
   "themePackOcean": "오션",
-  "themePremiumBody": "프리미엄 테마 팩으로 보드와 앱 전체의 분위기를 바꿔보세요 — 5가지 스타일 중에서 고를 수 있어요."
+  "themePremiumBody": "프리미엄 테마 팩으로 보드와 앱 전체의 분위기를 바꿔보세요 — 5가지 스타일 중에서 고를 수 있어요.",
+
+  "codexTitle": "기법 도감",
+  "codexProgress": "발견한 기법 {met} / {total}",
+  "codexUsage": "{uses}회 · {puzzles}판",
+  "codexUndiscovered": "미발견"
 }

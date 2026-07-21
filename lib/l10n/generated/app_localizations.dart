@@ -2163,6 +2163,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Restyle the board and the whole app with premium theme packs — five distinct looks to choose from.'**
   String get themePremiumBody;
+
+  /// No description provided for @codexTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technique Codex'**
+  String get codexTitle;
+
+  /// No description provided for @codexProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Discovered {met} / {total}'**
+  String codexProgress(int met, int total);
+
+  /// No description provided for @codexUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'{uses}× · {puzzles} puzzles'**
+  String codexUsage(int uses, int puzzles);
+
+  /// No description provided for @codexUndiscovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet'**
+  String get codexUndiscovered;
 }
 
 class _AppLocalizationsDelegate

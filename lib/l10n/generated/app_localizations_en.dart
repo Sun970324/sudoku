@@ -1277,4 +1277,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get themePremiumBody =>
       'Restyle the board and the whole app with premium theme packs — five distinct looks to choose from.';
+
+  @override
+  String get codexTitle => 'Technique Codex';
+
+  @override
+  String codexProgress(int met, int total) {
+    return 'Discovered $met / $total';
+  }
+
+  @override
+  String codexUsage(int uses, int puzzles) {
+    return '$uses× · $puzzles puzzles';
+  }
+
+  @override
+  String get codexUndiscovered => 'Not yet';
 }
