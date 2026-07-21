@@ -1194,7 +1194,59 @@ class AppLocalizationsKo extends AppLocalizations {
   String get premiumTitle => '프리미엄';
 
   @override
-  String get premiumLockTitle => '프리미엄 전용 기능';
+  String get premiumIntroTitle => '스도쿠 리그 프리미엄';
+
+  @override
+  String get premiumBenefitAssistTitle => '무제한 힌트·자동메모';
+
+  @override
+  String get premiumBenefitAssistBody => '광고 없이 힌트와 자동메모를 마음껏 사용해요.';
+
+  @override
+  String get premiumBenefitReplayTitle => '리플레이';
+
+  @override
+  String get premiumBenefitReplayBody =>
+      '최근 게임을 한 수씩 되돌려 보고 이어서 풀어요 — 대전 리플레이 포함.';
+
+  @override
+  String get premiumBenefitFavoriteTitle => '즐겨찾기';
+
+  @override
+  String get premiumBenefitFavoriteBody => '마음에 드는 퍼즐을 저장해두고 언제든 다시 풀어요.';
+
+  @override
+  String get premiumBenefitThemeTitle => '테마 팩 5종';
+
+  @override
+  String get premiumBenefitThemeBody => '보드와 앱 전체의 분위기를 바꾸는 프리미엄 테마.';
+
+  @override
+  String get premiumPlanLifetime => '평생 이용권';
+
+  @override
+  String get premiumPlanLifetimePrice => '₩5,500';
+
+  @override
+  String get premiumPlanLifetimeDetail => '한 번 결제로 평생 이용';
+
+  @override
+  String get premiumPlanMonthly => '월 구독';
+
+  @override
+  String get premiumPlanMonthlyPrice => '₩1,100';
+
+  @override
+  String get premiumPlanMonthlyDetail => '매월 자동 갱신';
+
+  @override
+  String get premiumCtaStart => '프리미엄 시작하기';
+
+  @override
+  String get premiumMockDone => '(목업) 프리미엄이 활성화됐어요!';
+
+  @override
+  String get premiumComingSoon => '결제는 정식 출시 시 제공돼요.';
 
   @override
   String get replayPremiumBody =>

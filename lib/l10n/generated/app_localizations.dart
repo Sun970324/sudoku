@@ -2056,11 +2056,113 @@ abstract class AppLocalizations {
   /// **'Premium'**
   String get premiumTitle;
 
-  /// No description provided for @premiumLockTitle.
+  /// No description provided for @premiumIntroTitle.
   ///
   /// In en, this message translates to:
-  /// **'Premium feature'**
-  String get premiumLockTitle;
+  /// **'Sudoku League Premium'**
+  String get premiumIntroTitle;
+
+  /// No description provided for @premiumBenefitAssistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited hints & auto-notes'**
+  String get premiumBenefitAssistTitle;
+
+  /// No description provided for @premiumBenefitAssistBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use hints and auto-notes freely — no ads.'**
+  String get premiumBenefitAssistBody;
+
+  /// No description provided for @premiumBenefitReplayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get premiumBenefitReplayTitle;
+
+  /// No description provided for @premiumBenefitReplayBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Review recent games move by move and resume solving — races included.'**
+  String get premiumBenefitReplayBody;
+
+  /// No description provided for @premiumBenefitFavoriteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get premiumBenefitFavoriteTitle;
+
+  /// No description provided for @premiumBenefitFavoriteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Save puzzles you like and solve them again anytime.'**
+  String get premiumBenefitFavoriteBody;
+
+  /// No description provided for @premiumBenefitThemeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'5 theme packs'**
+  String get premiumBenefitThemeTitle;
+
+  /// No description provided for @premiumBenefitThemeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium themes that restyle the board and the whole app.'**
+  String get premiumBenefitThemeBody;
+
+  /// No description provided for @premiumPlanLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifetime'**
+  String get premiumPlanLifetime;
+
+  /// No description provided for @premiumPlanLifetimePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$3.99'**
+  String get premiumPlanLifetimePrice;
+
+  /// No description provided for @premiumPlanLifetimeDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay once, yours forever'**
+  String get premiumPlanLifetimeDetail;
+
+  /// No description provided for @premiumPlanMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get premiumPlanMonthly;
+
+  /// No description provided for @premiumPlanMonthlyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$0.99'**
+  String get premiumPlanMonthlyPrice;
+
+  /// No description provided for @premiumPlanMonthlyDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews every month'**
+  String get premiumPlanMonthlyDetail;
+
+  /// No description provided for @premiumCtaStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Premium'**
+  String get premiumCtaStart;
+
+  /// No description provided for @premiumMockDone.
+  ///
+  /// In en, this message translates to:
+  /// **'(Mock) Premium activated!'**
+  String get premiumMockDone;
+
+  /// No description provided for @premiumComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases will be available at official launch.'**
+  String get premiumComingSoon;
 
   /// No description provided for @replayPremiumBody.
   ///

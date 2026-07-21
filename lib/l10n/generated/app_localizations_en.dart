@@ -1219,7 +1219,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumTitle => 'Premium';
 
   @override
-  String get premiumLockTitle => 'Premium feature';
+  String get premiumIntroTitle => 'Sudoku League Premium';
+
+  @override
+  String get premiumBenefitAssistTitle => 'Unlimited hints & auto-notes';
+
+  @override
+  String get premiumBenefitAssistBody =>
+      'Use hints and auto-notes freely — no ads.';
+
+  @override
+  String get premiumBenefitReplayTitle => 'Replay';
+
+  @override
+  String get premiumBenefitReplayBody =>
+      'Review recent games move by move and resume solving — races included.';
+
+  @override
+  String get premiumBenefitFavoriteTitle => 'Favorites';
+
+  @override
+  String get premiumBenefitFavoriteBody =>
+      'Save puzzles you like and solve them again anytime.';
+
+  @override
+  String get premiumBenefitThemeTitle => '5 theme packs';
+
+  @override
+  String get premiumBenefitThemeBody =>
+      'Premium themes that restyle the board and the whole app.';
+
+  @override
+  String get premiumPlanLifetime => 'Lifetime';
+
+  @override
+  String get premiumPlanLifetimePrice => '\$3.99';
+
+  @override
+  String get premiumPlanLifetimeDetail => 'Pay once, yours forever';
+
+  @override
+  String get premiumPlanMonthly => 'Monthly';
+
+  @override
+  String get premiumPlanMonthlyPrice => '\$0.99';
+
+  @override
+  String get premiumPlanMonthlyDetail => 'Renews every month';
+
+  @override
+  String get premiumCtaStart => 'Get Premium';
+
+  @override
+  String get premiumMockDone => '(Mock) Premium activated!';
+
+  @override
+  String get premiumComingSoon =>
+      'Purchases will be available at official launch.';
 
   @override
   String get replayPremiumBody =>
