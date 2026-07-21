@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/pixel_back_button.dart';
 import '../widgets/pop_card.dart';
 
 /// Scrollable viewer for a static legal document (privacy policy / terms of
@@ -22,7 +23,7 @@ class PolicyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final isKorean = Localizations.localeOf(context).languageCode == 'ko';
     return GradientScaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(leading: const PixelBackButton(), title: Text(title)),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [

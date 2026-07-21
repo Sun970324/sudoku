@@ -10,6 +10,7 @@ import '../../services/puzzle_queue_manager.dart';
 import '../../state/auth_controller.dart';
 import '../../state/race_controller.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pixel_icon.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pulse_ring.dart';
@@ -110,7 +111,8 @@ class _MatchmakingScreenState extends State<MatchmakingScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return GradientScaffold(
-      appBar: AppBar(title: Text(l10n.matchmakingTitle)),
+      appBar: AppBar(
+          leading: const PixelBackButton(), title: Text(l10n.matchmakingTitle)),
       body: Center(
         child: !widget.auth.isSignedIn
             ? SignInPrompt(

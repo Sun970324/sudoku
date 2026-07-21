@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pulse_ring.dart';
 import '../../models/daily.dart';
@@ -118,7 +119,8 @@ class _DailyEntryScreenState extends State<DailyEntryScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return GradientScaffold(
-      appBar: AppBar(title: Text(l10n.dailyTitle)),
+      appBar: AppBar(
+          leading: const PixelBackButton(), title: Text(l10n.dailyTitle)),
       body: Center(
         child: !widget.auth.isSignedIn
             ? SignInPrompt(

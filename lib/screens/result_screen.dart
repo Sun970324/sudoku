@@ -12,6 +12,7 @@ import '../services/percentile_estimator.dart';
 import '../theme/app_palette.dart';
 import '../widgets/celebration_overlay.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/pixel_back_button.dart';
 import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/pop_card.dart';
@@ -92,6 +93,7 @@ class ResultScreen extends StatelessWidget {
         isPerfect ? _perfectFlavors(l10n)[_flavorIndex] : null;
     return GradientScaffold(
       appBar: AppBar(
+        leading: const PixelBackButton(),
         title: Text(l10n.resultTitle),
         actions: [
           IconButton(

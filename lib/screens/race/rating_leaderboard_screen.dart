@@ -7,6 +7,7 @@ import '../../services/profile_service.dart';
 import '../../state/auth_controller.dart';
 import '../../theme/app_palette.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
 import '../../widgets/tier_badge.dart';
@@ -69,7 +70,8 @@ class _RatingLeaderboardScreenState extends State<RatingLeaderboardScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return GradientScaffold(
-      appBar: AppBar(title: Text(l10n.leaderboardTitle)),
+      appBar: AppBar(
+          leading: const PixelBackButton(), title: Text(l10n.leaderboardTitle)),
       body: _failed
           ? Center(
               child: Column(

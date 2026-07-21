@@ -8,6 +8,7 @@ import '../../services/puzzle_queue_manager.dart';
 import '../../state/auth_controller.dart';
 import '../../theme/app_palette.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
 import 'friend_room_screen.dart';
@@ -81,100 +82,97 @@ class _FriendMatchScreenState extends State<FriendMatchScreen> {
     final l10n = AppLocalizations.of(context)!;
     final isDark = AppPalette.isDark(context);
     return GradientScaffold(
-      appBar: AppBar(title: Text(l10n.friendMatchTitle)),
+      appBar: AppBar(
+          leading: const PixelBackButton(), title: Text(l10n.friendMatchTitle)),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
           PopCard(
             padding: const EdgeInsets.all(20),
             child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.createRoomTitle,
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final d in Difficulty.values)
-                        ChoiceChip(
-                          label: Text(d.label(context)),
-                          selected: _difficulty == d,
-                          onSelected: (_) => setState(() => _difficulty = d),
-                          selectedColor: AppPalette.difficultyColor(d, isDark)
-                              .withValues(alpha: 0.2),
-                          labelStyle: TextStyle(
-                            color: _difficulty == d
-                                ? AppPalette.difficultyColor(d, isDark)
-                                : null,
-                            fontWeight: _difficulty == d
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                          shape: const StadiumBorder(),
-                          showCheckmark: false,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.createRoomTitle,
+                    style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final d in Difficulty.values)
+                      ChoiceChip(
+                        label: Text(d.label(context)),
+                        selected: _difficulty == d,
+                        onSelected: (_) => setState(() => _difficulty = d),
+                        selectedColor: AppPalette.difficultyColor(d, isDark)
+                            .withValues(alpha: 0.2),
+                        labelStyle: TextStyle(
+                          color: _difficulty == d
+                              ? AppPalette.difficultyColor(d, isDark)
+                              : null,
+                          fontWeight: _difficulty == d
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  PopButton(
-                    onPressed: _createRoom,
-                    label: l10n.createRoomAction,
-                    expanded: true,
-                  ),
-                ],
-              ),
+                        shape: const StadiumBorder(),
+                        showCheckmark: false,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                PopButton(
+                  onPressed: _createRoom,
+                  label: l10n.createRoomAction,
+                  expanded: true,
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           PopCard(
             padding: const EdgeInsets.all(20),
             child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.joinRoomTitle,
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _codeController,
-                    decoration: InputDecoration(
-                      labelText: l10n.roomCodeFieldLabel,
-                      counterText: '',
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppDims.fieldRadius),
-                      ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.joinRoomTitle,
+                    style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: _codeController,
+                  decoration: InputDecoration(
+                    labelText: l10n.roomCodeFieldLabel,
+                    counterText: '',
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppDims.fieldRadius),
                     ),
-                    textAlign: TextAlign.center,
-                    textCapitalization: TextCapitalization.characters,
-                    maxLength: _codeLength,
-                    style: const TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 24,
-                        letterSpacing: 8),
-                    inputFormatters: [
-                      // Codes are stored uppercase server-side; normalizing
-                      // here too keeps what the player sees identical to
-                      // what gets sent.
-                      FilteringTextInputFormatter.allow(
-                          RegExp('[a-zA-Z0-9]')),
-                      TextInputFormatter.withFunction(
-                        (oldValue, newValue) => newValue.copyWith(
-                            text: newValue.text.toUpperCase()),
-                      ),
-                    ],
                   ),
-                  const SizedBox(height: 16),
-                  PopButton(
-                    onPressed: _codeComplete ? _joinRoom : null,
-                    label: l10n.joinRoomAction,
-                    variant: PopButtonVariant.secondary,
-                    color: AppPalette.dailyTeal,
-                    expanded: true,
-                  ),
-                ],
-              ),
+                  textAlign: TextAlign.center,
+                  textCapitalization: TextCapitalization.characters,
+                  maxLength: _codeLength,
+                  style: const TextStyle(
+                      fontFamily: 'monospace', fontSize: 24, letterSpacing: 8),
+                  inputFormatters: [
+                    // Codes are stored uppercase server-side; normalizing
+                    // here too keeps what the player sees identical to
+                    // what gets sent.
+                    FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
+                    TextInputFormatter.withFunction(
+                      (oldValue, newValue) =>
+                          newValue.copyWith(text: newValue.text.toUpperCase()),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                PopButton(
+                  onPressed: _codeComplete ? _joinRoom : null,
+                  label: l10n.joinRoomAction,
+                  variant: PopButtonVariant.secondary,
+                  color: AppPalette.dailyTeal,
+                  expanded: true,
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -180,7 +180,8 @@ class _RaceScreenState extends State<RaceScreen> {
                   ),
                 ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   children: [
                     Expanded(
@@ -243,10 +244,9 @@ class _RaceScreenState extends State<RaceScreen> {
                 onNumberSelected: game.quickInputMode
                     ? _onQuickValuePadTap
                     : (value) => setState(() => game.inputValue(value)),
-                selectedNumber:
-                    game.quickInputMode && !game.activeDigitIsNote
-                        ? game.activeDigit
-                        : null,
+                selectedNumber: game.quickInputMode && !game.activeDigitIsNote
+                    ? game.activeDigit
+                    : null,
               ),
               const SizedBox(height: 8),
               AnimatedOpacity(

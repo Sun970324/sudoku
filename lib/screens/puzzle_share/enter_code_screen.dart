@@ -7,6 +7,7 @@ import '../../services/puzzle_share_service.dart';
 import '../../state/auth_controller.dart';
 import '../../theme/app_palette.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
 import '../race/friend_room_screen.dart';
@@ -86,7 +87,8 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return GradientScaffold(
-      appBar: AppBar(title: Text(l10n.enterCodeTitle)),
+      appBar: AppBar(
+          leading: const PixelBackButton(), title: Text(l10n.enterCodeTitle)),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
@@ -99,7 +101,10 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
                   key: ValueKey(_errorShakeTick),
                   effects: _errorShakeTick == 0
                       ? const []
-                      : [const ShakeEffect(hz: 5, duration: Duration(milliseconds: 350))],
+                      : [
+                          const ShakeEffect(
+                              hz: 5, duration: Duration(milliseconds: 350))
+                        ],
                   child: TextField(
                     controller: _textCodeController,
                     decoration: InputDecoration(

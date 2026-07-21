@@ -11,6 +11,7 @@ import '../services/season_service.dart';
 import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/pixel_back_button.dart';
 import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/sign_in_prompt.dart';
@@ -86,7 +87,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return GradientScaffold(
-      appBar: AppBar(title: Text(l10n.myPageTitle)),
+      appBar: AppBar(
+          leading: const PixelBackButton(), title: Text(l10n.myPageTitle)),
       body: AnimatedBuilder(
         animation: widget.auth,
         builder: (context, _) {
@@ -354,8 +356,8 @@ class _ProfileSection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(profile.username,
-                        style:
-                            const TextStyle(fontFamily: 'Mulmaru', fontSize: 22)),
+                        style: const TextStyle(
+                            fontFamily: 'Mulmaru', fontSize: 22)),
                     IconButton(
                       icon: const Icon(PixelIcons.edit, size: 18),
                       onPressed: onEditPressed,

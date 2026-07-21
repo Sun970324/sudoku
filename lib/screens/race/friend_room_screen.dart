@@ -9,6 +9,7 @@ import '../../services/puzzle_queue_manager.dart';
 import '../../state/race_controller.dart';
 import '../../widgets/copyable_code_box.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pulse_ring.dart';
 import 'race_screen.dart';
@@ -141,6 +142,7 @@ class _FriendRoomScreenState extends State<FriendRoomScreen> {
     final joinCode = _controller.joinCode;
     return GradientScaffold(
       appBar: AppBar(
+          leading: const PixelBackButton(),
           title: Text(
               widget.isHost ? l10n.waitingForFriendTitle : l10n.joinRoomTitle)),
       body: Center(
