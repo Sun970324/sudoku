@@ -15,6 +15,7 @@ import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
 import '../state/game_controller.dart';
+import '../state/premium_controller.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_theme.dart';
 import '../theme/board_colors.dart';
@@ -318,6 +319,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       mistakes: mistakes,
       hintsUsed: hintsUsed,
     );
+    await _storage.saveReplay(_controller.toReplay(won: true));
 
     final solveResult = HumanSolver().solve(_controller.puzzle.puzzle.toJson());
     final difficultyResult = DifficultyEvaluator().evaluate(solveResult);
@@ -532,6 +534,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         actions: [
           TextButton(
             onPressed: () {
+              // A game-over is a finished (lost) game — save its replay, unlike
+              // a plain mid-game abandon. Daily games are never recorded.
+              if (!widget.isDaily) {
+                _storage.saveReplay(_controller.toReplay(won: false));
+              }
               Navigator.pop(dialogContext);
               _giveUp();
               _popToHome();
@@ -547,14 +554,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               // it's up; if the player backs out before earning the reward,
               // this same dialog is still exactly where they left it instead
               // of having been dismissed for nothing.
-              AdService.instance.showRewardedAd(
-                onUserEarnedReward: () {
+              _gateBehindAd(
+                () {
                   Navigator.pop(dialogContext);
                   _dialogShown = false;
                   _controller.reviveAfterAd();
                   _startTimer();
                 },
-                onAdUnavailable: () {
+                onUnavailable: () {
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(l10n.adNotLoaded)),
@@ -611,21 +618,31 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// Runs [onReward] behind a rewarded ad for free users; premium users skip
+  /// the ad and get the reward immediately (see [PremiumController]).
+  /// [onUnavailable] handles the free-user "no ad ready" case — defaults to
+  /// granting the reward anyway, matching the lenient hint behavior. Backing
+  /// out of the ad before earning the reward fires neither, so nothing runs.
+  void _gateBehindAd(VoidCallback onReward, {VoidCallback? onUnavailable}) {
+    if (PremiumController.instance.isPremium) {
+      onReward();
+      return;
+    }
+    AdService.instance.showRewardedAd(
+      onUserEarnedReward: onReward,
+      onAdUnavailable: onUnavailable ?? onReward,
+    );
+  }
+
   /// Gates a hint reveal behind a rewarded ad. Called only once a hint is
   /// known to be available, so an ad is never spent on a "no hint" outcome.
   /// If no ad is loaded yet the hint is shown for free rather than punishing
-  /// the player for a failed ad load — [AdService.showRewardedAd] routes that
-  /// case to [onAdUnavailable]. Backing out before earning the reward fires
-  /// neither callback, so no hint is revealed.
+  /// the player for a failed ad load — [_gateBehindAd] routes that case to the
+  /// same reveal. Backing out before earning the reward reveals no hint.
   void _revealHintWithAd(VoidCallback onReveal) {
-    AdService.instance.showRewardedAd(
-      onUserEarnedReward: () {
-        if (mounted) onReveal();
-      },
-      onAdUnavailable: () {
-        if (mounted) onReveal();
-      },
-    );
+    _gateBehindAd(() {
+      if (mounted) onReveal();
+    });
   }
 
   /// Shown when a stage-1 (notes-only) hint search comes up empty: offers to
@@ -952,13 +969,13 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   void _onAutoFillNotesPressed() {
-    AdService.instance.showRewardedAd(
-      onUserEarnedReward: () {
+    _gateBehindAd(
+      () {
         _controller.autoFillNotes();
         HapticService.medium();
         _saveProgress();
       },
-      onAdUnavailable: () {
+      onUnavailable: () {
         if (!mounted) return;
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(

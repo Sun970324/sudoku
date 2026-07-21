@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 
 import '../content/policy_texts.dart';
@@ -6,6 +7,7 @@ import '../screens/policy_screen.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
+import '../state/premium_controller.dart';
 import '../state/settings_controller.dart';
 import '../theme/app_palette.dart';
 import 'pixel_icon.dart';
@@ -109,6 +111,27 @@ void showSettingsSheet(
                   value: settings.autoRemoveNotesEnabled,
                   onChanged: settings.setAutoRemoveNotesEnabled,
                 ),
+                // Debug-only mockup toggle for the premium entitlement, so
+                // premium-gated features can be exercised without real IAP.
+                // Never shown in release builds.
+                if (kDebugMode)
+                  AnimatedBuilder(
+                    animation: PremiumController.instance,
+                    builder: (context, _) {
+                      final ko = Localizations.localeOf(context).languageCode ==
+                          'ko';
+                      return SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(ko ? '프리미엄 (디버그)' : 'Premium (debug)'),
+                        subtitle: Text(ko
+                            ? '결제 목업 · 유료 혜택 잠금 해제'
+                            : 'Billing mock · unlock premium'),
+                        value: PremiumController.instance.isPremium,
+                        onChanged: (v) =>
+                            PremiumController.instance.setMockPremium(v),
+                      );
+                    },
+                  ),
                 const Divider(),
                 if (onReplayTutorial != null)
                   ListTile(

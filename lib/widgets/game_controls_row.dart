@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
+import '../state/premium_controller.dart';
 import '../theme/board_colors.dart';
 import 'pixel_icon.dart';
 
@@ -44,6 +45,8 @@ class GameControlsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final noteColor = isNoteMode ? Theme.of(context).colorScheme.primary : null;
     final l10n = AppLocalizations.of(context)!;
+    // Premium skips the rewarded ad for assists, so drop the "plays an ad" badge.
+    final showAdBadge = !PremiumController.instance.isPremium;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -72,14 +75,14 @@ class GameControlsRow extends StatelessWidget {
             icon: PixelIcons.magicWand,
             label: l10n.autoFillLabel,
             onPressed: canAutoFillNotes ? onAutoFillNotes : null,
-            showAdBadge: true,
+            showAdBadge: showAdBadge,
           ),
           _ControlButton(
             key: hintButtonKey,
             icon: PixelIcons.lightbulb,
             label: l10n.hintLabel,
             onPressed: onHint,
-            showAdBadge: true,
+            showAdBadge: showAdBadge,
           ),
         ],
       ],

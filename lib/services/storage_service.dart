@@ -4,12 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/difficulty.dart';
+import '../models/game_replay.dart';
 import '../models/game_snapshot.dart';
 import '../models/stats.dart';
 import '../models/sudoku_puzzle.dart';
 
 class StorageService {
   static const _inProgressKey = 'in_progress_game';
+  static const _replaysKey = 'game_replays';
+
+  /// How many finished solo games are kept for replay — newest first, oldest
+  /// pruned past this. Premium-only feature; see [PremiumController].
+  static const maxReplays = 10;
   static const _statsKey = 'stats';
   static const _themeModeKey = 'theme_mode';
   static const _localeOverrideKey = 'locale_override';
@@ -18,6 +24,7 @@ class StorageService {
   static const _wrongNoteWarningEnabledKey = 'wrong_note_warning_enabled';
   static const _autoRemoveNotesEnabledKey = 'auto_remove_notes_enabled';
   static const _quickInputEnabledKey = 'quick_input_enabled';
+  static const _premiumMockKey = 'premium_mock';
   static const _puzzleQueueKey = 'puzzle_queue';
   static const _raceProgressKey = 'race_in_progress';
   static const _seenHomeTutorialKey = 'seen_home_tutorial';
@@ -69,6 +76,29 @@ class StorageService {
   Future<void> clearRaceProgress() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_raceProgressKey);
+  }
+
+  /// Prepends [replay] to the stored solo-game replays, newest first, and
+  /// prunes the list to [maxReplays]. Called when a solo game finishes
+  /// (win or game-over); abandoned and daily games are never recorded.
+  Future<void> saveReplay(GameReplay replay) async {
+    final replays = await loadReplays();
+    replays.insert(0, replay);
+    if (replays.length > maxReplays) {
+      replays.removeRange(maxReplays, replays.length);
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        _replaysKey, jsonEncode(replays.map((r) => r.toJson()).toList()));
+  }
+
+  Future<List<GameReplay>> loadReplays() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_replaysKey);
+    if (raw == null) return [];
+    return (jsonDecode(raw) as List<dynamic>)
+        .map((e) => GameReplay.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   Future<Stats> getStats() async {
@@ -166,6 +196,18 @@ class StorageService {
   Future<bool> loadWrongNoteWarningEnabled() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_wrongNoteWarningEnabledKey) ?? true;
+  }
+
+  /// The debug/mockup premium entitlement flag — see [PremiumController] and
+  /// [MockPurchaseService]. Placeholder for the real store entitlement.
+  Future<void> savePremiumMock(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_premiumMockKey, value);
+  }
+
+  Future<bool> loadPremiumMock() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_premiumMockKey) ?? false;
   }
 
   Future<void> saveQuickInputEnabled(bool enabled) async {

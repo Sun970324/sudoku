@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
+import '../models/game_replay.dart';
 import '../models/game_snapshot.dart';
 import '../models/hint.dart';
 import '../models/sudoku_grid.dart';
@@ -72,6 +73,12 @@ class GameController extends ChangeNotifier {
   late List<List<int>> _board;
   late List<List<Set<int>>> _notes;
   final List<_Move> _history = [];
+
+  /// The forward move log for replay (see [GameReplay]) — one entry recorded
+  /// alongside every [_history] push and popped in lockstep on [undo], so it
+  /// stays exactly the sequence that produced the current board. Carried
+  /// through save/resume via [GameSnapshot.events].
+  final List<GameEvent> _eventLog = [];
 
   /// Cache backing [remainingCount], one entry per digit (index = digit-1).
   /// Kept in sync by [_recomputeRemainingCounts] wherever [_board] changes.
@@ -228,6 +235,11 @@ class GameController extends ChangeNotifier {
     activeDigitIsNote = false;
     status = GameStatus.playing;
     _history.clear();
+    // Restore the move log so a game resumed across an app kill still finishes
+    // with a complete replay rooted at the pristine puzzle.
+    _eventLog
+      ..clear()
+      ..addAll(snapshot.events);
     notifyListeners();
   }
 
@@ -240,6 +252,22 @@ class GameController extends ChangeNotifier {
         mistakes: mistakes,
         elapsedSeconds: elapsedSeconds,
         hintsUsed: hintsUsed,
+        events: List.of(_eventLog),
+      );
+
+  /// Packages the recorded move log and result into a [GameReplay] for storage
+  /// (see StorageService.saveReplay). [raceId] tags a race replay; null is a
+  /// solo game.
+  GameReplay toReplay({required bool won, String? raceId}) => GameReplay(
+        puzzle: _puzzle,
+        events: List.of(_eventLog),
+        autoRemoveNotes: autoRemoveNotesEnabled,
+        won: won,
+        elapsedSeconds: elapsedSeconds,
+        mistakes: mistakes,
+        hintsUsed: hintsUsed,
+        finishedAt: DateTime.now(),
+        raceId: raceId,
       );
 
   static List<List<Set<int>>> _emptyNotes() =>
@@ -248,6 +276,30 @@ class GameController extends ChangeNotifier {
   List<List<Set<int>>> _cloneNotes() => _notes
       .map((row) => row.map((cell) => Set<int>.from(cell)).toList())
       .toList();
+
+  /// The recorded move log so far (read-only) — see [_eventLog], [toReplay].
+  List<GameEvent> get eventLog => List.unmodifiable(_eventLog);
+
+  /// Records one forward move, stamped with the current elapsed time. Called
+  /// alongside every [_history] push so undo can pop the two in lockstep.
+  void _recordEvent(GameEvent event) => _eventLog.add(event);
+
+  /// The cells whose notes [repaired] differs from the current [_notes] — the
+  /// ones the hint engine's candidate repair touched — so a replay can reset
+  /// exactly those to their true candidates (see [ReplayEventType.repair]).
+  List<List<int>> _repairedCells(List<List<Set<int>>> repaired) {
+    final cells = <List<int>>[];
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        final before = _notes[r][c];
+        final after = repaired[r][c];
+        if (before.length != after.length || !before.containsAll(after)) {
+          cells.add([r, c]);
+        }
+      }
+    }
+    return cells;
+  }
 
   void _resetRoundState() {
     selectedRow = null;
@@ -261,6 +313,7 @@ class GameController extends ChangeNotifier {
     activeDigitIsNote = false;
     status = GameStatus.playing;
     _history.clear();
+    _eventLog.clear();
     notifyListeners();
   }
 
@@ -328,6 +381,7 @@ class GameController extends ChangeNotifier {
       // Removing an existing note is always allowed, no validity check.
       _setActiveHint(null);
       _history.add(_Move.value(row, col, _board[row][col], _cloneNotes()));
+      _recordEvent(GameEvent.note(row, col, value, elapsedSeconds));
       notes.remove(value);
       notifyListeners();
       return;
@@ -341,6 +395,7 @@ class GameController extends ChangeNotifier {
 
     _setActiveHint(null);
     _history.add(_Move.value(row, col, _board[row][col], _cloneNotes()));
+    _recordEvent(GameEvent.note(row, col, value, elapsedSeconds));
     notes.add(value);
     notifyListeners();
   }
@@ -443,6 +498,7 @@ class GameController extends ChangeNotifier {
 
     _setActiveHint(null);
     _history.add(_Move.value(row, col, _board[row][col], _cloneNotes()));
+    _recordEvent(GameEvent.place(row, col, value, elapsedSeconds));
     _board[row][col] = value;
     _notes[row][col].clear();
     if (autoRemoveNotesEnabled &&
@@ -489,6 +545,7 @@ class GameController extends ChangeNotifier {
     if (status != GameStatus.playing) return;
     if (_history.isEmpty) return;
     final move = _history.removeLast();
+    if (_eventLog.isNotEmpty) _eventLog.removeLast();
     if (move.row != null) {
       _board[move.row!][move.col!] = move.previousValue!;
     }
@@ -561,8 +618,10 @@ class GameController extends ChangeNotifier {
     if (status != GameStatus.playing) return null;
     var hint = prepared.hint;
     if (prepared._repairedAny) {
+      final repairedNotes = prepared._repairedNotes!;
       _history.add(_Move.notesOnly(_cloneNotes()));
-      _notes = prepared._repairedNotes!;
+      _recordEvent(GameEvent.repair(_repairedCells(repairedNotes), elapsedSeconds));
+      _notes = repairedNotes;
       if (hint != null && hint.type == HintType.eliminate) {
         hint = hint.withExplanation(
           (l10n ?? lookupAppLocalizations(const Locale('ko')))
@@ -672,6 +731,7 @@ class GameController extends ChangeNotifier {
     final col = hint.col!;
     final value = hint.value!;
     _history.add(_Move.value(row, col, _board[row][col], _cloneNotes()));
+    _recordEvent(GameEvent.place(row, col, value, elapsedSeconds));
     _board[row][col] = value;
     // Same minimal-touch behavior as a normal inputValue placement: clear
     // this cell's own notes and drop the newly-placed digit from row/col/
@@ -694,6 +754,9 @@ class GameController extends ChangeNotifier {
   /// never asked for.
   void _applyEliminateHint(Hint hint) {
     _history.add(_Move.notesOnly(_cloneNotes()));
+    _recordEvent(GameEvent.eliminate(
+        [for (final e in hint.eliminations) [e.row, e.col, e.digit]],
+        elapsedSeconds));
     for (final elimination in hint.eliminations) {
       _notes[elimination.row][elimination.col].remove(elimination.digit);
     }
@@ -713,6 +776,7 @@ class GameController extends ChangeNotifier {
     if (!canAutoFillNotes) return;
     _setActiveHint(null);
     _history.add(_Move.notesOnly(_cloneNotes()));
+    _recordEvent(GameEvent.fillNotes(elapsedSeconds));
     _recomputeAllNotes();
     notifyListeners();
   }

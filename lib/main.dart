@@ -10,6 +10,7 @@ import 'services/ad_service.dart';
 import 'services/puzzle_queue_manager.dart';
 import 'services/storage_service.dart';
 import 'state/auth_controller.dart';
+import 'state/premium_controller.dart';
 import 'state/settings_controller.dart';
 import 'theme/app_theme.dart';
 
@@ -34,6 +35,7 @@ Future<void> main() async {
   AdService.instance.initialize();
   final settings = SettingsController();
   await settings.load();
+  await PremiumController.instance.load();
   final puzzleQueue = PuzzleQueueManager();
   await puzzleQueue.loadFromDisk();
   puzzleQueue.warmUp();
