@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'theme_pack.dart';
+
 /// The app's two ThemeData instances, extracted from main.dart so theme
 /// decisions live beside the palette. Mulmaru (bundled, single Regular weight)
 /// is the app-wide font, set as the base `fontFamily` so every text style —
@@ -46,21 +48,23 @@ class AppTheme {
       );
 
   static ThemeData light() {
+    final pack = ThemePack.active.of(false);
     final base = ThemeData(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF6E56FF),
+        seedColor: pack.seed,
         brightness: Brightness.light,
+        dynamicSchemeVariant: ThemePack.active.schemeVariant,
       ),
       useMaterial3: true,
       fontFamily: _mulmaru,
       // Kept as-is: the game screen (outside the redesign) paints on this.
-      scaffoldBackgroundColor: const Color(0xFFF6F5FF),
-      appBarTheme: const AppBarTheme(
+      scaffoldBackgroundColor: pack.scaffoldBg,
+      appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: Color(0xFFF6F5FF),
+        backgroundColor: pack.scaffoldBg,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: TextStyle(
-          color: Color(0xFF241B4B),
+          color: pack.appBarTitle,
           fontSize: 22,
           fontFamily: _mulmaru,
           fontWeight: FontWeight.normal,
@@ -69,10 +73,10 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: const Color(0xFF6E56FF),
+          backgroundColor: pack.seed,
           foregroundColor: Colors.white,
           elevation: 5,
-          shadowColor: const Color(0xFF6E56FF).withValues(alpha: 0.4),
+          shadowColor: pack.seed.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
@@ -83,20 +87,22 @@ class AppTheme {
   }
 
   static ThemeData dark() {
+    final pack = ThemePack.active.of(true);
     final base = ThemeData(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF9D8CFF),
+        seedColor: pack.seed,
         brightness: Brightness.dark,
+        dynamicSchemeVariant: ThemePack.active.schemeVariant,
       ),
       useMaterial3: true,
       fontFamily: _mulmaru,
-      scaffoldBackgroundColor: const Color(0xFF0D0B1E),
-      appBarTheme: const AppBarTheme(
+      scaffoldBackgroundColor: pack.scaffoldBg,
+      appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: Color(0xFF0D0B1E),
+        backgroundColor: pack.scaffoldBg,
         surfaceTintColor: Colors.transparent,
         titleTextStyle: TextStyle(
-          color: Color(0xFFF0EEFF),
+          color: pack.appBarTitle,
           fontSize: 22,
           fontFamily: _mulmaru,
           fontWeight: FontWeight.normal,

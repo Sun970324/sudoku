@@ -97,7 +97,11 @@ class _NumberPadButtonState extends State<_NumberPadButton> {
     if (!widget.enabled) {
       textColor = BoardColors.padTextDisabled(isDark);
     } else if (widget.isActive) {
-      textColor = Colors.white;
+      // onPrimary, not hardcoded white: the active chip's background is
+      // colorScheme.primary, and only its scheme-paired "on" color is
+      // guaranteed readable on it in every theme pack (monochrome dark's
+      // primary is near-white, where white text disappears).
+      textColor = Theme.of(context).colorScheme.onPrimary;
     } else if (widget.isNotePad) {
       textColor = BoardColors.padTextNote(isDark);
     } else {

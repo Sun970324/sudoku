@@ -2115,6 +2115,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Favorites are full (max {count}).'**
   String favoriteFull(int count);
+
+  /// No description provided for @themePackSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Pack'**
+  String get themePackSectionTitle;
+
+  /// No description provided for @themePackClassic.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic'**
+  String get themePackClassic;
+
+  /// No description provided for @themePackMidnightNeon.
+  ///
+  /// In en, this message translates to:
+  /// **'Midnight Neon'**
+  String get themePackMidnightNeon;
+
+  /// No description provided for @themePackSepiaPaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Sepia Paper'**
+  String get themePackSepiaPaper;
+
+  /// No description provided for @themePackMonochrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Monochrome'**
+  String get themePackMonochrome;
+
+  /// No description provided for @themePackForest.
+  ///
+  /// In en, this message translates to:
+  /// **'Forest'**
+  String get themePackForest;
+
+  /// No description provided for @themePackOcean.
+  ///
+  /// In en, this message translates to:
+  /// **'Ocean'**
+  String get themePackOcean;
+
+  /// No description provided for @themePremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Restyle the board and the whole app with premium theme packs — five distinct looks to choose from.'**
+  String get themePremiumBody;
 }
 
 class _AppLocalizationsDelegate

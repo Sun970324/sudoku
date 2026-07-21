@@ -91,3 +91,21 @@ Phase 5 — 즐겨찾기 저장
 Phase 6 — 선택 혜택 (프리미엄 테마/보드 스킨 + 심화 통계) (별도 설계 후 확정)
 유료 테마·보드 스킨, HumanSolver 기반 심화 통계. 구체 스킨/지표는 착수 전 다시 상의.
 각 Phase의 사용자 노출 문구는 ko/en ARB 추가 후 재생성이 필요합니다.
+
+
+Phase 6A — 프리미엄 테마 팩
+아키텍처 (회귀 위험 최소화)
+
+ThemePack 정의: 팩마다 핵심 색만 라이트/다크로 보유 — 앱(강조색·배경 그라데이션·버튼 그라데이션·ColorScheme seed) + 보드 구조색(셀 배경·선택/이웃·테두리·숫자색·패드/컨트롤). 힌트 의미색(빨강·초록·청록·주황)은 팩 무관 고정.
+현재 하드코딩 값을 그대로 Classic 팩으로 추출 → BoardColors/AppPalette/app_theme가 "활성 팩"을 읽도록 위임. 클래식 = 지금과 픽셀 동일(안전).
+SettingsController에 활성 팩 상태 추가(로컬 저장). 변경 시 앱 리빌드로 반영(테마모드와 동일 패턴). 라이트/다크 토글과 직교(팩은 각 모드용 색을 가짐).
+팩 라인업 (제안)
+
+Classic (무료) — 현재 바이올렛+시안.
+Midnight Neon (프리미엄) — 딥 네이비 배경 + 네온 청록/자홍 강조.
+Sepia Paper (프리미엄) — 따뜻한 크림/브라운, 종이 느낌.
+선택 UI / 게이팅
+
+설정 시트 "테마" 섹션에 팩 선택(각 팩 미니 미리보기 칩). 비프리미엄은 프리미엄 팩에 잠금 표시 → 탭 시 PremiumLockScreen(description=테마 설명).
+비프리미엄은 Classic만 적용 가능.
+작업 범위: models/theme_pack.dart(신규) · board_colors.dart/app_palette.dart/app_theme.dart 위임 리팩터 · settings_controller+storage 활성팩 · settings_sheet 선택 UI · l10n(팩 이름·설명). 회귀 검증 위해 클래식 픽셀 동일 확인.

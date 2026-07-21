@@ -967,5 +967,14 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+
+  "themePackSectionTitle": "Theme Pack",
+  "themePackClassic": "Classic",
+  "themePackMidnightNeon": "Midnight Neon",
+  "themePackSepiaPaper": "Sepia Paper",
+  "themePackMonochrome": "Monochrome",
+  "themePackForest": "Forest",
+  "themePackOcean": "Ocean",
+  "themePremiumBody": "Restyle the board and the whole app with premium theme packs — five distinct looks to choose from."
 }

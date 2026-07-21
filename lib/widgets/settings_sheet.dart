@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import '../content/policy_texts.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../screens/policy_screen.dart';
+import '../screens/premium/premium_lock_screen.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
 import '../state/premium_controller.dart';
 import '../state/settings_controller.dart';
 import '../theme/app_palette.dart';
+import '../theme/theme_pack.dart';
 import 'pixel_icon.dart';
 
 /// The settings bottom sheet (theme / language / haptics / sound) — grew
@@ -66,6 +68,14 @@ void showSettingsSheet(
                     (ThemeMode.light, l10n.lightTheme),
                     (ThemeMode.dark, l10n.darkTheme),
                   ],
+                ),
+                const SizedBox(height: 16),
+                _SectionTitle(l10n.themePackSectionTitle),
+                // Also rebuilds on premium changes: the debug premium toggle
+                // lives in this same sheet, and the lock badges must follow it.
+                AnimatedBuilder(
+                  animation: PremiumController.instance,
+                  builder: (context, _) => _ThemePackRow(settings: settings),
                 ),
                 const SizedBox(height: 16),
                 _SectionTitle(l10n.languageSectionTitle),
@@ -214,6 +224,137 @@ class _SectionTitle extends StatelessWidget {
           style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 17),
         ),
       );
+}
+
+/// The theme-pack picker: one tappable swatch per pack, premium packs locked
+/// behind the upsell page for free users.
+class _ThemePackRow extends StatelessWidget {
+  const _ThemePackRow({required this.settings});
+
+  final SettingsController settings;
+
+  String _nameOf(AppLocalizations l10n, ThemePack pack) => switch (pack.id) {
+        ThemePackId.classic => l10n.themePackClassic,
+        ThemePackId.midnightNeon => l10n.themePackMidnightNeon,
+        ThemePackId.sepiaPaper => l10n.themePackSepiaPaper,
+        ThemePackId.monochrome => l10n.themePackMonochrome,
+        ThemePackId.forest => l10n.themePackForest,
+        ThemePackId.ocean => l10n.themePackOcean,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = AppPalette.isDark(context);
+    final isPremiumUser = PremiumController.instance.isPremium;
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: [
+        for (final pack in ThemePack.all)
+          _ThemePackChip(
+            name: _nameOf(l10n, pack),
+            colors: pack.of(isDark),
+            selected: settings.themePack == pack,
+            locked: pack.isPremium && !isPremiumUser,
+            onTap: () {
+              if (pack.isPremium && !isPremiumUser) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        PremiumLockScreen(description: l10n.themePremiumBody),
+                  ),
+                );
+              } else {
+                settings.setThemePack(pack);
+              }
+            },
+          ),
+      ],
+    );
+  }
+}
+
+class _ThemePackChip extends StatelessWidget {
+  const _ThemePackChip({
+    required this.name,
+    required this.colors,
+    required this.selected,
+    required this.locked,
+    required this.onTap,
+  });
+
+  final String name;
+  final ThemePackColors colors;
+  final bool selected;
+  final bool locked;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 40,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: colors.primaryGradient,
+              ),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: selected ? scheme.primary : scheme.outlineVariant,
+                width: selected ? 2.5 : 1,
+              ),
+            ),
+            child: Stack(
+              children: [
+                // A corner peek of the pack's board cell + digit color, so the
+                // swatch hints at the in-game look, not just the button color.
+                Positioned(
+                  right: 3,
+                  bottom: 3,
+                  child: Container(
+                    width: 18,
+                    height: 18,
+                    decoration: BoxDecoration(
+                      color: colors.cellDefault,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: colors.innerBorder),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '5',
+                        style: TextStyle(
+                          fontSize: 11,
+                          height: 1.0,
+                          color: colors.textEntered,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                if (locked)
+                  const Center(
+                    child: Icon(Icons.lock, size: 18, color: Colors.white),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(name, style: const TextStyle(fontSize: 12)),
+        ],
+      ),
+    );
+  }
 }
 
 class _ChoiceRow<T> extends StatelessWidget {

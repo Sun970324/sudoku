@@ -2,27 +2,27 @@ import 'package:flutter/material.dart';
 
 import '../models/difficulty.dart';
 import '../models/tier.dart';
+import 'theme_pack.dart';
 
 /// App-wide "vivid pop" design tokens — gradients, category colors, and
 /// surfaces for the redesigned (non-game) screens. Same static-utility,
 /// `bool isDark` shape as [BoardColors], which stays the separate source of
 /// truth for everything on the game board itself.
+///
+/// Identity colors (gradients, card surfaces) delegate to the active
+/// [ThemePack]; semantic accents (difficulty/tier/race/daily) stay fixed.
 class AppPalette {
   AppPalette._();
 
   static bool isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
 
-  /// Background gradient consumed by `GradientScaffold` — lavender to sky
-  /// in light, deep violet to near-black in dark.
-  static List<Color> bgGradient(bool d) => d
-      ? const [Color(0xFF1C1440), Color(0xFF0D0B1E)]
-      : const [Color(0xFFEDE8FF), Color(0xFFDDF1FF)];
+  /// Background gradient consumed by `GradientScaffold`.
+  static List<Color> bgGradient(bool d) => ThemePack.active.of(d).bgGradient;
 
-  /// The identity-violet fill for primary buttons.
-  static List<Color> primaryGradient(bool d) => d
-      ? const [Color(0xFF9D8CFF), Color(0xFF7A63FF)]
-      : const [Color(0xFF8B72FF), Color(0xFF6E56FF)];
+  /// The identity fill for primary buttons.
+  static List<Color> primaryGradient(bool d) =>
+      ThemePack.active.of(d).primaryGradient;
 
   /// Per-difficulty accent. Beginner/Easy deliberately reuse the
   /// Bronze/Silver tier colors — those two difficulties map 1:1 to a
@@ -51,15 +51,14 @@ class AppPalette {
           d ? const Color(0xFFFF7B93) : const Color(0xFFE11D48),
       };
 
-  /// Card face color. Dark mode gets a slightly-lifted violet surface —
-  /// shadows read as nothing against the dark gradient, so depth there
-  /// comes from surface contrast plus a tinted border glow instead.
-  static Color cardSurface(bool d) =>
-      d ? const Color(0xFF241E48) : Colors.white;
+  /// Card face color. Dark mode gets a slightly-lifted surface — shadows
+  /// read as nothing against the dark gradient, so depth there comes from
+  /// surface contrast plus a tinted border glow instead.
+  static Color cardSurface(bool d) => ThemePack.active.of(d).cardSurface;
 
   static Color cardShadow(bool d) => d
       ? Colors.black.withValues(alpha: 0.5)
-      : const Color(0xFF6E56FF).withValues(alpha: 0.14);
+      : ThemePack.active.of(d).seed.withValues(alpha: 0.14);
 
   /// Accent colors for the home screen's secondary actions.
   static const raceCoral = Color(0xFFFF6B6B);

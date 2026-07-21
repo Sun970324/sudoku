@@ -39,6 +39,7 @@ class StorageService {
   static const _seenRaceTutorialKey = 'seen_race_tutorial';
   static const _seenQuickInputTutorialKey = 'seen_quick_input_tutorial';
   static const _celebratedSeasonKey = 'celebrated_season_id';
+  static const _themePackKey = 'theme_pack';
 
   Future<void> saveInProgressGame(GameSnapshot snapshot) async {
     final prefs = await SharedPreferences.getInstance();
@@ -369,6 +370,18 @@ class StorageService {
   Future<int> loadCelebratedSeasonId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_celebratedSeasonKey) ?? 0;
+  }
+
+  /// The active theme pack, stored by enum name. Null (never chosen) and
+  /// unknown names both resolve to classic — see ThemePack.byName.
+  Future<void> saveThemePackName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_themePackKey, name);
+  }
+
+  Future<String?> loadThemePackName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_themePackKey);
   }
 
   /// Clears all first-entry tutorial flags so they re-trigger on next visit —

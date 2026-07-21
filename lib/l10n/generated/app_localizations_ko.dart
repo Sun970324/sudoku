@@ -1225,4 +1225,29 @@ class AppLocalizationsKo extends AppLocalizations {
   String favoriteFull(int count) {
     return '즐겨찾기가 가득 찼어요 (최대 $count개).';
   }
+
+  @override
+  String get themePackSectionTitle => '테마 팩';
+
+  @override
+  String get themePackClassic => '클래식';
+
+  @override
+  String get themePackMidnightNeon => '미드나잇 네온';
+
+  @override
+  String get themePackSepiaPaper => '세피아 페이퍼';
+
+  @override
+  String get themePackMonochrome => '모노크롬';
+
+  @override
+  String get themePackForest => '포레스트';
+
+  @override
+  String get themePackOcean => '오션';
+
+  @override
+  String get themePremiumBody =>
+      '프리미엄 테마 팩으로 보드와 앱 전체의 분위기를 바꿔보세요 — 5가지 스타일 중에서 고를 수 있어요.';
 }

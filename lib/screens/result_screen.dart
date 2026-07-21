@@ -148,6 +148,16 @@ class ResultScreen extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          Text(
+                            l10n.perfectClearBadge,
+                            style: TextStyle(
+                              fontFamily: 'Mulmaru',
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontSize: 12,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -165,16 +175,6 @@ class ResultScreen extends StatelessWidget {
                                 ),
                               ),
                             ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            l10n.perfectClearBadge,
-                            style: TextStyle(
-                              fontFamily: 'Mulmaru',
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: 12,
-                              letterSpacing: 1.5,
-                            ),
                           ),
                         ],
                       ),

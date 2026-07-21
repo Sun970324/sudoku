@@ -352,5 +352,14 @@
   "favoritesEmpty": "저장한 스도쿠가 없어요.",
   "favoriteSaved": "즐겨찾기에 저장했어요.",
   "favoriteRemoved": "즐겨찾기에서 제거했어요.",
-  "favoriteFull": "즐겨찾기가 가득 찼어요 (최대 {count}개)."
+  "favoriteFull": "즐겨찾기가 가득 찼어요 (최대 {count}개).",
+
+  "themePackSectionTitle": "테마 팩",
+  "themePackClassic": "클래식",
+  "themePackMidnightNeon": "미드나잇 네온",
+  "themePackSepiaPaper": "세피아 페이퍼",
+  "themePackMonochrome": "모노크롬",
+  "themePackForest": "포레스트",
+  "themePackOcean": "오션",
+  "themePremiumBody": "프리미엄 테마 팩으로 보드와 앱 전체의 분위기를 바꿔보세요 — 5가지 스타일 중에서 고를 수 있어요."
 }

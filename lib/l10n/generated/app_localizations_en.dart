@@ -1252,4 +1252,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String favoriteFull(int count) {
     return 'Favorites are full (max $count).';
   }
+
+  @override
+  String get themePackSectionTitle => 'Theme Pack';
+
+  @override
+  String get themePackClassic => 'Classic';
+
+  @override
+  String get themePackMidnightNeon => 'Midnight Neon';
+
+  @override
+  String get themePackSepiaPaper => 'Sepia Paper';
+
+  @override
+  String get themePackMonochrome => 'Monochrome';
+
+  @override
+  String get themePackForest => 'Forest';
+
+  @override
+  String get themePackOcean => 'Ocean';
+
+  @override
+  String get themePremiumBody =>
+      'Restyle the board and the whole app with premium theme packs — five distinct looks to choose from.';
 }

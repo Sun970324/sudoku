@@ -33,9 +33,12 @@ Future<void> main() async {
     publishableKey: SupabaseConfig.anonKey,
   );
   AdService.instance.initialize();
+  // Premium before settings: SettingsController.load clamps a premium theme
+  // pack back to classic when the entitlement is gone, so it must see the
+  // resolved premium state.
+  await PremiumController.instance.load();
   final settings = SettingsController();
   await settings.load();
-  await PremiumController.instance.load();
   final puzzleQueue = PuzzleQueueManager();
   await puzzleQueue.loadFromDisk();
   puzzleQueue.warmUp();

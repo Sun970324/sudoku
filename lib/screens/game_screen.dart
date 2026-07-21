@@ -22,6 +22,7 @@ import '../theme/board_colors.dart';
 import '../widgets/coach_mark.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/game_controls_row.dart';
+import '../widgets/gradient_scaffold.dart';
 import '../widgets/number_pad_widget.dart';
 import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
@@ -1082,7 +1083,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         if (didPop) return;
         _onBackPressed();
       },
-      child: Scaffold(
+      child: GradientScaffold(
         appBar: AppBar(
           // Explicit instead of Flutter's automatic back button: this
           // screen can be the app's very first route (resumed straight
@@ -1205,17 +1206,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 
-  Widget _buildBody(BuildContext context) => Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: Theme.of(context).brightness == Brightness.dark
-              ? const [Color(0xFF15102C), Color(0xFF0D0B1E)]
-              : const [Color(0xFFF6F5FF), Color(0xFFECE9FF)],
-        ),
-      ),
-      child: SafeArea(
+  // No background of its own: the enclosing GradientScaffold paints the
+  // active theme pack's gradient (a hardcoded gradient here used to hide
+  // pack changes on this screen).
+  Widget _buildBody(BuildContext context) => SafeArea(
         child: Column(
           children: [
             // Expanded (instead of a fixed height fraction) so the grid
@@ -1359,5 +1353,5 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
             const SizedBox(height: 24),
           ],
         ),
-      ));
+      );
 }

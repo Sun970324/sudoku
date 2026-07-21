@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
+import '../theme/theme_pack.dart';
 import 'game_controller.dart';
+import 'premium_controller.dart';
 
 class SettingsController extends ChangeNotifier {
   SettingsController({StorageService? storage})
@@ -16,6 +18,7 @@ class SettingsController extends ChangeNotifier {
   bool _soundEnabled = true;
   bool _wrongNoteWarningEnabled = true;
   bool _autoRemoveNotesEnabled = true;
+  ThemePack _themePack = ThemePack.classic;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -25,6 +28,7 @@ class SettingsController extends ChangeNotifier {
   bool get soundEnabled => _soundEnabled;
   bool get wrongNoteWarningEnabled => _wrongNoteWarningEnabled;
   bool get autoRemoveNotesEnabled => _autoRemoveNotesEnabled;
+  ThemePack get themePack => _themePack;
 
   Future<void> load() async {
     _themeMode = await _storage.loadThemeMode();
@@ -42,7 +46,24 @@ class SettingsController extends ChangeNotifier {
     // StorageService — load-time push into the static default is all that's
     // needed here.
     GameController.quickInputDefault = await _storage.loadQuickInputEnabled();
+    // Resolve the stored theme pack, clamping a premium pack back to classic
+    // when the entitlement is gone (expired/debug-toggled off) — requires
+    // PremiumController.load() to have run first, see main(). The stored
+    // name is left untouched so regaining premium restores the choice.
+    final pack = ThemePack.byName(await _storage.loadThemePackName());
+    _themePack = pack.isPremium && !PremiumController.instance.isPremium
+        ? ThemePack.classic
+        : pack;
+    ThemePack.active = _themePack;
     notifyListeners();
+  }
+
+  Future<void> setThemePack(ThemePack pack) async {
+    if (pack == _themePack) return;
+    _themePack = pack;
+    ThemePack.active = pack;
+    notifyListeners();
+    await _storage.saveThemePackName(pack.id.name);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
