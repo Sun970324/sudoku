@@ -946,5 +946,12 @@
       "linesDesc": {"type": "String"}
     }
   },
-  "hintStepURIntro": "The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible."
+  "hintStepURIntro": "The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible.",
+
+  "replayTitle": "Replay",
+  "replayEmpty": "No games to replay yet.",
+  "replayPremiumTitle": "Premium feature",
+  "replayPremiumBody": "Replay your recent games move by move and pick up solving again — retrace every entry and note in the exact order you made them.",
+  "replayResumeFromHere": "Solve from here",
+  "raceReplayUnavailable": "No replay saved for this game on this device."
 }

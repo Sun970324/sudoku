@@ -1,27 +1,33 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../models/difficulty.dart';
+import '../../models/game_replay.dart';
 import '../../models/race.dart';
 import '../../models/tier.dart';
 import '../../models/user_profile.dart';
+import '../../services/generation/sudoku_generator.dart';
 import '../../services/puzzle_queue_manager.dart';
 import '../../services/race_service.dart';
 import '../../services/season_service.dart';
 import '../../services/storage_service.dart';
 import '../../state/auth_controller.dart';
+import '../../state/premium_controller.dart';
 import '../../theme/app_palette.dart';
 import '../../widgets/coach_mark.dart';
 import '../../widgets/gradient_scaffold.dart';
+import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pixel_icon.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
 import '../../widgets/season_banner.dart';
 import '../../widgets/sign_in_prompt.dart';
 import '../../widgets/tier_badge.dart';
-import '../game_screen.dart';
+import '../premium/premium_lock_screen.dart';
+import '../replay/replay_player_screen.dart';
 import 'friend_match_screen.dart';
 import 'matchmaking_screen.dart';
 import 'rating_leaderboard_screen.dart';
@@ -47,6 +53,10 @@ class RaceLobbyScreen extends StatefulWidget {
 class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
   Future<List<RaceHistoryEntry>>? _historyFuture;
 
+  /// Local race replays keyed by race id — only races played on this device
+  /// have one, so a history entry opens its move replay (premium) when present.
+  Map<String, GameReplay> _raceReplays = {};
+
   // Coach-mark anchors + one-shot guard for the first-entry race tutorial.
   final _profileKey = GlobalKey();
   final _friendKey = GlobalKey();
@@ -61,14 +71,85 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
     widget.auth.addListener(_onAuthChanged);
     if (widget.auth.isSignedIn) {
       _historyFuture = RaceService().fetchHistory();
+      _loadRaceReplays();
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowTutorial());
     _maybeShowSeasonSummary();
   }
 
+  Future<void> _loadRaceReplays() async {
+    final replays = await StorageService().loadRaceReplays();
+    if (!mounted) return;
+    setState(() {
+      _raceReplays = {
+        for (final r in replays)
+          if (r.raceId != null) r.raceId!: r,
+      };
+    });
+  }
+
+  /// Debug only: seeds a few fake finished-race replays locally so the whole
+  /// history-tile → replay-player flow can be exercised without a live match.
+  Future<void> _seedFakeRaceReplays() async {
+    final storage = StorageService();
+    for (var i = 0; i < 3; i++) {
+      final puzzle = widget.puzzleQueue.takeLast(Difficulty.easy) ??
+          SudokuGenerator().generate(Difficulty.easy);
+      final empties = <List<int>>[];
+      for (var r = 0; r < 9; r++) {
+        for (var c = 0; c < 9; c++) {
+          if (puzzle.puzzle.get(r, c) == 0) empties.add([r, c]);
+        }
+      }
+      final won = i.isEven;
+      final fillCount = won ? empties.length : (empties.length / 3).round();
+      final events = <GameEvent>[
+        for (var k = 0; k < fillCount; k++)
+          GameEvent.place(empties[k][0], empties[k][1],
+              puzzle.solution.get(empties[k][0], empties[k][1]), (k + 1) * 2),
+      ];
+      await storage.saveRaceReplay(GameReplay(
+        puzzle: puzzle,
+        events: events,
+        autoRemoveNotes: true,
+        won: won,
+        elapsedSeconds: fillCount * 2,
+        mistakes: won ? 0 : 1,
+        hintsUsed: 0,
+        finishedAt: DateTime.now().subtract(Duration(minutes: i * 7)),
+        raceId: 'debug-${DateTime.now().microsecondsSinceEpoch}-$i',
+      ));
+    }
+    await _loadRaceReplays();
+  }
+
+  /// The history to render. In debug, local race replays with no matching
+  /// server row (e.g. the seeded ones) are synthesized in as tiles so they're
+  /// reachable; in release this returns [server] untouched.
+  List<RaceHistoryEntry> _displayHistory(List<RaceHistoryEntry> server) {
+    if (!kDebugMode || _raceReplays.isEmpty) return server;
+    final serverIds = server.map((e) => e.id).toSet();
+    final synthesized = [
+      for (final replay in _raceReplays.values)
+        if (!serverIds.contains(replay.raceId))
+          RaceHistoryEntry(
+            id: replay.raceId!,
+            finishedAt: replay.finishedAt,
+            opponentUsername: 'TEST',
+            won: replay.won,
+            ratingAfter: 0,
+            ratingDelta: 0,
+            puzzle: replay.puzzle,
+          ),
+    ];
+    return [...server, ...synthesized]
+      ..sort((a, b) => b.finishedAt.compareTo(a.finishedAt));
+  }
+
   void _onAuthChanged() {
     if (widget.auth.isSignedIn && _historyFuture == null) {
       _historyFuture = RaceService().fetchHistory();
+      _loadRaceReplays();
     }
     if (mounted) setState(() {});
     _maybeShowTutorial();
@@ -183,8 +264,8 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
   }
 
   void _onRankedPressed() {
-    final difficulty = widget.auth.profile?.tier.raceDifficulty ??
-        Difficulty.medium;
+    final difficulty =
+        widget.auth.profile?.tier.raceDifficulty ?? Difficulty.medium;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -226,6 +307,31 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
 
   /// One finished race, tappable to replay its puzzle — moved here from
   /// StatsScreen so past races live where racing starts.
+  /// Opens the move-by-move replay for a finished race — premium only, and
+  /// only when this device has the replay saved (races played elsewhere or
+  /// older than the local cap don't). Each miss explains itself via a snackbar.
+  void _onHistoryTap(RaceHistoryEntry entry) {
+    final l10n = AppLocalizations.of(context)!;
+    if (!PremiumController.instance.isPremium) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PremiumLockScreen()),
+      );
+      return;
+    }
+    final replay = _raceReplays[entry.id];
+    if (replay == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.raceReplayUnavailable)),
+      );
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ReplayPlayerScreen(replay: replay)),
+    );
+  }
+
   Widget _buildRaceHistoryTile(RaceHistoryEntry entry) {
     final l10n = AppLocalizations.of(context)!;
     final delta = entry.ratingDelta;
@@ -234,17 +340,14 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
     final resultLabel =
         entry.won ? l10n.raceHistoryResultWon : l10n.raceHistoryResultLost;
     const baseStyle = TextStyle(fontSize: 13);
+    // Advertise replay on every tile for free users (tap → upsell); for
+    // premium, only where a local replay actually exists to open.
+    final showPlay = !PremiumController.instance.isPremium ||
+        _raceReplays.containsKey(entry.id);
     return Card(
       child: ListTile(
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => GameScreen.newGame(
-              difficulty: entry.puzzle.difficulty,
-              puzzle: entry.puzzle,
-            ),
-          ),
-        ),
+        onTap: () => _onHistoryTap(entry),
+        trailing: showPlay ? const Icon(PixelIcons.play, size: 18) : null,
         leading: Icon(
           entry.won ? PixelIcons.trophy : PixelIcons.sadFace,
           color:
@@ -278,7 +381,18 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
     final l10n = AppLocalizations.of(context)!;
     final profile = widget.auth.profile;
     return GradientScaffold(
-      appBar: AppBar(title: Text(l10n.raceLobbyTitle)),
+      appBar: AppBar(
+        leading: const PixelBackButton(),
+        title: Text(l10n.raceLobbyTitle),
+        actions: [
+          if (kDebugMode)
+            IconButton(
+              icon: const Icon(Icons.bug_report),
+              tooltip: 'Seed fake race replays',
+              onPressed: _seedFakeRaceReplays,
+            ),
+        ],
+      ),
       body: !widget.auth.isSignedIn
           ? Center(
               child: SignInPrompt(
@@ -334,7 +448,7 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
                           child: Center(child: CircularProgressIndicator()),
                         );
                       }
-                      final history = snapshot.data!;
+                      final history = _displayHistory(snapshot.data!);
                       if (history.isEmpty) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
@@ -342,8 +456,7 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
                         );
                       }
                       return Column(
-                        children:
-                            history.map(_buildRaceHistoryTile).toList(),
+                        children: history.map(_buildRaceHistoryTile).toList(),
                       );
                     },
                   ),

@@ -12,6 +12,7 @@ import '../models/sudoku_puzzle.dart';
 class StorageService {
   static const _inProgressKey = 'in_progress_game';
   static const _replaysKey = 'game_replays';
+  static const _raceReplaysKey = 'race_replays';
 
   /// How many finished solo games are kept for replay — newest first, oldest
   /// pruned past this. Premium-only feature; see [PremiumController].
@@ -95,6 +96,30 @@ class StorageService {
   Future<List<GameReplay>> loadReplays() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_replaysKey);
+    if (raw == null) return [];
+    return (jsonDecode(raw) as List<dynamic>)
+        .map((e) => GameReplay.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Race replays live in their own most-recent-[maxReplays] bucket (separate
+  /// from solo games), keyed by race id so the race lobby can surface a replay
+  /// for a history entry. Re-finishing the same race replaces its old entry.
+  Future<void> saveRaceReplay(GameReplay replay) async {
+    final replays = await loadRaceReplays();
+    replays.removeWhere((r) => r.raceId == replay.raceId);
+    replays.insert(0, replay);
+    if (replays.length > maxReplays) {
+      replays.removeRange(maxReplays, replays.length);
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(
+        _raceReplaysKey, jsonEncode(replays.map((r) => r.toJson()).toList()));
+  }
+
+  Future<List<GameReplay>> loadRaceReplays() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_raceReplaysKey);
     if (raw == null) return [];
     return (jsonDecode(raw) as List<dynamic>)
         .map((e) => GameReplay.fromJson(e as Map<String, dynamic>))

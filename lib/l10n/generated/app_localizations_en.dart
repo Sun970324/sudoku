@@ -1204,4 +1204,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get hintStepURIntro =>
       'The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible.';
+
+  @override
+  String get replayTitle => 'Replay';
+
+  @override
+  String get replayEmpty => 'No games to replay yet.';
+
+  @override
+  String get replayPremiumTitle => 'Premium feature';
+
+  @override
+  String get replayPremiumBody =>
+      'Replay your recent games move by move and pick up solving again — retrace every entry and note in the exact order you made them.';
+
+  @override
+  String get replayResumeFromHere => 'Solve from here';
+
+  @override
+  String get raceReplayUnavailable =>
+      'No replay saved for this game on this device.';
 }

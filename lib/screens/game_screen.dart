@@ -349,6 +349,9 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // point until their first completion.
     if (widget.isDaily) return;
     _abandoningGame = true;
+    // Save the replay for every give-up — a mid-game exit and a game-over both
+    // leave a game worth reviewing, so both are recorded (as a loss).
+    await _storage.saveReplay(_controller.toReplay(won: false));
     await _storage.clearInProgressGame();
     await _storage.recordGameResult(
       difficulty: _controller.difficulty,
@@ -534,11 +537,6 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         actions: [
           TextButton(
             onPressed: () {
-              // A game-over is a finished (lost) game — save its replay, unlike
-              // a plain mid-game abandon. Daily games are never recorded.
-              if (!widget.isDaily) {
-                _storage.saveReplay(_controller.toReplay(won: false));
-              }
               Navigator.pop(dialogContext);
               _giveUp();
               _popToHome();

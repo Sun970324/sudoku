@@ -2031,6 +2031,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible.'**
   String get hintStepURIntro;
+
+  /// No description provided for @replayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get replayTitle;
+
+  /// No description provided for @replayEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No games to replay yet.'**
+  String get replayEmpty;
+
+  /// No description provided for @replayPremiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium feature'**
+  String get replayPremiumTitle;
+
+  /// No description provided for @replayPremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay your recent games move by move and pick up solving again — retrace every entry and note in the exact order you made them.'**
+  String get replayPremiumBody;
+
+  /// No description provided for @replayResumeFromHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve from here'**
+  String get replayResumeFromHere;
+
+  /// No description provided for @raceReplayUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No replay saved for this game on this device.'**
+  String get raceReplayUnavailable;
 }
 
 class _AppLocalizationsDelegate

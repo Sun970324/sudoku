@@ -139,6 +139,13 @@ class RaceController extends ChangeNotifier {
   bool _startRequested = false;
   bool _initialProfilesRequested = false;
 
+  /// Guards the one-time race-replay save at finish: [_gameStarted] rules out a
+  /// cold restore that lands in `finished` without ever loading the board (so
+  /// [game] has no puzzle to package), and [_replaySaved] keeps repeated
+  /// `finished` stream updates from saving twice.
+  bool _gameStarted = false;
+  bool _replaySaved = false;
+
   /// Set by [restore] so the racing transition resumes this board instead of
   /// starting a fresh one — the reconnect-after-app-kill path.
   GameSnapshot? _resumeSnapshot;
@@ -253,6 +260,7 @@ class RaceController extends ChangeNotifier {
           } else {
             game.startNewGame(race.difficulty, puzzle: race.puzzle);
           }
+          _gameStarted = true;
           game.addListener(_onGameChanged);
           // A cold restore lands straight in inProgress without passing
           // through the ready branch, so join the channel here too (no-op
@@ -266,6 +274,14 @@ class RaceController extends ChangeNotifier {
         phase = RacePhase.finished;
         _cleanupRealtime();
         unawaited(_storage.clearRaceProgress());
+        // Save my move log for replay (premium), win or loss — but only if the
+        // board actually loaded this session, and only once across repeated
+        // `finished` updates.
+        if (_gameStarted && !_replaySaved) {
+          _replaySaved = true;
+          unawaited(_storage.saveRaceReplay(
+              game.toReplay(won: race.winnerId == selfId, raceId: race.id)));
+        }
         // Both a normal win and a forfeit-loss (see abort_race) update
         // rating/tier server-side — refetch so the result screen can show
         // the before/after delta via selfRatingDelta/opponentRatingDelta.

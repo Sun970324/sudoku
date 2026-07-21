@@ -1179,4 +1179,23 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get hintStepURIntro =>
       '강조된 칸들이 같은 후보 쌍을 공유하는 직사각형을 이뤄요. 네 칸 모두 그 두 후보만 남으면 정답이 두 개가 되어 버립니다 — 그럴 수는 없죠.';
+
+  @override
+  String get replayTitle => '리플레이';
+
+  @override
+  String get replayEmpty => '아직 리플레이할 기록이 없어요.';
+
+  @override
+  String get replayPremiumTitle => '프리미엄 전용 기능';
+
+  @override
+  String get replayPremiumBody =>
+      '최근 게임을 한 수씩 복기하고 다시 풀어보세요 — 입력·메모한 순서를 그대로 되돌려 봅니다.';
+
+  @override
+  String get replayResumeFromHere => '여기서부터 풀기';
+
+  @override
+  String get raceReplayUnavailable => '이 기기에 저장된 리플레이 기록이 없어요.';
 }

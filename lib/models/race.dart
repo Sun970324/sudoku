@@ -100,6 +100,7 @@ class Race {
 /// `profiles.rating` only ever holds the *current* rating).
 class RaceHistoryEntry {
   const RaceHistoryEntry({
+    required this.id,
     required this.finishedAt,
     required this.opponentUsername,
     required this.won,
@@ -113,6 +114,7 @@ class RaceHistoryEntry {
     final opponentProfile = (isPlayerA ? json['player_b_profile'] : json['player_a_profile'])
         as Map<String, dynamic>;
     return RaceHistoryEntry(
+      id: json['id'] as String,
       finishedAt: DateTime.parse(json['finished_at'] as String),
       opponentUsername: opponentProfile['username'] as String,
       won: json['winner_id'] == selfId,
@@ -124,6 +126,7 @@ class RaceHistoryEntry {
     );
   }
 
+  final String id;
   final DateTime finishedAt;
   final String opponentUsername;
   final bool won;

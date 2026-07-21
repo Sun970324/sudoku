@@ -165,7 +165,8 @@ class RaceService {
             '*, player_a_profile:profiles!races_player_a_fkey(username), player_b_profile:profiles!races_player_b_fkey(username)')
         .eq('status', 'finished')
         .not('player_a_rating_delta', 'is', null)
-        .order('finished_at', ascending: false);
+        .order('finished_at', ascending: false)
+        .limit(10);
     return (rows as List)
         .cast<Map<String, dynamic>>()
         .map((row) => RaceHistoryEntry.fromJson(row, selfId))

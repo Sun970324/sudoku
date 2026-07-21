@@ -8,8 +8,10 @@ import '../services/storage_service.dart';
 import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
 import '../widgets/gradient_scaffold.dart';
+import '../widgets/pixel_back_button.dart';
 import '../widgets/pixel_icon.dart';
 import '../widgets/pop_card.dart';
+import 'replay/replay_list_screen.dart';
 import 'stats/daily_calendar_card.dart';
 
 class StatsScreen extends StatefulWidget {
@@ -64,7 +66,20 @@ class _StatsScreenState extends State<StatsScreen>
         Difficulty.values[_tabController.index], isDark);
 
     return GradientScaffold(
-      appBar: AppBar(title: Text(l10n.statsTitle)),
+      appBar: AppBar(
+        leading: const PixelBackButton(),
+        title: Text(l10n.statsTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(PixelIcons.play),
+            tooltip: l10n.replayTitle,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ReplayListScreen()),
+            ),
+          ),
+        ],
+      ),
       body: FutureBuilder<Stats>(
         future: _statsFuture,
         builder: (context, snapshot) {
