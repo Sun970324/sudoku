@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
@@ -689,6 +690,23 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// Debug-only: fills every candidate note, then force-shows an X-Chain/AIC
+  /// hint via [GameController.debugRequestAicHint] and opens the normal hint
+  /// sheet on it — the live way to inspect the AIC visualization + steps.
+  Future<void> _onDebugAicPressed() async {
+    _controller.autoFillNotes();
+    final l10n = AppLocalizations.of(context)!;
+    final hint = await _controller.debugRequestAicHint(l10n: l10n);
+    if (!mounted) return;
+    if (hint == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No X-Chain / AIC on this board')),
+      );
+      return;
+    }
+    _showHintDialog(hint);
+  }
+
   void _showHintDialog(Hint hint) {
     final l10n = AppLocalizations.of(context)!;
     // A centered AlertDialog sits right on top of the grid, hiding the
@@ -1118,6 +1136,15 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                 puzzle: _controller.puzzle,
               ),
             ),
+            // Debug-only: force-show an X-Chain/AIC hint on the current
+            // board (bypasses the normal hint order, no ad). Never in
+            // release builds.
+            if (kDebugMode)
+              IconButton(
+                icon: const Icon(Icons.bug_report_outlined),
+                tooltip: 'AIC hint (debug)',
+                onPressed: _onDebugAicPressed,
+              ),
           ],
           titleSpacing: 0,
           title: ListenableBuilder(

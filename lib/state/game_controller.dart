@@ -680,6 +680,27 @@ class GameController extends ChangeNotifier {
     return hint;
   }
 
+  /// Debug-only: force-shows an X-Chain / AIC hint on the current board,
+  /// bypassing the ordered [findHint] (which would surface an easier
+  /// technique first) — the only way to see an AIC hint live, since it's
+  /// last in [hintTechniqueOrder] and rarely reached. Returns null when the
+  /// current notes hold no such chain. Sets it as the active hint + steps
+  /// exactly like [requestHintFromNotes] so the hint sheet drives normally.
+  Future<Hint?> debugRequestAicHint({AppLocalizations? l10n}) async {
+    if (status != GameStatus.playing) return null;
+    final board = boardSnapshot;
+    final notes = _notes;
+    final engine = _hintEngine;
+    final resolvedL10n = l10n ?? lookupAppLocalizations(const Locale('ko'));
+    var hint = await _runSearch(() =>
+        engine.findAic(board, notes, resolvedL10n) ??
+        engine.findXChain(board, notes, resolvedL10n));
+    if (hint != null && !_agreesWithSolution(hint)) hint = null;
+    _setActiveHint(hint, _stepsFor(hint, l10n));
+    notifyListeners();
+    return hint;
+  }
+
   /// Whether [hint]'s conclusion matches the actual solution: no eliminated
   /// candidate is a cell's true answer, and a revealed value is the true
   /// answer. Used to reject a notes-only hint built on faulty player notes

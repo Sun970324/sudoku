@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+
+import '../debug/aic_demo.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
@@ -327,6 +330,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   widget.settings,
                   onReplayTutorial: _showTutorial,
+                  onAicDemo: kDebugMode
+                      ? () => _openGame(GameScreen.newGame(
+                            difficulty: Difficulty.expert,
+                            puzzle: aicDemoPuzzle(),
+                          ))
+                      : null,
                 ),
               ),
             ],

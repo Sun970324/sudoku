@@ -22,6 +22,7 @@ void showSettingsSheet(
   BuildContext context,
   SettingsController settings, {
   VoidCallback? onReplayTutorial,
+  VoidCallback? onAicDemo,
 }) {
   showModalBottomSheet<void>(
     context: context,
@@ -140,6 +141,23 @@ void showSettingsSheet(
                         onChanged: (v) =>
                             PremiumController.instance.setMockPremium(v),
                       );
+                    },
+                  ),
+                if (kDebugMode && onAicDemo != null)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.bug_report_outlined),
+                    title: Text(
+                        Localizations.localeOf(context).languageCode == 'ko'
+                            ? 'AIC 힌트 데모 (디버그)'
+                            : 'AIC hint demo (debug)'),
+                    subtitle: Text(
+                        Localizations.localeOf(context).languageCode == 'ko'
+                            ? 'AIC가 있는 보드 로드 · 벌레 아이콘으로 힌트 확인'
+                            : 'Loads an AIC board · tap the bug icon for the hint'),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      onAicDemo();
                     },
                   ),
                 const Divider(),
