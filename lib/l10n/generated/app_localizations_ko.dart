@@ -1073,8 +1073,35 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get hintStepAicChain =>
-      '강한 연결과 약한 연결이 번갈아 이어져, 사슬 양 끝 중 적어도 하나는 반드시 참이에요.';
+  String hintStepAicStart(String cell, int digit) {
+    return '$cell의 후보 $digit번에서 출발해요. 만약 이 칸이 $digit번이 아니라면 —';
+  }
+
+  @override
+  String hintStepAicStrongUnit(String cell, int digit) {
+    return '$cell은 반드시 $digit번이 돼요. 이게 강한 연결이에요: 두 칸이 속한 구역에 $digit번이 들어갈 자리가 딱 두 곳뿐이라, 한쪽이 아니면 다른 쪽이 확정되거든요.';
+  }
+
+  @override
+  String hintStepAicStrongCell(int digit) {
+    return '남은 후보 $digit번이 확정돼요. 이게 강한 연결이에요: 이 칸의 후보가 딱 두 개뿐이라, 하나를 지우면 나머지가 확정되거든요.';
+  }
+
+  @override
+  String hintStepAicWeakUnit(String cell, int digit) {
+    return '그러면 $cell은 $digit번이 될 수 없어요 — 약한 연결이에요: 같은 구역의 두 칸이 동시에 $digit번일 수는 없으니까요.';
+  }
+
+  @override
+  String hintStepAicWeakCell(int digit) {
+    return '그러면 이 칸의 다른 후보 $digit번은 지워져요 — 약한 연결이에요: 한 칸에는 숫자가 하나만 들어가니까요.';
+  }
+
+  @override
+  String hintStepAicEitherEnds(
+      String startCell, int startDigit, String endCell, int endDigit) {
+    return '가정을 반대로 뒤집으면 사슬이 반대 방향으로 흐르고 결론은 같아요 — $startCell의 $startDigit번과 $endCell의 $endDigit번 중 적어도 하나는 항상 참이에요.';
+  }
 
   @override
   String get hintStepAicConclusion => '양 끝을 모두 보는 후보는 지울 수 있어요.';

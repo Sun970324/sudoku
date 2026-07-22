@@ -338,27 +338,79 @@ List<HintStep> _xyChainSteps(Hint hint, AppLocalizations l10n) {
   return steps;
 }
 
-/// X-Chain / general AIC. Unlike XY-Chain the strong links can start
-/// between cells (bilocation), so the per-hop XY narration doesn't apply —
-/// this shows the whole alternating chain, then the conclusion.
+/// X-Chain / general AIC, narrated hop by hop — and, per link, WHY it is a
+/// strong or weak link. Both kinds come in two shapes, detected from the
+/// link's own geometry (same cell vs different cells):
+///  - strong between cells  = bilocation (only two places in a shared unit)
+///  - strong within a cell  = bivalue (only two candidates in the cell)
+///  - weak between cells    = same digit can't repeat in a shared unit
+///  - weak within a cell    = one cell holds only one digit
+///
+/// The walkthrough runs the "suppose the start is false" direction: each
+/// step consumes one weak+strong pair (the assumption propagating one hop),
+/// then an either-ends step flips the assumption, then the conclusion.
 List<HintStep> _aicSteps(Hint hint, AppLocalizations l10n) {
   final links = hint.chainLinks;
-  final ends = [links.first.from, links.last.to];
-  return [
+
+  String strongText(HintChainLink link) =>
+      link.from.cells.first == link.to.cells.first
+          ? l10n.hintStepAicStrongCell(link.to.digit)
+          : l10n.hintStepAicStrongUnit(
+              _cellDesc(link.to.cells.first, l10n), link.to.digit);
+
+  String weakText(HintChainLink link) =>
+      link.from.cells.first == link.to.cells.first
+          ? l10n.hintStepAicWeakCell(link.to.digit)
+          : l10n.hintStepAicWeakUnit(
+              _cellDesc(link.to.cells.first, l10n), link.to.digit);
+
+  final start = links.first.from;
+  final shown = <HintCell>{...start.cells, ...links.first.to.cells};
+
+  final steps = <HintStep>[
+    // "Suppose the start is not its digit" + the first strong link firing.
     HintStep(
-      text: l10n.hintStepAicChain,
-      cells: hint.primaryCells,
-      visibleLinks: links.length,
-      emphasisNodes: ends,
-    ),
-    HintStep(
-      text: l10n.hintStepAicConclusion,
-      cells: hint.primaryCells,
-      visibleLinks: links.length,
-      emphasisNodes: ends,
-      showConclusion: true,
+      text:
+          '${l10n.hintStepAicStart(_cellDesc(start.cells.first, l10n), start.digit)} '
+          '${strongText(links.first)}',
+      cells: {...shown},
+      visibleLinks: 1,
+      emphasisNodes: [links.first.to],
     ),
   ];
+
+  // Each weak+strong pair propagates the assumption one hop further.
+  for (var j = 1; j + 1 < links.length; j += 2) {
+    shown.addAll(links[j].to.cells);
+    shown.addAll(links[j + 1].to.cells);
+    steps.add(HintStep(
+      text: '${weakText(links[j])} ${strongText(links[j + 1])}',
+      cells: {...shown},
+      visibleLinks: j + 2,
+      emphasisNodes: [links[j + 1].to],
+    ));
+  }
+
+  final ends = [links.first.from, links.last.to];
+  steps.add(HintStep(
+    text: l10n.hintStepAicEitherEnds(
+      _cellDesc(ends[0].cells.first, l10n),
+      ends[0].digit,
+      _cellDesc(ends[1].cells.first, l10n),
+      ends[1].digit,
+    ),
+    cells: hint.primaryCells,
+    visibleLinks: links.length,
+    emphasisNodes: ends,
+  ));
+  steps.add(HintStep(
+    text: l10n.hintStepAicConclusion,
+    cells: hint.primaryCells,
+    visibleLinks: links.length,
+    emphasisNodes: ends,
+    showConclusion: true,
+  ));
+  return steps;
 }
 
 /// Same link layout as an XY-Chain, but the narrative leans on the shared

@@ -350,4 +350,61 @@ void main() {
 
     expect(buildHintSteps(hint, l10n), isEmpty);
   });
+
+  test('X-Chain: start, one step per weak+strong hop, either-ends, then the '
+      'conclusion — each step explains why its link is strong or weak', () {
+    // The Skyscraper-shaped 4-node X-Chain fixture (3 links).
+    final hint = engine.findXChain(
+        _emptyBoard(),
+        candidatesFrom({
+          [0, 0]: {4},
+          [0, 3]: {4},
+          [8, 0]: {4},
+          [8, 5]: {4},
+          [1, 5]: {4, 7},
+        }))!;
+
+    final steps = buildHintSteps(hint, l10n);
+
+    _expectWellFormedSteps(hint, steps);
+    // 3 links = start(strong) + 1 weak/strong pair + either-ends + conclusion.
+    expect(steps, hasLength(4));
+    expect(steps[0].visibleLinks, 1);
+    expect(steps[1].visibleLinks, 3);
+    // Every link here joins two DIFFERENT cells, so the narration must use
+    // the unit-based reasons ("자리가 딱 두 곳" / "같은 구역"), never the
+    // bivalue in-cell ones.
+    expect(steps[0].text, contains('두 곳'));
+    expect(steps[1].text, contains('같은 구역'));
+    // The either-ends step names both endpoints' digits.
+    expect(steps[2].text, contains('4'));
+  });
+
+  test('AIC with a bivalue hop narrates the in-cell strong-link reason', () {
+    // r7c6={1,9} bridges two bilocation links through an in-cell strong
+    // link: r7c4(1) =S= r7c6(1) ~W~[in-cell] r7c6(9) =S= r9c5(9). Built as
+    // a hand fixture shaped like the mined demo board's chain.
+    final hint = engine.findAic(
+        _emptyBoard(),
+        candidatesFrom({
+          [6, 3]: {1},
+          [6, 5]: {1, 9},
+          [8, 4]: {9},
+          [8, 5]: {9, 5},
+          [8, 3]: {1, 5},
+        }))!;
+
+    final steps = buildHintSteps(hint, l10n);
+
+    _expectWellFormedSteps(hint, steps);
+    // Some hop must be narrated with an in-cell reason (bivalue strong link
+    // "후보가 딱 두 개" or in-cell weak link "숫자가 하나만") — that's what
+    // distinguishes a genuine AIC walkthrough from an X-Chain's.
+    expect(
+      steps.any((s) =>
+          s.text.contains('후보가 딱 두 개') || s.text.contains('하나만')),
+      isTrue,
+      reason: 'an AIC crossing a bivalue cell must explain the in-cell link',
+    );
+  });
 }

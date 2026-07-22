@@ -793,7 +793,48 @@
       "next": {"type": "int"}
     }
   },
-  "hintStepAicChain": "The links alternate strong and weak, so at least one of the chain's two ends must be true.",
+  "hintStepAicStart": "Start at candidate {digit} in {cell}, and suppose this cell is NOT {digit} —",
+  "@hintStepAicStart": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStrongUnit": "then {cell} must be {digit}. This is a STRONG link: the unit they share has only two places for {digit}, so if one isn't it, the other is.",
+  "@hintStepAicStrongUnit": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStrongCell": "then the remaining {digit} is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.",
+  "@hintStepAicStrongCell": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicWeakUnit": "Now {cell} can no longer be {digit} — a WEAK link: two cells in the same unit can't both hold {digit}.",
+  "@hintStepAicWeakUnit": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicWeakCell": "Now this cell's other candidate {digit} is ruled out — a WEAK link: one cell holds only one digit.",
+  "@hintStepAicWeakCell": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicEitherEnds": "Flip the starting assumption and the chain runs the other way with the same result — at least one of {startDigit} at {startCell} or {endDigit} at {endCell} is always true.",
+  "@hintStepAicEitherEnds": {
+    "placeholders": {
+      "startCell": {"type": "String"},
+      "startDigit": {"type": "int"},
+      "endCell": {"type": "String"},
+      "endDigit": {"type": "int"}
+    }
+  },
   "hintStepAicConclusion": "Any candidate that sees both ends can be removed.",
   "hintStepChainConclusion": "So either the start is {z}, or the end is {z}. Any cell that sees both ends can't be {z}.",
   "@hintStepChainConclusion": {

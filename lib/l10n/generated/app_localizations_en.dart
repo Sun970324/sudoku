@@ -1098,8 +1098,35 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get hintStepAicChain =>
-      'The links alternate strong and weak, so at least one of the chain\'s two ends must be true.';
+  String hintStepAicStart(String cell, int digit) {
+    return 'Start at candidate $digit in $cell, and suppose this cell is NOT $digit —';
+  }
+
+  @override
+  String hintStepAicStrongUnit(String cell, int digit) {
+    return 'then $cell must be $digit. This is a STRONG link: the unit they share has only two places for $digit, so if one isn\'t it, the other is.';
+  }
+
+  @override
+  String hintStepAicStrongCell(int digit) {
+    return 'then the remaining $digit is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.';
+  }
+
+  @override
+  String hintStepAicWeakUnit(String cell, int digit) {
+    return 'Now $cell can no longer be $digit — a WEAK link: two cells in the same unit can\'t both hold $digit.';
+  }
+
+  @override
+  String hintStepAicWeakCell(int digit) {
+    return 'Now this cell\'s other candidate $digit is ruled out — a WEAK link: one cell holds only one digit.';
+  }
+
+  @override
+  String hintStepAicEitherEnds(
+      String startCell, int startDigit, String endCell, int endDigit) {
+    return 'Flip the starting assumption and the chain runs the other way with the same result — at least one of $startDigit at $startCell or $endDigit at $endCell is always true.';
+  }
 
   @override
   String get hintStepAicConclusion =>

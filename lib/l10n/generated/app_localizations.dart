@@ -1906,11 +1906,42 @@ abstract class AppLocalizations {
   /// **'Then {cell} can\'t be {carry}, so it must be {next}.'**
   String hintStepChainHop(String cell, int carry, int next);
 
-  /// No description provided for @hintStepAicChain.
+  /// No description provided for @hintStepAicStart.
   ///
   /// In en, this message translates to:
-  /// **'The links alternate strong and weak, so at least one of the chain\'s two ends must be true.'**
-  String get hintStepAicChain;
+  /// **'Start at candidate {digit} in {cell}, and suppose this cell is NOT {digit} —'**
+  String hintStepAicStart(String cell, int digit);
+
+  /// No description provided for @hintStepAicStrongUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'then {cell} must be {digit}. This is a STRONG link: the unit they share has only two places for {digit}, so if one isn\'t it, the other is.'**
+  String hintStepAicStrongUnit(String cell, int digit);
+
+  /// No description provided for @hintStepAicStrongCell.
+  ///
+  /// In en, this message translates to:
+  /// **'then the remaining {digit} is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.'**
+  String hintStepAicStrongCell(int digit);
+
+  /// No description provided for @hintStepAicWeakUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Now {cell} can no longer be {digit} — a WEAK link: two cells in the same unit can\'t both hold {digit}.'**
+  String hintStepAicWeakUnit(String cell, int digit);
+
+  /// No description provided for @hintStepAicWeakCell.
+  ///
+  /// In en, this message translates to:
+  /// **'Now this cell\'s other candidate {digit} is ruled out — a WEAK link: one cell holds only one digit.'**
+  String hintStepAicWeakCell(int digit);
+
+  /// No description provided for @hintStepAicEitherEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'Flip the starting assumption and the chain runs the other way with the same result — at least one of {startDigit} at {startCell} or {endDigit} at {endCell} is always true.'**
+  String hintStepAicEitherEnds(
+      String startCell, int startDigit, String endCell, int endDigit);
 
   /// No description provided for @hintStepAicConclusion.
   ///
