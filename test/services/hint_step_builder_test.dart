@@ -433,6 +433,33 @@ void main() {
     expect(steps[1].text, contains('거의-잠긴'));
   });
 
+  test('Triple Firework: row spray, column spray, the forced triple, then '
+      'the conclusion', () {
+    final hint = engine.findTripleFirework(
+        _emptyBoard(),
+        candidatesFrom({
+          [4, 3]: {1, 2},
+          [4, 4]: {1, 2, 3},
+          [4, 5]: {3, 7},
+          [4, 8]: {1, 3, 5},
+          [3, 4]: {2, 3},
+          [5, 4]: {1, 2},
+          [8, 4]: {2, 3, 6},
+          [3, 3]: {1, 8},
+        }))!;
+
+    final steps = buildHintSteps(hint, l10n);
+
+    _expectWellFormedSteps(hint, steps);
+    expect(steps, hasLength(4));
+    // Wings are named in their line's step; the triple step names all three
+    // cells and all three digits.
+    expect(steps[0].text, contains('5행9열'));
+    expect(steps[1].text, contains('9행5열'));
+    expect(steps[2].text, contains('1·2·3'));
+    expect(steps[2].cells, hint.primaryCells);
+  });
+
   test('grouped chain names every cell of a group node and uses the '
       '"one of the cluster" strong wording', () {
     // A real grouped X-Chain shape, hand-built so the group's position in

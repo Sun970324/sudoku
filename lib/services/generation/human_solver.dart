@@ -214,6 +214,8 @@ class HumanSolver {
         HintTechnique.alsXZ => _hintEngine.findAlsXZ(board, candidates),
         HintTechnique.sueDeCoq =>
           _hintEngine.findSueDeCoq(board, candidates),
+        HintTechnique.tripleFirework =>
+          _hintEngine.findTripleFirework(board, candidates),
         HintTechnique.alsAic => _hintEngine.findAlsAic(board, candidates),
       };
       if (hint != null) return hint;

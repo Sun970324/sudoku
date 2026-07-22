@@ -1082,6 +1082,12 @@ abstract class AppLocalizations {
   /// **'Sue de Coq'**
   String get techniqueSueDeCoq;
 
+  /// No description provided for @techniqueTripleFirework.
+  ///
+  /// In en, this message translates to:
+  /// **'Triple Firework'**
+  String get techniqueTripleFirework;
+
   /// No description provided for @techniqueAlsAic.
   ///
   /// In en, this message translates to:
@@ -1313,6 +1319,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The same goes for {cells} in the box — its digits fit only there or in the crossing cells. Every digit\'s place is forced to add up exactly.'**
   String hintStepSueDeCoqBox(String cells);
+
+  /// No description provided for @explanationTripleFirework.
+  ///
+  /// In en, this message translates to:
+  /// **'Digits {digits} form fireworks: on both the row and the column they escape the box by just one wing cell each. The box can hold each digit only once, so the cross cell and the two wings ({cells}) must take exactly these three digits — removing their other candidates, and these digits from the box\'s non-cross cells.'**
+  String explanationTripleFirework(String digits, String cells);
+
+  /// No description provided for @hintStepFireworkRow.
+  ///
+  /// In en, this message translates to:
+  /// **'On this row, candidates for {digits} sit inside the box or in {cell} — nowhere else.'**
+  String hintStepFireworkRow(String digits, String cell);
+
+  /// No description provided for @hintStepFireworkCol.
+  ///
+  /// In en, this message translates to:
+  /// **'Same on this column — {digits} fit only inside the box or in {cell}.'**
+  String hintStepFireworkCol(String digits, String cell);
+
+  /// No description provided for @hintStepFireworkTriple.
+  ///
+  /// In en, this message translates to:
+  /// **'The box holds each digit once, so the three cells {cells} must take exactly {digits}, one apiece.'**
+  String hintStepFireworkTriple(String cells, String digits);
 
   /// No description provided for @explanationXChain.
   ///

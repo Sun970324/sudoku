@@ -104,6 +104,11 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
       hint.colorGroupA.isEmpty || hint.colorGroupB.isEmpty
           ? const []
           : _sueDeCoqSteps(hint, l10n),
+    HintTechnique.tripleFirework => hint.highlightedRows.isEmpty ||
+            hint.highlightedCols.isEmpty ||
+            hint.primaryCells.length != 3
+        ? const []
+        : _fireworkSteps(hint, l10n),
   };
 }
 
@@ -799,6 +804,52 @@ List<HintStep> _sueDeCoqSteps(Hint hint, AppLocalizations l10n) {
       rows: units.rows,
       cols: units.cols,
       boxes: units.boxes,
+      showConclusion: true,
+    ),
+  ];
+}
+
+/// Triple Firework: the row spray, the column spray, the forced triple on
+/// the cross + wings, then the explanation with the eliminations.
+List<HintStep> _fireworkSteps(Hint hint, AppLocalizations l10n) {
+  final r = hint.highlightedRows.first;
+  final c = hint.highlightedCols.first;
+  final cross = HintCell(r, c);
+  final rowWing =
+      hint.primaryCells.firstWhere((p) => p.row == r && p != cross);
+  final colWing =
+      hint.primaryCells.firstWhere((p) => p.col == c && p != cross);
+  final digits = (hint.primaryDigits.toList()..sort()).join('·');
+  final tripleDesc = [cross, rowWing, colWing]
+      .map((cell) => _cellDesc(cell, l10n))
+      .join('·');
+  return [
+    HintStep(
+      text: l10n.hintStepFireworkRow(digits, _cellDesc(rowWing, l10n)),
+      cells: hint.colorGroupA,
+      rows: {r},
+      boxes: hint.highlightedBoxes,
+    ),
+    HintStep(
+      text: l10n.hintStepFireworkCol(digits, _cellDesc(colWing, l10n)),
+      cells: {...hint.colorGroupA, ...hint.colorGroupB},
+      rows: {r},
+      cols: {c},
+      boxes: hint.highlightedBoxes,
+    ),
+    HintStep(
+      text: l10n.hintStepFireworkTriple(tripleDesc, digits),
+      cells: hint.primaryCells,
+      rows: {r},
+      cols: {c},
+      boxes: hint.highlightedBoxes,
+    ),
+    HintStep(
+      text: hint.explanation,
+      cells: {...hint.colorGroupA, ...hint.colorGroupB},
+      rows: {r},
+      cols: {c},
+      boxes: hint.highlightedBoxes,
       showConclusion: true,
     ),
   ];

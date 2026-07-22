@@ -527,6 +527,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get techniqueSueDeCoq => '수 드 코크';
 
   @override
+  String get techniqueTripleFirework => '트리플 파이어워크';
+
+  @override
   String get techniqueAlsAic => 'ALS 사슬';
 
   @override
@@ -713,6 +716,26 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String hintStepSueDeCoqBox(String cells) {
     return '같은 상자의 $cells도 마찬가지예요 — 상자 쪽 숫자들도 여기 아니면 교차 칸뿐이에요. 숫자마다 자리가 꼭 맞아떨어집니다.';
+  }
+
+  @override
+  String explanationTripleFirework(String digits, String cells) {
+    return '숫자 $digits가 행과 열 모두에서 상자 밖으로는 날개 한 칸씩만 삐져나가는 불꽃 모양이에요. 상자는 각 숫자를 한 번만 담을 수 있으니 교차 칸과 두 날개($cells)가 정확히 이 세 숫자로 채워져야 해요. 그래서 세 칸의 다른 후보와, 상자 안 비교차 칸의 이 숫자들을 지울 수 있습니다.';
+  }
+
+  @override
+  String hintStepFireworkRow(String digits, String cell) {
+    return '이 행에서 $digits의 후보는 상자 안 아니면 $cell 한 칸뿐이에요.';
+  }
+
+  @override
+  String hintStepFireworkCol(String digits, String cell) {
+    return '이 열에서도 마찬가지 — $digits는 상자 안 아니면 $cell뿐이에요.';
+  }
+
+  @override
+  String hintStepFireworkTriple(String cells, String digits) {
+    return '상자는 각 숫자를 한 번만 담아요. 그래서 $cells 세 칸이 정확히 $digits를 하나씩 나눠 갖게 돼요.';
   }
 
   @override

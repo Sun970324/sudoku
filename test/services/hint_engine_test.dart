@@ -1732,6 +1732,76 @@ void main() {
     });
   });
 
+  group('findTripleFirework', () {
+    // Cross at (4,4): digits 1·2·3 in row 4 live only inside box 4 plus the
+    // row wing (4,8); in column 4 only inside the box plus the column wing
+    // (8,4). The cross + wings must then hold exactly 1,2,3 — the wings'
+    // spare candidates (5, 6) go, and so does the 1 in the box's non-cross
+    // cell (3,3).
+    final fixture = {
+      [4, 3]: {1, 2},
+      [4, 4]: {1, 2, 3},
+      [4, 5]: {3, 7},
+      [4, 8]: {1, 3, 5},
+      [3, 4]: {2, 3},
+      [5, 4]: {1, 2},
+      [8, 4]: {2, 3, 6},
+      [3, 3]: {1, 8},
+    };
+
+    test('three digits spraying out of one box by a single wing per line '
+        'lock the cross and wings to exactly those digits', () {
+      final hint =
+          engine.findTripleFirework(_emptyBoard(), candidatesFrom(fixture));
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.tripleFirework);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryDigits, {1, 2, 3});
+      expect(hint.primaryCells, {
+        const HintCell(4, 4), const HintCell(4, 8), const HintCell(8, 4), //
+      });
+      expect(hint.eliminations, contains(const HintElimination(4, 8, 5)));
+      expect(hint.eliminations, contains(const HintElimination(8, 4, 6)));
+      expect(hint.eliminations, contains(const HintElimination(3, 3, 1)));
+    });
+
+    test('stays silent when a line leaks by two cells', () {
+      // Same shape, but digit 1 gains a second row cell outside the box —
+      // the row spray now needs two wings, which is no firework.
+      final hint = engine.findTripleFirework(
+          _emptyBoard(),
+          candidatesFrom({
+            ...fixture,
+            [4, 7]: {1, 9},
+          }));
+
+      expect(hint, isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findTripleFirework(_emptyBoard()), isNull);
+    });
+
+    test('fires on a real generated board (mined seed 40184) and never '
+        'eliminates a solution digit', () {
+      final rng = Random(40184);
+      final solution = BoardGenerator(random: rng).generateSolvedBoard();
+      final puzzle = Minimalizer(random: rng)
+          .minimalize(ClueRemover(random: rng).removeClues(solution, 24));
+
+      final hint = engine.findTripleFirework(puzzle);
+
+      expect(hint, isNotNull);
+      expect(hint!.eliminations, isNotEmpty);
+      for (final e in hint.eliminations) {
+        expect(solution[e.row][e.col], isNot(e.digit),
+            reason: 'firework eliminated r${e.row + 1}c${e.col + 1}\'s '
+                'actual solution ${e.digit}');
+      }
+    });
+  });
+
   group('findAlsAic', () {
     test('the general ALS chain also solves the ALS-XZ case', () {
       final hint = engine.findAlsAic(
@@ -1793,6 +1863,7 @@ void main() {
           engine.findWXYZWing(puzzle),
           engine.findAlsXZ(puzzle),
           engine.findSueDeCoq(puzzle),
+          engine.findTripleFirework(puzzle),
           engine.findAlsAic(puzzle),
         ]) {
           if (hint == null) continue;
@@ -1822,6 +1893,9 @@ void main() {
         HintTechnique.wxyzWing,
         HintTechnique.alsXZ,
         HintTechnique.sueDeCoq,
+        // tripleFirework is absent here on purpose: it fires on ~0.6% of
+        // dug boards (3 in 532 when mined), so 150 boards can't guarantee a
+        // hit — its own group has a mined real-board test instead.
         HintTechnique.alsAic,
       ]) {
         expect(found[technique] ?? 0, greaterThan(0),
@@ -2337,6 +2411,7 @@ void main() {
         HintTechnique.wxyzWing,
         HintTechnique.alsXZ,
         HintTechnique.sueDeCoq,
+        HintTechnique.tripleFirework,
         HintTechnique.alsAic,
       ]);
     });

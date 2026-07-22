@@ -229,6 +229,7 @@
   "techniqueWXYZWing": "WXYZ-Wing",
   "techniqueAlsXZ": "ALS-XZ",
   "techniqueSueDeCoq": "Sue de Coq",
+  "techniqueTripleFirework": "Triple Firework",
   "techniqueAlsAic": "ALS Chain",
 
   "unitRow": "Row {row}",
@@ -501,6 +502,34 @@
   "@hintStepSueDeCoqBox": {
     "placeholders": {
       "cells": {"type": "String"}
+    }
+  },
+  "explanationTripleFirework": "Digits {digits} form fireworks: on both the row and the column they escape the box by just one wing cell each. The box can hold each digit only once, so the cross cell and the two wings ({cells}) must take exactly these three digits — removing their other candidates, and these digits from the box's non-cross cells.",
+  "@explanationTripleFirework": {
+    "placeholders": {
+      "digits": {"type": "String"},
+      "cells": {"type": "String"}
+    }
+  },
+  "hintStepFireworkRow": "On this row, candidates for {digits} sit inside the box or in {cell} — nowhere else.",
+  "@hintStepFireworkRow": {
+    "placeholders": {
+      "digits": {"type": "String"},
+      "cell": {"type": "String"}
+    }
+  },
+  "hintStepFireworkCol": "Same on this column — {digits} fit only inside the box or in {cell}.",
+  "@hintStepFireworkCol": {
+    "placeholders": {
+      "digits": {"type": "String"},
+      "cell": {"type": "String"}
+    }
+  },
+  "hintStepFireworkTriple": "The box holds each digit once, so the three cells {cells} must take exactly {digits}, one apiece.",
+  "@hintStepFireworkTriple": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "digits": {"type": "String"}
     }
   },
   "explanationXChain": "Digit {digit} forms an alternating chain along {chainDesc}. Because the strong links guarantee at least one end is {digit}, any cell that sees both ends can have {digit} removed.",

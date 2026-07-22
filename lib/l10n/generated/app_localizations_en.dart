@@ -544,6 +544,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueSueDeCoq => 'Sue de Coq';
 
   @override
+  String get techniqueTripleFirework => 'Triple Firework';
+
+  @override
   String get techniqueAlsAic => 'ALS Chain';
 
   @override
@@ -730,6 +733,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String hintStepSueDeCoqBox(String cells) {
     return 'The same goes for $cells in the box — its digits fit only there or in the crossing cells. Every digit\'s place is forced to add up exactly.';
+  }
+
+  @override
+  String explanationTripleFirework(String digits, String cells) {
+    return 'Digits $digits form fireworks: on both the row and the column they escape the box by just one wing cell each. The box can hold each digit only once, so the cross cell and the two wings ($cells) must take exactly these three digits — removing their other candidates, and these digits from the box\'s non-cross cells.';
+  }
+
+  @override
+  String hintStepFireworkRow(String digits, String cell) {
+    return 'On this row, candidates for $digits sit inside the box or in $cell — nowhere else.';
+  }
+
+  @override
+  String hintStepFireworkCol(String digits, String cell) {
+    return 'Same on this column — $digits fit only inside the box or in $cell.';
+  }
+
+  @override
+  String hintStepFireworkTriple(String cells, String digits) {
+    return 'The box holds each digit once, so the three cells $cells must take exactly $digits, one apiece.';
   }
 
   @override
