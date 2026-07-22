@@ -535,6 +535,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueGroupedAic => 'Grouped AIC';
 
   @override
+  String get techniqueWXYZWing => 'WXYZ-Wing';
+
+  @override
+  String get techniqueAlsXZ => 'ALS-XZ';
+
+  @override
+  String get techniqueAlsAic => 'ALS Chain';
+
+  @override
   String unitRow(int row) {
     return 'Row $row';
   }
@@ -683,6 +692,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String explanationGroupedAic(String chainDesc) {
     return 'The alternating inference chain $chainDesc uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.';
+  }
+
+  @override
+  String explanationWXYZWing(String chainDesc) {
+    return '$chainDesc: a WXYZ-Wing — a bivalue cell and a 3-cell Almost Locked Set joined through a shared digit. At least one chain end is true, so any candidate seeing both ends can be removed.';
+  }
+
+  @override
+  String explanationAlsXZ(String chainDesc) {
+    return '$chainDesc: two Almost Locked Sets joined by a restricted common digit. If either set loses it the other locks, so at least one end is true — any candidate seeing both ends can be removed.';
+  }
+
+  @override
+  String explanationAlsAic(String chainDesc) {
+    return 'The alternating inference chain $chainDesc uses Almost Locked Sets as links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.';
   }
 
   @override
@@ -1136,6 +1160,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String hintStepAicStrongGroup(String cells, int digit) {
     return 'then one of $cells must be $digit. This is a STRONG link: the unit\'s ${digit}s split into just these two clusters, so if one is empty the other must hold it.';
+  }
+
+  @override
+  String hintStepAicStrongAls(String cells, int digit, int prevDigit) {
+    return 'then $digit must be in $cells. This is a STRONG link: these cells are an Almost Locked Set — one more candidate kind than cells — so removing $prevDigit locks every remaining digit into place.';
   }
 
   @override

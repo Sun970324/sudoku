@@ -1064,6 +1064,24 @@ abstract class AppLocalizations {
   /// **'Grouped AIC'**
   String get techniqueGroupedAic;
 
+  /// No description provided for @techniqueWXYZWing.
+  ///
+  /// In en, this message translates to:
+  /// **'WXYZ-Wing'**
+  String get techniqueWXYZWing;
+
+  /// No description provided for @techniqueAlsXZ.
+  ///
+  /// In en, this message translates to:
+  /// **'ALS-XZ'**
+  String get techniqueAlsXZ;
+
+  /// No description provided for @techniqueAlsAic.
+  ///
+  /// In en, this message translates to:
+  /// **'ALS Chain'**
+  String get techniqueAlsAic;
+
   /// No description provided for @unitRow.
   ///
   /// In en, this message translates to:
@@ -1247,6 +1265,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The alternating inference chain {chainDesc} uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.'**
   String explanationGroupedAic(String chainDesc);
+
+  /// No description provided for @explanationWXYZWing.
+  ///
+  /// In en, this message translates to:
+  /// **'{chainDesc}: a WXYZ-Wing — a bivalue cell and a 3-cell Almost Locked Set joined through a shared digit. At least one chain end is true, so any candidate seeing both ends can be removed.'**
+  String explanationWXYZWing(String chainDesc);
+
+  /// No description provided for @explanationAlsXZ.
+  ///
+  /// In en, this message translates to:
+  /// **'{chainDesc}: two Almost Locked Sets joined by a restricted common digit. If either set loses it the other locks, so at least one end is true — any candidate seeing both ends can be removed.'**
+  String explanationAlsXZ(String chainDesc);
+
+  /// No description provided for @explanationAlsAic.
+  ///
+  /// In en, this message translates to:
+  /// **'The alternating inference chain {chainDesc} uses Almost Locked Sets as links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.'**
+  String explanationAlsAic(String chainDesc);
 
   /// No description provided for @explanationXChain.
   ///
@@ -1959,6 +1995,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'then one of {cells} must be {digit}. This is a STRONG link: the unit\'s {digit}s split into just these two clusters, so if one is empty the other must hold it.'**
   String hintStepAicStrongGroup(String cells, int digit);
+
+  /// No description provided for @hintStepAicStrongAls.
+  ///
+  /// In en, this message translates to:
+  /// **'then {digit} must be in {cells}. This is a STRONG link: these cells are an Almost Locked Set — one more candidate kind than cells — so removing {prevDigit} locks every remaining digit into place.'**
+  String hintStepAicStrongAls(String cells, int digit, int prevDigit);
 
   /// No description provided for @hintStepAicWeakUnit.
   ///

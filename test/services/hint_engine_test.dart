@@ -1583,6 +1583,124 @@ void main() {
     });
   });
 
+  // An ALS strong link is the only link kind joining two DIFFERENT digits
+  // across different cells (bilocation/segment links keep the digit, the
+  // bivalue link stays inside one cell) — the tests below use that as the
+  // observable "this chain really used an ALS" marker.
+  bool usesAlsLink(Hint hint) => hint.chainLinks.any((l) =>
+      l.strong &&
+      l.from.digit != l.to.digit &&
+      !(l.from.cells.length == 1 &&
+          l.to.cells.length == 1 &&
+          l.from.cells.first == l.to.cells.first));
+
+  group('findAlsXZ', () {
+    // A = the bivalue cell (0,0){1,2}; B = the 2-cell ALS {(0,4){1,2},
+    // (0,5){1,3}} with candidates {1,2,3}. Digit 2 is restricted common
+    // (all its cells share row 0), so digit 1 — in both sets — leaves any
+    // cell seeing every 1 of both, e.g. (0,8).
+    final alsXzFixture = {
+      [0, 0]: {1, 2},
+      [0, 4]: {1, 2},
+      [0, 5]: {1, 3},
+      [0, 8]: {1, 5},
+    };
+
+    test('two ALSs joined by a restricted common digit eliminate a shared '
+        'digit seeing both', () {
+      final hint =
+          engine.findAlsXZ(_emptyBoard(), candidatesFrom(alsXzFixture));
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.alsXZ);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.eliminations, isNotEmpty);
+      expect(hint.chainLinks, isNotEmpty);
+      for (var i = 0; i + 1 < hint.chainLinks.length; i++) {
+        expect(hint.chainLinks[i].strong,
+            isNot(hint.chainLinks[i + 1].strong));
+      }
+      expect(usesAlsLink(hint), isTrue,
+          reason: 'an ALS-XZ chain must actually cross an ALS link');
+    });
+
+    test('stays silent when only a plain chain exists — that is the plain '
+        'finders\' job', () {
+      final candidates = candidatesFrom({
+        [0, 0]: {4},
+        [0, 3]: {4},
+        [8, 0]: {4},
+        [8, 5]: {4},
+        [1, 5]: {4, 7},
+      });
+
+      expect(engine.findAlsXZ(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findAlsXZ(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findWXYZWing', () {
+    test('a bivalue cell and a 3-cell ALS joined by a restricted common '
+        'digit fire as a WXYZ-Wing', () {
+      // Bivalue (0,0){1,2} + 3-cell ALS {(2,0){2,3},(3,0){3,4},(4,0){1,2,4}}
+      // (4 candidates over 3 cells), all in column 0; RCC 2, shared digit 1
+      // also lives in (8,0).
+      final hint = engine.findWXYZWing(
+          _emptyBoard(),
+          candidatesFrom({
+            [0, 0]: {1, 2},
+            [2, 0]: {2, 3},
+            [3, 0]: {3, 4},
+            [4, 0]: {1, 2, 4},
+            [8, 0]: {1, 9},
+          }));
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.wxyzWing);
+      expect(hint.eliminations, isNotEmpty);
+      // Its defining shape: exactly 4 nodes — one in-cell bivalue strong
+      // link and one ALS strong link.
+      expect(hint.chainLinks, hasLength(3));
+      expect(usesAlsLink(hint), isTrue);
+      expect(
+          hint.chainLinks.any((l) =>
+              l.strong &&
+              l.from.cells.length == 1 &&
+              l.from.cells.first == l.to.cells.first),
+          isTrue,
+          reason: 'one strong link must be the bivalue cell');
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findWXYZWing(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findAlsAic', () {
+    test('the general ALS chain also solves the ALS-XZ case', () {
+      final hint = engine.findAlsAic(
+          _emptyBoard(),
+          candidatesFrom({
+            [0, 0]: {1, 2},
+            [0, 4]: {1, 2},
+            [0, 5]: {1, 3},
+            [0, 8]: {1, 5},
+          }));
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.alsAic);
+      expect(hint.eliminations, isNotEmpty);
+      expect(usesAlsLink(hint), isTrue);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findAlsAic(_emptyBoard()), isNull);
+    });
+  });
+
   // Hand-built fixtures can only show that a technique fires where it should.
   // They cannot show it stays silent everywhere it shouldn't — and an
   // over-permissive elimination rule doesn't throw, it quietly removes digits
@@ -1619,6 +1737,9 @@ void main() {
           engine.findAic(puzzle),
           engine.findGroupedXChain(puzzle),
           engine.findGroupedAic(puzzle),
+          engine.findWXYZWing(puzzle),
+          engine.findAlsXZ(puzzle),
+          engine.findAlsAic(puzzle),
         ]) {
           if (hint == null) continue;
           found[hint.technique] = (found[hint.technique] ?? 0) + 1;
@@ -1644,6 +1765,9 @@ void main() {
         HintTechnique.aic,
         HintTechnique.groupedXChain,
         HintTechnique.groupedAic,
+        HintTechnique.wxyzWing,
+        HintTechnique.alsXZ,
+        HintTechnique.alsAic,
       ]) {
         expect(found[technique] ?? 0, greaterThan(0),
             reason: '$technique never fired across 150 real boards — either '
@@ -2155,6 +2279,9 @@ void main() {
         HintTechnique.aic,
         HintTechnique.groupedXChain,
         HintTechnique.groupedAic,
+        HintTechnique.wxyzWing,
+        HintTechnique.alsXZ,
+        HintTechnique.alsAic,
       ]);
     });
 

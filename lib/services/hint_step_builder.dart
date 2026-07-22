@@ -31,6 +31,9 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.aic,
     HintTechnique.groupedXChain,
     HintTechnique.groupedAic,
+    HintTechnique.wxyzWing,
+    HintTechnique.alsXZ,
+    HintTechnique.alsAic,
   };
   if (chainTechniques.contains(hint.technique) && hint.chainLinks.isEmpty) {
     return const [];
@@ -43,7 +46,10 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.xChain ||
     HintTechnique.aic ||
     HintTechnique.groupedXChain ||
-    HintTechnique.groupedAic =>
+    HintTechnique.groupedAic ||
+    HintTechnique.wxyzWing ||
+    HintTechnique.alsXZ ||
+    HintTechnique.alsAic =>
       _aicSteps(hint, l10n),
     HintTechnique.remotePair => _remotePairSteps(hint, l10n),
     HintTechnique.skyscraper ||
@@ -365,10 +371,20 @@ List<HintStep> _aicSteps(Hint hint, AppLocalizations l10n) {
       node.cells.map((c) => _cellDesc(c, l10n)).join('·');
 
   String strongText(HintChainLink link) {
+    final sameSingleCell = link.from.cells.length == 1 &&
+        link.to.cells.length == 1 &&
+        link.from.cells.first == link.to.cells.first;
+    // Different digits across different cells only ever happens on an ALS
+    // link (bilocation/segment links keep the digit, bivalue stays in-cell),
+    // whose "why" is the almost-locked argument, not the two-places one.
+    if (link.from.digit != link.to.digit && !sameSingleCell) {
+      return l10n.hintStepAicStrongAls(
+          nodeDesc(link.to), link.to.digit, link.from.digit);
+    }
     if (link.to.cells.length > 1) {
       return l10n.hintStepAicStrongGroup(nodeDesc(link.to), link.to.digit);
     }
-    return link.from.cells.first == link.to.cells.first
+    return sameSingleCell
         ? l10n.hintStepAicStrongCell(link.to.digit)
         : l10n.hintStepAicStrongUnit(nodeDesc(link.to), link.to.digit);
   }

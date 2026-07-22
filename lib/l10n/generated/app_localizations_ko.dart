@@ -518,6 +518,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get techniqueGroupedAic => '그룹 AIC 사슬';
 
   @override
+  String get techniqueWXYZWing => 'WXYZ-윙';
+
+  @override
+  String get techniqueAlsXZ => 'ALS-XZ';
+
+  @override
+  String get techniqueAlsAic => 'ALS 사슬';
+
+  @override
   String unitRow(int row) {
     return '$row행';
   }
@@ -666,6 +675,21 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String explanationGroupedAic(String chainDesc) {
     return '$chainDesc 교차 추론 사슬은 나란히 놓인 후보 몇 개를 하나의 묶음 고리로 사용해요. 양 끝 중 적어도 하나는 참이 되도록 강제하므로, 양 끝과 모두 충돌하는 후보를 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationWXYZWing(String chainDesc) {
+    return '$chainDesc: 후보가 두 개뿐인 칸과 세 칸짜리 거의-잠긴 집합(ALS)이 공유 숫자로 이어진 WXYZ-윙이에요. 사슬의 양 끝 중 적어도 하나는 참이므로, 양 끝을 모두 보는 후보는 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationAlsXZ(String chainDesc) {
+    return '$chainDesc: 두 거의-잠긴 집합(ALS)이 제한 공통 숫자로 이어졌어요. 한쪽에서 그 숫자가 빠지면 다른 쪽 집합이 잠기므로 양 끝 중 적어도 하나는 참 — 양 끝을 모두 보는 후보는 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationAlsAic(String chainDesc) {
+    return '$chainDesc 교차 추론 사슬은 거의-잠긴 집합(ALS)을 고리로 사용해요. 양 끝 중 적어도 하나는 참이 되므로, 양 끝과 모두 충돌하는 후보를 지울 수 있습니다.';
   }
 
   @override
@@ -1111,6 +1135,11 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String hintStepAicStrongGroup(String cells, int digit) {
     return '$cells 묶음 중 하나는 반드시 $digit번이 돼요. 이게 강한 연결이에요: 이 구역에서 $digit번이 들어갈 자리가 두 덩어리로만 나뉘어 있어서, 한쪽이 비면 다른 쪽이 채우거든요.';
+  }
+
+  @override
+  String hintStepAicStrongAls(String cells, int digit, int prevDigit) {
+    return '$cells에 $digit번이 반드시 들어가요. 이게 강한 연결이에요: 이 칸들은 후보 종류가 칸 수보다 딱 하나 많은 거의-잠긴 집합(ALS)이라, $prevDigit번이 빠지는 순간 나머지 후보가 전부 자리를 확정하거든요.';
   }
 
   @override

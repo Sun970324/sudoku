@@ -42,6 +42,9 @@ enum HintTechnique {
   aic,
   groupedXChain,
   groupedAic,
+  wxyzWing,
+  alsXZ,
+  alsAic,
 }
 
 extension HintTechniqueInfo on HintTechnique {
@@ -128,6 +131,12 @@ extension HintTechniqueInfo on HintTechnique {
         return l10n.techniqueGroupedXChain;
       case HintTechnique.groupedAic:
         return l10n.techniqueGroupedAic;
+      case HintTechnique.wxyzWing:
+        return l10n.techniqueWXYZWing;
+      case HintTechnique.alsXZ:
+        return l10n.techniqueAlsXZ;
+      case HintTechnique.alsAic:
+        return l10n.techniqueAlsAic;
     }
   }
 }
@@ -180,6 +189,13 @@ const hintTechniqueOrder = [
   HintTechnique.aic,
   HintTechnique.groupedXChain,
   HintTechnique.groupedAic,
+  // The ALS family: recognizable fixed shapes first (WXYZ-Wing is the
+  // bivalue+3-cell special case of ALS-XZ, so it must come before it),
+  // then the full ALS chain search last — it subsumes the others' link
+  // source.
+  HintTechnique.wxyzWing,
+  HintTechnique.alsXZ,
+  HintTechnique.alsAic,
 ];
 
 /// Which [Difficulty] tier each technique belongs to, per generator.md's
@@ -236,6 +252,9 @@ const techniqueDifficulty = <HintTechnique, Difficulty>{
   HintTechnique.aic: Difficulty.expert,
   HintTechnique.groupedXChain: Difficulty.expert,
   HintTechnique.groupedAic: Difficulty.expert,
+  HintTechnique.wxyzWing: Difficulty.expert,
+  HintTechnique.alsXZ: Difficulty.expert,
+  HintTechnique.alsAic: Difficulty.expert,
 };
 
 enum HintType { reveal, eliminate }

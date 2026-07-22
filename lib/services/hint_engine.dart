@@ -257,6 +257,9 @@ class HintEngine {
           findGroupedXChain(board, resolved, resolvedL10n),
         HintTechnique.groupedAic =>
           findGroupedAic(board, resolved, resolvedL10n),
+        HintTechnique.wxyzWing => findWXYZWing(board, resolved, resolvedL10n),
+        HintTechnique.alsXZ => findAlsXZ(board, resolved, resolvedL10n),
+        HintTechnique.alsAic => findAlsAic(board, resolved, resolvedL10n),
         HintTechnique.xyChain => findXYChain(board, resolved, resolvedL10n),
       };
       if (hint != null) return hint;

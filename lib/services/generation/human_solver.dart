@@ -210,6 +210,9 @@ class HumanSolver {
           _hintEngine.findGroupedXChain(board, candidates),
         HintTechnique.groupedAic =>
           _hintEngine.findGroupedAic(board, candidates),
+        HintTechnique.wxyzWing => _hintEngine.findWXYZWing(board, candidates),
+        HintTechnique.alsXZ => _hintEngine.findAlsXZ(board, candidates),
+        HintTechnique.alsAic => _hintEngine.findAlsAic(board, candidates),
       };
       if (hint != null) return hint;
     }

@@ -226,6 +226,9 @@
   "techniqueAic": "AIC",
   "techniqueGroupedXChain": "Grouped X-Chain",
   "techniqueGroupedAic": "Grouped AIC",
+  "techniqueWXYZWing": "WXYZ-Wing",
+  "techniqueAlsXZ": "ALS-XZ",
+  "techniqueAlsAic": "ALS Chain",
 
   "unitRow": "Row {row}",
   "@unitRow": {
@@ -452,6 +455,24 @@
   },
   "explanationGroupedAic": "The alternating inference chain {chainDesc} uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.",
   "@explanationGroupedAic": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+  "explanationWXYZWing": "{chainDesc}: a WXYZ-Wing — a bivalue cell and a 3-cell Almost Locked Set joined through a shared digit. At least one chain end is true, so any candidate seeing both ends can be removed.",
+  "@explanationWXYZWing": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+  "explanationAlsXZ": "{chainDesc}: two Almost Locked Sets joined by a restricted common digit. If either set loses it the other locks, so at least one end is true — any candidate seeing both ends can be removed.",
+  "@explanationAlsXZ": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+  "explanationAlsAic": "The alternating inference chain {chainDesc} uses Almost Locked Sets as links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.",
+  "@explanationAlsAic": {
     "placeholders": {
       "chainDesc": {"type": "String"}
     }
@@ -840,6 +861,14 @@
     "placeholders": {
       "cells": {"type": "String"},
       "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStrongAls": "then {digit} must be in {cells}. This is a STRONG link: these cells are an Almost Locked Set — one more candidate kind than cells — so removing {prevDigit} locks every remaining digit into place.",
+  "@hintStepAicStrongAls": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "digit": {"type": "int"},
+      "prevDigit": {"type": "int"}
     }
   },
   "hintStepAicWeakUnit": "Now {cell} can no longer be {digit} — a WEAK link: two cells in the same unit can't both hold {digit}.",
