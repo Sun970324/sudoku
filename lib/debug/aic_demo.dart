@@ -22,8 +22,30 @@ const _aicGivens = <List<int>>[
   [0, 0, 0, 0, 0, 2, 0, 0, 0],
 ];
 
-SudokuPuzzle aicDemoPuzzle() {
-  final givens = _aicGivens.map((row) => List<int>.from(row)).toList();
+SudokuPuzzle aicDemoPuzzle() => _demoPuzzle(_aicGivens);
+
+/// A puzzle mined (seed 9075, real generator pipeline) so that NO plain
+/// X-Chain/AIC exists but a Grouped X-Chain does — the debug bug icon's
+/// fallback therefore lands on the grouped finder. Its chain runs through
+/// three group nodes, one link even group-to-group:
+///   r6c4(3) =S= r5c4·r5c6(3) ~W~ r5c1·r5c3(3) =S= r6c1·r6c3(3)
+///     =>  r6c8 and r6c9 lose 3
+const _groupedGivens = <List<int>>[
+  [0, 0, 0, 0, 7, 0, 0, 1, 0],
+  [2, 0, 0, 0, 3, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 0, 0, 5],
+  [4, 0, 7, 6, 0, 2, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 8, 2],
+  [0, 8, 0, 0, 0, 4, 7, 0, 0],
+  [5, 0, 0, 0, 0, 0, 0, 6, 0],
+  [0, 0, 0, 7, 0, 0, 9, 0, 0],
+  [0, 3, 9, 0, 0, 0, 8, 0, 7],
+];
+
+SudokuPuzzle groupedChainDemoPuzzle() => _demoPuzzle(_groupedGivens);
+
+SudokuPuzzle _demoPuzzle(List<List<int>> board) {
+  final givens = board.map((row) => List<int>.from(row)).toList();
   final solution = SudokuSolver().solve(givens)!;
   return SudokuPuzzle(
     puzzle: SudokuGrid(givens),

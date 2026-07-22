@@ -692,11 +692,14 @@ class GameController extends ChangeNotifier {
     final notes = _notes;
     final engine = _hintEngine;
     final resolvedL10n = l10n ?? lookupAppLocalizations(const Locale('ko'));
+    // Grouped X-Chain before Grouped AIC: the general grouped search finds a
+    // chain whenever the single-digit one does, so the reverse order would
+    // make the groupedXChain label unreachable from this debug entry.
     var hint = await _runSearch(() =>
         engine.findAic(board, notes, resolvedL10n) ??
         engine.findXChain(board, notes, resolvedL10n) ??
-        engine.findGroupedAic(board, notes, resolvedL10n) ??
-        engine.findGroupedXChain(board, notes, resolvedL10n));
+        engine.findGroupedXChain(board, notes, resolvedL10n) ??
+        engine.findGroupedAic(board, notes, resolvedL10n));
     if (hint != null && !_agreesWithSolution(hint)) hint = null;
     _setActiveHint(hint, _stepsFor(hint, l10n));
     notifyListeners();

@@ -25,4 +25,31 @@ void main() {
       expect(puzzle.solution.get(e.row, e.col), isNot(e.digit));
     }
   });
+
+  test('the grouped demo board yields a Grouped X-Chain through the debug '
+      'fallback — no plain chain may preempt it', () {
+    final puzzle = groupedChainDemoPuzzle();
+    final board = puzzle.puzzle.toJson();
+    final engine = HintEngine();
+
+    // The bug icon tries the plain finders first; this board was mined so
+    // they stay silent and the grouped finder is what the user sees.
+    expect(engine.findAic(board), isNull);
+    expect(engine.findXChain(board), isNull);
+
+    final hint = engine.findGroupedXChain(board);
+
+    expect(hint, isNotNull);
+    expect(hint!.technique, HintTechnique.groupedXChain);
+    expect(hint.eliminations, isNotEmpty);
+    expect(
+        hint.chainLinks
+            .any((l) => l.from.cells.length > 1 || l.to.cells.length > 1),
+        isTrue,
+        reason: 'the demo must actually show a multi-cell group node');
+
+    for (final e in hint.eliminations) {
+      expect(puzzle.solution.get(e.row, e.col), isNot(e.digit));
+    }
+  });
 }

@@ -23,6 +23,7 @@ void showSettingsSheet(
   SettingsController settings, {
   VoidCallback? onReplayTutorial,
   VoidCallback? onAicDemo,
+  VoidCallback? onGroupedDemo,
 }) {
   showModalBottomSheet<void>(
     context: context,
@@ -158,6 +159,23 @@ void showSettingsSheet(
                     onTap: () {
                       Navigator.pop(sheetContext);
                       onAicDemo();
+                    },
+                  ),
+                if (kDebugMode && onGroupedDemo != null)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.bug_report_outlined),
+                    title: Text(
+                        Localizations.localeOf(context).languageCode == 'ko'
+                            ? '그룹 X-사슬 데모 (디버그)'
+                            : 'Grouped X-Chain demo (debug)'),
+                    subtitle: Text(
+                        Localizations.localeOf(context).languageCode == 'ko'
+                            ? '그룹 사슬만 있는 보드 로드 · 벌레 아이콘으로 힌트 확인'
+                            : 'Loads a grouped-only board · tap the bug icon for the hint'),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      onGroupedDemo();
                     },
                   ),
                 const Divider(),
