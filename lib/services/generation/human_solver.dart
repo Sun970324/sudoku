@@ -48,6 +48,16 @@ const humanSolverTechniqueOrder = [
   HintTechnique.uniqueRectangleType2,
   HintTechnique.uniqueRectangleType3,
   HintTechnique.uniqueRectangleType4,
+  // Promoted from hint-only into generation (2026-07-22): the three
+  // fixed-shape ALS/chain techniques a solver can fairly be asked to spot —
+  // X-Chain (single-digit AIC, the Skyscraper/Turbot line extended),
+  // WXYZ-Wing (the 4-candidate XYZ-Wing), ALS-XZ (the generalized W-Wing).
+  // All Expert. The open-ended AIC/grouped/ALS-chain and the rare
+  // Firework/Sue de Coq stay hint-only. Placed last so they only ever
+  // decide a puzzle the earlier, more recognizable techniques can't.
+  HintTechnique.xChain,
+  HintTechnique.wxyzWing,
+  HintTechnique.alsXZ,
 ];
 
 /// The outcome of [HumanSolver.solve]: how far a human-technique-only

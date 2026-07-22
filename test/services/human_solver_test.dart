@@ -170,52 +170,51 @@ void main() {
 
   test('Swordfish narrows candidates before the solver gets stuck, on a '
       'real generated puzzle', () {
-    // A genuine puzzle from BoardGenerator + ClueRemover (20 givens) where
-    // singles/intersections alone stall out and Swordfish is the last
-    // technique that still finds something before the solver runs out of
-    // known techniques entirely — confirmed by running this exact board:
-    // history's last entry (index 18 of 19) is swordfish, and solved is
-    // false (nothing beyond Swordfish is implemented yet to finish it).
+    // A genuine puzzle (BoardGenerator + ClueRemover 24 + Minimalizer, seed
+    // 80020) whose solve history includes Swordfish — confirmed by running
+    // this exact board. Asserts `contains` rather than `last`: once the
+    // fixed-shape ALS/chain techniques (X-Chain, WXYZ-Wing, ALS-XZ) were
+    // promoted into generation they sit after Swordfish, so "Swordfish is
+    // the final technique" is no longer a stable property — that Swordfish
+    // fires at all is the point.
     final board = [
-      [2, 0, 0, 4, 0, 0, 1, 0, 7],
-      [0, 0, 0, 8, 0, 0, 0, 2, 0],
-      [7, 0, 4, 0, 0, 5, 0, 0, 0],
-      [1, 0, 8, 0, 2, 7, 0, 0, 0],
-      [0, 0, 0, 9, 4, 0, 6, 0, 2],
-      [0, 0, 0, 6, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 1, 3],
-      [0, 0, 0, 0, 6, 0, 5, 0, 0],
-      [0, 3, 7, 0, 0, 0, 0, 0, 0],
+      [7, 0, 0, 1, 5, 3, 0, 0, 0],
+      [0, 0, 0, 0, 0, 9, 0, 7, 0],
+      [0, 9, 0, 0, 7, 0, 0, 0, 8],
+      [6, 7, 0, 0, 0, 0, 0, 0, 9],
+      [2, 0, 1, 0, 0, 0, 8, 0, 0],
+      [0, 0, 0, 3, 0, 0, 2, 0, 0],
+      [4, 0, 2, 0, 0, 0, 1, 8, 0],
+      [0, 0, 5, 0, 0, 2, 0, 0, 4],
+      [0, 0, 0, 0, 4, 0, 0, 0, 0],
     ];
 
     final result = HumanSolver().solve(board);
 
-    expect(result.solved, isFalse);
-    expect(result.history, isNotEmpty);
-    expect(result.history.last, HintTechnique.swordfish);
+    expect(result.history, contains(HintTechnique.swordfish));
   });
 
   test('Finned X-Wing narrows candidates before the solver gets stuck, on '
       'a real generated puzzle', () {
-    // A genuine puzzle (18 givens) where the solver progresses through
-    // singles/intersections, then Finned X-Wing fires (twice) before
-    // getting stuck — confirmed by running this exact board: history ends
-    // with two consecutive finnedXWing entries and solved is false.
+    // A genuine puzzle (BoardGenerator + ClueRemover 24 + Minimalizer, seed
+    // 80019) whose solve history includes Finned X-Wing — confirmed by
+    // running this exact board. Re-mined after the fixed-shape ALS/chain
+    // techniques were promoted into generation (they preempted the old
+    // fixture's route to Finned X-Wing).
     final board = [
-      [1, 0, 0, 0, 0, 0, 0, 0, 0],
-      [2, 0, 0, 8, 6, 0, 0, 0, 1],
-      [0, 9, 0, 0, 0, 7, 0, 0, 0],
-      [0, 0, 0, 0, 0, 3, 0, 8, 0],
-      [5, 0, 0, 0, 2, 0, 0, 0, 9],
-      [3, 0, 0, 0, 0, 0, 0, 0, 4],
-      [6, 0, 5, 0, 0, 4, 0, 0, 0],
-      [9, 0, 0, 0, 0, 1, 4, 0, 5],
-      [0, 1, 4, 5, 7, 0, 0, 0, 2],
+      [0, 0, 0, 0, 0, 4, 0, 0, 9],
+      [0, 4, 0, 5, 0, 0, 0, 0, 7],
+      [0, 5, 9, 0, 0, 1, 0, 0, 0],
+      [7, 0, 0, 0, 2, 0, 0, 0, 0],
+      [1, 2, 0, 0, 0, 0, 3, 0, 0],
+      [0, 0, 6, 0, 0, 0, 0, 1, 5],
+      [0, 7, 0, 0, 3, 0, 9, 0, 0],
+      [9, 0, 0, 0, 0, 0, 0, 3, 0],
+      [0, 0, 0, 7, 0, 0, 4, 0, 1],
     ];
 
     final result = HumanSolver().solve(board);
 
-    expect(result.solved, isFalse);
     expect(result.history, contains(HintTechnique.finnedXWing));
   });
 
