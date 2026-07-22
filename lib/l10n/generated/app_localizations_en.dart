@@ -1190,12 +1190,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String hintStepAicStrongUnit(String cell, int digit) {
-    return 'then $cell must be $digit. This is a STRONG link: the unit they share has only two places for $digit, so if one isn\'t it, the other is.';
+    return 'then $cell must be $digit.';
   }
 
   @override
   String hintStepAicStrongCell(int digit) {
-    return 'then the remaining $digit is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.';
+    return 'then the remaining $digit is forced.';
   }
 
   @override
@@ -1205,22 +1205,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String hintStepAicStrongGroup(String cells, int digit) {
-    return 'then one of $cells must be $digit. This is a STRONG link: the unit\'s ${digit}s split into just these two clusters, so if one is empty the other must hold it.';
-  }
-
-  @override
-  String hintStepAicStrongAls(String cells, int digit, int prevDigit) {
-    return 'then $digit must be in $cells. This is a STRONG link: these cells are an Almost Locked Set — one more candidate kind than cells — so removing $prevDigit locks every remaining digit into place.';
+    return 'then one of $cells must be $digit.';
   }
 
   @override
   String hintStepAicWeakUnit(String cell, int digit) {
-    return 'Now $cell can no longer be $digit — a WEAK link: two cells in the same unit can\'t both hold $digit.';
+    return 'Now $cell can no longer be $digit.';
   }
 
   @override
   String hintStepAicWeakCell(int digit) {
-    return 'Now this cell\'s other candidate $digit is ruled out — a WEAK link: one cell holds only one digit.';
+    return 'Now this cell\'s other candidate $digit is ruled out.';
   }
 
   @override

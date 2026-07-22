@@ -891,14 +891,14 @@
       "digit": {"type": "int"}
     }
   },
-  "hintStepAicStrongUnit": "then {cell} must be {digit}. This is a STRONG link: the unit they share has only two places for {digit}, so if one isn't it, the other is.",
+  "hintStepAicStrongUnit": "then {cell} must be {digit}.",
   "@hintStepAicStrongUnit": {
     "placeholders": {
       "cell": {"type": "String"},
       "digit": {"type": "int"}
     }
   },
-  "hintStepAicStrongCell": "then the remaining {digit} is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.",
+  "hintStepAicStrongCell": "then the remaining {digit} is forced.",
   "@hintStepAicStrongCell": {
     "placeholders": {
       "digit": {"type": "int"}
@@ -911,29 +911,21 @@
       "digit": {"type": "int"}
     }
   },
-  "hintStepAicStrongGroup": "then one of {cells} must be {digit}. This is a STRONG link: the unit's {digit}s split into just these two clusters, so if one is empty the other must hold it.",
+  "hintStepAicStrongGroup": "then one of {cells} must be {digit}.",
   "@hintStepAicStrongGroup": {
     "placeholders": {
       "cells": {"type": "String"},
       "digit": {"type": "int"}
     }
   },
-  "hintStepAicStrongAls": "then {digit} must be in {cells}. This is a STRONG link: these cells are an Almost Locked Set — one more candidate kind than cells — so removing {prevDigit} locks every remaining digit into place.",
-  "@hintStepAicStrongAls": {
-    "placeholders": {
-      "cells": {"type": "String"},
-      "digit": {"type": "int"},
-      "prevDigit": {"type": "int"}
-    }
-  },
-  "hintStepAicWeakUnit": "Now {cell} can no longer be {digit} — a WEAK link: two cells in the same unit can't both hold {digit}.",
+  "hintStepAicWeakUnit": "Now {cell} can no longer be {digit}.",
   "@hintStepAicWeakUnit": {
     "placeholders": {
       "cell": {"type": "String"},
       "digit": {"type": "int"}
     }
   },
-  "hintStepAicWeakCell": "Now this cell's other candidate {digit} is ruled out — a WEAK link: one cell holds only one digit.",
+  "hintStepAicWeakCell": "Now this cell's other candidate {digit} is ruled out.",
   "@hintStepAicWeakCell": {
     "placeholders": {
       "digit": {"type": "int"}

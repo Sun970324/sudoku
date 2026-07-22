@@ -359,13 +359,11 @@ List<HintStep> _xyChainSteps(Hint hint, AppLocalizations l10n) {
   return steps;
 }
 
-/// X-Chain / general AIC, narrated hop by hop — and, per link, WHY it is a
-/// strong or weak link. Both kinds come in two shapes, detected from the
-/// link's own geometry (same cell vs different cells):
-///  - strong between cells  = bilocation (only two places in a shared unit)
-///  - strong within a cell  = bivalue (only two candidates in the cell)
-///  - weak between cells    = same digit can't repeat in a shared unit
-///  - weak within a cell    = one cell holds only one digit
+/// X-Chain / general AIC, narrated hop by hop. Each link's wording is
+/// picked from its geometry (in-cell, single target, or multi-cell set
+/// target) but states only what happens — the strong/weak-link theory
+/// behind it is deliberately not spelled out (it made every step twice as
+/// long; removed on request).
 ///
 /// The walkthrough runs the "suppose the start is false" direction: each
 /// step consumes one weak+strong pair (the assumption propagating one hop),
@@ -380,20 +378,11 @@ List<HintStep> _aicSteps(Hint hint, AppLocalizations l10n) {
       node.cells.map((c) => _cellDesc(c, l10n)).join('·');
 
   String strongText(HintChainLink link) {
-    final sameSingleCell = link.from.cells.length == 1 &&
-        link.to.cells.length == 1 &&
-        link.from.cells.first == link.to.cells.first;
-    // Different digits across different cells only ever happens on an ALS
-    // link (bilocation/segment links keep the digit, bivalue stays in-cell),
-    // whose "why" is the almost-locked argument, not the two-places one.
-    if (link.from.digit != link.to.digit && !sameSingleCell) {
-      return l10n.hintStepAicStrongAls(
-          nodeDesc(link.to), link.to.digit, link.from.digit);
-    }
     if (link.to.cells.length > 1) {
       return l10n.hintStepAicStrongGroup(nodeDesc(link.to), link.to.digit);
     }
-    return sameSingleCell
+    return link.from.cells.length == 1 &&
+            link.from.cells.first == link.to.cells.first
         ? l10n.hintStepAicStrongCell(link.to.digit)
         : l10n.hintStepAicStrongUnit(nodeDesc(link.to), link.to.digit);
   }

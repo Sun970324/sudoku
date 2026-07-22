@@ -372,10 +372,10 @@ void main() {
     expect(steps[0].visibleLinks, 1);
     expect(steps[1].visibleLinks, 3);
     // Every link here joins two DIFFERENT cells, so the narration must use
-    // the unit-based reasons ("자리가 딱 두 곳" / "같은 구역"), never the
+    // the cross-cell wordings (forced cell / ruled-out cell), never the
     // bivalue in-cell ones.
-    expect(steps[0].text, contains('두 곳'));
-    expect(steps[1].text, contains('같은 구역'));
+    expect(steps[0].text, contains('반드시'));
+    expect(steps[1].text, contains('될 수 없어요'));
     // The either-ends step names both endpoints' digits.
     expect(steps[2].text, contains('4'));
   });
@@ -397,14 +397,14 @@ void main() {
     final steps = buildHintSteps(hint, l10n);
 
     _expectWellFormedSteps(hint, steps);
-    // Some hop must be narrated with an in-cell reason (bivalue strong link
-    // "후보가 딱 두 개" or in-cell weak link "숫자가 하나만") — that's what
-    // distinguishes a genuine AIC walkthrough from an X-Chain's.
+    // Some hop must use the in-cell wordings ("남은 후보"가 확정 / "다른
+    // 후보"가 지워짐) — that's what distinguishes a genuine AIC walkthrough
+    // from an X-Chain's.
     expect(
       steps.any((s) =>
-          s.text.contains('후보가 딱 두 개') || s.text.contains('하나만')),
+          s.text.contains('남은 후보') || s.text.contains('다른 후보')),
       isTrue,
-      reason: 'an AIC crossing a bivalue cell must explain the in-cell link',
+      reason: 'an AIC crossing a bivalue cell must use the in-cell wording',
     );
   });
 

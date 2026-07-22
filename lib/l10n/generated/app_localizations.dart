@@ -2035,13 +2035,13 @@ abstract class AppLocalizations {
   /// No description provided for @hintStepAicStrongUnit.
   ///
   /// In en, this message translates to:
-  /// **'then {cell} must be {digit}. This is a STRONG link: the unit they share has only two places for {digit}, so if one isn\'t it, the other is.'**
+  /// **'then {cell} must be {digit}.'**
   String hintStepAicStrongUnit(String cell, int digit);
 
   /// No description provided for @hintStepAicStrongCell.
   ///
   /// In en, this message translates to:
-  /// **'then the remaining {digit} is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.'**
+  /// **'then the remaining {digit} is forced.'**
   String hintStepAicStrongCell(int digit);
 
   /// No description provided for @hintStepAicStartGroup.
@@ -2053,25 +2053,19 @@ abstract class AppLocalizations {
   /// No description provided for @hintStepAicStrongGroup.
   ///
   /// In en, this message translates to:
-  /// **'then one of {cells} must be {digit}. This is a STRONG link: the unit\'s {digit}s split into just these two clusters, so if one is empty the other must hold it.'**
+  /// **'then one of {cells} must be {digit}.'**
   String hintStepAicStrongGroup(String cells, int digit);
-
-  /// No description provided for @hintStepAicStrongAls.
-  ///
-  /// In en, this message translates to:
-  /// **'then {digit} must be in {cells}. This is a STRONG link: these cells are an Almost Locked Set — one more candidate kind than cells — so removing {prevDigit} locks every remaining digit into place.'**
-  String hintStepAicStrongAls(String cells, int digit, int prevDigit);
 
   /// No description provided for @hintStepAicWeakUnit.
   ///
   /// In en, this message translates to:
-  /// **'Now {cell} can no longer be {digit} — a WEAK link: two cells in the same unit can\'t both hold {digit}.'**
+  /// **'Now {cell} can no longer be {digit}.'**
   String hintStepAicWeakUnit(String cell, int digit);
 
   /// No description provided for @hintStepAicWeakCell.
   ///
   /// In en, this message translates to:
-  /// **'Now this cell\'s other candidate {digit} is ruled out — a WEAK link: one cell holds only one digit.'**
+  /// **'Now this cell\'s other candidate {digit} is ruled out.'**
   String hintStepAicWeakCell(int digit);
 
   /// No description provided for @hintStepAicEitherEnds.

@@ -1165,12 +1165,12 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String hintStepAicStrongUnit(String cell, int digit) {
-    return '$cell은 반드시 $digit번이 돼요. 이게 강한 연결이에요: 두 칸이 속한 구역에 $digit번이 들어갈 자리가 딱 두 곳뿐이라, 한쪽이 아니면 다른 쪽이 확정되거든요.';
+    return '$cell은 반드시 $digit번이 돼요.';
   }
 
   @override
   String hintStepAicStrongCell(int digit) {
-    return '남은 후보 $digit번이 확정돼요. 이게 강한 연결이에요: 이 칸의 후보가 딱 두 개뿐이라, 하나를 지우면 나머지가 확정되거든요.';
+    return '남은 후보 $digit번이 확정돼요.';
   }
 
   @override
@@ -1180,22 +1180,17 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String hintStepAicStrongGroup(String cells, int digit) {
-    return '$cells 묶음 중 하나는 반드시 $digit번이 돼요. 이게 강한 연결이에요: 이 구역에서 $digit번이 들어갈 자리가 두 덩어리로만 나뉘어 있어서, 한쪽이 비면 다른 쪽이 채우거든요.';
-  }
-
-  @override
-  String hintStepAicStrongAls(String cells, int digit, int prevDigit) {
-    return '$cells에 $digit번이 반드시 들어가요. 이게 강한 연결이에요: 이 칸들은 후보 종류가 칸 수보다 딱 하나 많은 거의-잠긴 집합(ALS)이라, $prevDigit번이 빠지는 순간 나머지 후보가 전부 자리를 확정하거든요.';
+    return '$cells 묶음 중 하나는 반드시 $digit번이 돼요.';
   }
 
   @override
   String hintStepAicWeakUnit(String cell, int digit) {
-    return '그러면 $cell은 $digit번이 될 수 없어요 — 약한 연결이에요: 같은 구역의 두 칸이 동시에 $digit번일 수는 없으니까요.';
+    return '그러면 $cell은 $digit번이 될 수 없어요.';
   }
 
   @override
   String hintStepAicWeakCell(int digit) {
-    return '그러면 이 칸의 다른 후보 $digit번은 지워져요 — 약한 연결이에요: 한 칸에는 숫자가 하나만 들어가니까요.';
+    return '그러면 이 칸의 다른 후보 $digit번은 지워져요.';
   }
 
   @override
