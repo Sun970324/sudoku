@@ -1196,7 +1196,7 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String hintStepAicEitherEnds(
       String startCell, int startDigit, String endCell, int endDigit) {
-    return '가정을 반대로 뒤집으면 사슬이 반대 방향으로 흐르고 결론은 같아요 — $startCell의 $startDigit번과 $endCell의 $endDigit번 중 적어도 하나는 항상 참이에요.';
+    return '정리하면 경우는 딱 둘이에요. $startCell이 정말 $startDigit번이거나, 아니라면 방금 본 흐름대로 $endCell이 $endDigit번이 되거나 — 어느 쪽이든 둘 중 하나는 반드시 맞아요.';
   }
 
   @override

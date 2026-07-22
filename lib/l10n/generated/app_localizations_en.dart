@@ -1221,7 +1221,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String hintStepAicEitherEnds(
       String startCell, int startDigit, String endCell, int endDigit) {
-    return 'Flip the starting assumption and the chain runs the other way with the same result — at least one of $startDigit at $startCell or $endDigit at $endCell is always true.';
+    return 'So there are only two cases: either $startCell really is $startDigit, or — as we just followed — $endCell ends up $endDigit. Either way, one of the two must be true.';
   }
 
   @override
