@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../content/policy_texts.dart';
 import '../l10n/generated/app_localizations.dart';
+import '../models/hint.dart';
 import '../screens/policy_screen.dart';
 import '../screens/premium/premium_lock_screen.dart';
 import '../services/haptic_service.dart';
@@ -24,6 +25,7 @@ void showSettingsSheet(
   VoidCallback? onReplayTutorial,
   VoidCallback? onAicDemo,
   VoidCallback? onGroupedDemo,
+  void Function(HintTechnique technique)? onAlsDemo,
 }) {
   showModalBottomSheet<void>(
     context: context,
@@ -176,6 +178,44 @@ void showSettingsSheet(
                     onTap: () {
                       Navigator.pop(sheetContext);
                       onGroupedDemo();
+                    },
+                  ),
+                if (kDebugMode && onAlsDemo != null)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.bug_report_outlined),
+                    title: Text(
+                        Localizations.localeOf(context).languageCode == 'ko'
+                            ? 'ALS 기법 데모 (디버그)'
+                            : 'ALS technique demos (debug)'),
+                    subtitle: Text(
+                        Localizations.localeOf(context).languageCode == 'ko'
+                            ? '기법 선택 → 보장 보드 로드 · 벌레 아이콘으로 확인'
+                            : 'Pick one · loads its board · tap the bug icon'),
+                    onTap: () async {
+                      final picked = await showDialog<HintTechnique>(
+                        context: context,
+                        builder: (dialogContext) => SimpleDialog(
+                          title: const Text('ALS demo'),
+                          children: [
+                            for (final technique in const [
+                              HintTechnique.wxyzWing,
+                              HintTechnique.alsXZ,
+                              HintTechnique.sueDeCoq,
+                              HintTechnique.tripleFirework,
+                              HintTechnique.alsAic,
+                            ])
+                              SimpleDialogOption(
+                                onPressed: () =>
+                                    Navigator.pop(dialogContext, technique),
+                                child: Text(technique.label(dialogContext)),
+                              ),
+                          ],
+                        ),
+                      );
+                      if (picked == null) return;
+                      if (sheetContext.mounted) Navigator.pop(sheetContext);
+                      onAlsDemo(picked);
                     },
                   ),
                 const Divider(),

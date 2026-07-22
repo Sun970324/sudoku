@@ -342,6 +342,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             puzzle: groupedChainDemoPuzzle(),
                           ))
                       : null,
+                  onAlsDemo: kDebugMode
+                      ? (technique) => _openGame(GameScreen.newGame(
+                            difficulty: Difficulty.expert,
+                            puzzle: alsDemoPuzzle(technique),
+                            debugDemoTechnique: technique,
+                          ))
+                      : null,
                 ),
               ),
             ],

@@ -1,4 +1,5 @@
 import '../models/difficulty.dart';
+import '../models/hint.dart';
 import '../models/sudoku_grid.dart';
 import '../models/sudoku_puzzle.dart';
 import '../services/sudoku_solver.dart';
@@ -43,6 +44,56 @@ const _groupedGivens = <List<int>>[
 ];
 
 SudokuPuzzle groupedChainDemoPuzzle() => _demoPuzzle(_groupedGivens);
+
+/// Boards mined (real generator pipeline, seeds 70000 / 70001 / 40184) so
+/// each ALS-family finder fires on fresh notes with a sound elimination.
+/// The demo bug icon asks the picked technique's finder DIRECTLY (see
+/// [GameScreen.debugDemoTechnique]), so unlike [_groupedGivens] these need
+/// no "nothing earlier fires" condition — one board can serve two demos.
+const _alsXzGivens = <List<int>>[
+  [0, 0, 5, 1, 0, 0, 0, 0, 0],
+  [8, 0, 6, 0, 0, 0, 1, 0, 0],
+  [4, 0, 0, 0, 0, 5, 0, 8, 0],
+  [0, 0, 9, 2, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 2, 0, 0],
+  [0, 0, 0, 0, 0, 4, 3, 0, 7],
+  [0, 0, 0, 0, 0, 9, 0, 0, 5],
+  [0, 0, 0, 0, 4, 8, 0, 0, 2],
+  [3, 6, 0, 0, 7, 0, 0, 0, 0],
+];
+
+const _wxyzGivens = <List<int>>[
+  [0, 9, 5, 0, 0, 0, 0, 0, 0],
+  [1, 0, 0, 5, 0, 6, 0, 7, 4],
+  [4, 0, 0, 0, 8, 0, 0, 0, 0],
+  [0, 6, 0, 0, 0, 9, 0, 0, 0],
+  [2, 0, 0, 0, 3, 5, 0, 0, 8],
+  [0, 0, 7, 0, 0, 1, 0, 0, 2],
+  [0, 3, 9, 0, 0, 0, 0, 6, 0],
+  [0, 1, 0, 2, 0, 0, 0, 0, 5],
+  [7, 0, 0, 0, 0, 0, 0, 0, 0],
+];
+
+const _fireworkGivens = <List<int>>[
+  [2, 0, 0, 0, 0, 0, 3, 0, 8],
+  [5, 0, 3, 0, 9, 0, 0, 0, 0],
+  [0, 7, 0, 2, 0, 0, 0, 0, 0],
+  [3, 0, 5, 0, 0, 0, 0, 2, 0],
+  [4, 0, 9, 0, 8, 6, 0, 0, 0],
+  [0, 6, 0, 4, 0, 0, 0, 0, 0],
+  [0, 0, 0, 8, 1, 9, 6, 4, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 2],
+  [0, 0, 0, 6, 0, 3, 0, 0, 1],
+];
+
+/// The demo board for one ALS-family technique (any other technique maps
+/// to the ALS-XZ board — its general chains fire there too).
+SudokuPuzzle alsDemoPuzzle(HintTechnique technique) =>
+    _demoPuzzle(switch (technique) {
+      HintTechnique.wxyzWing || HintTechnique.sueDeCoq => _wxyzGivens,
+      HintTechnique.tripleFirework => _fireworkGivens,
+      _ => _alsXzGivens,
+    });
 
 SudokuPuzzle _demoPuzzle(List<List<int>> board) {
   final givens = board.map((row) => List<int>.from(row)).toList();

@@ -52,4 +52,30 @@ void main() {
       expect(puzzle.solution.get(e.row, e.col), isNot(e.digit));
     }
   });
+
+  test('every ALS-family demo board still makes its own technique fire, '
+      'soundly — guards the settings "ALS 기법 데모" entries', () {
+    final engine = HintEngine();
+    final finders = <HintTechnique,
+        Hint? Function(List<List<int>> board)>{
+      HintTechnique.wxyzWing: engine.findWXYZWing,
+      HintTechnique.alsXZ: engine.findAlsXZ,
+      HintTechnique.sueDeCoq: engine.findSueDeCoq,
+      HintTechnique.tripleFirework: engine.findTripleFirework,
+      HintTechnique.alsAic: engine.findAlsAic,
+    };
+
+    for (final entry in finders.entries) {
+      final puzzle = alsDemoPuzzle(entry.key);
+      final hint = entry.value(puzzle.puzzle.toJson());
+
+      expect(hint, isNotNull, reason: '${entry.key} demo board went silent');
+      expect(hint!.technique, entry.key);
+      expect(hint.eliminations, isNotEmpty);
+      for (final e in hint.eliminations) {
+        expect(puzzle.solution.get(e.row, e.col), isNot(e.digit),
+            reason: '${entry.key} demo eliminated a solution digit');
+      }
+    }
+  });
 }

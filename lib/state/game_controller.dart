@@ -686,7 +686,8 @@ class GameController extends ChangeNotifier {
   /// last in [hintTechniqueOrder] and rarely reached. Returns null when the
   /// current notes hold no such chain. Sets it as the active hint + steps
   /// exactly like [requestHintFromNotes] so the hint sheet drives normally.
-  Future<Hint?> debugRequestAicHint({AppLocalizations? l10n}) async {
+  Future<Hint?> debugRequestAicHint(
+      {AppLocalizations? l10n, HintTechnique? technique}) async {
     if (status != GameStatus.playing) return null;
     final board = boardSnapshot;
     final notes = _notes;
@@ -694,12 +695,25 @@ class GameController extends ChangeNotifier {
     final resolvedL10n = l10n ?? lookupAppLocalizations(const Locale('ko'));
     // Grouped X-Chain before Grouped AIC: the general grouped search finds a
     // chain whenever the single-digit one does, so the reverse order would
-    // make the groupedXChain label unreachable from this debug entry.
-    var hint = await _runSearch(() =>
-        engine.findAic(board, notes, resolvedL10n) ??
-        engine.findXChain(board, notes, resolvedL10n) ??
-        engine.findGroupedXChain(board, notes, resolvedL10n) ??
-        engine.findGroupedAic(board, notes, resolvedL10n));
+    // make the groupedXChain label unreachable from this debug entry. A
+    // non-null [technique] (the ALS-family demo boards) bypasses the
+    // fallback and asks that finder directly.
+    var hint = await _runSearch(() => switch (technique) {
+          null => engine.findAic(board, notes, resolvedL10n) ??
+              engine.findXChain(board, notes, resolvedL10n) ??
+              engine.findGroupedXChain(board, notes, resolvedL10n) ??
+              engine.findGroupedAic(board, notes, resolvedL10n),
+          HintTechnique.wxyzWing =>
+            engine.findWXYZWing(board, notes, resolvedL10n),
+          HintTechnique.alsXZ => engine.findAlsXZ(board, notes, resolvedL10n),
+          HintTechnique.sueDeCoq =>
+            engine.findSueDeCoq(board, notes, resolvedL10n),
+          HintTechnique.tripleFirework =>
+            engine.findTripleFirework(board, notes, resolvedL10n),
+          HintTechnique.alsAic =>
+            engine.findAlsAic(board, notes, resolvedL10n),
+          _ => null,
+        });
     if (hint != null && !_agreesWithSolution(hint)) hint = null;
     _setActiveHint(hint, _stepsFor(hint, l10n));
     notifyListeners();

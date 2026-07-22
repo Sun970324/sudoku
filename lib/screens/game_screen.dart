@@ -39,6 +39,7 @@ class GameScreen extends StatefulWidget {
     super.key,
     required Difficulty this.difficulty,
     this.puzzle,
+    this.debugDemoTechnique,
   })  : resumeSnapshot = null,
         isDaily = false,
         dailyAlreadyCompleted = false;
@@ -48,7 +49,8 @@ class GameScreen extends StatefulWidget {
       : difficulty = null,
         puzzle = null,
         isDaily = false,
-        dailyAlreadyCompleted = false;
+        dailyAlreadyCompleted = false,
+        debugDemoTechnique = null;
 
   /// Today's shared ranked puzzle. Daily games never touch local solo
   /// stats or the in-progress save slot, and on win route to
@@ -59,7 +61,8 @@ class GameScreen extends StatefulWidget {
     this.dailyAlreadyCompleted = false,
   })  : difficulty = null,
         resumeSnapshot = null,
-        isDaily = true;
+        isDaily = true,
+        debugDemoTechnique = null;
 
   final Difficulty? difficulty;
   final GameSnapshot? resumeSnapshot;
@@ -73,6 +76,11 @@ class GameScreen extends StatefulWidget {
   /// of generating one synchronously. Null falls back to generating on the
   /// spot — see [GameController.startNewGame].
   final SudokuPuzzle? puzzle;
+
+  /// Debug-only (set by the settings sheet's ALS technique demos): the bug
+  /// icon asks this exact finder instead of the AIC-family fallback chain,
+  /// so a demo board only has to make its own technique fire.
+  final HintTechnique? debugDemoTechnique;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -696,11 +704,15 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   Future<void> _onDebugAicPressed() async {
     _controller.autoFillNotes();
     final l10n = AppLocalizations.of(context)!;
-    final hint = await _controller.debugRequestAicHint(l10n: l10n);
+    final hint = await _controller.debugRequestAicHint(
+        l10n: l10n, technique: widget.debugDemoTechnique);
     if (!mounted) return;
     if (hint == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No X-Chain / AIC on this board')),
+        SnackBar(
+            content: Text(widget.debugDemoTechnique == null
+                ? 'No X-Chain / AIC on this board'
+                : 'Demo technique not found on this board')),
       );
       return;
     }
