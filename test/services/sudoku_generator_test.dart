@@ -39,14 +39,14 @@ void main() {
   final evaluator = DifficultyEvaluator();
   final generator = SudokuGenerator(random: Random(42));
 
-  // beginner/easy/medium are generated purely by given count (no technique
-  // ceiling/exact-match check at all — see SudokuGenerator's class doc), so
-  // they get a relaxed assertion set below instead of the full
-  // technique-gated ones that still apply to hard/master/expert.
+  // beginner/easy (Bronze/Silver) are generated purely by given count (no
+  // technique ceiling/exact-match check at all — see SudokuGenerator's class
+  // doc), so they get a relaxed assertion set below instead of the full
+  // technique-gated ones that apply to Gold and up (medium/hard/master/
+  // expert).
   const givenCountBasedTiers = {
     Difficulty.beginner,
     Difficulty.easy,
-    Difficulty.medium,
   };
 
   for (final difficulty in Difficulty.values) {
@@ -135,14 +135,20 @@ void main() {
 
               final stillUnique =
                   solver.countSolutions(withoutClue, limit: 2) == 1;
-              final stillWithinCeiling = Difficulty.values.indexOf(
-                    evaluator
-                        .evaluate(humanSolver.solve(withoutClue))
-                        .highestDifficulty,
-                  ) <=
-                  targetRank;
+              // Short-circuit: only the (rare, on a minimal board) cells that
+              // stay unique need the far heavier human-solve ceiling check.
+              // Removing most cells breaks uniqueness outright, so skipping
+              // solve there is equivalent and avoids ~80 expensive solves per
+              // tier (solve got much heavier once ALS/chains entered it).
+              final removable = stillUnique &&
+                  Difficulty.values.indexOf(
+                        evaluator
+                            .evaluate(humanSolver.solve(withoutClue))
+                            .highestDifficulty,
+                      ) <=
+                      targetRank;
 
-              expect(stillUnique && stillWithinCeiling, isFalse,
+              expect(removable, isFalse,
                   reason: 'cell ($r, $c) should not be removable');
             }
           }

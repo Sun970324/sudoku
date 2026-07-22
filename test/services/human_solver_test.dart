@@ -101,31 +101,22 @@ void main() {
 
   test('Simple Coloring narrows candidates enough to unlock a subsequent '
       'Naked Single, on a real generated puzzle', () {
-    // A genuine puzzle produced by BoardGenerator + ClueRemover +
-    // Minimalizer where Simple Coloring is the technique that breaks a stall
-    // even though every single-digit chain technique (Skyscraper, 2-String
-    // Kite, Turbot Fish) and Remote Pair are all tried before it — confirmed
-    // by running this exact board: history[45] is simpleColoring, history[46]
-    // is an immediately-following nakedSingle, and the puzzle goes on to
-    // fully solve. Hand-crafting an equivalent board from scratch turned out
-    // to be impractical (a 2-3 cell conjugate pattern confined to one
-    // box/line is always also solvable by an earlier technique — a real
-    // generated puzzle is what actually needs Simple Coloring).
-    //
-    // The previous board here was retired when Remote Pair was added ahead of
-    // Simple Coloring and preempted it — the deliberate "more specific
-    // deduction wins" effect, same as when the Turbot family landed. Replaced
-    // by re-mining rather than by reordering the engine to suit the test.
+    // A genuine puzzle (BoardGenerator + ClueRemover 24 + Minimalizer, seed
+    // 100197) where Simple Coloring breaks a stall and the next step is a
+    // Naked Single — confirmed by running this exact board. Re-mined after
+    // the difficulty rebalance moved Simple Coloring to the head of the
+    // Master band (any later and the single-digit techniques ahead of it
+    // preempt it entirely — it fired on zero of 6000 boards from the tail).
     final board = [
-      [0, 1, 6, 3, 8, 0, 0, 0, 0],
-      [0, 0, 0, 6, 0, 0, 0, 0, 0],
-      [9, 0, 0, 0, 4, 0, 0, 0, 0],
-      [0, 5, 0, 8, 0, 0, 0, 0, 2],
-      [1, 0, 0, 0, 2, 0, 0, 0, 6],
-      [0, 0, 0, 0, 1, 6, 9, 0, 0],
-      [0, 0, 0, 0, 9, 0, 4, 0, 0],
-      [0, 8, 7, 2, 0, 0, 0, 0, 1],
-      [0, 0, 2, 1, 6, 0, 0, 0, 5],
+      [1, 0, 0, 9, 0, 0, 0, 0, 0],
+      [0, 0, 0, 7, 0, 2, 0, 4, 0],
+      [0, 0, 3, 0, 4, 0, 0, 6, 2],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [4, 0, 9, 0, 3, 1, 0, 0, 0],
+      [6, 0, 0, 0, 7, 0, 0, 0, 1],
+      [7, 0, 0, 0, 2, 0, 0, 3, 5],
+      [2, 0, 4, 3, 9, 0, 0, 0, 0],
+      [0, 6, 0, 0, 0, 0, 0, 0, 0],
     ];
 
     final result = HumanSolver().solve(board);
@@ -280,22 +271,21 @@ void main() {
 
   test('XY-Chain narrows candidates enough to unlock a subsequent Naked '
       'Single, on a real generated puzzle', () {
-    // A genuine puzzle (18 givens) where XY-Chain is the technique that
-    // breaks a stall after Simple Coloring/Intersection Claiming/XY-Wing
-    // all stop finding anything new — confirmed by running this exact
-    // board: history[50] is xyChain and history[51] is an
-    // immediately-following nakedSingle, and the puzzle goes on to fully
-    // solve.
+    // A genuine puzzle (BoardGenerator + ClueRemover 24 + Minimalizer, seed
+    // 100030) where XY-Chain breaks a stall and the next step is a Naked
+    // Single — confirmed by running this exact board. XY-Chain is last in
+    // humanSolverTechniqueOrder (the solver only reaches for it when nothing
+    // more local applies); re-mined after the difficulty rebalance.
     final board = [
-      [0, 2, 0, 0, 7, 0, 1, 0, 0],
-      [9, 0, 0, 0, 1, 0, 0, 8, 0],
-      [0, 1, 0, 5, 0, 0, 0, 7, 0],
-      [8, 0, 0, 0, 6, 0, 0, 3, 0],
-      [0, 0, 3, 0, 0, 0, 5, 1, 0],
-      [0, 4, 0, 0, 0, 1, 0, 6, 0],
-      [0, 0, 0, 0, 0, 3, 8, 0, 0],
-      [0, 8, 0, 7, 0, 0, 0, 5, 0],
-      [6, 0, 0, 0, 0, 9, 3, 0, 0],
+      [0, 0, 7, 0, 0, 0, 0, 6, 0],
+      [0, 0, 0, 0, 0, 0, 9, 8, 0],
+      [1, 0, 4, 0, 0, 0, 0, 0, 3],
+      [0, 1, 0, 5, 0, 0, 0, 0, 0],
+      [0, 9, 8, 4, 0, 7, 0, 0, 0],
+      [0, 3, 0, 0, 2, 0, 0, 0, 4],
+      [0, 4, 0, 0, 0, 2, 0, 0, 0],
+      [0, 0, 0, 8, 0, 5, 0, 0, 2],
+      [2, 0, 0, 6, 9, 0, 0, 7, 0],
     ];
 
     final result = HumanSolver().solve(board);

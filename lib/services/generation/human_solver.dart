@@ -16,48 +16,54 @@ import '../hint_engine.dart';
 /// (Hidden before Naked) for a better in-game hint experience. Both are
 /// correct for their own purpose; this is not an inconsistency.
 const humanSolverTechniqueOrder = [
+  // Bronze
   HintTechnique.fullHouse,
   HintTechnique.nakedSingle,
+  // Silver
   HintTechnique.hiddenSingle,
   HintTechnique.intersectionPointing,
   HintTechnique.intersectionClaiming,
+  // Gold — pairs
   HintTechnique.lockedPair,
-  HintTechnique.lockedTriple,
   HintTechnique.nakedPair,
   HintTechnique.hiddenPair,
+  // Diamond — triples, single-digit fish/chains, basic wings
+  HintTechnique.lockedTriple,
   HintTechnique.nakedTriple,
   HintTechnique.hiddenTriple,
-  HintTechnique.nakedQuad,
-  HintTechnique.hiddenQuad,
   HintTechnique.xWing,
   HintTechnique.skyscraper,
   HintTechnique.twoStringKite,
   HintTechnique.turbotFish,
-  HintTechnique.remotePair,
-  HintTechnique.simpleColoring,
   HintTechnique.xyWing,
+  HintTechnique.remotePair,
+  // Master — single-digit colouring, 3-cover fish, compound wings,
+  // finned/sashimi, quads. Simple Coloring leads the band: placed any later
+  // it is fully preempted by the single-digit techniques (Skyscraper /
+  // Turbot / X-Chain) that resolve the same colourable components, so it
+  // would never fire in generation at all.
+  HintTechnique.simpleColoring,
   HintTechnique.xyzWing,
   HintTechnique.wWing,
   HintTechnique.swordfish,
+  HintTechnique.jellyfish,
   HintTechnique.finnedXWing,
   HintTechnique.sashimiXWing,
+  HintTechnique.nakedQuad,
+  HintTechnique.hiddenQuad,
+  // Challenger — uniqueness, chains, ALS
   HintTechnique.bugPlusOne,
-  HintTechnique.xyChain,
-  HintTechnique.jellyfish,
   HintTechnique.uniqueRectangleType1,
   HintTechnique.uniqueRectangleType2,
   HintTechnique.uniqueRectangleType3,
   HintTechnique.uniqueRectangleType4,
-  // Promoted from hint-only into generation (2026-07-22): the three
-  // fixed-shape ALS/chain techniques a solver can fairly be asked to spot —
-  // X-Chain (single-digit AIC, the Skyscraper/Turbot line extended),
-  // WXYZ-Wing (the 4-candidate XYZ-Wing), ALS-XZ (the generalized W-Wing).
-  // All Expert. The open-ended AIC/grouped/ALS-chain and the rare
-  // Firework/Sue de Coq stay hint-only. Placed last so they only ever
-  // decide a puzzle the earlier, more recognizable techniques can't.
   HintTechnique.xChain,
   HintTechnique.wxyzWing,
   HintTechnique.alsXZ,
+  // Deliberately last (user request): the solver only reaches for XY-Chain
+  // when nothing more local applies. Its tier still comes from
+  // [techniqueDifficulty], not this position.
+  HintTechnique.xyChain,
 ];
 
 /// The outcome of [HumanSolver.solve]: how far a human-technique-only

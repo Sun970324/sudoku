@@ -57,10 +57,14 @@ class SudokuGenerator {
   /// so it can never become a hard failure (see [_generateByTechnique]).
   static const _expertMaxGivens = 23;
 
+  // Bronze/Silver are the only given-count tiers: their bands (singles /
+  // hidden-single + intersections) don't separate cleanly by technique, so
+  // digging to a target given-count and stopping is both faster (one pass,
+  // always succeeds) and a truer knob for them. Every tier from Gold up is
+  // technique-gated.
   static const _givenCountBasedTiers = {
     Difficulty.beginner,
     Difficulty.easy,
-    Difficulty.medium,
   };
 
   final BoardGenerator _boardGenerator;
