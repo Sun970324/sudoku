@@ -408,6 +408,31 @@ void main() {
     );
   });
 
+  test('Sue de Coq: crossing intro, line ALS, box ALS, then the conclusion',
+      () {
+    final hint = engine.findSueDeCoq(
+        _emptyBoard(),
+        candidatesFrom({
+          [0, 0]: {1, 2, 3},
+          [0, 1]: {2, 3, 4},
+          [0, 5]: {1, 4},
+          [0, 7]: {1, 5},
+          [1, 2]: {2, 3},
+          [2, 1]: {3, 9},
+        }))!;
+
+    final steps = buildHintSteps(hint, l10n);
+
+    _expectWellFormedSteps(hint, steps);
+    expect(steps, hasLength(4));
+    // The walkthrough grows one cluster at a time: crossing → +line ALS →
+    // +box ALS.
+    expect(steps[0].cells, hint.primaryCells);
+    expect(steps[1].cells, containsAll(hint.colorGroupA));
+    expect(steps[2].cells, containsAll(hint.colorGroupB));
+    expect(steps[1].text, contains('거의-잠긴'));
+  });
+
   test('grouped chain names every cell of a group node and uses the '
       '"one of the cluster" strong wording', () {
     // A real grouped X-Chain shape, hand-built so the group's position in

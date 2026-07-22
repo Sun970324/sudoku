@@ -1679,6 +1679,59 @@ void main() {
     });
   });
 
+  group('findSueDeCoq', () {
+    // Box 0 ∩ row 0: crossing cells (0,0){1,2,3} + (0,1){2,3,4} hold
+    // V={1,2,3,4}; the line ALS is the bivalue (0,5){1,4}, the box ALS the
+    // bivalue (1,2){2,3} — disjoint digits, V exactly absorbed. So 1/4 are
+    // locked to the line side and 2/3 to the box side: (0,7) loses 1 and
+    // (2,1) loses 3.
+    final fixture = {
+      [0, 0]: {1, 2, 3},
+      [0, 1]: {2, 3, 4},
+      [0, 5]: {1, 4},
+      [0, 7]: {1, 5},
+      [1, 2]: {2, 3},
+      [2, 1]: {3, 9},
+    };
+
+    test('crossing cells + line ALS + box ALS lock every digit and eliminate '
+        'outside the clusters', () {
+      final hint = engine.findSueDeCoq(_emptyBoard(), candidatesFrom(fixture));
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.sueDeCoq);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryCells,
+          {const HintCell(0, 0), const HintCell(0, 1)});
+      expect(hint.colorGroupA, {const HintCell(0, 5)});
+      expect(hint.colorGroupB, {const HintCell(1, 2)});
+      expect(hint.eliminations, contains(const HintElimination(0, 7, 1)));
+      expect(hint.eliminations, contains(const HintElimination(2, 1, 3)));
+      expect(hint.highlightedRows, {0});
+      expect(hint.highlightedBoxes, {0});
+    });
+
+    test('stays silent when the line and box sets share a digit (the classic '
+        'disjoint condition)', () {
+      // Same shape but the box ALS is {1,3} — digit 1 overlaps the line
+      // ALS's {1,4}, so the disjoint counting argument no longer holds.
+      final hint = engine.findSueDeCoq(
+          _emptyBoard(),
+          candidatesFrom({
+            [0, 0]: {1, 2, 3},
+            [0, 1]: {2, 3, 4},
+            [0, 5]: {1, 4},
+            [1, 2]: {1, 3},
+          }));
+
+      expect(hint, isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findSueDeCoq(_emptyBoard()), isNull);
+    });
+  });
+
   group('findAlsAic', () {
     test('the general ALS chain also solves the ALS-XZ case', () {
       final hint = engine.findAlsAic(
@@ -1739,6 +1792,7 @@ void main() {
           engine.findGroupedAic(puzzle),
           engine.findWXYZWing(puzzle),
           engine.findAlsXZ(puzzle),
+          engine.findSueDeCoq(puzzle),
           engine.findAlsAic(puzzle),
         ]) {
           if (hint == null) continue;
@@ -1767,6 +1821,7 @@ void main() {
         HintTechnique.groupedAic,
         HintTechnique.wxyzWing,
         HintTechnique.alsXZ,
+        HintTechnique.sueDeCoq,
         HintTechnique.alsAic,
       ]) {
         expect(found[technique] ?? 0, greaterThan(0),
@@ -2281,6 +2336,7 @@ void main() {
         HintTechnique.groupedAic,
         HintTechnique.wxyzWing,
         HintTechnique.alsXZ,
+        HintTechnique.sueDeCoq,
         HintTechnique.alsAic,
       ]);
     });

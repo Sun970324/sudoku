@@ -100,6 +100,10 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.uniqueRectangleType3 ||
     HintTechnique.uniqueRectangleType4 =>
       _urSteps(hint, l10n),
+    HintTechnique.sueDeCoq =>
+      hint.colorGroupA.isEmpty || hint.colorGroupB.isEmpty
+          ? const []
+          : _sueDeCoqSteps(hint, l10n),
   };
 }
 
@@ -752,6 +756,49 @@ List<HintStep> _fishSteps(Hint hint, AppLocalizations l10n) {
       cells: hint.primaryCells,
       rows: hint.highlightedRows,
       cols: hint.highlightedCols,
+      showConclusion: true,
+    ),
+  ];
+}
+
+/// Sue de Coq: the crowded crossing cells, then each Almost Locked Set —
+/// line side, box side — then the full explanation with the eliminations.
+List<HintStep> _sueDeCoqSteps(Hint hint, AppLocalizations l10n) {
+  String cellsDesc(Set<HintCell> cells) =>
+      cells.map((c) => _cellDesc(c, l10n)).join('·');
+  final units = (
+    rows: hint.highlightedRows,
+    cols: hint.highlightedCols,
+    boxes: hint.highlightedBoxes,
+  );
+  return [
+    HintStep(
+      text: l10n.hintStepSueDeCoqIntro(cellsDesc(hint.primaryCells)),
+      cells: hint.primaryCells,
+      rows: units.rows,
+      cols: units.cols,
+      boxes: units.boxes,
+    ),
+    HintStep(
+      text: l10n.hintStepSueDeCoqLine(cellsDesc(hint.colorGroupA)),
+      cells: {...hint.primaryCells, ...hint.colorGroupA},
+      rows: units.rows,
+      cols: units.cols,
+      boxes: units.boxes,
+    ),
+    HintStep(
+      text: l10n.hintStepSueDeCoqBox(cellsDesc(hint.colorGroupB)),
+      cells: {...hint.primaryCells, ...hint.colorGroupA, ...hint.colorGroupB},
+      rows: units.rows,
+      cols: units.cols,
+      boxes: units.boxes,
+    ),
+    HintStep(
+      text: hint.explanation,
+      cells: {...hint.primaryCells, ...hint.colorGroupA, ...hint.colorGroupB},
+      rows: units.rows,
+      cols: units.cols,
+      boxes: units.boxes,
       showConclusion: true,
     ),
   ];

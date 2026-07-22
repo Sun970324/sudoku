@@ -1076,6 +1076,12 @@ abstract class AppLocalizations {
   /// **'ALS-XZ'**
   String get techniqueAlsXZ;
 
+  /// No description provided for @techniqueSueDeCoq.
+  ///
+  /// In en, this message translates to:
+  /// **'Sue de Coq'**
+  String get techniqueSueDeCoq;
+
   /// No description provided for @techniqueAlsAic.
   ///
   /// In en, this message translates to:
@@ -1283,6 +1289,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The alternating inference chain {chainDesc} uses Almost Locked Sets as links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.'**
   String explanationAlsAic(String chainDesc);
+
+  /// No description provided for @explanationSueDeCoq.
+  ///
+  /// In en, this message translates to:
+  /// **'The crossing cells {cells} interlock exactly with an Almost Locked Set on their line and one in their box. Every involved digit ({digits}) must land inside these three clusters, so matching candidates outside them can be removed.'**
+  String explanationSueDeCoq(String cells, String digits);
+
+  /// No description provided for @hintStepSueDeCoqIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Where the box meets the line, {cells} are crowded — at least two more candidate kinds than cells.'**
+  String hintStepSueDeCoqIntro(String cells);
+
+  /// No description provided for @hintStepSueDeCoqLine.
+  ///
+  /// In en, this message translates to:
+  /// **'On the same line, {cells} form an Almost Locked Set — one more candidate kind than cells. On this line those digits fit only here or in the crossing cells.'**
+  String hintStepSueDeCoqLine(String cells);
+
+  /// No description provided for @hintStepSueDeCoqBox.
+  ///
+  /// In en, this message translates to:
+  /// **'The same goes for {cells} in the box — its digits fit only there or in the crossing cells. Every digit\'s place is forced to add up exactly.'**
+  String hintStepSueDeCoqBox(String cells);
 
   /// No description provided for @explanationXChain.
   ///

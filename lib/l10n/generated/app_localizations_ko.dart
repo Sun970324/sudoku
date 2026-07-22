@@ -524,6 +524,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get techniqueAlsXZ => 'ALS-XZ';
 
   @override
+  String get techniqueSueDeCoq => '수 드 코크';
+
+  @override
   String get techniqueAlsAic => 'ALS 사슬';
 
   @override
@@ -690,6 +693,26 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String explanationAlsAic(String chainDesc) {
     return '$chainDesc 교차 추론 사슬은 거의-잠긴 집합(ALS)을 고리로 사용해요. 양 끝 중 적어도 하나는 참이 되므로, 양 끝과 모두 충돌하는 후보를 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationSueDeCoq(String cells, String digits) {
+    return '교차 칸 $cells의 후보가 같은 줄의 거의-잠긴 집합, 같은 상자의 거의-잠긴 집합과 정확히 맞물려요. 관련 숫자($digits)가 전부 이 세 무리 안에서만 자리를 잡을 수 있으므로, 무리 밖의 같은 숫자 후보는 지울 수 있습니다.';
+  }
+
+  @override
+  String hintStepSueDeCoqIntro(String cells) {
+    return '상자와 줄이 만나는 $cells에 후보가 잔뜩 몰려 있어요 — 칸 수보다 두 종류 이상 많아요.';
+  }
+
+  @override
+  String hintStepSueDeCoqLine(String cells) {
+    return '같은 줄의 $cells는 후보 종류가 칸 수보다 딱 하나 많은 거의-잠긴 집합이에요. 이 숫자들은 줄에서 여기 아니면 교차 칸에만 들어갈 수 있어요.';
+  }
+
+  @override
+  String hintStepSueDeCoqBox(String cells) {
+    return '같은 상자의 $cells도 마찬가지예요 — 상자 쪽 숫자들도 여기 아니면 교차 칸뿐이에요. 숫자마다 자리가 꼭 맞아떨어집니다.';
   }
 
   @override

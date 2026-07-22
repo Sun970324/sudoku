@@ -14,6 +14,7 @@ part 'hint_engine/wings.dart';
 part 'hint_engine/unique_rectangles.dart';
 part 'hint_engine/uniqueness.dart';
 part 'hint_engine/aic.dart';
+part 'hint_engine/als.dart';
 
 enum _UnitType { row, col, box }
 
@@ -259,6 +260,8 @@ class HintEngine {
           findGroupedAic(board, resolved, resolvedL10n),
         HintTechnique.wxyzWing => findWXYZWing(board, resolved, resolvedL10n),
         HintTechnique.alsXZ => findAlsXZ(board, resolved, resolvedL10n),
+        HintTechnique.sueDeCoq =>
+          findSueDeCoq(board, resolved, resolvedL10n),
         HintTechnique.alsAic => findAlsAic(board, resolved, resolvedL10n),
         HintTechnique.xyChain => findXYChain(board, resolved, resolvedL10n),
       };

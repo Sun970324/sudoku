@@ -541,6 +541,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueAlsXZ => 'ALS-XZ';
 
   @override
+  String get techniqueSueDeCoq => 'Sue de Coq';
+
+  @override
   String get techniqueAlsAic => 'ALS Chain';
 
   @override
@@ -707,6 +710,26 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String explanationAlsAic(String chainDesc) {
     return 'The alternating inference chain $chainDesc uses Almost Locked Sets as links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.';
+  }
+
+  @override
+  String explanationSueDeCoq(String cells, String digits) {
+    return 'The crossing cells $cells interlock exactly with an Almost Locked Set on their line and one in their box. Every involved digit ($digits) must land inside these three clusters, so matching candidates outside them can be removed.';
+  }
+
+  @override
+  String hintStepSueDeCoqIntro(String cells) {
+    return 'Where the box meets the line, $cells are crowded — at least two more candidate kinds than cells.';
+  }
+
+  @override
+  String hintStepSueDeCoqLine(String cells) {
+    return 'On the same line, $cells form an Almost Locked Set — one more candidate kind than cells. On this line those digits fit only here or in the crossing cells.';
+  }
+
+  @override
+  String hintStepSueDeCoqBox(String cells) {
+    return 'The same goes for $cells in the box — its digits fit only there or in the crossing cells. Every digit\'s place is forced to add up exactly.';
   }
 
   @override

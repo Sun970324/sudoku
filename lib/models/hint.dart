@@ -44,6 +44,7 @@ enum HintTechnique {
   groupedAic,
   wxyzWing,
   alsXZ,
+  sueDeCoq,
   alsAic,
 }
 
@@ -135,6 +136,8 @@ extension HintTechniqueInfo on HintTechnique {
         return l10n.techniqueWXYZWing;
       case HintTechnique.alsXZ:
         return l10n.techniqueAlsXZ;
+      case HintTechnique.sueDeCoq:
+        return l10n.techniqueSueDeCoq;
       case HintTechnique.alsAic:
         return l10n.techniqueAlsAic;
     }
@@ -195,6 +198,7 @@ const hintTechniqueOrder = [
   // source.
   HintTechnique.wxyzWing,
   HintTechnique.alsXZ,
+  HintTechnique.sueDeCoq,
   HintTechnique.alsAic,
 ];
 
@@ -254,6 +258,7 @@ const techniqueDifficulty = <HintTechnique, Difficulty>{
   HintTechnique.groupedAic: Difficulty.expert,
   HintTechnique.wxyzWing: Difficulty.expert,
   HintTechnique.alsXZ: Difficulty.expert,
+  HintTechnique.sueDeCoq: Difficulty.expert,
   HintTechnique.alsAic: Difficulty.expert,
 };
 

@@ -228,6 +228,7 @@
   "techniqueGroupedAic": "Grouped AIC",
   "techniqueWXYZWing": "WXYZ-Wing",
   "techniqueAlsXZ": "ALS-XZ",
+  "techniqueSueDeCoq": "Sue de Coq",
   "techniqueAlsAic": "ALS Chain",
 
   "unitRow": "Row {row}",
@@ -475,6 +476,31 @@
   "@explanationAlsAic": {
     "placeholders": {
       "chainDesc": {"type": "String"}
+    }
+  },
+  "explanationSueDeCoq": "The crossing cells {cells} interlock exactly with an Almost Locked Set on their line and one in their box. Every involved digit ({digits}) must land inside these three clusters, so matching candidates outside them can be removed.",
+  "@explanationSueDeCoq": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "digits": {"type": "String"}
+    }
+  },
+  "hintStepSueDeCoqIntro": "Where the box meets the line, {cells} are crowded — at least two more candidate kinds than cells.",
+  "@hintStepSueDeCoqIntro": {
+    "placeholders": {
+      "cells": {"type": "String"}
+    }
+  },
+  "hintStepSueDeCoqLine": "On the same line, {cells} form an Almost Locked Set — one more candidate kind than cells. On this line those digits fit only here or in the crossing cells.",
+  "@hintStepSueDeCoqLine": {
+    "placeholders": {
+      "cells": {"type": "String"}
+    }
+  },
+  "hintStepSueDeCoqBox": "The same goes for {cells} in the box — its digits fit only there or in the crossing cells. Every digit's place is forced to add up exactly.",
+  "@hintStepSueDeCoqBox": {
+    "placeholders": {
+      "cells": {"type": "String"}
     }
   },
   "explanationXChain": "Digit {digit} forms an alternating chain along {chainDesc}. Because the strong links guarantee at least one end is {digit}, any cell that sees both ends can have {digit} removed.",
