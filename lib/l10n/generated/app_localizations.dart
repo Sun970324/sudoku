@@ -1305,20 +1305,23 @@ abstract class AppLocalizations {
   /// No description provided for @hintStepSueDeCoqIntro.
   ///
   /// In en, this message translates to:
-  /// **'Where the box meets the line, {cells} are crowded — at least two more candidate kinds than cells.'**
-  String hintStepSueDeCoqIntro(String cells);
+  /// **'Where the box meets the line, {cells} — {cellCount} cells — together hold {digits}: {digitCount} candidate kinds, at least two more than cells.'**
+  String hintStepSueDeCoqIntro(
+      String cells, int cellCount, String digits, int digitCount);
 
   /// No description provided for @hintStepSueDeCoqLine.
   ///
   /// In en, this message translates to:
-  /// **'On the same line, {cells} form an Almost Locked Set — one more candidate kind than cells. On this line those digits fit only here or in the crossing cells.'**
-  String hintStepSueDeCoqLine(String cells);
+  /// **'On the same line, {cells} ({cellCount} cells) hold only {digits} — {digitCount} kinds, exactly one more than cells: an Almost Locked Set. On this line those digits fit only here or in the crossing cells.'**
+  String hintStepSueDeCoqLine(
+      String cells, int cellCount, String digits, int digitCount);
 
   /// No description provided for @hintStepSueDeCoqBox.
   ///
   /// In en, this message translates to:
-  /// **'The same goes for {cells} in the box — its digits fit only there or in the crossing cells. Every digit\'s place is forced to add up exactly.'**
-  String hintStepSueDeCoqBox(String cells);
+  /// **'In the box, {cells} ({cellCount} cells) likewise hold only {digits} — {digitCount} kinds, another Almost Locked Set. Its digits fit only there or in the crossing cells; every digit\'s place adds up exactly.'**
+  String hintStepSueDeCoqBox(
+      String cells, int cellCount, String digits, int digitCount);
 
   /// No description provided for @explanationTripleFirework.
   ///
@@ -1329,19 +1332,19 @@ abstract class AppLocalizations {
   /// No description provided for @hintStepFireworkRow.
   ///
   /// In en, this message translates to:
-  /// **'On this row, candidates for {digits} sit inside the box or in {cell} — nowhere else.'**
-  String hintStepFireworkRow(String digits, String cell);
+  /// **'On this row, candidates for {digits} sit only in {cells} — outside the box that is just {cell}.'**
+  String hintStepFireworkRow(String digits, String cells, String cell);
 
   /// No description provided for @hintStepFireworkCol.
   ///
   /// In en, this message translates to:
-  /// **'Same on this column — {digits} fit only inside the box or in {cell}.'**
-  String hintStepFireworkCol(String digits, String cell);
+  /// **'Same on this column — {digits} sit only in {cells}, with {cell} the lone escape from the box.'**
+  String hintStepFireworkCol(String digits, String cells, String cell);
 
   /// No description provided for @hintStepFireworkTriple.
   ///
   /// In en, this message translates to:
-  /// **'The box holds each digit once, so the three cells {cells} must take exactly {digits}, one apiece.'**
+  /// **'The box can hold {digits} only once each, so for all three to fit, the three cells {cells} must take exactly one apiece.'**
   String hintStepFireworkTriple(String cells, String digits);
 
   /// No description provided for @explanationXChain.

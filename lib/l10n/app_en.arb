@@ -486,22 +486,31 @@
       "digits": {"type": "String"}
     }
   },
-  "hintStepSueDeCoqIntro": "Where the box meets the line, {cells} are crowded — at least two more candidate kinds than cells.",
+  "hintStepSueDeCoqIntro": "Where the box meets the line, {cells} — {cellCount} cells — together hold {digits}: {digitCount} candidate kinds, at least two more than cells.",
   "@hintStepSueDeCoqIntro": {
     "placeholders": {
-      "cells": {"type": "String"}
+      "cells": {"type": "String"},
+      "cellCount": {"type": "int"},
+      "digits": {"type": "String"},
+      "digitCount": {"type": "int"}
     }
   },
-  "hintStepSueDeCoqLine": "On the same line, {cells} form an Almost Locked Set — one more candidate kind than cells. On this line those digits fit only here or in the crossing cells.",
+  "hintStepSueDeCoqLine": "On the same line, {cells} ({cellCount} cells) hold only {digits} — {digitCount} kinds, exactly one more than cells: an Almost Locked Set. On this line those digits fit only here or in the crossing cells.",
   "@hintStepSueDeCoqLine": {
     "placeholders": {
-      "cells": {"type": "String"}
+      "cells": {"type": "String"},
+      "cellCount": {"type": "int"},
+      "digits": {"type": "String"},
+      "digitCount": {"type": "int"}
     }
   },
-  "hintStepSueDeCoqBox": "The same goes for {cells} in the box — its digits fit only there or in the crossing cells. Every digit's place is forced to add up exactly.",
+  "hintStepSueDeCoqBox": "In the box, {cells} ({cellCount} cells) likewise hold only {digits} — {digitCount} kinds, another Almost Locked Set. Its digits fit only there or in the crossing cells; every digit's place adds up exactly.",
   "@hintStepSueDeCoqBox": {
     "placeholders": {
-      "cells": {"type": "String"}
+      "cells": {"type": "String"},
+      "cellCount": {"type": "int"},
+      "digits": {"type": "String"},
+      "digitCount": {"type": "int"}
     }
   },
   "explanationTripleFirework": "Digits {digits} form fireworks: on both the row and the column they escape the box by just one wing cell each. The box can hold each digit only once, so the cross cell and the two wings ({cells}) must take exactly these three digits — removing their other candidates, and these digits from the box's non-cross cells.",
@@ -511,21 +520,23 @@
       "cells": {"type": "String"}
     }
   },
-  "hintStepFireworkRow": "On this row, candidates for {digits} sit inside the box or in {cell} — nowhere else.",
+  "hintStepFireworkRow": "On this row, candidates for {digits} sit only in {cells} — outside the box that is just {cell}.",
   "@hintStepFireworkRow": {
     "placeholders": {
       "digits": {"type": "String"},
+      "cells": {"type": "String"},
       "cell": {"type": "String"}
     }
   },
-  "hintStepFireworkCol": "Same on this column — {digits} fit only inside the box or in {cell}.",
+  "hintStepFireworkCol": "Same on this column — {digits} sit only in {cells}, with {cell} the lone escape from the box.",
   "@hintStepFireworkCol": {
     "placeholders": {
       "digits": {"type": "String"},
+      "cells": {"type": "String"},
       "cell": {"type": "String"}
     }
   },
-  "hintStepFireworkTriple": "The box holds each digit once, so the three cells {cells} must take exactly {digits}, one apiece.",
+  "hintStepFireworkTriple": "The box can hold {digits} only once each, so for all three to fit, the three cells {cells} must take exactly one apiece.",
   "@hintStepFireworkTriple": {
     "placeholders": {
       "cells": {"type": "String"},

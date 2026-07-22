@@ -119,6 +119,7 @@ extension HintEngineSueDeCoq on HintEngine {
                   highlightedCols: isRow ? const {} : {lineIdx},
                   highlightedBoxes: {box},
                   eliminations: eliminations,
+                  digitGroups: [v, a.digits, b.digits],
                 );
               }
             }

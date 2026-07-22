@@ -704,18 +704,21 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String hintStepSueDeCoqIntro(String cells) {
-    return '상자와 줄이 만나는 $cells에 후보가 잔뜩 몰려 있어요 — 칸 수보다 두 종류 이상 많아요.';
+  String hintStepSueDeCoqIntro(
+      String cells, int cellCount, String digits, int digitCount) {
+    return '상자와 줄이 만나는 $cells, 이 $cellCount칸의 후보를 모으면 $digits — 총 $digitCount종류예요. 칸 수보다 후보 종류가 두 개 이상 많죠.';
   }
 
   @override
-  String hintStepSueDeCoqLine(String cells) {
-    return '같은 줄의 $cells는 후보 종류가 칸 수보다 딱 하나 많은 거의-잠긴 집합이에요. 이 숫자들은 줄에서 여기 아니면 교차 칸에만 들어갈 수 있어요.';
+  String hintStepSueDeCoqLine(
+      String cells, int cellCount, String digits, int digitCount) {
+    return '같은 줄의 $cells은 $cellCount칸에 후보가 $digits — $digitCount종류로 딱 하나 많은 거의-잠긴 집합이에요. 이 숫자들은 줄에서 여기 아니면 교차 칸에만 들어갈 수 있어요.';
   }
 
   @override
-  String hintStepSueDeCoqBox(String cells) {
-    return '같은 상자의 $cells도 마찬가지예요 — 상자 쪽 숫자들도 여기 아니면 교차 칸뿐이에요. 숫자마다 자리가 꼭 맞아떨어집니다.';
+  String hintStepSueDeCoqBox(
+      String cells, int cellCount, String digits, int digitCount) {
+    return '같은 상자의 $cells도 $cellCount칸에 후보가 $digits — $digitCount종류뿐인 거의-잠긴 집합이에요. 이 숫자들도 상자에서 여기 아니면 교차 칸뿐 — 숫자마다 자리가 꼭 맞아떨어집니다.';
   }
 
   @override
@@ -724,18 +727,18 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String hintStepFireworkRow(String digits, String cell) {
-    return '이 행에서 $digits의 후보는 상자 안 아니면 $cell 한 칸뿐이에요.';
+  String hintStepFireworkRow(String digits, String cells, String cell) {
+    return '이 행에서 $digits의 후보는 $cells에만 있어요 — 상자 밖으로는 $cell 한 칸뿐이죠.';
   }
 
   @override
-  String hintStepFireworkCol(String digits, String cell) {
-    return '이 열에서도 마찬가지 — $digits는 상자 안 아니면 $cell뿐이에요.';
+  String hintStepFireworkCol(String digits, String cells, String cell) {
+    return '이 열에서도 $digits의 후보는 $cells에만 있어요 — 상자 밖은 $cell 하나예요.';
   }
 
   @override
   String hintStepFireworkTriple(String cells, String digits) {
-    return '상자는 각 숫자를 한 번만 담아요. 그래서 $cells 세 칸이 정확히 $digits를 하나씩 나눠 갖게 돼요.';
+    return '상자에 $digits 세 숫자는 각각 한 번씩만 들어갈 수 있어요. 전부 들어가려면 $cells 세 칸이 정확히 하나씩 나눠 가져야 해요.';
   }
 
   @override

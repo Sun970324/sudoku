@@ -100,10 +100,11 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.uniqueRectangleType3 ||
     HintTechnique.uniqueRectangleType4 =>
       _urSteps(hint, l10n),
-    HintTechnique.sueDeCoq =>
-      hint.colorGroupA.isEmpty || hint.colorGroupB.isEmpty
-          ? const []
-          : _sueDeCoqSteps(hint, l10n),
+    HintTechnique.sueDeCoq => hint.colorGroupA.isEmpty ||
+            hint.colorGroupB.isEmpty ||
+            hint.digitGroups.length != 3
+        ? const []
+        : _sueDeCoqSteps(hint, l10n),
     HintTechnique.tripleFirework => hint.highlightedRows.isEmpty ||
             hint.highlightedCols.isEmpty ||
             hint.primaryCells.length != 3
@@ -757,31 +758,41 @@ List<HintStep> _fishSteps(Hint hint, AppLocalizations l10n) {
 
 /// Sue de Coq: the crowded crossing cells, then each Almost Locked Set —
 /// line side, box side — then the full explanation with the eliminations.
+/// Every step spells out the concrete count argument (these N cells hold
+/// exactly these digits — M kinds) with the per-cluster digit sets the
+/// finder stored in [Hint.digitGroups] as `[V, D, E]`.
 List<HintStep> _sueDeCoqSteps(Hint hint, AppLocalizations l10n) {
   String cellsDesc(Set<HintCell> cells) =>
       cells.map((c) => _cellDesc(c, l10n)).join('·');
+  String digitsDesc(Set<int> digits) =>
+      (digits.toList()..sort()).join('·');
   final units = (
     rows: hint.highlightedRows,
     cols: hint.highlightedCols,
     boxes: hint.highlightedBoxes,
   );
+  final v = hint.digitGroups[0], d = hint.digitGroups[1];
+  final e = hint.digitGroups[2];
   return [
     HintStep(
-      text: l10n.hintStepSueDeCoqIntro(cellsDesc(hint.primaryCells)),
+      text: l10n.hintStepSueDeCoqIntro(cellsDesc(hint.primaryCells),
+          hint.primaryCells.length, digitsDesc(v), v.length),
       cells: hint.primaryCells,
       rows: units.rows,
       cols: units.cols,
       boxes: units.boxes,
     ),
     HintStep(
-      text: l10n.hintStepSueDeCoqLine(cellsDesc(hint.colorGroupA)),
+      text: l10n.hintStepSueDeCoqLine(cellsDesc(hint.colorGroupA),
+          hint.colorGroupA.length, digitsDesc(d), d.length),
       cells: {...hint.primaryCells, ...hint.colorGroupA},
       rows: units.rows,
       cols: units.cols,
       boxes: units.boxes,
     ),
     HintStep(
-      text: l10n.hintStepSueDeCoqBox(cellsDesc(hint.colorGroupB)),
+      text: l10n.hintStepSueDeCoqBox(cellsDesc(hint.colorGroupB),
+          hint.colorGroupB.length, digitsDesc(e), e.length),
       cells: {...hint.primaryCells, ...hint.colorGroupA, ...hint.colorGroupB},
       rows: units.rows,
       cols: units.cols,
@@ -812,15 +823,27 @@ List<HintStep> _fireworkSteps(Hint hint, AppLocalizations l10n) {
   final tripleDesc = [cross, rowWing, colWing]
       .map((cell) => _cellDesc(cell, l10n))
       .join('·');
+  // The full spray, enumerated in line order so the player can check the
+  // confinement cell by cell.
+  final rowSpray = (hint.colorGroupA.toList()
+        ..sort((a, b) => a.col - b.col))
+      .map((cell) => _cellDesc(cell, l10n))
+      .join('·');
+  final colSpray = (hint.colorGroupB.toList()
+        ..sort((a, b) => a.row - b.row))
+      .map((cell) => _cellDesc(cell, l10n))
+      .join('·');
   return [
     HintStep(
-      text: l10n.hintStepFireworkRow(digits, _cellDesc(rowWing, l10n)),
+      text: l10n.hintStepFireworkRow(
+          digits, rowSpray, _cellDesc(rowWing, l10n)),
       cells: hint.colorGroupA,
       rows: {r},
       boxes: hint.highlightedBoxes,
     ),
     HintStep(
-      text: l10n.hintStepFireworkCol(digits, _cellDesc(colWing, l10n)),
+      text: l10n.hintStepFireworkCol(
+          digits, colSpray, _cellDesc(colWing, l10n)),
       cells: {...hint.colorGroupA, ...hint.colorGroupB},
       rows: {r},
       cols: {c},

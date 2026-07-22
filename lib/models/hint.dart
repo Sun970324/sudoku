@@ -443,6 +443,7 @@ class Hint {
     this.eliminations = const [],
     this.chainLinks = const [],
     this.elimSources,
+    this.digitGroups = const [],
   });
 
   final HintTechnique technique;
@@ -522,6 +523,13 @@ class Hint {
   /// draw none at all (its eliminations land ON the source cells themselves).
   final List<HintChainNode>? elimSources;
 
+  /// Per-cluster candidate sets, for techniques whose walkthrough counts
+  /// candidates against cells. Sue de Coq (the only user today) stores
+  /// `[V, D, E]` — the crossing cells' union, the line ALS's digits, and
+  /// the box ALS's digits, matching [primaryCells]/[colorGroupA]/
+  /// [colorGroupB] in that order. Empty for every other technique.
+  final List<Set<int>> digitGroups;
+
   /// The hint's conclusion in standard sudoku notation, shown alongside the
   /// full [explanation] at the last stage of the progressive reveal: a reveal
   /// is `r4c7 = 5`, an elimination is `r4c258<>7` per digit (cells sharing a
@@ -587,5 +595,6 @@ class Hint {
         eliminations: eliminations,
         chainLinks: chainLinks,
         elimSources: elimSources,
+        digitGroups: digitGroups,
       );
 }
