@@ -512,6 +512,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get techniqueAic => 'AIC 사슬';
 
   @override
+  String get techniqueGroupedXChain => '그룹 X-사슬';
+
+  @override
+  String get techniqueGroupedAic => '그룹 AIC 사슬';
+
+  @override
   String unitRow(int row) {
     return '$row행';
   }
@@ -650,6 +656,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String explanationWWing(
       String cell1, String cell2, int a, int b, String unitDesc) {
     return '$cell1과(와) $cell2은(는) 후보가 똑같이 $a, $b 두 개뿐이고, $unitDesc에는 $b번이 들어갈 자리가 두 곳뿐인데 그 두 곳이 각각 두 칸을 하나씩 보고 있어요. 만약 두 칸이 모두 $b번이면 $unitDesc에 $b번이 들어갈 자리가 없어집니다. 따라서 둘 중 적어도 하나는 $a번이고, 두 칸을 모두 보는 칸에서는 $a번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationGroupedXChain(String chainDesc, int digit) {
+    return '숫자 $digit번이 $chainDesc를 따라 교대 사슬을 이뤄요. 이 사슬은 나란히 놓인 후보 몇 개를 하나의 묶음 고리로 사용해요. 강한 연결이 양 끝 중 하나는 반드시 $digit임을 보장하므로, 두 끝을 모두 보는 칸에서는 $digit번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
+  String explanationGroupedAic(String chainDesc) {
+    return '$chainDesc 교차 추론 사슬은 나란히 놓인 후보 몇 개를 하나의 묶음 고리로 사용해요. 양 끝 중 적어도 하나는 참이 되도록 강제하므로, 양 끝과 모두 충돌하는 후보를 지울 수 있습니다.';
   }
 
   @override
@@ -1085,6 +1101,16 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String hintStepAicStrongCell(int digit) {
     return '남은 후보 $digit번이 확정돼요. 이게 강한 연결이에요: 이 칸의 후보가 딱 두 개뿐이라, 하나를 지우면 나머지가 확정되거든요.';
+  }
+
+  @override
+  String hintStepAicStartGroup(String cells, int digit) {
+    return '$cells 묶음의 후보 $digit번에서 출발해요. 만약 이 묶음 어디에도 $digit번이 없다면 —';
+  }
+
+  @override
+  String hintStepAicStrongGroup(String cells, int digit) {
+    return '$cells 묶음 중 하나는 반드시 $digit번이 돼요. 이게 강한 연결이에요: 이 구역에서 $digit번이 들어갈 자리가 두 덩어리로만 나뉘어 있어서, 한쪽이 비면 다른 쪽이 채우거든요.';
   }
 
   @override

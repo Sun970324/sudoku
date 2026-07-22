@@ -29,6 +29,8 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.xWing,
     HintTechnique.xChain,
     HintTechnique.aic,
+    HintTechnique.groupedXChain,
+    HintTechnique.groupedAic,
   };
   if (chainTechniques.contains(hint.technique) && hint.chainLinks.isEmpty) {
     return const [];
@@ -38,7 +40,11 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.xyzWing => _xyzWingSteps(hint, l10n),
     HintTechnique.wWing => _wWingSteps(hint, l10n),
     HintTechnique.xyChain => _xyChainSteps(hint, l10n),
-    HintTechnique.xChain || HintTechnique.aic => _aicSteps(hint, l10n),
+    HintTechnique.xChain ||
+    HintTechnique.aic ||
+    HintTechnique.groupedXChain ||
+    HintTechnique.groupedAic =>
+      _aicSteps(hint, l10n),
     HintTechnique.remotePair => _remotePairSteps(hint, l10n),
     HintTechnique.skyscraper ||
     HintTechnique.twoStringKite ||
@@ -352,27 +358,37 @@ List<HintStep> _xyChainSteps(Hint hint, AppLocalizations l10n) {
 List<HintStep> _aicSteps(Hint hint, AppLocalizations l10n) {
   final links = hint.chainLinks;
 
-  String strongText(HintChainLink link) =>
-      link.from.cells.first == link.to.cells.first
-          ? l10n.hintStepAicStrongCell(link.to.digit)
-          : l10n.hintStepAicStrongUnit(
-              _cellDesc(link.to.cells.first, l10n), link.to.digit);
+  // A grouped node (several candidates acting as one link) is described by
+  // listing its cells, and gets the "one of the cluster" strong wording —
+  // the weak wording already reads correctly for every cell of a group.
+  String nodeDesc(HintChainNode node) =>
+      node.cells.map((c) => _cellDesc(c, l10n)).join('·');
+
+  String strongText(HintChainLink link) {
+    if (link.to.cells.length > 1) {
+      return l10n.hintStepAicStrongGroup(nodeDesc(link.to), link.to.digit);
+    }
+    return link.from.cells.first == link.to.cells.first
+        ? l10n.hintStepAicStrongCell(link.to.digit)
+        : l10n.hintStepAicStrongUnit(nodeDesc(link.to), link.to.digit);
+  }
 
   String weakText(HintChainLink link) =>
-      link.from.cells.first == link.to.cells.first
+      link.from.cells.length == 1 &&
+              link.from.cells.first == link.to.cells.first
           ? l10n.hintStepAicWeakCell(link.to.digit)
-          : l10n.hintStepAicWeakUnit(
-              _cellDesc(link.to.cells.first, l10n), link.to.digit);
+          : l10n.hintStepAicWeakUnit(nodeDesc(link.to), link.to.digit);
 
   final start = links.first.from;
   final shown = <HintCell>{...start.cells, ...links.first.to.cells};
 
+  final startText = start.cells.length > 1
+      ? l10n.hintStepAicStartGroup(nodeDesc(start), start.digit)
+      : l10n.hintStepAicStart(nodeDesc(start), start.digit);
   final steps = <HintStep>[
     // "Suppose the start is not its digit" + the first strong link firing.
     HintStep(
-      text:
-          '${l10n.hintStepAicStart(_cellDesc(start.cells.first, l10n), start.digit)} '
-          '${strongText(links.first)}',
+      text: '$startText ${strongText(links.first)}',
       cells: {...shown},
       visibleLinks: 1,
       emphasisNodes: [links.first.to],
@@ -394,9 +410,9 @@ List<HintStep> _aicSteps(Hint hint, AppLocalizations l10n) {
   final ends = [links.first.from, links.last.to];
   steps.add(HintStep(
     text: l10n.hintStepAicEitherEnds(
-      _cellDesc(ends[0].cells.first, l10n),
+      nodeDesc(ends[0]),
       ends[0].digit,
-      _cellDesc(ends[1].cells.first, l10n),
+      nodeDesc(ends[1]),
       ends[1].digit,
     ),
     cells: hint.primaryCells,

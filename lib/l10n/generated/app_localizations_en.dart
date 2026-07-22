@@ -529,6 +529,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueAic => 'AIC';
 
   @override
+  String get techniqueGroupedXChain => 'Grouped X-Chain';
+
+  @override
+  String get techniqueGroupedAic => 'Grouped AIC';
+
+  @override
   String unitRow(int row) {
     return 'Row $row';
   }
@@ -667,6 +673,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String explanationWWing(
       String cell1, String cell2, int a, int b, String unitDesc) {
     return '$cell1 and $cell2 both hold only $a and $b, and $unitDesc has just two places for $b — one seeing each of them. If both were $b, that unit would have nowhere left for $b. So at least one of them is $a, and any cell seeing both can have $a removed.';
+  }
+
+  @override
+  String explanationGroupedXChain(String chainDesc, int digit) {
+    return 'Digit $digit forms an alternating chain along $chainDesc, using clusters of neighbouring candidates as single links. The strong links still guarantee at least one end is $digit, so any cell that sees both ends can have $digit removed.';
+  }
+
+  @override
+  String explanationGroupedAic(String chainDesc) {
+    return 'The alternating inference chain $chainDesc uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.';
   }
 
   @override
@@ -1110,6 +1126,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String hintStepAicStrongCell(int digit) {
     return 'then the remaining $digit is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.';
+  }
+
+  @override
+  String hintStepAicStartGroup(String cells, int digit) {
+    return 'Start at the $digit candidates clustered in $cells, and suppose NONE of them is $digit —';
+  }
+
+  @override
+  String hintStepAicStrongGroup(String cells, int digit) {
+    return 'then one of $cells must be $digit. This is a STRONG link: the unit\'s ${digit}s split into just these two clusters, so if one is empty the other must hold it.';
   }
 
   @override

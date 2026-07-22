@@ -1052,6 +1052,18 @@ abstract class AppLocalizations {
   /// **'AIC'**
   String get techniqueAic;
 
+  /// No description provided for @techniqueGroupedXChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped X-Chain'**
+  String get techniqueGroupedXChain;
+
+  /// No description provided for @techniqueGroupedAic.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped AIC'**
+  String get techniqueGroupedAic;
+
   /// No description provided for @unitRow.
   ///
   /// In en, this message translates to:
@@ -1223,6 +1235,18 @@ abstract class AppLocalizations {
   /// **'{cell1} and {cell2} both hold only {a} and {b}, and {unitDesc} has just two places for {b} — one seeing each of them. If both were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}, and any cell seeing both can have {a} removed.'**
   String explanationWWing(
       String cell1, String cell2, int a, int b, String unitDesc);
+
+  /// No description provided for @explanationGroupedXChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms an alternating chain along {chainDesc}, using clusters of neighbouring candidates as single links. The strong links still guarantee at least one end is {digit}, so any cell that sees both ends can have {digit} removed.'**
+  String explanationGroupedXChain(String chainDesc, int digit);
+
+  /// No description provided for @explanationGroupedAic.
+  ///
+  /// In en, this message translates to:
+  /// **'The alternating inference chain {chainDesc} uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.'**
+  String explanationGroupedAic(String chainDesc);
 
   /// No description provided for @explanationXChain.
   ///
@@ -1923,6 +1947,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'then the remaining {digit} is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.'**
   String hintStepAicStrongCell(int digit);
+
+  /// No description provided for @hintStepAicStartGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Start at the {digit} candidates clustered in {cells}, and suppose NONE of them is {digit} —'**
+  String hintStepAicStartGroup(String cells, int digit);
+
+  /// No description provided for @hintStepAicStrongGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'then one of {cells} must be {digit}. This is a STRONG link: the unit\'s {digit}s split into just these two clusters, so if one is empty the other must hold it.'**
+  String hintStepAicStrongGroup(String cells, int digit);
 
   /// No description provided for @hintStepAicWeakUnit.
   ///

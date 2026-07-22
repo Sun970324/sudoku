@@ -40,6 +40,8 @@ enum HintTechnique {
   uniqueRectangleType4,
   xChain,
   aic,
+  groupedXChain,
+  groupedAic,
 }
 
 extension HintTechniqueInfo on HintTechnique {
@@ -122,6 +124,10 @@ extension HintTechniqueInfo on HintTechnique {
         return l10n.techniqueXChain;
       case HintTechnique.aic:
         return l10n.techniqueAic;
+      case HintTechnique.groupedXChain:
+        return l10n.techniqueGroupedXChain;
+      case HintTechnique.groupedAic:
+        return l10n.techniqueGroupedAic;
     }
   }
 }
@@ -168,8 +174,12 @@ const hintTechniqueOrder = [
   HintTechnique.uniqueRectangleType4,
   // AIC core is deliberately LAST: it subsumes the Turbot family / XY-Chain,
   // so it must only surface chains those earlier techniques don't report.
+  // The grouped variants sit after even that — they only report chains that
+  // need a group node, i.e. ones the plain finders can't see.
   HintTechnique.xChain,
   HintTechnique.aic,
+  HintTechnique.groupedXChain,
+  HintTechnique.groupedAic,
 ];
 
 /// Which [Difficulty] tier each technique belongs to, per generator.md's
@@ -224,6 +234,8 @@ const techniqueDifficulty = <HintTechnique, Difficulty>{
   // they'd sit if they ever joined generation.
   HintTechnique.xChain: Difficulty.expert,
   HintTechnique.aic: Difficulty.expert,
+  HintTechnique.groupedXChain: Difficulty.expert,
+  HintTechnique.groupedAic: Difficulty.expert,
 };
 
 enum HintType { reveal, eliminate }

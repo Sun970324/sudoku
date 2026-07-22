@@ -206,6 +206,10 @@ class HumanSolver {
         HintTechnique.xChain =>
           _hintEngine.findXChain(board, candidates),
         HintTechnique.aic => _hintEngine.findAic(board, candidates),
+        HintTechnique.groupedXChain =>
+          _hintEngine.findGroupedXChain(board, candidates),
+        HintTechnique.groupedAic =>
+          _hintEngine.findGroupedAic(board, candidates),
       };
       if (hint != null) return hint;
     }

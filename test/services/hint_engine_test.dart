@@ -1494,6 +1494,95 @@ void main() {
     });
   });
 
+  group('findGroupedXChain', () {
+    // Digit 1: row 0 splits into box chunks {r0c0} | {r0c6,r0c7}, so the
+    // pair acts as one grouped node; col 0 and row 8 are plain conjugate
+    // pairs. One valid chain is {r0c6,r0c7} = r0c0 ~ r8c0 = r8c7, whose
+    // ends both see the 1 in (1,7).
+    final groupedFixture = {
+      [0, 0]: {1},
+      [0, 6]: {1},
+      [0, 7]: {1},
+      [8, 0]: {1},
+      [8, 7]: {1},
+      [1, 7]: {1, 7},
+    };
+
+    test('a chain through a two-cell group node eliminates the digit from a '
+        'cell seeing both ends', () {
+      final hint =
+          engine.findGroupedXChain(_emptyBoard(), candidatesFrom(groupedFixture));
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.groupedXChain);
+      expect(hint.type, HintType.eliminate);
+      expect(hint.primaryDigits, {1});
+      expect(hint.eliminations, isNotEmpty);
+      expect(hint.eliminations.every((e) => e.digit == 1), isTrue);
+      // Alternating links, and at least one node really is a multi-cell
+      // group — that's what distinguishes this from a plain X-Chain. (The
+      // fixture admits several valid chains, so no fixed cells asserted.)
+      expect(hint.chainLinks, isNotEmpty);
+      for (var i = 0; i + 1 < hint.chainLinks.length; i++) {
+        expect(hint.chainLinks[i].strong,
+            isNot(hint.chainLinks[i + 1].strong));
+      }
+      expect(hint.chainLinks.first.from.digit,
+          hint.chainLinks.last.to.digit);
+      expect(
+          hint.chainLinks.any(
+              (l) => l.from.cells.length > 1 || l.to.cells.length > 1),
+          isTrue);
+    });
+
+    test('stays silent when only a plain chain exists — that is the plain '
+        'finders\' job', () {
+      // The findXChain fixture: all segments hold a single candidate, so no
+      // group node can form and no group-bearing chain exists.
+      final candidates = candidatesFrom({
+        [0, 0]: {4},
+        [0, 3]: {4},
+        [8, 0]: {4},
+        [8, 5]: {4},
+        [1, 5]: {4, 7},
+      });
+
+      expect(engine.findXChain(_emptyBoard(), candidates), isNotNull);
+      expect(engine.findGroupedXChain(_emptyBoard(), candidates), isNull);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findGroupedXChain(_emptyBoard()), isNull);
+    });
+  });
+
+  group('findGroupedAic', () {
+    test('the general grouped chain also solves the single-digit case', () {
+      final hint = engine.findGroupedAic(
+          _emptyBoard(),
+          candidatesFrom({
+            [0, 0]: {1},
+            [0, 6]: {1},
+            [0, 7]: {1},
+            [8, 0]: {1},
+            [8, 7]: {1},
+            [1, 7]: {1, 7},
+          }));
+
+      expect(hint, isNotNull);
+      expect(hint!.technique, HintTechnique.groupedAic);
+      expect(hint.eliminations, isNotEmpty);
+      expect(
+          hint.chainLinks.any(
+              (l) => l.from.cells.length > 1 || l.to.cells.length > 1),
+          isTrue);
+    });
+
+    test('returns null on an empty board', () {
+      expect(engine.findGroupedAic(_emptyBoard()), isNull);
+    });
+  });
+
   // Hand-built fixtures can only show that a technique fires where it should.
   // They cannot show it stays silent everywhere it shouldn't — and an
   // over-permissive elimination rule doesn't throw, it quietly removes digits
@@ -1528,6 +1617,8 @@ void main() {
           engine.findRemotePair(puzzle),
           engine.findXChain(puzzle),
           engine.findAic(puzzle),
+          engine.findGroupedXChain(puzzle),
+          engine.findGroupedAic(puzzle),
         ]) {
           if (hint == null) continue;
           found[hint.technique] = (found[hint.technique] ?? 0) + 1;
@@ -1551,6 +1642,8 @@ void main() {
         HintTechnique.remotePair,
         HintTechnique.xChain,
         HintTechnique.aic,
+        HintTechnique.groupedXChain,
+        HintTechnique.groupedAic,
       ]) {
         expect(found[technique] ?? 0, greaterThan(0),
             reason: '$technique never fired across 150 real boards — either '
@@ -2060,6 +2153,8 @@ void main() {
         HintTechnique.uniqueRectangleType4,
         HintTechnique.xChain,
         HintTechnique.aic,
+        HintTechnique.groupedXChain,
+        HintTechnique.groupedAic,
       ]);
     });
 

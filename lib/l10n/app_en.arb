@@ -224,6 +224,8 @@
   "techniqueUniqueRectangleType4": "Unique Rectangle Type 4",
   "techniqueXChain": "X-Chain",
   "techniqueAic": "AIC",
+  "techniqueGroupedXChain": "Grouped X-Chain",
+  "techniqueGroupedAic": "Grouped AIC",
 
   "unitRow": "Row {row}",
   "@unitRow": {
@@ -439,6 +441,19 @@
       "a": {"type": "int"},
       "b": {"type": "int"},
       "unitDesc": {"type": "String"}
+    }
+  },
+  "explanationGroupedXChain": "Digit {digit} forms an alternating chain along {chainDesc}, using clusters of neighbouring candidates as single links. The strong links still guarantee at least one end is {digit}, so any cell that sees both ends can have {digit} removed.",
+  "@explanationGroupedXChain": {
+    "placeholders": {
+      "chainDesc": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "explanationGroupedAic": "The alternating inference chain {chainDesc} uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.",
+  "@explanationGroupedAic": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
     }
   },
   "explanationXChain": "Digit {digit} forms an alternating chain along {chainDesc}. Because the strong links guarantee at least one end is {digit}, any cell that sees both ends can have {digit} removed.",
@@ -810,6 +825,20 @@
   "hintStepAicStrongCell": "then the remaining {digit} is forced. This is a STRONG link: the cell has only two candidates, so ruling one out confirms the other.",
   "@hintStepAicStrongCell": {
     "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStartGroup": "Start at the {digit} candidates clustered in {cells}, and suppose NONE of them is {digit} —",
+  "@hintStepAicStartGroup": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStrongGroup": "then one of {cells} must be {digit}. This is a STRONG link: the unit's {digit}s split into just these two clusters, so if one is empty the other must hold it.",
+  "@hintStepAicStrongGroup": {
+    "placeholders": {
+      "cells": {"type": "String"},
       "digit": {"type": "int"}
     }
   },

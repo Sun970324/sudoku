@@ -407,4 +407,48 @@ void main() {
       reason: 'an AIC crossing a bivalue cell must explain the in-cell link',
     );
   });
+
+  test('grouped chain names every cell of a group node and uses the '
+      '"one of the cluster" strong wording', () {
+    // A real grouped X-Chain shape, hand-built so the group's position in
+    // the walkthrough is deterministic: r8c7 = r8c0 ~ r0c0 = {r0c6,r0c7},
+    // the final strong link landing on the two-cell group.
+    const group = HintChainNode([HintCell(0, 6), HintCell(0, 7)], 1);
+    final hint = Hint(
+      technique: HintTechnique.groupedXChain,
+      type: HintType.eliminate,
+      explanation: '',
+      primaryCells: {
+        const HintCell(8, 7), const HintCell(8, 0), const HintCell(0, 0), //
+        const HintCell(0, 6), const HintCell(0, 7),
+      },
+      primaryDigits: const {1},
+      eliminations: const [HintElimination(1, 7, 1)],
+      chainLinks: [
+        HintChainLink(
+            from: HintChainNode.single(const HintCell(8, 7), 1),
+            to: HintChainNode.single(const HintCell(8, 0), 1),
+            strong: true),
+        HintChainLink(
+            from: HintChainNode.single(const HintCell(8, 0), 1),
+            to: HintChainNode.single(const HintCell(0, 0), 1),
+            strong: false),
+        HintChainLink(
+            from: HintChainNode.single(const HintCell(0, 0), 1),
+            to: group,
+            strong: true),
+      ],
+    );
+
+    final steps = buildHintSteps(hint, l10n);
+
+    _expectWellFormedSteps(hint, steps);
+    expect(steps, hasLength(4));
+    // The hop landing on the group must say "one of the cluster", not the
+    // single-cell "this cell must be" wording, and must list both cells.
+    expect(steps[1].text, contains('묶음 중 하나'));
+    expect(steps[1].text, contains('1행7열·1행8열'));
+    // The either-ends step names the group end by all of its cells too.
+    expect(steps[2].text, contains('1행7열·1행8열'));
+  });
 }

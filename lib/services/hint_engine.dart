@@ -253,6 +253,10 @@ class HintEngine {
           findUniqueRectangleType4(board, resolved, resolvedL10n),
         HintTechnique.xChain => findXChain(board, resolved, resolvedL10n),
         HintTechnique.aic => findAic(board, resolved, resolvedL10n),
+        HintTechnique.groupedXChain =>
+          findGroupedXChain(board, resolved, resolvedL10n),
+        HintTechnique.groupedAic =>
+          findGroupedAic(board, resolved, resolvedL10n),
         HintTechnique.xyChain => findXYChain(board, resolved, resolvedL10n),
       };
       if (hint != null) return hint;

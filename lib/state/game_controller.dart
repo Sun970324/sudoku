@@ -694,7 +694,9 @@ class GameController extends ChangeNotifier {
     final resolvedL10n = l10n ?? lookupAppLocalizations(const Locale('ko'));
     var hint = await _runSearch(() =>
         engine.findAic(board, notes, resolvedL10n) ??
-        engine.findXChain(board, notes, resolvedL10n));
+        engine.findXChain(board, notes, resolvedL10n) ??
+        engine.findGroupedAic(board, notes, resolvedL10n) ??
+        engine.findGroupedXChain(board, notes, resolvedL10n));
     if (hint != null && !_agreesWithSolution(hint)) hint = null;
     _setActiveHint(hint, _stepsFor(hint, l10n));
     notifyListeners();
