@@ -39,7 +39,7 @@ class NumberPadWidget extends StatelessWidget {
                   Text(
                     '$remaining',
                     style: TextStyle(
-                        fontFamily: AppTheme.systemFontFamily,
+                        fontFamily: AppTheme.boardFontFamily,
                         fontSize: 11,
                         // fontWeight: FontWeight.w600,
                         color: BoardColors.remainingCountText(isDark)),
@@ -157,7 +157,7 @@ class _NumberPadButtonState extends State<_NumberPadButton> {
           child: Text(
             '${widget.number}',
             style: TextStyle(
-              fontFamily: AppTheme.systemFontFamily,
+              fontFamily: AppTheme.boardFontFamily,
               fontSize: 24,
               fontWeight: FontWeight.w600,
               color: textColor,

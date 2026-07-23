@@ -9,15 +9,32 @@ import 'theme_pack.dart';
 /// body, label, and titles — renders in it. Display/headline/title styles pin
 /// `fontWeight: normal` for the "game voice" look and because the family has
 /// no bold cut (a synthesized faux-bold would distort it).
+/// User-selectable font for the Sudoku board & number-pad digits.
+/// [classic] is the clean system typeface (the long-standing default);
+/// [dot] switches digits to the pixel Mulmaru face for a retro board.
+enum BoardFont { classic, dot }
+
 class AppTheme {
   AppTheme._();
 
   static const _mulmaru = 'Mulmaru';
 
+  /// Active board-digit font, driven by [SettingsController] and read by the
+  /// board cell / number-pad widgets via [boardFontFamily]. Static (mirrors
+  /// [ThemePack.active]) so a settings change repaints through the app-wide
+  /// rebuild without threading the value through every board widget.
+  static BoardFont activeBoardFont = BoardFont.classic;
+
+  /// Font family for board & number-pad digits: the [systemFontFamily] for
+  /// [BoardFont.classic], Mulmaru for [BoardFont.dot].
+  static String get boardFontFamily =>
+      activeBoardFont == BoardFont.dot ? _mulmaru : systemFontFamily;
+
   /// The platform's default UI font. The Sudoku board and number pad use this
-  /// to opt out of the app-wide [_mulmaru] font — digits read cleaner in the
-  /// system typeface. A concrete family is required (not null) so it overrides
-  /// the inherited Mulmaru during [TextStyle] merge instead of falling back to it.
+  /// (via [boardFontFamily]) to opt out of the app-wide [_mulmaru] font —
+  /// digits read cleaner in the system typeface. A concrete family is required
+  /// (not null) so it overrides the inherited Mulmaru during [TextStyle] merge
+  /// instead of falling back to it.
   static String get systemFontFamily {
     switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:

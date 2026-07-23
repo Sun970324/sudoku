@@ -13,6 +13,7 @@ import '../services/storage_service.dart';
 import '../state/premium_controller.dart';
 import '../state/settings_controller.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_theme.dart';
 import '../theme/theme_pack.dart';
 import 'pixel_icon.dart';
 
@@ -79,6 +80,16 @@ void showSettingsSheet(
                 AnimatedBuilder(
                   animation: PremiumController.instance,
                   builder: (context, _) => _ThemePackRow(settings: settings),
+                ),
+                const SizedBox(height: 16),
+                _SectionTitle(l10n.boardFontSectionTitle),
+                _ChoiceRow<BoardFont>(
+                  value: settings.boardFont,
+                  onChanged: settings.setBoardFont,
+                  options: [
+                    (BoardFont.classic, l10n.boardFontClassic),
+                    (BoardFont.dot, l10n.boardFontDot),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 _SectionTitle(l10n.languageSectionTitle),

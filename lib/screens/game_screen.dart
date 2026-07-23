@@ -206,6 +206,14 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
         // until it too is done, which restarts the timer).
         _maybeShowQuickInputTutorial();
       },
+      onSkip: () {
+        // Skipping the game tutorial skips the whole onboarding — mark the
+        // chained quick-input tip seen too so it never pops up on its own,
+        // and restart the frozen clock (no quick-input step will do it).
+        _storage.saveSeenGameTutorial(true);
+        _storage.saveSeenQuickInputTutorial(true);
+        if (mounted) _startTimer();
+      },
     );
   }
 
@@ -727,6 +735,17 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     // cell(s) remain visible while the explanation is showing.
     final isDark = AppPalette.isDark(context);
     final accent = BoardColors.hintArrow(isDark);
+    // Cap the sheet so its top never rises above the board — a long
+    // explanation/step scrolls inside the sheet (see the Flexible below)
+    // instead of growing up over the grid and hiding the amber highlight.
+    // Measured from the live grid; falls back to half-screen if unmeasurable.
+    final screenHeight = MediaQuery.of(context).size.height;
+    final gridBox = _gridKey.currentContext?.findRenderObject() as RenderBox?;
+    final gridBottom = gridBox != null
+        ? gridBox.localToGlobal(Offset.zero).dy + gridBox.size.height
+        : screenHeight * 0.5;
+    final maxSheetHeight =
+        (screenHeight - gridBottom - 8).clamp(180.0, screenHeight * 0.6);
     // Drives the step walkthrough's swipeable pager; the prev/next buttons
     // animate it too, so every path shares the PageView's snap physics and
     // lands in onPageChanged, the single place the controller is synced.
@@ -735,6 +754,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     showModalBottomSheet<void>(
       context: context,
       barrierColor: Colors.transparent,
+      // Only the explicit 닫기/적용 buttons dismiss the sheet — an accidental
+      // tap outside or a downward drag shouldn't close the walkthrough.
+      isDismissible: false,
+      enableDrag: false,
+      // Keep the sheet's top below the board (see maxSheetHeight above).
+      constraints: BoxConstraints(maxHeight: maxSheetHeight),
       // The card surface is drawn by the Container below, so the sheet frame
       // itself is transparent (no double background / default rounded chrome).
       backgroundColor: Colors.transparent,
@@ -809,6 +834,16 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                             ),
                           ],
                         ),
+                        // Everything between the header and the pinned action
+                        // buttons scrolls, so a long explanation/step stays
+                        // within the capped sheet instead of pushing its top
+                        // up over the board.
+                        Flexible(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
                         if (stage == 1 && hint.mainInfo != null) ...[
                           const SizedBox(height: 12),
                           Text(applyKoJosa(hint.mainInfo!)),
@@ -934,6 +969,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                             ),
                           ),
                         ],
+                              ],
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         Row(
                           children: [

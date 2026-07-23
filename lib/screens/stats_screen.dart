@@ -7,6 +7,7 @@ import '../services/percentile_estimator.dart';
 import '../services/storage_service.dart';
 import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
+import '../widgets/coach_mark.dart';
 import '../widgets/gradient_scaffold.dart';
 import '../widgets/pixel_back_button.dart';
 import '../widgets/pixel_icon.dart';
@@ -28,6 +29,13 @@ class _StatsScreenState extends State<StatsScreen>
     with SingleTickerProviderStateMixin {
   final StorageService _storage = StorageService();
   late Future<Stats> _statsFuture;
+
+  // Coach-mark anchors + one-shot guard for the first-entry stats tutorial.
+  final _calendarKey = GlobalKey();
+  final _recordsKey = GlobalKey();
+  final _codexKey = GlobalKey();
+  final _replayKey = GlobalKey();
+  bool _tutorialChecked = false;
 
   /// Drives the difficulty TabBar. There is deliberately no TabBarView —
   /// the screen stays one ListView (the daily calendar above must scroll
@@ -51,6 +59,53 @@ class _StatsScreenState extends State<StatsScreen>
     super.dispose();
   }
 
+  /// First-entry spotlight over the stats screen (calendar → per-difficulty
+  /// records → codex → replay). Scheduled from the FutureBuilder once stats
+  /// have loaded so every target is in the tree to be measured; guarded to a
+  /// single run and gated by the stored "seen" flag (reset via the settings
+  /// "replay tutorial" action).
+  void _maybeShowTutorial() {
+    if (_tutorialChecked) return;
+    _tutorialChecked = true;
+    // Let the layout settle before measuring the spotlight rects.
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      if (!mounted) return;
+      if (await _storage.loadSeenStatsTutorial()) return;
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      showCoachMark(
+        context,
+        steps: [
+          CoachMarkStep(
+            targetKey: _calendarKey,
+            title: l10n.tutorialStatsCalendarTitle,
+            body: l10n.tutorialStatsCalendarBody,
+            align: ContentAlign.bottom,
+          ),
+          CoachMarkStep(
+            targetKey: _recordsKey,
+            title: l10n.tutorialStatsRecordsTitle,
+            body: l10n.tutorialStatsRecordsBody,
+            align: ContentAlign.top,
+          ),
+          CoachMarkStep(
+            targetKey: _codexKey,
+            title: l10n.tutorialStatsCodexTitle,
+            body: l10n.tutorialStatsCodexBody,
+            align: ContentAlign.bottom,
+          ),
+          CoachMarkStep(
+            targetKey: _replayKey,
+            title: l10n.tutorialStatsReplayTitle,
+            body: l10n.tutorialStatsReplayBody,
+            align: ContentAlign.bottom,
+          ),
+        ],
+        onDone: () => _storage.saveSeenStatsTutorial(true),
+      );
+    });
+  }
+
   String _formatTime(int seconds) {
     final minutes = seconds ~/ 60;
     final secs = seconds % 60;
@@ -72,6 +127,7 @@ class _StatsScreenState extends State<StatsScreen>
         title: Text(l10n.statsTitle),
         actions: [
           IconButton(
+            key: _codexKey,
             icon: const Icon(PixelIcons.document),
             tooltip: l10n.codexTitle,
             onPressed: () => Navigator.push(
@@ -81,6 +137,7 @@ class _StatsScreenState extends State<StatsScreen>
             ),
           ),
           IconButton(
+            key: _replayKey,
             icon: const Icon(PixelIcons.play),
             tooltip: l10n.replayTitle,
             onPressed: () => Navigator.push(
@@ -97,6 +154,10 @@ class _StatsScreenState extends State<StatsScreen>
             return const Center(child: CircularProgressIndicator());
           }
           final stats = snapshot.data!;
+          // Targets exist now (calendar + tab bar are behind this hasData
+          // branch) — schedule the one-shot tutorial for the next frame.
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _maybeShowTutorial());
           // Non-scrolling, viewport-fitting layout: the calendar and the
           // difficulty card share the available height by flex, so the whole
           // screen adapts to any device instead of overflowing. The calendar's
@@ -109,10 +170,11 @@ class _StatsScreenState extends State<StatsScreen>
                 flex: 5,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: DailyCalendarCard(auth: widget.auth),
+                  child: DailyCalendarCard(key: _calendarKey, auth: widget.auth),
                 ),
               ),
               Padding(
+                key: _recordsKey,
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                 child: TabBar(
                   controller: _tabController,

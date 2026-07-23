@@ -117,6 +117,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get tutorialRaceProfileBody => '티어와 레이팅, 전적을 여기서 확인할 수 있어요.';
 
   @override
+  String get tutorialRaceTrendTitle => '레이팅 추이';
+
+  @override
+  String get tutorialRaceTrendBody => '랭크 대결을 치를수록 레이팅 변화가 그래프로 쌓여요.';
+
+  @override
   String get tutorialRaceFriendTitle => '친구와 대결';
 
   @override
@@ -313,6 +319,31 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get statsTitle => '기록';
+
+  @override
+  String get tutorialStatsCalendarTitle => '데일리 달력';
+
+  @override
+  String get tutorialStatsCalendarBody =>
+      '매일 오늘의 스도쿠를 풀면 달력에 도장이 찍혀요. 꾸준히 채워보세요.';
+
+  @override
+  String get tutorialStatsRecordsTitle => '난이도별 기록';
+
+  @override
+  String get tutorialStatsRecordsBody => '탭을 바꿔 난이도별 완료 수·평균·최고 기록을 확인할 수 있어요.';
+
+  @override
+  String get tutorialStatsCodexTitle => '기법 도감';
+
+  @override
+  String get tutorialStatsCodexBody => '지금까지 힌트로 만난 풀이 기법이 도감에 모여요.';
+
+  @override
+  String get tutorialStatsReplayTitle => '리플레이';
+
+  @override
+  String get tutorialStatsReplayBody => '지난 게임의 풀이 과정을 한 수씩 다시 볼 수 있어요.';
 
   @override
   String get dailyCalendarSignInHint => '로그인하면 데일리 스도쿠 기록이 표시됩니다.';
@@ -829,6 +860,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get ratingTrendTitle => '레이팅 추이';
+
+  @override
+  String get ratingTrendEmpty => '아직 랭크 기록이 없어요.\n랭크 대결로 내 실력을 확인해보세요.';
 
   @override
   String get linkAccountPrompt => '게스트 계정으로 로그인 중입니다. 계정을 연동하면 기록이 유지됩니다.';
@@ -1429,6 +1463,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get themePackSectionTitle => '테마 팩';
+
+  @override
+  String get boardFontSectionTitle => '보드 글꼴';
+
+  @override
+  String get boardFontClassic => '클래식';
+
+  @override
+  String get boardFontDot => '도트';
 
   @override
   String get themePackClassic => '클래식';

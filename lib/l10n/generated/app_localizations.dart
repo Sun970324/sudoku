@@ -308,6 +308,18 @@ abstract class AppLocalizations {
   /// **'Your tier, rating, and win-loss record show up here.'**
   String get tutorialRaceProfileBody;
 
+  /// No description provided for @tutorialRaceTrendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating trend'**
+  String get tutorialRaceTrendTitle;
+
+  /// No description provided for @tutorialRaceTrendBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating charts here as you play more ranked races.'**
+  String get tutorialRaceTrendBody;
+
   /// No description provided for @tutorialRaceFriendTitle.
   ///
   /// In en, this message translates to:
@@ -673,6 +685,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Stats'**
   String get statsTitle;
+
+  /// No description provided for @tutorialStatsCalendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily calendar'**
+  String get tutorialStatsCalendarTitle;
+
+  /// No description provided for @tutorialStatsCalendarBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve the daily Sudoku to stamp the calendar. Keep your streak going!'**
+  String get tutorialStatsCalendarBody;
+
+  /// No description provided for @tutorialStatsRecordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Records by difficulty'**
+  String get tutorialStatsRecordsTitle;
+
+  /// No description provided for @tutorialStatsRecordsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch tabs to see completions, average, and best times per difficulty.'**
+  String get tutorialStatsRecordsBody;
+
+  /// No description provided for @tutorialStatsCodexTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technique codex'**
+  String get tutorialStatsCodexTitle;
+
+  /// No description provided for @tutorialStatsCodexBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Solving techniques you\'ve met through hints collect here.'**
+  String get tutorialStatsCodexBody;
+
+  /// No description provided for @tutorialStatsReplayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get tutorialStatsReplayTitle;
+
+  /// No description provided for @tutorialStatsReplayBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch your past games move by move.'**
+  String get tutorialStatsReplayBody;
 
   /// No description provided for @dailyCalendarSignInHint.
   ///
@@ -1469,6 +1529,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rating Trend'**
   String get ratingTrendTitle;
+
+  /// No description provided for @ratingTrendEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No ranked games yet.\nPlay a ranked race to check your skill.'**
+  String get ratingTrendEmpty;
 
   /// No description provided for @linkAccountPrompt.
   ///
@@ -2425,6 +2491,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Theme Pack'**
   String get themePackSectionTitle;
+
+  /// No description provided for @boardFontSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Board Font'**
+  String get boardFontSectionTitle;
+
+  /// No description provided for @boardFontClassic.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic'**
+  String get boardFontClassic;
+
+  /// No description provided for @boardFontDot.
+  ///
+  /// In en, this message translates to:
+  /// **'Dot'**
+  String get boardFontDot;
 
   /// No description provided for @themePackClassic.
   ///

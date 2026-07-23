@@ -7,9 +7,11 @@ import '../../l10n/generated/app_localizations.dart';
 import '../../models/difficulty.dart';
 import '../../models/game_replay.dart';
 import '../../models/race.dart';
+import '../../models/rating_history.dart';
 import '../../models/tier.dart';
 import '../../models/user_profile.dart';
 import '../../services/generation/sudoku_generator.dart';
+import '../../services/profile_service.dart';
 import '../../services/puzzle_queue_manager.dart';
 import '../../services/race_service.dart';
 import '../../services/season_service.dart';
@@ -23,6 +25,7 @@ import '../../widgets/pixel_back_button.dart';
 import '../../widgets/pixel_icon.dart';
 import '../../widgets/pop_button.dart';
 import '../../widgets/pop_card.dart';
+import '../../widgets/rating_trend_chart.dart';
 import '../../widgets/season_banner.dart';
 import '../../widgets/sign_in_prompt.dart';
 import '../../widgets/tier_badge.dart';
@@ -53,12 +56,18 @@ class RaceLobbyScreen extends StatefulWidget {
 class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
   Future<List<RaceHistoryEntry>>? _historyFuture;
 
+  /// The rating-over-time series for the trend card. Fetched once per sign-in,
+  /// same lifecycle as [_historyFuture] — moved here from MyPage so the ranked
+  /// progress graph lives beside the racing entry points.
+  Future<List<RatingHistoryPoint>>? _ratingHistoryFuture;
+
   /// Local race replays keyed by race id — only races played on this device
   /// have one, so a history entry opens its move replay (premium) when present.
   Map<String, GameReplay> _raceReplays = {};
 
   // Coach-mark anchors + one-shot guard for the first-entry race tutorial.
   final _profileKey = GlobalKey();
+  final _trendKey = GlobalKey();
   final _friendKey = GlobalKey();
   final _rankedKey = GlobalKey();
   final _leaderboardKey = GlobalKey();
@@ -71,6 +80,7 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
     widget.auth.addListener(_onAuthChanged);
     if (widget.auth.isSignedIn) {
       _historyFuture = RaceService().fetchHistory();
+      _ratingHistoryFuture = ProfileService().fetchRatingHistory();
       _loadRaceReplays();
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowTutorial());
@@ -149,6 +159,7 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
   void _onAuthChanged() {
     if (widget.auth.isSignedIn && _historyFuture == null) {
       _historyFuture = RaceService().fetchHistory();
+      _ratingHistoryFuture = ProfileService().fetchRatingHistory();
       _loadRaceReplays();
     }
     if (mounted) setState(() {});
@@ -234,10 +245,19 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
             align: ContentAlign.bottom,
           ),
           CoachMarkStep(
+            targetKey: _trendKey,
+            title: l10n.tutorialRaceTrendTitle,
+            body: l10n.tutorialRaceTrendBody,
+            align: ContentAlign.bottom,
+          ),
+          CoachMarkStep(
             targetKey: _friendKey,
             title: l10n.tutorialRaceFriendTitle,
             body: l10n.tutorialRaceFriendBody,
-            align: ContentAlign.bottom,
+            // Above the button (like the ranked/leaderboard steps): the friend
+            // button sits low enough that a card below it runs off-screen,
+            // putting the skip/next buttons out of reach.
+            align: ContentAlign.top,
           ),
           CoachMarkStep(
             targetKey: _rankedKey,
@@ -409,6 +429,14 @@ class _RaceLobbyScreenState extends State<RaceLobbyScreen> {
                 const SizedBox(height: 16),
                 if (profile != null)
                   _ProfileCard(key: _profileKey, profile: profile),
+                if (profile != null) ...[
+                  const SizedBox(height: 16),
+                  _RatingTrendCard(
+                    key: _trendKey,
+                    future: _ratingHistoryFuture,
+                    color: profile.tier.color(AppPalette.isDark(context)),
+                  ),
+                ],
                 const SizedBox(height: 24),
                 PopButton(
                   key: _friendKey,
@@ -510,6 +538,84 @@ class _ProfileCard extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// Rating-over-time card (moved here from MyPage). Unlike MyPage's version,
+/// which vanished when there was no data, this always renders — an empty
+/// placeholder box invites the player into a ranked match.
+class _RatingTrendCard extends StatelessWidget {
+  const _RatingTrendCard(
+      {super.key, required this.future, required this.color});
+
+  final Future<List<RatingHistoryPoint>>? future;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return PopCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.ratingTrendTitle,
+              style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 12),
+          FutureBuilder<List<RatingHistoryPoint>>(
+            future: future,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  height: 140,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              final points = snapshot.data;
+              if (points == null || points.isEmpty) {
+                return _EmptyTrendBox(message: l10n.ratingTrendEmpty);
+              }
+              final values = <int>[
+                points.first.ratingBefore,
+                for (final p in points) p.rating,
+              ];
+              final dates = <DateTime?>[
+                null,
+                for (final p in points) p.finishedAt,
+              ];
+              return RatingTrendChart(
+                  values: values, dates: dates, color: color);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Placeholder shown in the trend card's chart slot before any ranked game.
+class _EmptyTrendBox extends StatelessWidget {
+  const _EmptyTrendBox({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final onVariant = Theme.of(context).colorScheme.onSurfaceVariant;
+    return Container(
+      height: 140,
+      width: double.infinity,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: onVariant.withValues(alpha: 0.25)),
+      ),
+      child: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 13, height: 1.5, color: onVariant),
       ),
     );
   }

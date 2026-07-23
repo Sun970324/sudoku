@@ -126,6 +126,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your tier, rating, and win-loss record show up here.';
 
   @override
+  String get tutorialRaceTrendTitle => 'Rating trend';
+
+  @override
+  String get tutorialRaceTrendBody =>
+      'Your rating charts here as you play more ranked races.';
+
+  @override
   String get tutorialRaceFriendTitle => 'Play a friend';
 
   @override
@@ -329,6 +336,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statsTitle => 'Stats';
+
+  @override
+  String get tutorialStatsCalendarTitle => 'Daily calendar';
+
+  @override
+  String get tutorialStatsCalendarBody =>
+      'Solve the daily Sudoku to stamp the calendar. Keep your streak going!';
+
+  @override
+  String get tutorialStatsRecordsTitle => 'Records by difficulty';
+
+  @override
+  String get tutorialStatsRecordsBody =>
+      'Switch tabs to see completions, average, and best times per difficulty.';
+
+  @override
+  String get tutorialStatsCodexTitle => 'Technique codex';
+
+  @override
+  String get tutorialStatsCodexBody =>
+      'Solving techniques you\'ve met through hints collect here.';
+
+  @override
+  String get tutorialStatsReplayTitle => 'Replay';
+
+  @override
+  String get tutorialStatsReplayBody => 'Watch your past games move by move.';
 
   @override
   String get dailyCalendarSignInHint =>
@@ -846,6 +880,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ratingTrendTitle => 'Rating Trend';
+
+  @override
+  String get ratingTrendEmpty =>
+      'No ranked games yet.\nPlay a ranked race to check your skill.';
 
   @override
   String get linkAccountPrompt =>
@@ -1461,6 +1499,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themePackSectionTitle => 'Theme Pack';
+
+  @override
+  String get boardFontSectionTitle => 'Board Font';
+
+  @override
+  String get boardFontClassic => 'Classic';
+
+  @override
+  String get boardFontDot => 'Dot';
 
   @override
   String get themePackClassic => 'Classic';

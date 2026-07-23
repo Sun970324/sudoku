@@ -32,18 +32,25 @@ class CoachMarkStep {
 /// Runs a spotlight walkthrough over real UI elements. Shared by every
 /// first-entry tutorial (home / game / race) so they look and behave the
 /// same. [onDone] fires once, whether the user finishes or skips — the
-/// caller uses it to persist the "seen" flag.
+/// caller uses it to persist the "seen" flag. [onSkip], when given, fires
+/// *instead of* [onDone] on skip, so a caller can distinguish "skipped" from
+/// "finished" (e.g. to also suppress a chained follow-up tutorial).
 void showCoachMark(
   BuildContext context, {
   required List<CoachMarkStep> steps,
   VoidCallback? onDone,
+  VoidCallback? onSkip,
 }) {
   final l10n = AppLocalizations.of(context)!;
   var done = false;
-  void finish() {
+  void finish({bool skipped = false}) {
     if (done) return;
     done = true;
-    onDone?.call();
+    if (skipped && onSkip != null) {
+      onSkip();
+    } else {
+      onDone?.call();
+    }
   }
 
   final targets = [
@@ -77,7 +84,7 @@ void showCoachMark(
     opacityShadow: 0.82,
     onFinish: finish,
     onSkip: () {
-      finish();
+      finish(skipped: true);
       return true;
     },
   ).show(context: context);

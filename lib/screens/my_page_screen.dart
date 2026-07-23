@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../l10n/generated/app_localizations.dart';
-import '../models/rating_history.dart';
 import '../models/season.dart';
 import '../models/tier.dart';
 import '../models/user_profile.dart';
-import '../services/profile_service.dart';
 import '../services/season_service.dart';
 import '../state/auth_controller.dart';
 import '../theme/app_palette.dart';
@@ -17,22 +15,16 @@ import '../widgets/pixel_icon.dart';
 import '../widgets/pop_button.dart';
 import '../widgets/sign_in_prompt.dart';
 import '../widgets/pop_card.dart';
-import '../widgets/rating_trend_chart.dart';
-import '../widgets/season_banner.dart';
 import '../widgets/tier_badge.dart';
 
 class MyPageScreen extends StatefulWidget {
   const MyPageScreen({
     super.key,
     required this.auth,
-    this.profileService,
     this.seasonService,
   });
 
   final AuthController auth;
-
-  /// Injectable for tests; defaults to a real [ProfileService].
-  final ProfileService? profileService;
 
   /// Injectable for tests; defaults to a real [SeasonService].
   final SeasonService? seasonService;
@@ -44,16 +36,10 @@ class MyPageScreen extends StatefulWidget {
 class _MyPageScreenState extends State<MyPageScreen> {
   final _usernameController = TextEditingController();
   bool _editingUsername = false;
-  late final ProfileService _profileService =
-      widget.profileService ?? ProfileService();
   late final SeasonService _seasonService =
       widget.seasonService ?? SeasonService();
 
-  /// Fetched once (not per auth-notify rebuild) — the rating trend only
-  /// changes between races, not while this screen is open.
-  Future<List<RatingHistoryPoint>>? _ratingHistory;
-
-  /// Fetched once, same as [_ratingHistory] — past-season standings only
+  /// Fetched once (not per auth-notify rebuild) — past-season standings only
   /// ever change at a season rollover.
   Future<List<SeasonStanding>>? _pastSeasons;
 
@@ -62,15 +48,11 @@ class _MyPageScreenState extends State<MyPageScreen> {
     super.initState();
     widget.auth.addListener(_onAuthChanged);
     if (widget.auth.isSignedIn) {
-      _ratingHistory = _profileService.fetchRatingHistory();
       _pastSeasons = _seasonService.fetchMyStandings();
     }
   }
 
   void _onAuthChanged() {
-    if (widget.auth.isSignedIn && _ratingHistory == null) {
-      _ratingHistory = _profileService.fetchRatingHistory();
-    }
     if (widget.auth.isSignedIn && _pastSeasons == null) {
       _pastSeasons = _seasonService.fetchMyStandings();
     }
@@ -104,17 +86,12 @@ class _MyPageScreenState extends State<MyPageScreen> {
                 ),
                 const SizedBox(height: 16),
               ],
-              if (profile != null) ...[
-                const SeasonBanner(),
-                const SizedBox(height: 16),
-              ],
               if (profile == null)
                 _SignInSection(auth: widget.auth)
               else
                 _ProfileSection(
                   auth: widget.auth,
                   profile: profile,
-                  ratingHistory: _ratingHistory,
                   pastSeasons: _pastSeasons,
                   editing: _editingUsername,
                   usernameController: _usernameController,
@@ -142,57 +119,10 @@ class _MyPageScreenState extends State<MyPageScreen> {
   }
 }
 
-/// Rating-over-time card, shown only once the caller has at least one
-/// ranked result. Prepends the pre-first-race baseline so the trend starts
-/// from where the player began. Silently absent while loading, on error, or
-/// with no ranked games — no empty-state clutter on the profile.
-class _RatingTrendCard extends StatelessWidget {
-  const _RatingTrendCard({required this.future, required this.color});
-
-  final Future<List<RatingHistoryPoint>>? future;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    if (future == null) return const SizedBox.shrink();
-    return FutureBuilder<List<RatingHistoryPoint>>(
-      future: future,
-      builder: (context, snapshot) {
-        final points = snapshot.data;
-        if (points == null || points.isEmpty) return const SizedBox.shrink();
-        final l10n = AppLocalizations.of(context)!;
-        final values = <int>[
-          points.first.ratingBefore,
-          for (final p in points) p.rating,
-        ];
-        final dates = <DateTime?>[
-          null,
-          for (final p in points) p.finishedAt,
-        ];
-        return Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: PopCard(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l10n.ratingTrendTitle,
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 12),
-                RatingTrendChart(values: values, dates: dates, color: color),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
 /// Archived past-season results — the season's recognition reward: each
 /// closed season's final tier and rank, on permanent display. Silently
 /// absent while loading, on error, or before any season has closed for
-/// this player (mirrors [_RatingTrendCard]).
+/// this player (mirrors [_PastSeasonsCard]'s own silent-until-ready pattern).
 class _PastSeasonsCard extends StatelessWidget {
   const _PastSeasonsCard({required this.future});
 
@@ -284,7 +214,6 @@ class _ProfileSection extends StatelessWidget {
   const _ProfileSection({
     required this.auth,
     required this.profile,
-    required this.ratingHistory,
     required this.pastSeasons,
     required this.editing,
     required this.usernameController,
@@ -295,7 +224,6 @@ class _ProfileSection extends StatelessWidget {
 
   final AuthController auth;
   final UserProfile profile;
-  final Future<List<RatingHistoryPoint>>? ratingHistory;
   final Future<List<SeasonStanding>>? pastSeasons;
   final bool editing;
   final TextEditingController usernameController;
@@ -339,7 +267,7 @@ class _ProfileSection extends StatelessWidget {
                       child: TextField(
                         controller: usernameController,
                         autofocus: true,
-                        maxLength: 20,
+                        maxLength: 12,
                       ),
                     ),
                     IconButton(
@@ -420,7 +348,6 @@ class _ProfileSection extends StatelessWidget {
             ],
           ),
         ),
-        _RatingTrendCard(future: ratingHistory, color: tierColor),
         _PastSeasonsCard(future: pastSeasons),
         const SizedBox(height: 16),
         PopButton(

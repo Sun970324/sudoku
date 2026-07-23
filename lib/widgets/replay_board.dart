@@ -85,7 +85,7 @@ class ReplayBoard extends StatelessWidget {
         child: Text(
           '$value',
           style: TextStyle(
-            fontFamily: AppTheme.systemFontFamily,
+            fontFamily: AppTheme.boardFontFamily,
             fontSize: 28,
             color: color,
             fontWeight: FontWeight.w500,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
+import '../theme/app_theme.dart';
 import '../theme/theme_pack.dart';
 import 'game_controller.dart';
 import 'premium_controller.dart';
@@ -19,6 +20,7 @@ class SettingsController extends ChangeNotifier {
   bool _wrongNoteWarningEnabled = true;
   bool _autoRemoveNotesEnabled = true;
   ThemePack _themePack = ThemePack.classic;
+  BoardFont _boardFont = BoardFont.classic;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -29,6 +31,7 @@ class SettingsController extends ChangeNotifier {
   bool get wrongNoteWarningEnabled => _wrongNoteWarningEnabled;
   bool get autoRemoveNotesEnabled => _autoRemoveNotesEnabled;
   ThemePack get themePack => _themePack;
+  BoardFont get boardFont => _boardFont;
 
   Future<void> load() async {
     _themeMode = await _storage.loadThemeMode();
@@ -55,6 +58,11 @@ class SettingsController extends ChangeNotifier {
         ? ThemePack.classic
         : pack;
     ThemePack.active = _themePack;
+    // Board digit font — unknown/absent name falls back to classic.
+    final fontName = await _storage.loadBoardFontName();
+    _boardFont = BoardFont.values
+        .firstWhere((f) => f.name == fontName, orElse: () => BoardFont.classic);
+    AppTheme.activeBoardFont = _boardFont;
     notifyListeners();
   }
 
@@ -64,6 +72,14 @@ class SettingsController extends ChangeNotifier {
     ThemePack.active = pack;
     notifyListeners();
     await _storage.saveThemePackName(pack.id.name);
+  }
+
+  Future<void> setBoardFont(BoardFont font) async {
+    if (font == _boardFont) return;
+    _boardFont = font;
+    AppTheme.activeBoardFont = font;
+    notifyListeners();
+    await _storage.saveBoardFontName(font.name);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {

@@ -127,7 +127,7 @@ class _SudokuPreviewBoardState extends State<SudokuPreviewBoard> {
                 child: Text(
                   '$value',
                   style: TextStyle(
-                    fontFamily: AppTheme.systemFontFamily,
+                    fontFamily: AppTheme.boardFontFamily,
                     fontSize: 28,
                     color: BoardColors.textFixed(isDark),
                     fontWeight: FontWeight.w500,

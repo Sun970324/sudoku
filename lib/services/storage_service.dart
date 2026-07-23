@@ -39,9 +39,11 @@ class StorageService {
   static const _seenHomeTutorialKey = 'seen_home_tutorial';
   static const _seenGameTutorialKey = 'seen_game_tutorial';
   static const _seenRaceTutorialKey = 'seen_race_tutorial';
+  static const _seenStatsTutorialKey = 'seen_stats_tutorial';
   static const _seenQuickInputTutorialKey = 'seen_quick_input_tutorial';
   static const _celebratedSeasonKey = 'celebrated_season_id';
   static const _themePackKey = 'theme_pack';
+  static const _boardFontKey = 'board_font';
   static const _techniqueCodexKey = 'technique_codex';
 
   Future<void> saveInProgressGame(GameSnapshot snapshot) async {
@@ -426,6 +428,16 @@ class StorageService {
     return prefs.getBool(_seenRaceTutorialKey) ?? false;
   }
 
+  Future<void> saveSeenStatsTutorial(bool seen) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_seenStatsTutorialKey, seen);
+  }
+
+  Future<bool> loadSeenStatsTutorial() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_seenStatsTutorialKey) ?? false;
+  }
+
   Future<void> saveSeenQuickInputTutorial(bool seen) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_seenQuickInputTutorialKey, seen);
@@ -461,6 +473,19 @@ class StorageService {
     return prefs.getString(_themePackKey);
   }
 
+  /// The board/number-pad digit font, stored by [BoardFont] enum name. Null
+  /// (never chosen) and unknown names both resolve to classic — see
+  /// SettingsController.load.
+  Future<void> saveBoardFontName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_boardFontKey, name);
+  }
+
+  Future<String?> loadBoardFontName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_boardFontKey);
+  }
+
   /// Clears all first-entry tutorial flags so they re-trigger on next visit —
   /// used by the "replay tutorial" action in the settings sheet.
   Future<void> resetTutorials() async {
@@ -468,6 +493,7 @@ class StorageService {
     await prefs.remove(_seenHomeTutorialKey);
     await prefs.remove(_seenGameTutorialKey);
     await prefs.remove(_seenRaceTutorialKey);
+    await prefs.remove(_seenStatsTutorialKey);
     await prefs.remove(_seenQuickInputTutorialKey);
   }
 
