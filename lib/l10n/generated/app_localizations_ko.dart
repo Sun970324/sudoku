@@ -12,6 +12,30 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appTitle => '스도쿠 리그';
 
   @override
+  String get offlineTitle => '인터넷 연결이 되지 않았습니다';
+
+  @override
+  String get offlineBody => '인터넷에 연결되어 있지 않아 이 기능을 사용할 수 없어요.';
+
+  @override
+  String get offlineAvailableTitle => '오프라인에서 할 수 있는 것';
+
+  @override
+  String get offlineAvailablePlay => '다양한 난이도의 스도쿠를 즐길 수 있어요';
+
+  @override
+  String get offlineAvailableResume => '진행 중인 게임을 이어서 풀 수 있어요';
+
+  @override
+  String get offlineAvailableStats => '기록과 통계를 확인할 수 있어요';
+
+  @override
+  String get offlineRetry => '다시 시도';
+
+  @override
+  String get offlineStillDisconnected => '아직 인터넷에 연결되지 않았어요';
+
+  @override
   String get homeButton => '홈으로';
 
   @override

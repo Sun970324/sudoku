@@ -11,28 +11,23 @@ import '../models/sudoku_puzzle.dart';
 import 'generation/technique_board_miner.dart';
 import 'storage_service.dart';
 
-/// Bundled starter boards (see tool/generate_technique_boards.dart) used to
-/// fill any technique still empty after [TechniqueQueueManager.take]'s lazy
-/// load — most notably the very first use, before any background mining has
-/// run.
+/// Optional bundled starter boards (see tool/generate_technique_boards.dart)
+/// used to fill any item still empty after a lazy load. Absent until the
+/// bundle is mined for a release — until then [take] falls back to live
+/// mining.
 const _assetPath = 'assets/data/technique_boards.json';
 
-/// Keeps up to [capacity] boards queued per technique for the "이 기법이
-/// 나오는 보드 풀기" feature (today the debug 힌트 데모; planned as a
-/// premium perk): every queued board makes its technique's own finder fire
-/// with a solution-sound conclusion. [take] pops a RANDOM queued board so
-/// repeat visits see different puzzles, then refills in the background on
-/// an [Isolate] via [mineTechniqueBoard] (mining is random-search, so rare
-/// techniques can take a while — the queue is the buffer). Persisted via
-/// [StorageService] so mined boards survive restarts.
-///
-/// BUG+1 is excluded ([supportedTechniques]): its precondition never
-/// arises on fresh candidates, so it can't be mined — how to demo it is an
-/// open question.
+/// Keeps up to [capacity] boards queued per [PracticeItem] for the
+/// technique-practice feature (today the debug 힌트 데모; planned as a
+/// premium perk): every queued board shows its item's technique in a
+/// ceiling-capped solve (see [boardShowsItem]). [take] pops a RANDOM queued
+/// board so repeat visits differ, then refills in the background on an
+/// [Isolate] via [mineTechniqueBoard]. Persisted via [StorageService] so
+/// mined boards survive restarts.
 class TechniqueQueueManager extends ChangeNotifier {
   TechniqueQueueManager({
     StorageService? storage,
-    Future<SudokuPuzzle?> Function(HintTechnique technique)? mineBoard,
+    Future<SudokuPuzzle?> Function(Set<HintTechnique> techniques)? mineBoard,
     Random? random,
   })  : _storage = storage ?? StorageService(),
         _mineBoard = mineBoard ?? _isolateMineBoard,
@@ -42,49 +37,51 @@ class TechniqueQueueManager extends ChangeNotifier {
 
   static const capacity = 3;
 
-  static final supportedTechniques = List<HintTechnique>.unmodifiable([
-    for (final t in hintTechniqueOrder)
-      if (t != HintTechnique.bugPlusOne) t,
-  ]);
+  /// The practice list the UI iterates.
+  static List<PracticeItem> get items => practiceItems;
 
   final StorageService _storage;
-  final Future<SudokuPuzzle?> Function(HintTechnique) _mineBoard;
+  final Future<SudokuPuzzle?> Function(Set<HintTechnique>) _mineBoard;
   final Random _random;
 
-  final Map<HintTechnique, List<SudokuPuzzle>> _queues = {
-    for (final t in supportedTechniques) t: <SudokuPuzzle>[],
+  final Map<String, List<SudokuPuzzle>> _queues = {
+    for (final item in practiceItems) item.id: <SudokuPuzzle>[],
   };
-
-  /// The bundled boards, kept around as a bottomless fallback so [take]
-  /// never comes back empty even if mining hasn't caught up.
-  final Map<HintTechnique, List<SudokuPuzzle>> _bundled = {};
-
-  final Set<HintTechnique> _pending = {};
+  final Map<String, List<SudokuPuzzle>> _bundled = {};
+  final Set<String> _pending = {};
   Future<void>? _activeProcessing;
   Future<void>? _loading;
 
-  int countFor(HintTechnique technique) => _queues[technique]?.length ?? 0;
+  int countFor(String itemId) => _queues[itemId]?.length ?? 0;
 
-  /// Pops a random queued board for [technique] (falling back to a random
-  /// bundled one on a miss) and schedules a background refill. Await-able
-  /// but fast: the only awaited work is the one-time lazy load.
-  Future<SudokuPuzzle?> take(HintTechnique technique) async {
-    if (!_queues.containsKey(technique)) return null; // unsupported (BUG+1)
+  static PracticeItem? _itemById(String id) {
+    for (final item in practiceItems) {
+      if (item.id == id) return item;
+    }
+    return null;
+  }
+
+  /// Pops a random queued board for [itemId] (falling back to a random
+  /// bundled one, then to live mining) and schedules a background refill.
+  Future<SudokuPuzzle?> take(String itemId) async {
+    final item = _itemById(itemId);
+    if (item == null) return null;
     await (_loading ??= _load());
-    // Read AFTER the load — _load replaces the per-technique lists, so a
-    // reference captured earlier would still point at the empty originals.
-    final queue = _queues[technique]!;
+    final queue = _queues[itemId]!;
     SudokuPuzzle? puzzle;
     if (queue.isNotEmpty) {
       puzzle = queue.removeAt(_random.nextInt(queue.length));
       unawaited(_persist());
     } else {
-      final bundled = _bundled[technique];
+      final bundled = _bundled[itemId];
       if (bundled != null && bundled.isNotEmpty) {
         puzzle = bundled[_random.nextInt(bundled.length)];
+      } else {
+        // No bundle yet — mine one on the spot (debug/first-run path).
+        puzzle = await _mineBoard(item.techniques);
       }
     }
-    _scheduleRefillIfNeeded(technique);
+    _scheduleRefillIfNeeded(itemId);
     notifyListeners();
     return puzzle;
   }
@@ -93,53 +90,51 @@ class TechniqueQueueManager extends ChangeNotifier {
     try {
       final loaded = await _storage.loadTechniqueQueue();
       for (final entry in loaded.entries) {
-        if (_queues.containsKey(entry.key)) {
-          _queues[entry.key] = entry.value;
-        }
+        if (_queues.containsKey(entry.key)) _queues[entry.key] = entry.value;
       }
     } catch (_) {
-      // Corrupt persisted state — start over from the bundle.
+      // Corrupt persisted state — start over from the (optional) bundle.
     }
     try {
       final raw = await rootBundle.loadString(_assetPath);
       final json = jsonDecode(raw) as Map<String, dynamic>;
-      for (final technique in supportedTechniques) {
-        final seeded = json[technique.name] as List<dynamic>?;
+      for (final item in practiceItems) {
+        final seeded = json[item.id] as List<dynamic>?;
         if (seeded == null) continue;
-        _bundled[technique] = seeded
+        _bundled[item.id] = seeded
             .map((p) => SudokuPuzzle.fromJson(p as Map<String, dynamic>))
             .toList();
-        if (_queues[technique]!.isEmpty) {
-          _queues[technique] = [..._bundled[technique]!];
+        if (_queues[item.id]!.isEmpty) {
+          _queues[item.id] = [..._bundled[item.id]!];
         }
       }
     } catch (_) {
-      // Asset missing/corrupt — take() falls back to mining-only refills.
+      // No bundle asset yet — take() live-mines instead.
     }
   }
 
-  void _scheduleRefillIfNeeded(HintTechnique technique) {
-    if ((_queues[technique]?.length ?? capacity) >= capacity) return;
-    if (!_pending.add(technique)) return;
+  void _scheduleRefillIfNeeded(String itemId) {
+    if ((_queues[itemId]?.length ?? capacity) >= capacity) return;
+    if (!_pending.add(itemId)) return;
     _activeProcessing ??=
         _processPending().whenComplete(() => _activeProcessing = null);
   }
 
   Future<void> _processPending() async {
     while (_pending.isNotEmpty) {
-      final next = supportedTechniques.firstWhere(_pending.contains);
-      _pending.remove(next);
+      final itemId = _pending.first;
+      _pending.remove(itemId);
+      final item = _itemById(itemId);
+      if (item == null) continue;
       try {
-        // One board per pass — mining is unbounded random search, so keep
-        // slices small and re-queue until the technique is back at capacity.
-        final mined = await _mineBoard(next);
+        final mined = await _mineBoard(item.techniques);
         if (mined == null) continue; // budget ran out; retried on next take
-        _queues[next]!.add(mined);
+        _queues[itemId]!.add(mined);
         await _persist();
         notifyListeners();
-        if (_queues[next]!.length < capacity) _pending.add(next);
+        if (_queues[itemId]!.length < capacity) _pending.add(itemId);
       } catch (_) {
-        // A mining failure for one technique must not stop the others.
+        // A mining failure for one item must not stop the others.
       }
     }
   }
@@ -155,13 +150,10 @@ class TechniqueQueueManager extends ChangeNotifier {
   }
 }
 
-Future<SudokuPuzzle?> _isolateMineBoard(HintTechnique technique) async {
-  final json = await Isolate.run(() => _mineBoardJson(technique));
+Future<SudokuPuzzle?> _isolateMineBoard(Set<HintTechnique> techniques) async {
+  final json = await Isolate.run(() => _mineBoardJson(techniques));
   return json == null ? null : SudokuPuzzle.fromJson(json);
 }
 
-// Top-level so the closure Isolate.run sends across the isolate boundary
-// only captures the enum; returns JSON since that's the proven-sendable
-// shape (same pattern as PuzzleQueueManager).
-Map<String, dynamic>? _mineBoardJson(HintTechnique technique) =>
-    mineTechniqueBoard(technique)?.toJson();
+Map<String, dynamic>? _mineBoardJson(Set<HintTechnique> techniques) =>
+    mineTechniqueBoard(techniques)?.toJson();

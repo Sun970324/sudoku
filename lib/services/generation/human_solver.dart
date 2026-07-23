@@ -110,9 +110,18 @@ class SolveResult {
 /// since every digit in this grid is derived purely from this solver's own
 /// valid deductions, so a full recompute after every reveal is always safe.
 class HumanSolver {
-  HumanSolver({HintEngine? hintEngine}) : _hintEngine = hintEngine ?? HintEngine();
+  HumanSolver({HintEngine? hintEngine, List<HintTechnique>? techniqueOrder})
+      : _hintEngine = hintEngine ?? HintEngine(),
+        _techniqueOrder = techniqueOrder ?? humanSolverTechniqueOrder;
 
   final HintEngine _hintEngine;
+
+  /// The priority order [_findNext] scans. Defaults to
+  /// [humanSolverTechniqueOrder] (generation/difficulty semantics); the
+  /// technique-board miner passes an extended order that appends the
+  /// hint-only techniques, so "solve history contains X" is a checkable
+  /// condition for them too.
+  final List<HintTechnique> _techniqueOrder;
 
   SolveResult solve(List<List<int>> board) {
     final working = board.map((row) => List<int>.from(row)).toList();
@@ -148,7 +157,7 @@ class HumanSolver {
   }
 
   Hint? _findNext(List<List<int>> board, List<List<Set<int>>> candidates) {
-    for (final technique in humanSolverTechniqueOrder) {
+    for (final technique in _techniqueOrder) {
       final hint = switch (technique) {
         HintTechnique.fullHouse => _hintEngine.findFullHouse(board),
         HintTechnique.nakedSingle =>

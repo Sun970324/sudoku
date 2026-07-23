@@ -39,7 +39,7 @@ class GameScreen extends StatefulWidget {
     super.key,
     required Difficulty this.difficulty,
     this.puzzle,
-    this.debugDemoTechnique,
+    this.debugDemoTechniques,
   })  : resumeSnapshot = null,
         isDaily = false,
         dailyAlreadyCompleted = false;
@@ -50,7 +50,7 @@ class GameScreen extends StatefulWidget {
         puzzle = null,
         isDaily = false,
         dailyAlreadyCompleted = false,
-        debugDemoTechnique = null;
+        debugDemoTechniques = null;
 
   /// Today's shared ranked puzzle. Daily games never touch local solo
   /// stats or the in-progress save slot, and on win route to
@@ -62,7 +62,7 @@ class GameScreen extends StatefulWidget {
   })  : difficulty = null,
         resumeSnapshot = null,
         isDaily = true,
-        debugDemoTechnique = null;
+        debugDemoTechniques = null;
 
   final Difficulty? difficulty;
   final GameSnapshot? resumeSnapshot;
@@ -77,10 +77,10 @@ class GameScreen extends StatefulWidget {
   /// spot — see [GameController.startNewGame].
   final SudokuPuzzle? puzzle;
 
-  /// Debug-only (set by the settings sheet's ALS technique demos): the bug
-  /// icon asks this exact finder instead of the AIC-family fallback chain,
-  /// so a demo board only has to make its own technique fire.
-  final HintTechnique? debugDemoTechnique;
+  /// Debug-only (set by the settings sheet's hint demos): the bug icon asks
+  /// these finders (a practice item's technique group) instead of the
+  /// AIC-family fallback chain, surfacing whichever one the board shows.
+  final Set<HintTechnique>? debugDemoTechniques;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -713,12 +713,12 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     _controller.autoFillNotes();
     final l10n = AppLocalizations.of(context)!;
     final hint = await _controller.debugRequestAicHint(
-        l10n: l10n, technique: widget.debugDemoTechnique);
+        l10n: l10n, techniques: widget.debugDemoTechniques);
     if (!mounted) return;
     if (hint == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(widget.debugDemoTechnique == null
+            content: Text(widget.debugDemoTechniques == null
                 ? 'No X-Chain / AIC on this board'
                 : 'Demo technique not found on this board')),
       );

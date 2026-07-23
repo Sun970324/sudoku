@@ -6,6 +6,7 @@ import '../l10n/generated/app_localizations.dart';
 import '../models/hint.dart';
 import '../screens/policy_screen.dart';
 import '../screens/premium/premium_lock_screen.dart';
+import '../services/generation/technique_board_miner.dart';
 import '../services/haptic_service.dart';
 import '../services/technique_queue_manager.dart';
 import '../services/sound_service.dart';
@@ -25,7 +26,7 @@ void showSettingsSheet(
   BuildContext context,
   SettingsController settings, {
   VoidCallback? onReplayTutorial,
-  void Function(HintTechnique technique)? onHintDemo,
+  void Function(PracticeItem item)? onHintDemo,
 }) {
   showModalBottomSheet<void>(
     context: context,
@@ -169,7 +170,7 @@ void showSettingsSheet(
                             ? '기법 선택 → 보장 보드 로드 · 벌레 아이콘으로 확인'
                             : 'Pick a technique · loads its board · tap the bug icon'),
                     onTap: () async {
-                      final picked = await showDialog<HintTechnique>(
+                      final picked = await showDialog<PracticeItem>(
                         context: context,
                         builder: (dialogContext) => AlertDialog(
                           title: const Text('Hint demo'),
@@ -180,20 +181,22 @@ void showSettingsSheet(
                             height: 480,
                             child: ListView(
                               children: [
-                                for (final technique in TechniqueQueueManager
-                                    .supportedTechniques)
+                                for (final item in TechniqueQueueManager.items)
                                   ListTile(
                                     dense: true,
-                                    title:
-                                        Text(technique.label(dialogContext)),
+                                    title: Text(item.techniques
+                                        .map((t) => t.label(dialogContext))
+                                        .join(' / ')),
                                     trailing: Text(
-                                      techniqueDifficulty[technique]!.name,
+                                      techniqueDifficulty[
+                                              item.techniques.first]!
+                                          .name,
                                       style: Theme.of(dialogContext)
                                           .textTheme
                                           .bodySmall,
                                     ),
-                                    onTap: () => Navigator.pop(
-                                        dialogContext, technique),
+                                    onTap: () =>
+                                        Navigator.pop(dialogContext, item),
                                   ),
                               ],
                             ),

@@ -367,31 +367,28 @@ class StorageService {
     await prefs.setString(_puzzleQueueKey, jsonEncode(json));
   }
 
-  /// The per-technique demo-board queue (see TechniqueQueueManager) —
-  /// same shape as the per-difficulty puzzle queue, keyed by
-  /// [HintTechnique.name]. Unknown names are skipped on load so removing a
-  /// technique can never brick startup.
+  /// The technique-practice board queue (see TechniqueQueueManager) — same
+  /// shape as the per-difficulty puzzle queue, keyed by practice-item id.
+  /// Unknown ids are skipped on load so renaming/removing an item can never
+  /// brick startup.
   Future<void> saveTechniqueQueue(
-      Map<HintTechnique, List<SudokuPuzzle>> queues) async {
+      Map<String, List<SudokuPuzzle>> queues) async {
     final prefs = await SharedPreferences.getInstance();
     final json = {
       for (final entry in queues.entries)
-        entry.key.name: entry.value.map((p) => p.toJson()).toList(),
+        entry.key: entry.value.map((p) => p.toJson()).toList(),
     };
     await prefs.setString(_techniqueQueueKey, jsonEncode(json));
   }
 
-  Future<Map<HintTechnique, List<SudokuPuzzle>>> loadTechniqueQueue() async {
+  Future<Map<String, List<SudokuPuzzle>>> loadTechniqueQueue() async {
     final prefs = await SharedPreferences.getInstance();
-    final result = <HintTechnique, List<SudokuPuzzle>>{};
+    final result = <String, List<SudokuPuzzle>>{};
     final raw = prefs.getString(_techniqueQueueKey);
     if (raw == null) return result;
     final json = jsonDecode(raw) as Map<String, dynamic>;
-    final byName = {for (final t in HintTechnique.values) t.name: t};
     for (final entry in json.entries) {
-      final technique = byName[entry.key];
-      if (technique == null) continue;
-      result[technique] = (entry.value as List<dynamic>)
+      result[entry.key] = (entry.value as List<dynamic>)
           .map((p) => SudokuPuzzle.fromJson(p as Map<String, dynamic>))
           .toList();
     }

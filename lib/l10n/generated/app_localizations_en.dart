@@ -12,6 +12,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Sudoku League';
 
   @override
+  String get offlineTitle => 'No internet connection';
+
+  @override
+  String get offlineBody =>
+      'You\'re offline, so this feature isn\'t available right now.';
+
+  @override
+  String get offlineAvailableTitle => 'What you can do offline';
+
+  @override
+  String get offlineAvailablePlay => 'Play Sudoku across every difficulty';
+
+  @override
+  String get offlineAvailableResume => 'Resume a game in progress';
+
+  @override
+  String get offlineAvailableStats => 'Check your records and stats';
+
+  @override
+  String get offlineRetry => 'Try again';
+
+  @override
+  String get offlineStillDisconnected => 'Still no internet connection';
+
+  @override
   String get homeButton => 'Home';
 
   @override

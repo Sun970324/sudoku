@@ -687,23 +687,30 @@ class GameController extends ChangeNotifier {
   /// current notes hold no such chain. Sets it as the active hint + steps
   /// exactly like [requestHintFromNotes] so the hint sheet drives normally.
   Future<Hint?> debugRequestAicHint(
-      {AppLocalizations? l10n, HintTechnique? technique}) async {
+      {AppLocalizations? l10n, Set<HintTechnique>? techniques}) async {
     if (status != GameStatus.playing) return null;
     final board = boardSnapshot;
     final notes = _notes;
     final engine = _hintEngine;
     final resolvedL10n = l10n ?? lookupAppLocalizations(const Locale('ko'));
-    // A non-null [technique] (the settings hint-demo boards) asks exactly
-    // that finder. The null fallback keeps the plain bug icon useful on any
-    // board: grouped X-Chain before grouped AIC, since the general grouped
-    // search finds a chain whenever the single-digit one does and would
-    // otherwise make that label unreachable.
-    var hint = await _runSearch(() => technique != null
-        ? engine.findTechnique(technique, board, notes, resolvedL10n)
-        : engine.findAic(board, notes, resolvedL10n) ??
-            engine.findXChain(board, notes, resolvedL10n) ??
-            engine.findGroupedXChain(board, notes, resolvedL10n) ??
-            engine.findGroupedAic(board, notes, resolvedL10n));
+    // Non-null [techniques] (a settings hint-demo item's group) asks those
+    // finders in turn — the board shows one of them. The null fallback keeps
+    // the plain bug icon useful on any board: grouped X-Chain before grouped
+    // AIC, since the general grouped search finds a chain whenever the
+    // single-digit one does and would otherwise make that label unreachable.
+    var hint = await _runSearch(() {
+      if (techniques != null) {
+        for (final t in techniques) {
+          final h = engine.findTechnique(t, board, notes, resolvedL10n);
+          if (h != null) return h;
+        }
+        return null;
+      }
+      return engine.findAic(board, notes, resolvedL10n) ??
+          engine.findXChain(board, notes, resolvedL10n) ??
+          engine.findGroupedXChain(board, notes, resolvedL10n) ??
+          engine.findGroupedAic(board, notes, resolvedL10n);
+    });
     if (hint != null && !_agreesWithSolution(hint)) hint = null;
     _setActiveHint(hint, _stepsFor(hint, l10n));
     notifyListeners();

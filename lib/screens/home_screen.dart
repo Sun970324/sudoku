@@ -25,6 +25,7 @@ import '../widgets/sudoku_preview_board.dart';
 import 'daily/daily_entry_screen.dart';
 import 'game_screen.dart';
 import 'my_page_screen.dart';
+import 'offline_screen.dart';
 import 'puzzle_share/enter_code_screen.dart';
 import 'race/race_lobby_screen.dart';
 import 'race/race_result_screen.dart';
@@ -245,11 +246,21 @@ class _HomeScreenState extends State<HomeScreen> {
         GameScreen.newGame(difficulty: puzzle.difficulty, puzzle: puzzle));
   }
 
-  void _onRacePressed() {
+  Future<void> _onRacePressed() async {
+    // Racing is server-only — pre-empt offline so the player lands on the
+    // offline notice instead of a dead lobby.
+    if (!await ensureOnline(context)) return;
     _openGame(RaceLobbyScreen(
       auth: widget.auth,
       puzzleQueue: widget.puzzleQueue,
     ));
+  }
+
+  Future<void> _onDailyPressed() async {
+    // Today's daily puzzle is fetched from the server — needs a connection.
+    if (!await ensureOnline(context)) return;
+    _openGame(
+        DailyEntryScreen(auth: widget.auth, puzzleQueue: widget.puzzleQueue));
   }
 
   @override
@@ -332,14 +343,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   widget.settings,
                   onReplayTutorial: _showTutorial,
                   onHintDemo: kDebugMode
-                      ? (technique) async {
+                      ? (item) async {
                           final puzzle = await TechniqueQueueManager.instance
-                              .take(technique);
+                              .take(item.id);
                           if (!mounted || puzzle == null) return;
                           _openGame(GameScreen.newGame(
-                            difficulty: techniqueDifficulty[technique]!,
+                            difficulty:
+                                techniqueDifficulty[item.techniques.first]!,
                             puzzle: puzzle,
-                            debugDemoTechnique: technique,
+                            debugDemoTechniques: item.techniques,
                           ));
                         }
                       : null,
@@ -492,8 +504,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: PopButton(
                   key: _dailyKey,
-                  onPressed: () => _openGame(DailyEntryScreen(
-                      auth: widget.auth, puzzleQueue: widget.puzzleQueue)),
+                  onPressed: _onDailyPressed,
                   label: l10n.dailyButton,
                   icon: PixelIcons.calendar,
                   color: AppPalette.dailyTeal,

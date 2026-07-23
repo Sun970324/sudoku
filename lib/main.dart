@@ -7,6 +7,7 @@ import 'l10n/generated/app_localizations.dart';
 import 'models/game_snapshot.dart';
 import 'screens/home_screen.dart';
 import 'services/ad_service.dart';
+import 'services/connectivity_service.dart';
 import 'services/puzzle_queue_manager.dart';
 import 'services/storage_service.dart';
 import 'state/auth_controller.dart';
@@ -33,6 +34,7 @@ Future<void> main() async {
     publishableKey: SupabaseConfig.anonKey,
   );
   AdService.instance.initialize();
+  await ConnectivityService.instance.initialize();
   // Premium before settings: SettingsController.load clamps a premium theme
   // pack back to classic when the entitlement is gone, so it must see the
   // resolved premium state.

@@ -25,58 +25,48 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  test('take() serves a bundled board immediately and refills back to '
-      'capacity in the background', () async {
-    final mined = <HintTechnique>[];
-    final manager = TechniqueQueueManager(mineBoard: (t) async {
-      mined.add(t);
+  test('take() live-mines a board when nothing is queued, and refills back '
+      'to capacity in the background', () async {
+    final mined = <Set<HintTechnique>>[];
+    final manager = TechniqueQueueManager(mineBoard: (techs) async {
+      mined.add(techs);
       return _fakePuzzle();
     });
 
-    final puzzle = await manager.take(HintTechnique.xWing);
+    final puzzle = await manager.take('xWing');
 
     expect(puzzle, isNotNull);
     await manager.waitUntilIdle();
-    expect(manager.countFor(HintTechnique.xWing),
-        TechniqueQueueManager.capacity);
+    expect(manager.countFor('xWing'), TechniqueQueueManager.capacity);
     expect(mined, isNotEmpty);
-    expect(mined.every((t) => t == HintTechnique.xWing), isTrue);
   });
 
-  test('an empty queue falls back to a bundled board instead of returning '
-      'null, even when mining keeps failing', () async {
-    final manager = TechniqueQueueManager(mineBoard: (_) async => null);
+  test('take() refills the queue to capacity and persists it', () async {
+    final manager =
+        TechniqueQueueManager(mineBoard: (_) async => _fakePuzzle());
+    await manager.take('xyWing');
+    await manager.waitUntilIdle();
+    expect(manager.countFor('xyWing'), TechniqueQueueManager.capacity);
 
-    // Drain the seeded queue, then keep taking: the bundle backstops.
-    for (var i = 0; i < TechniqueQueueManager.capacity + 2; i++) {
-      final puzzle = await manager.take(HintTechnique.skyscraper);
-      expect(puzzle, isNotNull, reason: 'take #${i + 1} came back empty');
-      await manager.waitUntilIdle();
-    }
-    expect(manager.countFor(HintTechnique.skyscraper), 0);
-  });
-
-  test('mined boards persist across manager instances', () async {
-    final first = TechniqueQueueManager(mineBoard: (_) async => _fakePuzzle());
-    await first.take(HintTechnique.xyWing);
-    await first.waitUntilIdle();
-
-    // A fresh manager (same mock prefs store) must see the persisted queue.
-    // (Its own take() still schedules a refill for the taken technique —
-    // that's fine; the assertion is about the untouched xyWing queue.)
-    final second = TechniqueQueueManager(mineBoard: (_) async => null);
-    final puzzle = await second.take(HintTechnique.turbotFish);
+    // A fresh manager (same mock prefs store) loads the persisted queue
+    // without mining anything.
+    final reloaded = TechniqueQueueManager(
+        mineBoard: (_) async => fail('should not mine on a warm queue'));
+    final puzzle = await reloaded.take('xyWing');
     expect(puzzle, isNotNull);
-    await second.waitUntilIdle();
-    expect(second.countFor(HintTechnique.xyWing),
-        TechniqueQueueManager.capacity);
   });
 
-  test('BUG+1 is unsupported: take() returns null and supportedTechniques '
-      'excludes it', () async {
-    expect(TechniqueQueueManager.supportedTechniques,
-        isNot(contains(HintTechnique.bugPlusOne)));
+  test('an unknown item id returns null', () async {
     final manager = TechniqueQueueManager(mineBoard: (_) async => null);
-    expect(await manager.take(HintTechnique.bugPlusOne), isNull);
+    expect(await manager.take('bugPlusOne'), isNull);
+    expect(await manager.take('nonsense'), isNull);
+  });
+
+  test('the practice list excludes BUG+1', () {
+    final ids = TechniqueQueueManager.items.map((i) => i.id).toSet();
+    expect(ids, isNot(contains('bugPlusOne')));
+    for (final item in TechniqueQueueManager.items) {
+      expect(item.techniques, isNot(contains(HintTechnique.bugPlusOne)));
+    }
   });
 }

@@ -104,6 +104,54 @@ abstract class AppLocalizations {
   /// **'Sudoku League'**
   String get appTitle;
 
+  /// No description provided for @offlineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get offlineTitle;
+
+  /// No description provided for @offlineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline, so this feature isn\'t available right now.'**
+  String get offlineBody;
+
+  /// No description provided for @offlineAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What you can do offline'**
+  String get offlineAvailableTitle;
+
+  /// No description provided for @offlineAvailablePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play Sudoku across every difficulty'**
+  String get offlineAvailablePlay;
+
+  /// No description provided for @offlineAvailableResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume a game in progress'**
+  String get offlineAvailableResume;
+
+  /// No description provided for @offlineAvailableStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your records and stats'**
+  String get offlineAvailableStats;
+
+  /// No description provided for @offlineRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get offlineRetry;
+
+  /// No description provided for @offlineStillDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Still no internet connection'**
+  String get offlineStillDisconnected;
+
   /// No description provided for @homeButton.
   ///
   /// In en, this message translates to:
