@@ -254,7 +254,7 @@ List<HintStep> _wWingSteps(Hint hint, AppLocalizations l10n) {
       ],
     ),
     HintStep(
-      text: l10n.hintStepWWingForced(a, b),
+      text: l10n.hintStepWWingForced(unitDesc, a, b),
       cells: hint.primaryCells,
       rows: hint.highlightedRows,
       cols: hint.highlightedCols,

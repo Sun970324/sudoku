@@ -866,9 +866,10 @@
       "b": {"type": "int"}
     }
   },
-  "hintStepWWingForced": "If both pair cells were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}.",
+  "hintStepWWingForced": "If both those cells were {b}, {unitDesc} would have nowhere left for {b}. So at least one of them is {a}.",
   "@hintStepWWingForced": {
     "placeholders": {
+      "unitDesc": {"type": "String"},
       "a": {"type": "int"},
       "b": {"type": "int"}
     }

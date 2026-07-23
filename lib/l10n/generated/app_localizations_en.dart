@@ -1167,8 +1167,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String hintStepWWingForced(int a, int b) {
-    return 'If both pair cells were $b, that unit would have nowhere left for $b. So at least one of them is $a.';
+  String hintStepWWingForced(String unitDesc, int a, int b) {
+    return 'If both those cells were $b, $unitDesc would have nowhere left for $b. So at least one of them is $a.';
   }
 
   @override

@@ -670,7 +670,7 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String explanationWWing(
       String cell1, String cell2, int a, int b, String unitDesc) {
-    return '$cell1과(와) $cell2은(는) 후보가 똑같이 $a, $b 두 개뿐이고, $unitDesc에는 $b번이 들어갈 자리가 두 곳뿐인데 그 두 곳이 각각 두 칸을 하나씩 보고 있어요. 만약 두 칸이 모두 $b번이면 $unitDesc에 $b번이 들어갈 자리가 없어집니다. 따라서 둘 중 적어도 하나는 $a번이고, 두 칸을 모두 보는 칸에서는 $a번을 후보에서 지울 수 있습니다.';
+    return '$cell1과(와) $cell2은(는) 후보가 똑같이 $a, $b 두 개뿐이에요. $unitDesc에는 $b번이 들어갈 자리가 두 곳뿐인데, 한 곳은 $cell1을(를), 다른 한 곳은 $cell2을(를) 봐요. 만약 $cell1과(와) $cell2이(가) 둘 다 $b번이면 $unitDesc에 $b번이 들어갈 자리가 없어져요. 그러니 둘 중 적어도 하나는 $a번이고, 이 두 칸을 모두 보는 칸에서는 $a번을 후보에서 지울 수 있습니다.';
   }
 
   @override
@@ -712,7 +712,7 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String hintStepSueDeCoqLine(
       String cells, int cellCount, String digits, int digitCount) {
-    return '같은 줄의 $cells은 $cellCount칸에 후보가 $digits — $digitCount종류로 딱 하나 많은 거의-잠긴 집합이에요. 이 숫자들은 줄에서 여기 아니면 교차 칸에만 들어갈 수 있어요.';
+    return '같은 줄의 $cells은 $cellCount칸에 후보가 $digits — $digitCount종류로 딱 하나 많은 거의-잠긴 집합(ALS)이에요. 이 숫자들은 줄에서 여기 아니면 교차 칸에만 들어갈 수 있어요.';
   }
 
   @override
@@ -1133,22 +1133,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String hintStepWWingPair(String cell1, String cell2, int a, int b) {
-    return '$cell1과(와) $cell2은(는) 후보가 $a, $b(으)로 똑같은 쌍이에요.';
+    return '$cell1과(와) $cell2은(는) 후보가 $a, $b번으로 똑같은 두 칸이에요.';
   }
 
   @override
   String hintStepWWingBridge(String unitDesc, int b) {
-    return '$unitDesc에서 $b이(가) 들어갈 곳은 두 곳뿐인데, 그 두 곳이 각각 쌍 칸을 하나씩 보고 있어요.';
+    return '$unitDesc에서 $b번이 들어갈 자리는 두 곳뿐인데, 그 두 곳이 위의 두 칸을 하나씩 봐요.';
   }
 
   @override
-  String hintStepWWingForced(int a, int b) {
-    return '쌍 두 칸이 모두 $b(이)라면 그 줄엔 $b이(가) 들어갈 곳이 없어져요. 그래서 적어도 하나는 $a입니다.';
+  String hintStepWWingForced(String unitDesc, int a, int b) {
+    return '만약 위의 두 칸이 모두 $b번이면 $unitDesc에 $b번이 들어갈 자리가 없어져요. 그래서 둘 중 적어도 하나는 $a번이에요.';
   }
 
   @override
   String hintStepWWingConclusion(int a) {
-    return '두 쌍 칸을 모두 보는 칸은 $a이(가) 될 수 없어요.';
+    return '이 두 칸을 모두 보는 칸은 $a번이 될 수 없어요.';
   }
 
   @override

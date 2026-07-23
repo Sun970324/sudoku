@@ -2008,8 +2008,8 @@ abstract class AppLocalizations {
   /// No description provided for @hintStepWWingForced.
   ///
   /// In en, this message translates to:
-  /// **'If both pair cells were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}.'**
-  String hintStepWWingForced(int a, int b);
+  /// **'If both those cells were {b}, {unitDesc} would have nowhere left for {b}. So at least one of them is {a}.'**
+  String hintStepWWingForced(String unitDesc, int a, int b);
 
   /// No description provided for @hintStepWWingConclusion.
   ///
