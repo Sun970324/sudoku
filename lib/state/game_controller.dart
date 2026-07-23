@@ -680,13 +680,14 @@ class GameController extends ChangeNotifier {
     return hint;
   }
 
-  /// Debug-only: force-shows an X-Chain / AIC hint on the current board,
-  /// bypassing the ordered [findHint] (which would surface an easier
-  /// technique first) — the only way to see an AIC hint live, since it's
-  /// last in [hintTechniqueOrder] and rarely reached. Returns null when the
-  /// current notes hold no such chain. Sets it as the active hint + steps
-  /// exactly like [requestHintFromNotes] so the hint sheet drives normally.
-  Future<Hint?> debugRequestAicHint(
+  /// Force-shows a hint for a specific technique (or, with null [techniques],
+  /// an X-Chain / AIC) on the current board, bypassing the ordered [findHint]
+  /// that would surface an easier technique first. Powers the technique
+  /// practice screen's "이 기법 보기" and the debug bug icon. Returns null when
+  /// the current notes hold none of the requested techniques. Sets it as the
+  /// active hint + steps exactly like [requestHintFromNotes] so the hint sheet
+  /// drives normally.
+  Future<Hint?> requestTechniqueHint(
       {AppLocalizations? l10n, Set<HintTechnique>? techniques}) async {
     if (status != GameStatus.playing) return null;
     final board = boardSnapshot;

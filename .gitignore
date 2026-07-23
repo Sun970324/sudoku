@@ -48,4 +48,5 @@ app.*.map.json
 require.md
 config/secrets.json
 
-/sudoku-js/
+/ref/
+/release2.2.0/

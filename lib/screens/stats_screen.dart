@@ -15,6 +15,7 @@ import '../widgets/pop_card.dart';
 import 'replay/replay_list_screen.dart';
 import 'stats/daily_calendar_card.dart';
 import 'stats/technique_codex_screen.dart';
+import 'stats/technique_practice_screen.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({super.key, required this.auth});
@@ -134,6 +135,15 @@ class _StatsScreenState extends State<StatsScreen>
               context,
               MaterialPageRoute(
                   builder: (_) => const TechniqueCodexScreen()),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.school_outlined),
+            tooltip: l10n.practiceTitle,
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const TechniquePracticeScreen()),
             ),
           ),
           IconButton(

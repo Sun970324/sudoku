@@ -51,8 +51,8 @@ void main() {
     final result =
         _resultFor([HintTechnique.nakedTriple, HintTechnique.hiddenTriple]);
 
-    expect(techniqueDifficulty[HintTechnique.nakedTriple], Difficulty.hard);
-    expect(techniqueDifficulty[HintTechnique.hiddenTriple], Difficulty.hard);
+    expect(techniqueDifficulty[HintTechnique.nakedTriple], Difficulty.medium);
+    expect(techniqueDifficulty[HintTechnique.hiddenTriple], Difficulty.medium);
     expect(
       humanSolverTechniqueOrder.indexOf(HintTechnique.hiddenTriple),
       greaterThan(humanSolverTechniqueOrder.indexOf(HintTechnique.nakedTriple)),
@@ -60,7 +60,7 @@ void main() {
 
     final evaluated = evaluator.evaluate(result);
 
-    expect(evaluated.highestDifficulty, Difficulty.hard);
+    expect(evaluated.highestDifficulty, Difficulty.medium);
     expect(evaluated.highestTechnique, HintTechnique.hiddenTriple);
   });
 
@@ -111,6 +111,42 @@ void main() {
     expect(evaluated.highestTechnique, HintTechnique.intersectionPointing);
   });
 
+  test('score is the sum of every applied step\'s techniqueBaseScore', () {
+    // nakedSingle 4 + 4, hiddenSingle 14 → 22.
+    final evaluated = evaluator.evaluate(_resultFor([
+      HintTechnique.nakedSingle,
+      HintTechnique.nakedSingle,
+      HintTechnique.hiddenSingle,
+    ]));
+
+    expect(evaluated.score, 22);
+  });
+
+  test('a high cumulative score promotes the tier above the hardest '
+      'technique\'s floor, while floorDifficulty keeps the floor', () {
+    // 10 Intersection Pointings: floor tier is easy, but 10 * 50 = 500 lands
+    // in the medium score band ([450, 700)), so the puzzle promotes.
+    final evaluated = evaluator.evaluate(_resultFor(
+      List.filled(10, HintTechnique.intersectionPointing),
+    ));
+
+    expect(evaluated.score, 500);
+    expect(evaluated.floorDifficulty, Difficulty.easy);
+    expect(evaluated.highestDifficulty, Difficulty.medium);
+    expect(evaluated.highestTechnique, HintTechnique.intersectionPointing);
+  });
+
+  test('a low cumulative score never demotes below the hardest technique\'s '
+      'tier — the floor is a floor', () {
+    // A single XYZ-Wing (master, base 180) scores only 180, well inside the
+    // beginner band, but the floor keeps it at master.
+    final evaluated =
+        evaluator.evaluate(_resultFor([HintTechnique.xyzWing]));
+
+    expect(scoreBand(evaluated.score), Difficulty.beginner);
+    expect(evaluated.highestDifficulty, Difficulty.master);
+  });
+
   test('one representative technique per tier maps to the expected '
       'difficulty', () {
     expect(
@@ -135,12 +171,12 @@ void main() {
       Difficulty.medium,
     );
     expect(
-      evaluator.evaluate(_resultFor([HintTechnique.hiddenTriple]))
+      evaluator.evaluate(_resultFor([HintTechnique.xWing]))
           .highestDifficulty,
       Difficulty.hard,
     );
     expect(
-      evaluator.evaluate(_resultFor([HintTechnique.swordfish]))
+      evaluator.evaluate(_resultFor([HintTechnique.xyzWing]))
           .highestDifficulty,
       Difficulty.master,
     );

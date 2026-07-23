@@ -9,9 +9,34 @@ import 'clue_remover.dart';
 import 'human_solver.dart';
 import 'minimalizer.dart';
 
-/// Digs one solved board to several depths — shallow boards produce
-/// singles-only solve paths, deep minimalized ones the hard families.
-const digTargets = [55, 42, 35, 30];
+/// The dig depths (target given-counts) probed per solved board, tuned to an
+/// item's tier. A technique of tier T only surfaces on boards sparse enough to
+/// actually *need* tier-T reasoning: dense boards solve by singles and can
+/// never show it, so harder items skip the dense depths (measured 0% hit for
+/// X-Wing/fish/AIC at 55/42 givens — pure wasted solves).
+///
+/// But past a point, going *sparser* backfires for the top tiers: a very
+/// sparse board (≤24 givens) solved with the full expert ceiling
+/// (chains/ALS) costs seconds per solve — measured ~10–16s/board at 22–24
+/// givens, which swamps the higher hit rate. So master/expert stay in a
+/// moderate band (~26–33 givens) where the technique still appears without
+/// the solve-cost blowup. (Truly rare expert boards are better pre-mined into
+/// the bundle than found on demand — see tool/generate_technique_boards.dart.)
+List<int> digTargetsFor(Difficulty tier) {
+  switch (tier) {
+    case Difficulty.beginner:
+    case Difficulty.easy:
+      return const [55, 42, 35, 30];
+    case Difficulty.medium:
+      return const [44, 38, 33, 29];
+    case Difficulty.hard:
+      return const [38, 33, 30, 28];
+    case Difficulty.master:
+      return const [35, 32, 30, 28];
+    case Difficulty.expert:
+      return const [33, 31, 29, 28];
+  }
+}
 
 /// Every technique that can be mined, ordered easiest → hardest: the
 /// generation order, then the hint-only techniques (all Expert, absent from
@@ -136,6 +161,7 @@ SudokuPuzzle? mineTechniqueBoard(
       () => HumanSolver(techniqueOrder: order));
   final difficulty = techniqueDifficulty[item.reduce(
       (a, b) => _tierRank(a) >= _tierRank(b) ? a : b)]!;
+  final targets = digTargetsFor(difficulty);
 
   SudokuPuzzle? tryBoard(List<List<int>> board, List<List<int>> solution) {
     if (!boardShowsItem(item, board, solverFor: solverFor)) return null;
@@ -150,7 +176,7 @@ SudokuPuzzle? mineTechniqueBoard(
 
   for (var i = 0; i < maxSeeds; i++) {
     final solution = BoardGenerator(random: rng).generateSolvedBoard();
-    for (final target in digTargets) {
+    for (final target in targets) {
       final dug = ClueRemover(random: rng).removeClues(solution, target);
       final found = tryBoard(dug, solution);
       if (found != null) return found;

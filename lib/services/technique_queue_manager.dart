@@ -17,10 +17,11 @@ import 'storage_service.dart';
 /// mining.
 const _assetPath = 'assets/data/technique_boards.json';
 
-/// Keeps up to [capacity] boards queued per [PracticeItem] for the
-/// technique-practice feature (today the debug 힌트 데모; planned as a
-/// premium perk): every queued board shows its item's technique in a
-/// ceiling-capped solve (see [boardShowsItem]). [take] pops a RANDOM queued
+/// Keeps up to [capacity] boards queued per [PracticeItem] for the technique
+/// practice screen (learning mode; beginner/easy items free, the rest a
+/// premium perk) and the debug 힌트 데모: every queued board shows its item's
+/// technique in a ceiling-capped solve (see [boardShowsItem]). [take] pops a
+/// RANDOM queued
 /// board so repeat visits differ, then refills in the background on an
 /// [Isolate] via [mineTechniqueBoard]. Persisted via [StorageService] so
 /// mined boards survive restarts.
@@ -37,8 +38,37 @@ class TechniqueQueueManager extends ChangeNotifier {
 
   static const capacity = 3;
 
+  /// How many isolates race to mine one board on the on-demand path (a user
+  /// tapped an item with an empty queue). Each explores different random
+  /// boards, so the first to hit wins — roughly an N× wall-clock speedup for
+  /// rare techniques, where a single search can take many seconds.
+  static const _onDemandParallelism = 3;
+
+  /// How many items may be mined at once during background refill/warm-up —
+  /// bounded so pre-warming the whole list doesn't peg every core.
+  static const _maxConcurrentMines = 2;
+
   /// The practice list the UI iterates.
   static List<PracticeItem> get items => practiceItems;
+
+  /// Runs up to [k] mines concurrently and resolves with the first non-null
+  /// board (or null if all come back empty). Losing isolates finish in the
+  /// background — harmless, their results are dropped.
+  Future<SudokuPuzzle?> _mineRaced(Set<HintTechnique> techniques, int k) {
+    if (k <= 1) return _mineBoard(techniques);
+    final completer = Completer<SudokuPuzzle?>();
+    var remaining = k;
+    for (var i = 0; i < k; i++) {
+      _mineBoard(techniques).then((p) {
+        if (p != null && !completer.isCompleted) completer.complete(p);
+      }, onError: (_) {}).whenComplete(() {
+        if (--remaining == 0 && !completer.isCompleted) {
+          completer.complete(null);
+        }
+      });
+    }
+    return completer.future;
+  }
 
   final StorageService _storage;
   final Future<SudokuPuzzle?> Function(Set<HintTechnique>) _mineBoard;
@@ -51,6 +81,7 @@ class TechniqueQueueManager extends ChangeNotifier {
   final Set<String> _pending = {};
   Future<void>? _activeProcessing;
   Future<void>? _loading;
+  Future<void>? _warming;
 
   int countFor(String itemId) => _queues[itemId]?.length ?? 0;
 
@@ -77,8 +108,10 @@ class TechniqueQueueManager extends ChangeNotifier {
       if (bundled != null && bundled.isNotEmpty) {
         puzzle = bundled[_random.nextInt(bundled.length)];
       } else {
-        // No bundle yet — mine one on the spot (debug/first-run path).
-        puzzle = await _mineBoard(item.techniques);
+        // No bundle yet — mine one on the spot (first-run path), racing a few
+        // isolates so a rare technique doesn't leave the user waiting on a
+        // single slow search.
+        puzzle = await _mineRaced(item.techniques, _onDemandParallelism);
       }
     }
     _scheduleRefillIfNeeded(itemId);
@@ -121,22 +154,71 @@ class TechniqueQueueManager extends ChangeNotifier {
   }
 
   Future<void> _processPending() async {
-    while (_pending.isNotEmpty) {
-      final itemId = _pending.first;
-      _pending.remove(itemId);
-      final item = _itemById(itemId);
-      if (item == null) continue;
-      try {
-        final mined = await _mineBoard(item.techniques);
-        if (mined == null) continue; // budget ran out; retried on next take
-        _queues[itemId]!.add(mined);
-        await _persist();
-        notifyListeners();
-        if (_queues[itemId]!.length < capacity) _pending.add(itemId);
-      } catch (_) {
-        // A mining failure for one item must not stop the others.
+    // A small worker pool drains _pending [_maxConcurrentMines] at a time, so
+    // refilling several items (or one item to capacity) doesn't serialize on a
+    // single slow search.
+    Future<void> worker() async {
+      while (_pending.isNotEmpty) {
+        final itemId = _pending.first;
+        _pending.remove(itemId);
+        await _mineOneInto(itemId);
       }
     }
+
+    await Future.wait([for (var i = 0; i < _maxConcurrentMines; i++) worker()]);
+  }
+
+  /// Mines one board for [itemId] and appends it, re-queuing the item if it's
+  /// still below capacity. A failure for one item must not stop the others.
+  Future<void> _mineOneInto(String itemId) async {
+    final item = _itemById(itemId);
+    if (item == null) return;
+    try {
+      final mined = await _mineBoard(item.techniques);
+      if (mined == null) return; // budget ran out; retried on next take
+      _queues[itemId]!.add(mined);
+      await _persist();
+      notifyListeners();
+      if (_queues[itemId]!.length < capacity) _pending.add(itemId);
+    } catch (_) {
+      // Swallow — background mining is best-effort.
+    }
+  }
+
+  /// Pre-mines one board for every currently-empty item (the practice screen
+  /// calls this on open), so tapping an item is instant instead of waiting on
+  /// a live mine. Only fills to a single board — capacity refills lazily after
+  /// a real [take] — so a cold first open doesn't churn the whole list to
+  /// capacity. Idempotent: a run already in flight is reused.
+  Future<void> warmUp() =>
+      _warming ??= _warmUp().whenComplete(() => _warming = null);
+
+  Future<void> _warmUp() async {
+    await (_loading ??= _load());
+    final empty = <String>[
+      for (final item in practiceItems)
+        if (countFor(item.id) == 0) item.id,
+    ];
+    var next = 0;
+    Future<void> worker() async {
+      while (next < empty.length) {
+        final itemId = empty[next++];
+        if (countFor(itemId) > 0) continue; // filled by another path meanwhile
+        final item = _itemById(itemId);
+        if (item == null) continue;
+        try {
+          final mined = await _mineBoard(item.techniques);
+          if (mined == null) continue;
+          _queues[itemId]!.add(mined);
+          await _persist();
+          notifyListeners();
+        } catch (_) {
+          // best-effort
+        }
+      }
+    }
+
+    await Future.wait([for (var i = 0; i < _maxConcurrentMines; i++) worker()]);
   }
 
   Future<void> _persist() => _storage.saveTechniqueQueue(_queues);

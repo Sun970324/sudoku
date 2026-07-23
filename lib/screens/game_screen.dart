@@ -40,6 +40,7 @@ class GameScreen extends StatefulWidget {
     required Difficulty this.difficulty,
     this.puzzle,
     this.debugDemoTechniques,
+    this.practiceTechniques,
   })  : resumeSnapshot = null,
         isDaily = false,
         dailyAlreadyCompleted = false;
@@ -50,7 +51,8 @@ class GameScreen extends StatefulWidget {
         puzzle = null,
         isDaily = false,
         dailyAlreadyCompleted = false,
-        debugDemoTechniques = null;
+        debugDemoTechniques = null,
+        practiceTechniques = null;
 
   /// Today's shared ranked puzzle. Daily games never touch local solo
   /// stats or the in-progress save slot, and on win route to
@@ -62,7 +64,8 @@ class GameScreen extends StatefulWidget {
   })  : difficulty = null,
         resumeSnapshot = null,
         isDaily = true,
-        debugDemoTechniques = null;
+        debugDemoTechniques = null,
+        practiceTechniques = null;
 
   final Difficulty? difficulty;
   final GameSnapshot? resumeSnapshot;
@@ -81,6 +84,11 @@ class GameScreen extends StatefulWidget {
   /// these finders (a practice item's technique group) instead of the
   /// AIC-family fallback chain, surfacing whichever one the board shows.
   final Set<HintTechnique>? debugDemoTechniques;
+
+  /// Set by the technique practice screen: the game runs in learning mode
+  /// with a "이 기법 보기" action that force-shows a step-by-step hint for one
+  /// of these techniques (the board is built to feature them).
+  final Set<HintTechnique>? practiceTechniques;
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -263,12 +271,18 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     }
   }
 
+  /// Learning-mode games (from the technique practice screen) are ephemeral,
+  /// exactly like daily ones: they never touch the solo in-progress save
+  /// slot, stats, replays, or the codex, so practicing can't clobber a real
+  /// game in progress or inflate solo records.
+  bool get _isPractice => widget.practiceTechniques != null;
+
   Future<void> _saveProgress() async {
-    // Daily games are never persisted/resumed: abandoning one simply means
-    // retrying from 0:00 later (matching the retry-until-first-completion
-    // policy), and a snapshot surviving past the KST midnight boundary
-    // would resurrect a stale board no longer tied to any ranking.
-    if (widget.isDaily) return;
+    // Daily/practice games are never persisted/resumed: abandoning one simply
+    // means retrying later, and (for daily) a snapshot surviving past the KST
+    // midnight boundary would resurrect a stale board no longer tied to any
+    // ranking.
+    if (widget.isDaily || _isPractice) return;
     // dispose() calls this unconditionally as a just-in-case save, which
     // would otherwise race clearInProgressGame() in _giveUp() (status is
     // still `playing` at that point) and can re-persist the game the user
@@ -323,6 +337,15 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
       return;
     }
 
+    if (_isPractice) {
+      // A practice clear leaves no trace — no stats, replay, or codex, and no
+      // in-progress slot to clear (it was never saved). Just return to the
+      // technique practice list.
+      if (!mounted) return;
+      Navigator.pop(context);
+      return;
+    }
+
     // Read the previous best before recordGameResult overwrites it, so the
     // result screen can tell "first clear" / "new best" / "same as before"
     // apart.
@@ -366,10 +389,10 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   }
 
   Future<void> _giveUp() async {
-    // Abandoning a daily attempt has no local-stats consequence and there's
-    // no saved slot to clear — the user can simply retry from the entry
-    // point until their first completion.
-    if (widget.isDaily) return;
+    // Abandoning a daily/practice attempt has no local-stats consequence and
+    // there's no saved slot to clear — the user can simply retry from the
+    // entry point.
+    if (widget.isDaily || _isPractice) return;
     _abandoningGame = true;
     // Save the replay for a mid-game exit or game-over (as a loss) — but only
     // if a move was actually made; leaving an untouched board records nothing.
@@ -706,21 +729,26 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
   }
 
-  /// Debug-only: fills every candidate note, then force-shows an X-Chain/AIC
-  /// hint via [GameController.debugRequestAicHint] and opens the normal hint
-  /// sheet on it — the live way to inspect the AIC visualization + steps.
-  Future<void> _onDebugAicPressed() async {
+  /// Fills every candidate note, then force-shows a step-by-step hint for one
+  /// of [techniques] (or an X-Chain/AIC when null) via
+  /// [GameController.requestTechniqueHint] and opens the normal hint sheet on
+  /// it. Powers both the technique practice "이 기법 보기" button and the debug
+  /// bug icon.
+  Future<void> _showTechniqueHint(Set<HintTechnique>? techniques) async {
     _controller.autoFillNotes();
     final l10n = AppLocalizations.of(context)!;
-    final hint = await _controller.debugRequestAicHint(
-        l10n: l10n, techniques: widget.debugDemoTechniques);
+    final hint = await _controller.requestTechniqueHint(
+        l10n: l10n, techniques: techniques);
     if (!mounted) return;
     if (hint == null) {
+      // In practice (Practising) mode the technique appears partway through
+      // the solve, not on the initial board — so "not found now" means "keep
+      // solving", not a broken board.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(widget.debugDemoTechniques == null
+            content: Text(techniques == null
                 ? 'No X-Chain / AIC on this board'
-                : 'Demo technique not found on this board')),
+                : l10n.practiceTechniqueNotYet)),
       );
       return;
     }
@@ -1187,6 +1215,15 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
                 puzzle: _controller.puzzle,
               ),
             ),
+            // Technique practice: force-show a step-by-step hint for the
+            // practiced technique on this board (built to feature it).
+            if (widget.practiceTechniques != null)
+              IconButton(
+                icon: const Icon(Icons.lightbulb_outline),
+                tooltip: AppLocalizations.of(context)!.practiceShowTechnique,
+                onPressed: () =>
+                    _showTechniqueHint(widget.practiceTechniques),
+              ),
             // Debug-only: force-show an X-Chain/AIC hint on the current
             // board (bypasses the normal hint order, no ad). Never in
             // release builds.
@@ -1194,7 +1231,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
               IconButton(
                 icon: const Icon(Icons.bug_report_outlined),
                 tooltip: 'AIC hint (debug)',
-                onPressed: _onDebugAicPressed,
+                onPressed: () => _showTechniqueHint(widget.debugDemoTechniques),
               ),
           ],
           titleSpacing: 0,

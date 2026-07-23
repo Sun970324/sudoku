@@ -84,18 +84,59 @@ List<int> _candidates(GameController controller, int row, int col) =>
 List<List<int>> _echoAsSolution(List<List<int>> board) =>
     board.map((row) => row.map((v) => v == 0 ? 1 : v).toList()).toList();
 
+// A fixed easy board (and its solution) injected into every setUp below, so
+// these game-mechanic tests never depend on what the generator happens to
+// produce. It's the exact board the generator built for Random(7) before
+// symmetric digging changed that output — the shape the peer-note and
+// reveal-hint tests were written against (first empty editable cell is a
+// naked single with valid same-row / unrelated peers for its value).
+const _fixedEasyBoard = [
+  [0, 0, 5, 8, 4, 6, 0, 0, 0],
+  [3, 0, 0, 0, 1, 9, 0, 0, 8],
+  [0, 0, 0, 0, 0, 0, 0, 7, 0],
+  [0, 3, 7, 4, 0, 2, 5, 0, 0],
+  [0, 0, 0, 0, 8, 0, 3, 0, 0],
+  [2, 0, 9, 0, 0, 1, 0, 4, 0],
+  [0, 4, 6, 0, 7, 0, 0, 2, 3],
+  [5, 0, 0, 9, 3, 4, 0, 0, 0],
+  [7, 9, 0, 0, 0, 0, 0, 1, 0],
+];
+const _fixedEasySolution = [
+  [1, 7, 5, 8, 4, 6, 2, 3, 9],
+  [3, 2, 4, 7, 1, 9, 6, 5, 8],
+  [9, 6, 8, 5, 2, 3, 1, 7, 4],
+  [6, 3, 7, 4, 9, 2, 5, 8, 1],
+  [4, 5, 1, 6, 8, 7, 3, 9, 2],
+  [2, 8, 9, 3, 5, 1, 7, 4, 6],
+  [8, 4, 6, 1, 7, 5, 9, 2, 3],
+  [5, 1, 2, 9, 3, 4, 8, 6, 7],
+  [7, 9, 3, 2, 6, 8, 4, 1, 5],
+];
+
+SudokuPuzzle _fixedEasyPuzzle() => SudokuPuzzle(
+      puzzle:
+          SudokuGrid(_fixedEasyBoard.map((r) => List<int>.from(r)).toList()),
+      solution: SudokuGrid(
+          _fixedEasySolution.map((r) => List<int>.from(r)).toList()),
+      fixedMask:
+          _fixedEasyBoard.map((r) => r.map((v) => v != 0).toList()).toList(),
+      difficulty: Difficulty.easy,
+    );
+
 void main() {
   late GameController controller;
   late _FakeHintEngine hintEngine;
 
   setUp(() {
-    // Seeded generator makes the puzzle deterministic across test runs.
+    // A fixed board (see [_fixedEasyPuzzle]) keeps these tests independent of
+    // the generator; the seeded generator is only a fallback for the few
+    // tests that call startNewGame() again without supplying a puzzle.
     hintEngine = _FakeHintEngine();
     controller = GameController(
       searchRunner: _inlineSearch,
       generator: SudokuGenerator(random: Random(7)),
       hintEngine: hintEngine,
-    )..startNewGame(Difficulty.easy);
+    )..startNewGame(Difficulty.easy, puzzle: _fixedEasyPuzzle());
   });
 
   int? firstEmptyEditableCellRow;

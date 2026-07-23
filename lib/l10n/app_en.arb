@@ -1207,5 +1207,12 @@
       "puzzles": {"type": "int"}
     }
   },
-  "codexUndiscovered": "Not yet"
+  "codexUndiscovered": "Not yet",
+  "practiceTitle": "Technique Practice",
+  "practiceIntro": "Pick a technique to practice on a board built to feature it.",
+  "practiceShowTechnique": "Show this technique",
+  "practicePreparingBoard": "Preparing a board…",
+  "practiceNoBoard": "Couldn't find a practice board — please try again.",
+  "practiceTechniqueNotYet": "This technique isn't in play yet — solve a little more and it'll come up.",
+  "practicePremiumBody": "Practice the harder techniques on boards built to feature them, walked through step by step."
 }

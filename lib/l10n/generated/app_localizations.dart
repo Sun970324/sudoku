@@ -2623,6 +2623,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not yet'**
   String get codexUndiscovered;
+
+  /// No description provided for @practiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technique Practice'**
+  String get practiceTitle;
+
+  /// No description provided for @practiceIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a technique to practice on a board built to feature it.'**
+  String get practiceIntro;
+
+  /// No description provided for @practiceShowTechnique.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this technique'**
+  String get practiceShowTechnique;
+
+  /// No description provided for @practicePreparingBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing a board…'**
+  String get practicePreparingBoard;
+
+  /// No description provided for @practiceNoBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t find a practice board — please try again.'**
+  String get practiceNoBoard;
+
+  /// No description provided for @practiceTechniqueNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'This technique isn\'t in play yet — solve a little more and it\'ll come up.'**
+  String get practiceTechniqueNotYet;
+
+  /// No description provided for @practicePremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice the harder techniques on boards built to feature them, walked through step by step.'**
+  String get practicePremiumBody;
 }
 
 class _AppLocalizationsDelegate

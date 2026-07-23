@@ -75,18 +75,30 @@ void main() {
       });
 
       if (isGivenCountBased) {
-        test('given-cell count matches the tier\'s target exactly — dug '
-            'straight to it with no technique ceiling involved', () {
+        test('has a 180°-rotationally symmetric givens pattern (these tiers '
+            'are dug in symmetric pairs)', () {
+          for (var r = 0; r < 9; r++) {
+            for (var c = 0; c < 9; c++) {
+              expect(puzzle.puzzle.get(r, c) != 0,
+                  puzzle.puzzle.get(8 - r, 8 - c) != 0,
+                  reason: 'cell ($r, $c) and its rotational partner '
+                      '(${8 - r}, ${8 - c}) must both be given or both empty');
+            }
+          }
+        });
+
+        test('given-cell count lands at or near the tier target — symmetric '
+            'pair removal can stop a cell or two short of it', () {
           final givenCount = puzzle.puzzle.cells
               .expand((row) => row)
               .where((value) => value != 0)
               .length;
-          expect(givenCount, difficulty.givenCount);
+          expect(givenCount.toDouble(),
+              closeTo(difficulty.givenCount.toDouble(), 2));
         });
 
         test('is solvable via human techniques alone (no guessing) at this '
-            'generous a given count, even though it was never checked '
-            'during generation', () {
+            'generous a given count', () {
           final result = humanSolver.solve(puzzle.puzzle.cells);
           expect(result.solved, isTrue,
               reason: '$difficulty puzzles must fully solve via human '

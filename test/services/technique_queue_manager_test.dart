@@ -56,6 +56,24 @@ void main() {
     expect(puzzle, isNotNull);
   });
 
+  test('warmUp pre-mines exactly one board for every empty item (not to '
+      'capacity)', () async {
+    final mined = <Set<HintTechnique>>[];
+    final manager = TechniqueQueueManager(mineBoard: (techs) async {
+      mined.add(techs);
+      return _fakePuzzle();
+    });
+
+    await manager.warmUp();
+
+    for (final item in TechniqueQueueManager.items) {
+      expect(manager.countFor(item.id), 1,
+          reason: '${item.id} should be warmed to a single board');
+    }
+    // One mine per item — warm-up fills to one, never to capacity.
+    expect(mined.length, TechniqueQueueManager.items.length);
+  });
+
   test('an unknown item id returns null', () async {
     final manager = TechniqueQueueManager(mineBoard: (_) async => null);
     expect(await manager.take('bugPlusOne'), isNull);

@@ -10,6 +10,8 @@ class DifficultyResult {
     required this.guessed,
     required this.highestTechnique,
     required this.highestDifficulty,
+    required this.floorDifficulty,
+    required this.score,
     required this.techniqueCounts,
     required this.solveHistory,
   });
@@ -26,25 +28,45 @@ class DifficultyResult {
 
   final HintTechnique? highestTechnique;
 
-  /// The tier of [highestTechnique], or [Difficulty.beginner] when
-  /// [solveHistory] is empty (a puzzle solved with zero technique
-  /// applications is trivially the easiest tier).
+  /// The puzzle's overall tier: the higher of the hardest technique's tier
+  /// (a "floor", from [techniqueDifficulty]) and the cumulative-score band
+  /// (from [scoreBand]). So a puzzle can be *promoted* above its hardest
+  /// technique when it needs enough hard steps to accumulate a high [score],
+  /// but never demoted below it. [Difficulty.beginner] when [solveHistory]
+  /// is empty.
   final Difficulty highestDifficulty;
+
+  /// The tier of [highestTechnique] alone (the floor before score
+  /// promotion), or [Difficulty.beginner] when [solveHistory] is empty.
+  /// Kept separate from [highestDifficulty] so callers can show "hardest
+  /// technique used" independently of the score-promoted overall tier.
+  final Difficulty floorDifficulty;
+
+  /// The cumulative difficulty score: the sum of every applied step's
+  /// [techniqueBaseScore]. Drives the [scoreBand] half of
+  /// [highestDifficulty].
+  final int score;
 
   final Map<HintTechnique, int> techniqueCounts;
   final List<HintTechnique> solveHistory;
 }
 
-/// Maps a [SolveResult] onto the app's [Difficulty] tiers using
-/// [techniqueDifficulty] — the "DifficultyEvaluator" module.
+/// Maps a [SolveResult] onto the app's [Difficulty] tiers — the
+/// "DifficultyEvaluator" module.
 ///
-/// Per generator.md, difficulty is decided solely by the single
-/// hardest-tier technique that appeared in the solve history — not a
-/// cumulative score. Priority order ([humanSolverTechniqueOrder]) is only
-/// used to break ties among techniques that share a tier (e.g. picking a
-/// representative technique among Naked/Hidden Pair/Triple, all Hard); it
-/// must never be used to compare across tiers, because priority order and
-/// tier order are not monotonic with each other in this app's mapping
+/// Difficulty is the higher of two views of the solve (HoDoKu's model):
+///  * a **floor** — the single hardest-tier technique that appeared, via
+///    [techniqueDifficulty]; and
+///  * a **score band** — [scoreBand] of the cumulative [techniqueBaseScore]
+///    summed over every step, so a puzzle that needs *many* hard steps can
+///    promote above its hardest single technique.
+///
+/// A puzzle is therefore never rated below its hardest technique, but can be
+/// rated above it. Priority order ([humanSolverTechniqueOrder]) is used only
+/// to pick a representative [highestTechnique] among techniques that share
+/// the floor tier (e.g. Naked/Hidden Pair/Triple, all one tier); it must
+/// never be used to compare across tiers, because priority order and tier
+/// order are not monotonic with each other in this app's mapping
 /// (nakedQuad/hiddenQuad/simpleColoring/finnedXWing/sashimiXWing/xyChain
 /// are all Expert-tier despite sitting earlier in priority order than
 /// several Master-tier techniques like xWing/xyWing/swordfish/jellyfish).
@@ -52,8 +74,12 @@ class DifficultyEvaluator {
   DifficultyResult evaluate(SolveResult result) {
     HintTechnique? highestTechnique;
     var highestRank = -1;
+    var score = 0;
 
-    for (final technique in result.techniqueCounts.keys) {
+    for (final entry in result.techniqueCounts.entries) {
+      final technique = entry.key;
+      score += entry.value * techniqueBaseScore[technique]!;
+
       final rank = Difficulty.values.indexOf(techniqueDifficulty[technique]!);
       final isNewMax = rank > highestRank;
       final tieBrokenByPriority = rank == highestRank &&
@@ -65,13 +91,23 @@ class DifficultyEvaluator {
       }
     }
 
+    final floorDifficulty = highestTechnique == null
+        ? Difficulty.beginner
+        : techniqueDifficulty[highestTechnique]!;
+    final scoreDifficulty = scoreBand(score);
+    // Higher of floor and score band (enum is ordered easiest→hardest).
+    final highestDifficulty =
+        scoreDifficulty.index > floorDifficulty.index
+            ? scoreDifficulty
+            : floorDifficulty;
+
     return DifficultyResult(
       solved: result.solved,
       guessed: false,
       highestTechnique: highestTechnique,
-      highestDifficulty: highestTechnique == null
-          ? Difficulty.beginner
-          : techniqueDifficulty[highestTechnique]!,
+      highestDifficulty: highestDifficulty,
+      floorDifficulty: floorDifficulty,
+      score: score,
       techniqueCounts: result.techniqueCounts,
       solveHistory: result.history,
     );

@@ -438,5 +438,12 @@
   "codexTitle": "기법 도감",
   "codexProgress": "발견한 기법 {met} / {total}",
   "codexUsage": "{uses}회 · {puzzles}판",
-  "codexUndiscovered": "미발견"
+  "codexUndiscovered": "미발견",
+  "practiceTitle": "기법 연습",
+  "practiceIntro": "연습할 기법을 골라 그 기법이 나오는 보드에서 익혀보세요.",
+  "practiceShowTechnique": "이 기법 보기",
+  "practicePreparingBoard": "보드 준비 중…",
+  "practiceNoBoard": "연습 보드를 찾지 못했어요 — 다시 시도해 주세요.",
+  "practiceTechniqueNotYet": "아직 이 기법이 나올 차례가 아니에요 — 조금 더 풀면 등장해요.",
+  "practicePremiumBody": "상급 기법을 그 기법이 나오도록 만든 보드에서 단계별 안내와 함께 연습하세요."
 }

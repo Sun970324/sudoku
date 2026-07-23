@@ -1571,4 +1571,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get codexUndiscovered => 'Not yet';
+
+  @override
+  String get practiceTitle => 'Technique Practice';
+
+  @override
+  String get practiceIntro =>
+      'Pick a technique to practice on a board built to feature it.';
+
+  @override
+  String get practiceShowTechnique => 'Show this technique';
+
+  @override
+  String get practicePreparingBoard => 'Preparing a board…';
+
+  @override
+  String get practiceNoBoard =>
+      'Couldn\'t find a practice board — please try again.';
+
+  @override
+  String get practiceTechniqueNotYet =>
+      'This technique isn\'t in play yet — solve a little more and it\'ll come up.';
+
+  @override
+  String get practicePremiumBody =>
+      'Practice the harder techniques on boards built to feature them, walked through step by step.';
 }

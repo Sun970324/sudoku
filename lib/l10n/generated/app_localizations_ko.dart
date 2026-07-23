@@ -1534,4 +1534,26 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get codexUndiscovered => '미발견';
+
+  @override
+  String get practiceTitle => '기법 연습';
+
+  @override
+  String get practiceIntro => '연습할 기법을 골라 그 기법이 나오는 보드에서 익혀보세요.';
+
+  @override
+  String get practiceShowTechnique => '이 기법 보기';
+
+  @override
+  String get practicePreparingBoard => '보드 준비 중…';
+
+  @override
+  String get practiceNoBoard => '연습 보드를 찾지 못했어요 — 다시 시도해 주세요.';
+
+  @override
+  String get practiceTechniqueNotYet => '아직 이 기법이 나올 차례가 아니에요 — 조금 더 풀면 등장해요.';
+
+  @override
+  String get practicePremiumBody =>
+      '상급 기법을 그 기법이 나오도록 만든 보드에서 단계별 안내와 함께 연습하세요.';
 }
