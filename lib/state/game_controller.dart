@@ -811,14 +811,6 @@ class GameController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Debug-only (the settings hint demos): overwrite the whole notes grid
-  /// with a pre-narrowed state — for techniques like BUG+1 whose
-  /// precondition never arises on freshly computed candidates.
-  void debugSetNotes(List<List<Set<int>>> notes) {
-    _notes = notes.map((row) => row.map((s) => {...s}).toList()).toList();
-    notifyListeners();
-  }
-
   void _recomputeAllNotes() {
     final grid = SudokuGrid(_board);
     for (var r = 0; r < 9; r++) {

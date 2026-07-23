@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 
 import '../content/policy_texts.dart';
-import '../debug/technique_demos.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/hint.dart';
 import '../screens/policy_screen.dart';
 import '../screens/premium/premium_lock_screen.dart';
 import '../services/haptic_service.dart';
+import '../services/technique_queue_manager.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
 import '../state/premium_controller.dart';
@@ -169,11 +169,10 @@ void showSettingsSheet(
                             height: 480,
                             child: ListView(
                               children: [
-                                for (final technique in hintTechniqueOrder)
+                                for (final technique in TechniqueQueueManager
+                                    .supportedTechniques)
                                   ListTile(
                                     dense: true,
-                                    enabled:
-                                        techniqueDemoAvailable(technique),
                                     title:
                                         Text(technique.label(dialogContext)),
                                     trailing: Text(

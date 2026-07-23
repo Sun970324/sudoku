@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../debug/technique_demos.dart';
 import '../models/hint.dart';
+import '../services/technique_queue_manager.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../models/difficulty.dart';
@@ -332,11 +332,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   widget.settings,
                   onReplayTutorial: _showTutorial,
                   onHintDemo: kDebugMode
-                      ? (technique) => _openGame(GameScreen.newGame(
+                      ? (technique) async {
+                          final puzzle = await TechniqueQueueManager.instance
+                              .take(technique);
+                          if (!mounted || puzzle == null) return;
+                          _openGame(GameScreen.newGame(
                             difficulty: techniqueDifficulty[technique]!,
-                            puzzle: techniqueDemoPuzzle(technique),
+                            puzzle: puzzle,
                             debugDemoTechnique: technique,
-                          ))
+                          ));
+                        }
                       : null,
                 ),
               ),

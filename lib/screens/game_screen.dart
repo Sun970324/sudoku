@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 
-import '../debug/technique_demos.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../l10n/ko_josa.dart';
 import '../models/difficulty.dart';
@@ -703,14 +702,7 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
   /// hint via [GameController.debugRequestAicHint] and opens the normal hint
   /// sheet on it — the live way to inspect the AIC visualization + steps.
   Future<void> _onDebugAicPressed() async {
-    final demoNotes = widget.debugDemoTechnique == null
-        ? null
-        : techniqueDemoNotes(widget.debugDemoTechnique!);
-    if (demoNotes != null) {
-      _controller.debugSetNotes(demoNotes);
-    } else {
-      _controller.autoFillNotes();
-    }
+    _controller.autoFillNotes();
     final l10n = AppLocalizations.of(context)!;
     final hint = await _controller.debugRequestAicHint(
         l10n: l10n, technique: widget.debugDemoTechnique);
