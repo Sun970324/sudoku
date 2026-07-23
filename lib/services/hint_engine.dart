@@ -194,9 +194,26 @@ class HintEngine {
     AppLocalizations? l10n,
   ]) {
     final resolved = candidates ?? _freshCandidates(board);
-    final resolvedL10n = _resolveL10n(l10n);
     for (final technique in hintTechniqueOrder) {
-      final hint = switch (technique) {
+      final hint = findTechnique(technique, board, resolved, l10n);
+      if (hint != null) return hint;
+    }
+    return null;
+  }
+
+  /// Runs exactly [technique]'s finder — the single technique→finder
+  /// dispatch [findHint] iterates, exposed for callers that want one
+  /// specific technique (the debug hint demos). Same candidate semantics as
+  /// [findHint]: reveal-type techniques always recompute from the board.
+  Hint? findTechnique(
+    HintTechnique technique,
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) {
+    final resolved = candidates ?? _freshCandidates(board);
+    final resolvedL10n = _resolveL10n(l10n);
+    return switch (technique) {
         HintTechnique.fullHouse => findFullHouse(board, resolvedL10n),
         HintTechnique.nakedSingle => findNakedSingle(board, null, resolvedL10n),
         HintTechnique.hiddenSingle =>
@@ -268,9 +285,6 @@ class HintEngine {
         HintTechnique.alsAic => findAlsAic(board, resolved, resolvedL10n),
         HintTechnique.xyChain => findXYChain(board, resolved, resolvedL10n),
       };
-      if (hint != null) return hint;
-    }
-    return null;
   }
 
   /// Intersection removal (pointing): a digit confined to one line within a

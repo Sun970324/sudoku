@@ -693,27 +693,17 @@ class GameController extends ChangeNotifier {
     final notes = _notes;
     final engine = _hintEngine;
     final resolvedL10n = l10n ?? lookupAppLocalizations(const Locale('ko'));
-    // Grouped X-Chain before Grouped AIC: the general grouped search finds a
-    // chain whenever the single-digit one does, so the reverse order would
-    // make the groupedXChain label unreachable from this debug entry. A
-    // non-null [technique] (the ALS-family demo boards) bypasses the
-    // fallback and asks that finder directly.
-    var hint = await _runSearch(() => switch (technique) {
-          null => engine.findAic(board, notes, resolvedL10n) ??
-              engine.findXChain(board, notes, resolvedL10n) ??
-              engine.findGroupedXChain(board, notes, resolvedL10n) ??
-              engine.findGroupedAic(board, notes, resolvedL10n),
-          HintTechnique.wxyzWing =>
-            engine.findWXYZWing(board, notes, resolvedL10n),
-          HintTechnique.alsXZ => engine.findAlsXZ(board, notes, resolvedL10n),
-          HintTechnique.sueDeCoq =>
-            engine.findSueDeCoq(board, notes, resolvedL10n),
-          HintTechnique.tripleFirework =>
-            engine.findTripleFirework(board, notes, resolvedL10n),
-          HintTechnique.alsAic =>
-            engine.findAlsAic(board, notes, resolvedL10n),
-          _ => null,
-        });
+    // A non-null [technique] (the settings hint-demo boards) asks exactly
+    // that finder. The null fallback keeps the plain bug icon useful on any
+    // board: grouped X-Chain before grouped AIC, since the general grouped
+    // search finds a chain whenever the single-digit one does and would
+    // otherwise make that label unreachable.
+    var hint = await _runSearch(() => technique != null
+        ? engine.findTechnique(technique, board, notes, resolvedL10n)
+        : engine.findAic(board, notes, resolvedL10n) ??
+            engine.findXChain(board, notes, resolvedL10n) ??
+            engine.findGroupedXChain(board, notes, resolvedL10n) ??
+            engine.findGroupedAic(board, notes, resolvedL10n));
     if (hint != null && !_agreesWithSolution(hint)) hint = null;
     _setActiveHint(hint, _stepsFor(hint, l10n));
     notifyListeners();
@@ -818,6 +808,14 @@ class GameController extends ChangeNotifier {
     _history.add(_Move.notesOnly(_cloneNotes()));
     _recordEvent(GameEvent.fillNotes(elapsedSeconds));
     _recomputeAllNotes();
+    notifyListeners();
+  }
+
+  /// Debug-only (the settings hint demos): overwrite the whole notes grid
+  /// with a pre-narrowed state — for techniques like BUG+1 whose
+  /// precondition never arises on freshly computed candidates.
+  void debugSetNotes(List<List<Set<int>>> notes) {
+    _notes = notes.map((row) => row.map((s) => {...s}).toList()).toList();
     notifyListeners();
   }
 
