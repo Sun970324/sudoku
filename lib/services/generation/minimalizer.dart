@@ -9,16 +9,6 @@ import '../sudoku_solver.dart';
 /// remaining given can be removed without breaking uniqueness (this is
 /// order-dependent — a different shuffle order can land on a different,
 /// equally-valid minimal subset, not one canonical minimum).
-///
-/// When [isAcceptable] is supplied to [minimalize], the fixed point becomes
-/// *conditionally* minimal: no remaining given is removable while
-/// preserving both uniqueness and [isAcceptable] (e.g. a difficulty
-/// ceiling during graded puzzle generation). A ceiling-bounded run can land
-/// on a different minimal subset depending on shuffle order, and can even
-/// undershoot a target difficulty tier entirely — both acceptable per
-/// generator.md, since the spec only requires the final accepted puzzle to
-/// exactly match the target (enforced by the caller's retry loop, not by
-/// this class).
 class Minimalizer {
   Minimalizer({Random? random, SudokuSolver? solver})
       : _random = random ?? Random(),
@@ -27,25 +17,18 @@ class Minimalizer {
   final Random _random;
   final SudokuSolver _solver;
 
-  List<List<int>> minimalize(
-    List<List<int>> puzzle, {
-    bool Function(List<List<int>> puzzle)? isAcceptable,
-  }) {
+  List<List<int>> minimalize(List<List<int>> puzzle) {
     var current = puzzle.map((row) => List<int>.from(row)).toList();
     while (true) {
-      final removedThisPass = _removalPass(current, isAcceptable);
+      final removedThisPass = _removalPass(current);
       if (!removedThisPass) return current;
     }
   }
 
   /// Tries removing every remaining given once, in random order, keeping
-  /// each removal that preserves a unique solution and (if given) satisfies
-  /// [isAcceptable]. Returns whether at least one clue was actually removed
-  /// during this pass.
-  bool _removalPass(
-    List<List<int>> puzzle,
-    bool Function(List<List<int>> puzzle)? isAcceptable,
-  ) {
+  /// each removal that preserves a unique solution. Returns whether at
+  /// least one clue was actually removed during this pass.
+  bool _removalPass(List<List<int>> puzzle) {
     final givens = [
       for (var r = 0; r < 9; r++)
         for (var c = 0; c < 9; c++)
@@ -58,8 +41,7 @@ class Minimalizer {
       final col = pos[1];
       final backup = puzzle[row][col];
       puzzle[row][col] = 0;
-      final accept = _solver.countSolutions(puzzle, limit: 2) == 1 &&
-          (isAcceptable == null || isAcceptable(puzzle));
+      final accept = _solver.countSolutions(puzzle, limit: 2) == 1;
       if (accept) {
         removedAny = true;
       } else {

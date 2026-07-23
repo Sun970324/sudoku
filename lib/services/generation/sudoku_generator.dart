@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import '../../models/difficulty.dart';
+import '../../models/hint.dart';
 import '../../models/sudoku_grid.dart';
 import '../../models/sudoku_puzzle.dart';
 import 'board_generator.dart';
 import 'clue_remover.dart';
 import 'difficulty_evaluator.dart';
 import 'human_solver.dart';
-import 'minimalizer.dart';
 
 /// Orchestrates board generation end to end — the "Generator" module.
 ///
@@ -20,33 +20,45 @@ import 'minimalizer.dart';
 /// re-evaluated afterward and regenerated until its tier matches the bucket
 /// (best-effort, with a fallback so generation never fails).
 ///
-/// [Difficulty.hard]/[Difficulty.master]/[Difficulty.expert] keep the
-/// technique-gated generation (see [_generateByTechnique]): difficulty is
-/// decided by [DifficultyEvaluator] from how a [HumanSolver] actually solved
-/// the board — the higher of its hardest-technique tier and its
-/// cumulative-score band, never by given count. [ClueRemover] and
-/// [Minimalizer] both dig only while a candidate board's
-/// [DifficultyEvaluator]-computed `highestDifficulty` stays at or below the
-/// target tier (a "ceiling" that now also caps the accumulated score), and
-/// the final board is only accepted if it *exactly* matches the target —
-/// this catches undershoot (a dig that stayed within the ceiling but never
-/// actually reached the target tier). A puzzle that doesn't reach an exact
-/// match is discarded and generation retries with a fresh solved board.
+/// [Difficulty.medium] and up use HoDoKu's generator loop, ported from
+/// ref/release2.2.0 (`BackgroundGenerator.generate` +
+/// `SudokuGenerator.generateInitPos`), in [_generateByTechnique]: the dig is
+/// BLIND — every cell is tried once in random order and kept out only if
+/// uniqueness survives, so the board comes out minimal and difficulty never
+/// steers the dig. The candidate is then human-solved exactly ONCE, aborting
+/// early the moment it exceeds the target tier ([HumanSolver.solve]'s
+/// `maxDifficulty`), and accepted only on an exact match: the
+/// [DifficultyEvaluator] combined tier must equal the target AND the score
+/// band alone must too (HoDoKu's `rejectTooLowScore` — a puzzle whose
+/// hardest step reaches the tier but whose total work sits in a lower band
+/// plays too easy for its label). Any miss discards the whole board and
+/// retries with a fresh grid; with rejection made cheap by the early abort,
+/// many fast tries replace the old ceiling-gated dig that ran a human solve
+/// per removed clue.
 class SudokuGenerator {
   SudokuGenerator({
     Random? random,
     BoardGenerator? boardGenerator,
     ClueRemover? clueRemover,
     HumanSolver? humanSolver,
-    Minimalizer? minimalizer,
     DifficultyEvaluator? difficultyEvaluator,
   })  : _boardGenerator = boardGenerator ?? BoardGenerator(random: random),
         _clueRemover = clueRemover ?? ClueRemover(random: random),
         _humanSolver = humanSolver ?? HumanSolver(),
-        _minimalizer = minimalizer ?? Minimalizer(random: random),
         _evaluator = difficultyEvaluator ?? DifficultyEvaluator();
 
-  static const _maxAttempts = 200;
+  /// HoDoKu's background-generation retry budget
+  /// (`BackgroundGenerator.MAX_TRIES`). Attempts are cheap now (one blind
+  /// dig + one early-aborted solve), so the budget is sized to make the
+  /// StateError below effectively unreachable rather than to bound work —
+  /// typical tiers accept within tens of attempts.
+  static const _maxAttempts = 20000;
+
+  /// Blind-dig target: the proven mathematical floor for a uniquely
+  /// solvable 9x9 (HoDoKu's `maxPosToFill`). Never actually reached — the
+  /// dig stops wherever uniqueness pruning leaves it (~22-27 givens) — it
+  /// just means "dig as deep as uniqueness allows".
+  static const _digFloor = 17;
 
   /// Retry budget for the given-count tiers' re-evaluation loop (see
   /// [_generateByGivenCount]). Each attempt is a fast dig + human solve, so a
@@ -76,7 +88,6 @@ class SudokuGenerator {
   final BoardGenerator _boardGenerator;
   final ClueRemover _clueRemover;
   final HumanSolver _humanSolver;
-  final Minimalizer _minimalizer;
   final DifficultyEvaluator _evaluator;
 
   SudokuPuzzle generate(Difficulty difficulty) =>
@@ -110,8 +121,6 @@ class SudokuGenerator {
   }
 
   SudokuPuzzle _generateByTechnique(Difficulty difficulty) {
-    final targetRank = Difficulty.values.indexOf(difficulty);
-
     // Expert only: a tier-correct candidate that missed the givens cap is
     // kept as a last resort, so exhausting every attempt degrades to a
     // slightly-too-full expert puzzle instead of a StateError — which the
@@ -122,40 +131,30 @@ class SudokuGenerator {
     for (var attempt = 1; attempt <= _maxAttempts; attempt++) {
       final solvedBoard = _boardGenerator.generateSolvedBoard();
 
-      bool withinCeiling(List<List<int>> candidate) {
-        final evaluated = _evaluator.evaluate(_humanSolver.solve(candidate));
-        // `solved` is deliberately ignored here: an intermediate dig state
-        // HumanSolver can't yet fully finish is normal (fewer givens means
-        // more ambiguity along the way), not evidence of "too hard." Only a
-        // technique that actually outranks the target tier disqualifies.
-        return Difficulty.values.indexOf(evaluated.highestDifficulty) <=
-            targetRank;
+      // Blind dig: uniqueness is the only gate, so this lands minimal
+      // (every cell was tried once) without a single human solve.
+      final dug = _clueRemover.removeClues(solvedBoard, _digFloor);
+
+      // One human solve per candidate, early-aborted the moment the board
+      // proves harder than the target — an abort comes back `solved: false`
+      // and is rejected below exactly like a stuck board.
+      final result = _humanSolver.solve(dug, maxDifficulty: difficulty);
+      if (!result.solved) continue;
+
+      final evaluated = _evaluator.evaluate(result);
+      if (evaluated.highestDifficulty != difficulty ||
+          scoreBand(evaluated.score) != difficulty) {
+        // Undershoot, or a score band below the tier its hardest step
+        // reached (HoDoKu's rejectTooLowScore) — retry with a fresh board.
+        continue;
       }
 
-      final dug = _clueRemover.removeClues(
-        solvedBoard,
-        difficulty.givenCount,
-        isAcceptable: withinCeiling,
-      );
-      final minimized =
-          _minimalizer.minimalize(dug, isAcceptable: withinCeiling);
-
-      final finalEvaluated =
-          _evaluator.evaluate(_humanSolver.solve(minimized));
-      if (finalEvaluated.solved &&
-          finalEvaluated.highestDifficulty == difficulty) {
-        final givens = minimized.fold<int>(
-            0, (sum, row) => sum + row.where((v) => v != 0).length);
-        if (difficulty != Difficulty.expert || givens <= _expertMaxGivens) {
-          return _toPuzzle(minimized, solvedBoard, difficulty);
-        }
-        overfullFallback ??= _toPuzzle(minimized, solvedBoard, difficulty);
+      final givens = dug.fold<int>(
+          0, (sum, row) => sum + row.where((v) => v != 0).length);
+      if (difficulty != Difficulty.expert || givens <= _expertMaxGivens) {
+        return _toPuzzle(dug, solvedBoard, difficulty);
       }
-      // Undershoot (never reached the target tier), an overshoot that
-      // slipped past the ceiling (shouldn't happen given both passes are
-      // ceiling-gated, but this final check is the real guard either way),
-      // or an expert board that landed with too many givens — retry with a
-      // fresh solved board.
+      overfullFallback ??= _toPuzzle(dug, solvedBoard, difficulty);
     }
 
     final fallback = overfullFallback;

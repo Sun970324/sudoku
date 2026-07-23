@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sudoku/models/difficulty.dart';
 import 'package:sudoku/models/hint.dart';
 import 'package:sudoku/services/generation/human_solver.dart';
 
@@ -304,5 +305,45 @@ void main() {
     HumanSolver().solve(board);
 
     expect(board, equals(original));
+  });
+
+  test('maxDifficulty aborts a too-hard solve early: the aborted history is '
+      'a strict prefix of the unrestricted one, with nothing over-tier '
+      'applied', () {
+    // The Simple Coloring board above: it fully solves unrestricted, and
+    // Simple Coloring (Master band) plus the sheer step count push it well
+    // past a medium ceiling — so a medium-capped solve MUST abort, mirroring
+    // HoDoKu's generation-time "zu schwer -> gleich abbrechen".
+    final board = [
+      [1, 0, 0, 9, 0, 0, 0, 0, 0],
+      [0, 0, 0, 7, 0, 2, 0, 4, 0],
+      [0, 0, 3, 0, 4, 0, 0, 6, 2],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [4, 0, 9, 0, 3, 1, 0, 0, 0],
+      [6, 0, 0, 0, 7, 0, 0, 0, 1],
+      [7, 0, 0, 0, 2, 0, 0, 3, 5],
+      [2, 0, 4, 3, 9, 0, 0, 0, 0],
+      [0, 6, 0, 0, 0, 0, 0, 0, 0],
+    ];
+
+    final full = HumanSolver().solve(board);
+    expect(full.solved, isTrue, reason: 'fixture must solve unrestricted');
+
+    final capped =
+        HumanSolver().solve(board, maxDifficulty: Difficulty.medium);
+
+    expect(capped.solved, isFalse);
+    expect(capped.history.length, lessThan(full.history.length));
+    // Same deterministic solver, same order — identical path until abort.
+    expect(capped.history,
+        equals(full.history.sublist(0, capped.history.length)));
+    // The offending step is never applied, so nothing recorded outranks
+    // the cap... unless the abort was by cumulative score, where every
+    // applied step is individually within tier. Either way:
+    for (final t in capped.history) {
+      expect(techniqueDifficulty[t]!.index,
+          lessThanOrEqualTo(Difficulty.medium.index),
+          reason: '$t outranks the medium cap but was applied');
+    }
   });
 }

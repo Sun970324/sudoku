@@ -19,20 +19,14 @@ class ClueRemover {
   /// first) — the result may have more than [targetGivenCount] givens if
   /// uniqueness can't be preserved all the way down.
   ///
-  /// If [isAcceptable] is given, a removal is also only kept when it
-  /// returns true for the resulting board (in addition to the existing
-  /// uniqueness check) — e.g. a difficulty-ceiling check during graded
-  /// puzzle generation. Defaults to always-accept, matching prior behavior.
-  ///
   /// When [symmetric] is true, cells are cleared in 180°-rotational pairs
   /// (a cell and its point-reflection through the centre), so the givens
   /// keep a point-symmetric pattern; the pair is kept only if clearing
-  /// *both* still leaves a unique, acceptable puzzle. Defaults to false
+  /// *both* still leaves a unique puzzle. Defaults to false
   /// (independent single-cell removal).
   List<List<int>> removeClues(
     List<List<int>> solvedBoard,
     int targetGivenCount, {
-    bool Function(List<List<int>> puzzle)? isAcceptable,
     bool symmetric = false,
   }) {
     final puzzle = solvedBoard.map((row) => List<int>.from(row)).toList();
@@ -45,8 +39,7 @@ class ClueRemover {
       for (final pos in unit) {
         puzzle[pos[0]][pos[1]] = 0;
       }
-      final accept = _solver.countSolutions(puzzle, limit: 2) == 1 &&
-          (isAcceptable == null || isAcceptable(puzzle));
+      final accept = _solver.countSolutions(puzzle, limit: 2) == 1;
       if (accept) {
         givenCount -= unit.length;
       } else {

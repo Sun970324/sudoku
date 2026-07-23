@@ -1,3 +1,4 @@
+import '../../models/difficulty.dart';
 import '../../models/hint.dart';
 import '../../models/sudoku_grid.dart';
 import '../hint_engine.dart';
@@ -123,16 +124,37 @@ class HumanSolver {
   /// condition for them too.
   final List<HintTechnique> _techniqueOrder;
 
-  SolveResult solve(List<List<int>> board) {
+  /// Solves as far as human techniques reach. With [maxDifficulty] set, the
+  /// solve aborts early the moment it becomes clear the puzzle exceeds that
+  /// tier — HoDoKu's generation-time optimisation (SudokuSolver.getHint:
+  /// "Wenn das Puzzle zu schwer ist, gleich abbrechen"): a candidate that
+  /// needs an over-tier technique, or whose cumulative score leaves the
+  /// tier's band, is going to be rejected anyway, so finishing the solve is
+  /// pure waste. An aborted result has `solved == false` (indistinguishable
+  /// from "stuck" — callers reject both); the offending technique is NOT
+  /// added to [SolveResult.history].
+  SolveResult solve(List<List<int>> board, {Difficulty? maxDifficulty}) {
     final working = board.map((row) => List<int>.from(row)).toList();
     final history = <HintTechnique>[];
     final techniqueCounts = <HintTechnique, int>{};
     List<List<Set<int>>>? candidates;
+    final scoreCeiling =
+        maxDifficulty == null ? null : difficultyScoreBands[maxDifficulty];
+    var score = 0;
 
     while (true) {
       candidates ??= _freshCandidates(working);
       final hint = _findNext(working, candidates);
       if (hint == null) break;
+
+      if (maxDifficulty != null &&
+          techniqueDifficulty[hint.technique]!.index > maxDifficulty.index) {
+        break; // over-tier step found — too hard, abort unapplied
+      }
+      score += techniqueBaseScore[hint.technique]!;
+      if (scoreCeiling != null && score >= scoreCeiling) {
+        break; // cumulative score already past the tier's band — too hard
+      }
 
       history.add(hint.technique);
       techniqueCounts[hint.technique] =
