@@ -6,8 +6,8 @@
 /// A whole grid is a flat `List<int>` of length 81, indexed by
 /// `cell = row * 9 + col` — the same indexing the geometry tables use.
 ///
-/// VM/native only, for the same reason as [BitSet81]: these are 64-bit
-/// bitwise ops that would truncate on Dart web (the solver never runs there).
+/// Every mask uses only bits 0..9, so all bitwise ops fit inside 32 bits and
+/// are correct on both the Dart VM and Dart web (like [BitSet81]).
 library;
 
 /// Mask with every digit 1..9 present (`0b11_1111_1110` = 0x3FE).
