@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/models/hint.dart';
+import 'package:sudoku/models/sudoku_grid.dart';
 import 'package:sudoku/services/generation/bitset/bitset_solver.dart';
 import 'package:sudoku/services/generation/board_generator.dart';
 import 'package:sudoku/services/generation/clue_remover.dart';
@@ -30,6 +31,7 @@ const _phase1Human = <HintTechnique>[
   HintTechnique.turbotFish,
   HintTechnique.xyWing,
   HintTechnique.simpleColoring,
+  HintTechnique.multiColoring,
   HintTechnique.xyzWing,
   HintTechnique.wWing,
   HintTechnique.swordfish,
@@ -176,6 +178,41 @@ void main() {
       expect(after![1][4], isNot(contains(6)));
       expect(after[1][2], contains(6));
     });
+  });
+
+  test('Multi-Coloring port fires on the known multi-coloring position '
+      '(same fixture as multi_coloring_test.dart) and strikes 5 from (6,4)',
+      () {
+    // A singles-stall board where two separate color clusters for digit 5
+    // exist and Simple Coloring does not apply — found by search, verified
+    // against the hint engine in multi_coloring_test.dart.
+    const board = [
+      [8, 0, 4, 7, 0, 1, 6, 3, 9],
+      [0, 3, 0, 6, 0, 0, 0, 1, 0],
+      [1, 0, 6, 3, 0, 9, 0, 0, 0],
+      [6, 4, 5, 9, 0, 0, 1, 7, 2],
+      [7, 0, 0, 2, 0, 0, 3, 8, 5],
+      [3, 8, 2, 5, 1, 7, 9, 6, 4],
+      [0, 0, 8, 1, 0, 0, 0, 4, 3],
+      [4, 6, 3, 8, 9, 0, 7, 0, 1],
+      [2, 0, 0, 4, 0, 0, 8, 9, 6],
+    ];
+    final candidates = SudokuGrid(
+            board.map((r) => List<int>.from(r)).toList())
+        .allCandidates();
+    // Simple coloring must not fire here (so multi genuinely owns the step).
+    expect(
+        BitsetSolver().debugApplyOnce(
+            HintTechnique.simpleColoring,
+            board.map((r) => List<int>.from(r)).toList(),
+            candidates),
+        isNull);
+    final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.multiColoring,
+        board.map((r) => List<int>.from(r)).toList(),
+        candidates);
+    expect(after, isNotNull);
+    expect(after![6][4], isNot(contains(5)));
   });
 
   test('enabled filter restricts which techniques run', () {

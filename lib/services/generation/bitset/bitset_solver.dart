@@ -59,6 +59,7 @@ class BitsetSolver {
     HintTechnique.turbotFish,
     HintTechnique.xyWing,
     HintTechnique.simpleColoring,
+    HintTechnique.multiColoring,
     HintTechnique.xyzWing,
     HintTechnique.wWing,
     HintTechnique.nakedQuad,
@@ -169,6 +170,7 @@ class BitsetSolver {
         HintTechnique.xyzWing => _xyWing(withPivotZ: true),
         HintTechnique.wWing => _wWing(),
         HintTechnique.simpleColoring => _simpleColoring(),
+        HintTechnique.multiColoring => _multiColoring(),
         _ => false,
       };
 
@@ -595,6 +597,76 @@ class BitsetSolver {
           });
           _history.add(HintTechnique.simpleColoring);
           return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /// Multi-Coloring (HoDoKu wrap/trap between two clusters, mirroring the
+  /// hint engine's findMultiColoring): for a digit with 2+ separate color
+  /// clusters — wrap: a colour of cluster A seeing BOTH colours of cluster B
+  /// can never be the digit; trap: if colour a (of A) sees colour c (of B),
+  /// cells seeing both opposite colours b and d lose the digit.
+  bool _multiColoring() {
+    for (var d = 1; d <= 9; d++) {
+      final positions = BitSet81();
+      for (var i = 0; i < 81; i++) {
+        if (_cell[i] == 0 && candHas(_mask[i], d)) positions.add(i);
+      }
+      final components = _colorComponents(d, positions);
+      if (components.length < 2) continue;
+
+      BitSet81 seen(BitSet81 color) {
+        final s = BitSet81();
+        color.forEach((c) => s.union(BitsetGeometry.buddies[c]));
+        return s;
+      }
+
+      for (var i = 0; i < components.length; i++) {
+        for (var j = 0; j < components.length; j++) {
+          if (i == j) continue;
+          final (a, b) = components[i];
+          final (c, e) = components[j];
+          // Wrap: a colour of A sees both colours of B -> that colour off.
+          for (final color in [a, b]) {
+            final s = seen(color);
+            if (s.intersects(c) && s.intersects(e)) {
+              var changed = false;
+              color.forEach((cell) {
+                if (candHas(_mask[cell], d)) {
+                  _mask[cell] = candRemove(_mask[cell], d);
+                  changed = true;
+                }
+              });
+              if (changed) {
+                _history.add(HintTechnique.multiColoring);
+                return true;
+              }
+            }
+          }
+          // Trap: colour x of A sees colour y of B -> cells seeing both
+          // opposites lose d.
+          for (final (x, y, oppX, oppY) in [
+            (a, c, b, e),
+            (a, e, b, c),
+            (b, c, a, e),
+            (b, e, a, c),
+          ]) {
+            if (!seen(x).intersects(y)) continue;
+            final trapped = (seen(oppX) & seen(oppY) & positions)
+              ..subtract(a)
+              ..subtract(b)
+              ..subtract(c)
+              ..subtract(e);
+            if (trapped.isNotEmpty) {
+              trapped.forEach((cell) {
+                _mask[cell] = candRemove(_mask[cell], d);
+              });
+              _history.add(HintTechnique.multiColoring);
+              return true;
+            }
+          }
         }
       }
     }
