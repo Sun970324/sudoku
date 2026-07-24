@@ -11,7 +11,7 @@ import '../models/hint.dart';
 import '../models/sudoku_puzzle.dart';
 import '../services/ad_service.dart';
 import '../services/generation/difficulty_evaluator.dart';
-import '../services/generation/human_solver.dart';
+import '../services/generation/bitset/bitset_solver.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
@@ -363,7 +363,11 @@ class _GameScreenState extends State<GameScreen> with WidgetsBindingObserver {
     );
     await _storage.saveReplay(_controller.toReplay(won: true));
 
-    final solveResult = HumanSolver().solve(_controller.puzzle.puzzle.toJson());
+    // BitsetSolver is the app's single difficulty/technique authority
+    // (HoDoKu's one-solver principle) — the same solver that accepted the
+    // puzzle at generation scores what it showcased here.
+    final solveResult =
+        BitsetSolver().solve(_controller.puzzle.puzzle.toJson()).toSolveResult();
     final difficultyResult = DifficultyEvaluator().evaluate(solveResult);
     // Feed the technique codex (premium stats) — the counts are already
     // computed for the result screen, so this is pure bookkeeping.

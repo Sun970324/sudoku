@@ -3,8 +3,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../models/hint.dart';
+import '../../services/generation/bitset/bitset_solver.dart';
 import '../../services/generation/difficulty_evaluator.dart';
-import '../../services/generation/human_solver.dart';
+import '../../services/generation/human_solver.dart' show humanSolverTechniqueOrder;
 import '../../state/race_controller.dart';
 import '../../widgets/celebration_overlay.dart';
 import '../../widgets/gradient_scaffold.dart';
@@ -34,7 +35,7 @@ class _RaceResultScreenState extends State<RaceResultScreen> {
     final puzzle = widget.controller.puzzle;
     if (puzzle != null) {
       _difficultyResult = DifficultyEvaluator().evaluate(
-        HumanSolver().solve(puzzle.puzzle.toJson()),
+        BitsetSolver().solve(puzzle.puzzle.toJson()).toSolveResult(),
       );
     }
   }

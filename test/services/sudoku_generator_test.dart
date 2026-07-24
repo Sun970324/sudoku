@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/models/difficulty.dart';
 import 'package:sudoku/models/hint.dart';
+import 'package:sudoku/services/generation/bitset/bitset_solver.dart';
 import 'package:sudoku/services/generation/difficulty_evaluator.dart';
 import 'package:sudoku/services/generation/human_solver.dart';
 import 'package:sudoku/services/generation/sudoku_generator.dart';
+import 'package:sudoku/services/generation/technique_board_miner.dart';
 import 'package:sudoku/services/sudoku_solver.dart';
 
 bool _isCompleteAndValid(List<List<int>> cells) {
@@ -36,7 +38,12 @@ bool _isCompleteAndValid(List<List<int>> cells) {
 
 void main() {
   final solver = SudokuSolver();
-  final humanSolver = HumanSolver();
+  // BitsetSolver is the difficulty authority (what generation scored with);
+  // the hint-arsenal HumanSolver below guards the separate playability
+  // invariant (the in-game hint engine must never dead-end on an accepted
+  // puzzle — its technique set is a superset of the generation order).
+  final bitsetSolver = BitsetSolver();
+  final hintArsenalSolver = HumanSolver(techniqueOrder: minableOrder);
   final evaluator = DifficultyEvaluator();
   final generator = SudokuGenerator(random: Random(42));
 
@@ -100,7 +107,7 @@ void main() {
 
         test('is solvable via human techniques alone (no guessing) at this '
             'generous a given count', () {
-          final result = humanSolver.solve(puzzle.puzzle.cells);
+          final result = bitsetSolver.solve(puzzle.puzzle.cells);
           expect(result.solved, isTrue,
               reason: '$difficulty puzzles must fully solve via human '
                   'techniques alone (no guessing/backtracking)');
@@ -151,11 +158,11 @@ void main() {
           }
         });
 
-        test('is genuinely solvable via human techniques whose highest tier '
-            'AND score band exactly match the target difficulty (HoDoKu '
-            'acceptance incl. rejectTooLowScore)', () {
-          final result = humanSolver.solve(puzzle.puzzle.cells);
-          final evaluated = evaluator.evaluate(result);
+        test('the difficulty authority (BitsetSolver) re-scores the puzzle '
+            'to exactly the target tier AND score band (HoDoKu acceptance '
+            'incl. rejectTooLowScore)', () {
+          final result = bitsetSolver.solve(puzzle.puzzle.cells);
+          final evaluated = evaluator.evaluate(result.toSolveResult());
           expect(result.solved, isTrue,
               reason: '$difficulty puzzles must fully solve via human '
                   'techniques alone (no guessing/backtracking)');
@@ -166,6 +173,12 @@ void main() {
               reason: 'the cumulative score alone must land in the '
                   '$difficulty band (rejectTooLowScore) — '
                   'score: ${evaluated.score}');
+        });
+
+        test('the in-game hint engine (full arsenal) can also finish the '
+            'puzzle — an accepted board must never dead-end the player\'s '
+            'hint button', () {
+          expect(hintArsenalSolver.solve(puzzle.puzzle.cells).solved, isTrue);
         });
       }
     });

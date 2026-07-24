@@ -4,10 +4,10 @@ import '../../models/difficulty.dart';
 import '../../models/hint.dart';
 import '../../models/sudoku_grid.dart';
 import '../../models/sudoku_puzzle.dart';
+import 'bitset/bitset_solver.dart';
 import 'board_generator.dart';
 import 'clue_remover.dart';
 import 'difficulty_evaluator.dart';
-import 'human_solver.dart';
 
 /// Orchestrates board generation end to end — the "Generator" module.
 ///
@@ -25,9 +25,10 @@ import 'human_solver.dart';
 /// `SudokuGenerator.generateInitPos`), in [_generateByTechnique]: the dig is
 /// BLIND — every cell is tried once in random order and kept out only if
 /// uniqueness survives, so the board comes out minimal and difficulty never
-/// steers the dig. The candidate is then human-solved exactly ONCE, aborting
-/// early the moment it exceeds the target tier ([HumanSolver.solve]'s
-/// `maxDifficulty`), and accepted only on an exact match: the
+/// steers the dig. The candidate is then solved exactly ONCE by the
+/// [BitsetSolver] — the app's single difficulty authority, HoDoKu-style —
+/// aborting early the moment it exceeds the target tier (`maxDifficulty`),
+/// and accepted only on an exact match: the
 /// [DifficultyEvaluator] combined tier must equal the target AND the score
 /// band alone must too (HoDoKu's `rejectTooLowScore` — a puzzle whose
 /// hardest step reaches the tier but whose total work sits in a lower band
@@ -40,11 +41,11 @@ class SudokuGenerator {
     Random? random,
     BoardGenerator? boardGenerator,
     ClueRemover? clueRemover,
-    HumanSolver? humanSolver,
+    BitsetSolver? solver,
     DifficultyEvaluator? difficultyEvaluator,
   })  : _boardGenerator = boardGenerator ?? BoardGenerator(random: random),
         _clueRemover = clueRemover ?? ClueRemover(random: random),
-        _humanSolver = humanSolver ?? HumanSolver(),
+        _solver = solver ?? BitsetSolver(),
         _evaluator = difficultyEvaluator ?? DifficultyEvaluator();
 
   /// HoDoKu's background-generation retry budget
@@ -87,7 +88,7 @@ class SudokuGenerator {
 
   final BoardGenerator _boardGenerator;
   final ClueRemover _clueRemover;
-  final HumanSolver _humanSolver;
+  final BitsetSolver _solver;
   final DifficultyEvaluator _evaluator;
 
   SudokuPuzzle generate(Difficulty difficulty) =>
@@ -111,7 +112,9 @@ class SudokuGenerator {
         symmetric: true,
       );
       final puzzle = _toPuzzle(dug, solvedBoard, difficulty);
-      if (_evaluator.evaluate(_humanSolver.solve(dug)).highestDifficulty ==
+      if (_evaluator
+              .evaluate(_solver.solve(dug).toSolveResult())
+              .highestDifficulty ==
           difficulty) {
         return puzzle;
       }
@@ -135,13 +138,13 @@ class SudokuGenerator {
       // (every cell was tried once) without a single human solve.
       final dug = _clueRemover.removeClues(solvedBoard, _digFloor);
 
-      // One human solve per candidate, early-aborted the moment the board
+      // One bitset solve per candidate, early-aborted the moment the board
       // proves harder than the target — an abort comes back `solved: false`
       // and is rejected below exactly like a stuck board.
-      final result = _humanSolver.solve(dug, maxDifficulty: difficulty);
+      final result = _solver.solve(dug, maxDifficulty: difficulty);
       if (!result.solved) continue;
 
-      final evaluated = _evaluator.evaluate(result);
+      final evaluated = _evaluator.evaluate(result.toSolveResult());
       if (evaluated.highestDifficulty != difficulty ||
           scoreBand(evaluated.score) != difficulty) {
         // Undershoot, or a score band below the tier its hardest step

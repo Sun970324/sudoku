@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart' show visibleForTesting;
 
+import '../../../models/difficulty.dart';
 import '../../../models/hint.dart';
+import '../human_solver.dart' show SolveResult;
 import 'bitset81.dart';
 import 'candidates.dart';
 import 'conversions.dart';
@@ -29,6 +31,7 @@ class BitsetSolveResult {
     required this.solved,
     required this.board,
     required this.history,
+    required this.techniqueCounts,
   });
 
   /// Whether every cell was filled using only the enabled techniques.
@@ -39,6 +42,20 @@ class BitsetSolveResult {
 
   /// Every technique application, in order.
   final List<HintTechnique> history;
+
+  /// How many times each technique in [history] was used.
+  final Map<HintTechnique, int> techniqueCounts;
+
+  /// This result in the shape [DifficultyEvaluator] scores — same fields, so
+  /// every difficulty-labelling site in the app can use the bitset solver as
+  /// the single authority (HoDoKu's one-solver principle) without touching
+  /// the evaluator.
+  SolveResult toSolveResult() => SolveResult(
+        solved: solved,
+        board: board,
+        history: history,
+        techniqueCounts: techniqueCounts,
+      );
 }
 
 class BitsetSolver {
@@ -49,8 +66,10 @@ class BitsetSolver {
     HintTechnique.hiddenSingle,
     HintTechnique.intersectionPointing,
     HintTechnique.intersectionClaiming,
+    HintTechnique.lockedPair,
     HintTechnique.nakedPair,
     HintTechnique.hiddenPair,
+    HintTechnique.lockedTriple,
     HintTechnique.nakedTriple,
     HintTechnique.hiddenTriple,
     HintTechnique.xWing,
@@ -87,7 +106,19 @@ class BitsetSolver {
   /// Solves [input] (9x9, 0 = empty) with the enabled subset of [order]. When
   /// [enabled] is null every technique is used. Returns the final board plus
   /// the technique log; `solved` is true only if every cell was filled.
-  BitsetSolveResult solve(List<List<int>> input, {Set<HintTechnique>? enabled}) {
+  ///
+  /// With [maxDifficulty] set the solve aborts the moment it proves too hard
+  /// for that tier — HoDoKu's generation-time optimisation, integrated into
+  /// the solver exactly like SudokuSolver.getHint ("Wenn das Puzzle zu schwer
+  /// ist, gleich abbrechen"): each applied step accumulates score/level, and
+  /// an over-tier step or a cumulative score past the tier's band ends the
+  /// solve with `solved == false` (indistinguishable from stuck — generation
+  /// rejects both).
+  BitsetSolveResult solve(
+    List<List<int>> input, {
+    Set<HintTechnique>? enabled,
+    Difficulty? maxDifficulty,
+  }) {
     _cell = List<int>.filled(81, 0);
     _mask = List<int>.filled(81, 0);
     _history = <HintTechnique>[];
@@ -107,6 +138,11 @@ class BitsetSolver {
     }
 
     bool on(HintTechnique t) => enabled == null || enabled.contains(t);
+    final scoreCeiling =
+        maxDifficulty == null ? null : difficultyScoreBands[maxDifficulty];
+    var score = 0;
+    var seenSteps = 0;
+    var aborted = false;
 
     while (!_contradiction()) {
       var progressed = false;
@@ -118,12 +154,32 @@ class BitsetSolver {
         }
       }
       if (!progressed) break;
+      if (maxDifficulty != null) {
+        // Score the steps this iteration appended (techniques may log more
+        // than one entry only in theory; the loop breaks on first success).
+        while (seenSteps < _history.length) {
+          final t = _history[seenSteps++];
+          if (techniqueDifficulty[t]!.index > maxDifficulty.index) {
+            aborted = true; // over-tier step — too hard
+          }
+          score += techniqueBaseScore[t]!;
+          if (scoreCeiling != null && score >= scoreCeiling) {
+            aborted = true; // past the tier's cumulative band — too hard
+          }
+        }
+        if (aborted) break;
+      }
     }
 
+    final counts = <HintTechnique, int>{};
+    for (final t in _history) {
+      counts[t] = (counts[t] ?? 0) + 1;
+    }
     return BitsetSolveResult(
-      solved: _cell.every((v) => v != 0),
+      solved: !aborted && _cell.every((v) => v != 0),
       board: [for (var r = 0; r < 9; r++) _cell.sublist(r * 9, r * 9 + 9)],
       history: _history,
+      techniqueCounts: counts,
     );
   }
 
@@ -164,9 +220,11 @@ class BitsetSolver {
         HintTechnique.hiddenSingle => _hiddenSingle(),
         HintTechnique.intersectionPointing => _pointing(),
         HintTechnique.intersectionClaiming => _claiming(),
-        HintTechnique.nakedPair => _nakedSubset(2, HintTechnique.nakedPair),
-        HintTechnique.nakedTriple => _nakedSubset(3, HintTechnique.nakedTriple),
-        HintTechnique.nakedQuad => _nakedSubset(4, HintTechnique.nakedQuad),
+        HintTechnique.lockedPair => _nakedSubset(2, lockedOnly: true),
+        HintTechnique.lockedTriple => _nakedSubset(3, lockedOnly: true),
+        HintTechnique.nakedPair => _nakedSubset(2),
+        HintTechnique.nakedTriple => _nakedSubset(3),
+        HintTechnique.nakedQuad => _nakedSubset(4),
         HintTechnique.hiddenPair => _hiddenSubset(2, HintTechnique.hiddenPair),
         HintTechnique.hiddenTriple =>
           _hiddenSubset(3, HintTechnique.hiddenTriple),
@@ -322,7 +380,15 @@ class BitsetSolver {
     return changed;
   }
 
-  bool _nakedSubset(int k, HintTechnique tag) {
+  /// Naked subset of size [k], HoDoKu-style (SimpleSolver.findNakedXle): the
+  /// eliminations run over EVERY unit the subset cells share (a box-and-line
+  /// confined pair strips both units in ONE step), and the step is labelled
+  /// Locked Pair/Triple exactly under HoDoKu's condition — size < 4, cells
+  /// confined to a box AND a line, eliminations found in more than one shared
+  /// unit. With [lockedOnly] only locked-labelled finds fire (the separate
+  /// lockedPair/lockedTriple order slots); without it the locked shapes have
+  /// already been consumed, so plain naked labels stay clean.
+  bool _nakedSubset(int k, {bool lockedOnly = false}) {
     for (final unit in _unitCells) {
       final empties = [for (final i in unit) if (_cell[i] == 0) i];
       if (empties.length <= k) continue; // need cells left to eliminate from
@@ -332,19 +398,53 @@ class BitsetSolver {
           union |= _mask[i];
         }
         if (candCount(union) != k) continue;
-        var changed = false;
-        for (final i in empties) {
-          if (combo.contains(i)) continue;
-          final trimmed = _mask[i] & ~union;
-          if (trimmed != _mask[i]) {
-            _mask[i] = trimmed;
-            changed = true;
+
+        // Every unit shared by ALL subset cells (its own unit plus, for a
+        // box-line confined subset, the crossing one).
+        final sameRow = combo.every((i) => i ~/ 9 == combo.first ~/ 9);
+        final sameCol = combo.every((i) => i % 9 == combo.first % 9);
+        final sameBox = combo.every(
+            (i) => BitsetGeometry.boxOf(i) == BitsetGeometry.boxOf(combo.first));
+        final sharedUnits = [
+          if (sameRow) combo.first ~/ 9,
+          if (sameCol) 9 + combo.first % 9,
+          if (sameBox) 18 + BitsetGeometry.boxOf(combo.first),
+        ];
+        final lockedShape = k < 4 && sameBox && (sameRow || sameCol);
+        if (lockedOnly && !lockedShape) continue;
+
+        var changedUnits = 0;
+        for (final u in sharedUnits) {
+          var changedHere = false;
+          for (final i in _unitCells[u]) {
+            if (combo.contains(i) || _cell[i] != 0) continue;
+            final trimmed = _mask[i] & ~union;
+            if (trimmed != _mask[i]) {
+              _mask[i] = trimmed;
+              changedHere = true;
+            }
           }
+          if (changedHere) changedUnits++;
         }
-        if (changed) {
-          _history.add(tag);
+        if (changedUnits == 0) continue;
+
+        final isLocked = lockedShape && changedUnits > 1;
+        if (lockedOnly && !isLocked) {
+          // Locked shape but single-unit eliminations: HoDoKu treats that as
+          // a plain naked subset — but we've already applied the strikes, so
+          // record it under its naked label rather than pretending nothing
+          // happened.
+          _history.add(k == 2 ? HintTechnique.nakedPair : HintTechnique.nakedTriple);
           return true;
         }
+        _history.add(isLocked
+            ? (k == 2 ? HintTechnique.lockedPair : HintTechnique.lockedTriple)
+            : switch (k) {
+                2 => HintTechnique.nakedPair,
+                3 => HintTechnique.nakedTriple,
+                _ => HintTechnique.nakedQuad,
+              });
+        return true;
       }
     }
     return false;

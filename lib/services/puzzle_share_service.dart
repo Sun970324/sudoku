@@ -1,7 +1,7 @@
 import '../models/sudoku_grid.dart';
 import '../models/sudoku_puzzle.dart';
 import 'generation/difficulty_evaluator.dart';
-import 'generation/human_solver.dart';
+import 'generation/bitset/bitset_solver.dart';
 import 'sudoku_solver.dart';
 
 class PuzzleShareException implements Exception {
@@ -13,14 +13,14 @@ class PuzzleShareException implements Exception {
 class PuzzleShareService {
   PuzzleShareService({
     SudokuSolver? solver,
-    HumanSolver? humanSolver,
+    BitsetSolver? difficultySolver,
     DifficultyEvaluator? difficultyEvaluator,
   })  : _solver = solver ?? SudokuSolver(),
-        _humanSolver = humanSolver ?? HumanSolver(),
+        _difficultySolver = difficultySolver ?? BitsetSolver(),
         _difficultyEvaluator = difficultyEvaluator ?? DifficultyEvaluator();
 
   final SudokuSolver _solver;
-  final HumanSolver _humanSolver;
+  final BitsetSolver _difficultySolver;
   final DifficultyEvaluator _difficultyEvaluator;
 
   static const _textCodeVersion = '1';
@@ -72,7 +72,7 @@ class PuzzleShareService {
     }
     final fixedMask =
         List.generate(9, (r) => List.generate(9, (c) => givens[r][c] != 0));
-    final evaluated = _difficultyEvaluator.evaluate(_humanSolver.solve(givens));
+    final evaluated = _difficultyEvaluator.evaluate(_difficultySolver.solve(givens).toSolveResult());
     return SudokuPuzzle(
       puzzle: SudokuGrid(givens),
       solution: SudokuGrid(solved),
