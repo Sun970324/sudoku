@@ -251,6 +251,93 @@ void main() {
     });
   });
 
+  group('phase-4a hint-only pattern ports (finned Swordfish · Sue de Coq · '
+      'Triple Firework — mirror hint_engine_test positions)', () {
+    List<List<Set<int>>> candidatesFrom(Map<List<int>, Set<int>> entries) {
+      final grid =
+          List.generate(9, (_) => List.generate(9, (_) => <int>{}));
+      entries.forEach((cell, digits) => grid[cell[0]][cell[1]] = {...digits});
+      return grid;
+    }
+
+    final emptyBoard = List.generate(9, (_) => List.filled(9, 0));
+
+    test('Finned Swordfish: rows 0/3/6 (cover cols 1/4/7) with a fin at '
+        '(6,2) strips 6 from (7,1)', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.finnedSwordfish,
+        emptyBoard,
+        candidatesFrom({
+          [0, 1]: {6},
+          [0, 4]: {6},
+          [3, 4]: {6},
+          [3, 7]: {6},
+          [6, 1]: {6},
+          [6, 7]: {6},
+          [6, 2]: {6},
+          [7, 1]: {6},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![7][1], isNot(contains(6)));
+    });
+
+    test('Sue de Coq: crossing {1,2,3},{2,3,4} + line ALS {1,4} + box ALS '
+        '{2,3} eliminate 1 from (0,7) and 3 from (2,1)', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.sueDeCoq,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1, 2, 3},
+          [0, 1]: {2, 3, 4},
+          [0, 5]: {1, 4},
+          [0, 7]: {1, 5},
+          [1, 2]: {2, 3},
+          [2, 1]: {3, 9},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![0][7], isNot(contains(1)));
+      expect(after[2][1], isNot(contains(3)));
+    });
+
+    test('Sue de Coq: silent when line and box ALS share a digit', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.sueDeCoq,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1, 2, 3},
+          [0, 1]: {2, 3, 4},
+          [0, 5]: {1, 4},
+          [1, 2]: {1, 3},
+        }),
+      );
+      expect(after, isNull);
+    });
+
+    test('Triple Firework: digits 1·2·3 spraying box 4 lock cross (4,4) + '
+        'wings (4,8)/(8,4) — extras 5/6 and box 1 go', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.tripleFirework,
+        emptyBoard,
+        candidatesFrom({
+          [4, 3]: {1, 2},
+          [4, 4]: {1, 2, 3},
+          [4, 5]: {3, 7},
+          [4, 8]: {1, 3, 5},
+          [3, 4]: {2, 3},
+          [5, 4]: {1, 2},
+          [8, 4]: {2, 3, 6},
+          [3, 3]: {1, 8},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![4][8], isNot(contains(5)));
+      expect(after[8][4], isNot(contains(6)));
+      expect(after[3][3], isNot(contains(1)));
+    });
+  });
+
   test('Multi-Coloring port fires on the known multi-coloring position '
       '(same fixture as multi_coloring_test.dart) and strikes 5 from (6,4)',
       () {

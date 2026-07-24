@@ -244,6 +244,12 @@ class BitsetSolver {
         HintTechnique.remotePair => _remotePair(),
         HintTechnique.finnedXWing => _finnedXWing(wantSashimi: false),
         HintTechnique.sashimiXWing => _finnedXWing(wantSashimi: true),
+        HintTechnique.finnedSwordfish =>
+          _finnedFishN(3, HintTechnique.finnedSwordfish),
+        HintTechnique.finnedJellyfish =>
+          _finnedFishN(4, HintTechnique.finnedJellyfish),
+        HintTechnique.sueDeCoq => _sueDeCoq(),
+        HintTechnique.tripleFirework => _tripleFirework(),
         HintTechnique.bugPlusOne => _bugPlusOne(),
         HintTechnique.uniqueRectangleType1 => _uniqueRectangle(1),
         HintTechnique.uniqueRectangleType2 => _uniqueRectangle(2),
@@ -1081,6 +1087,272 @@ class BitsetSolver {
                   : HintTechnique.finnedXWing);
               return true;
             }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /// Finned Swordfish (size 3) / Finned Jellyfish (size 4): [size] base lines
+  /// whose combined positions span size+1..size+2 cover positions; picking
+  /// [size] of them as the cover leaves the rest as fins. A cover cell outside
+  /// the base lines that sees EVERY fin loses the digit. Generalizes
+  /// [_finnedXWing] (which owns size 2, incl. the sashimi split).
+  bool _finnedFishN(int size, HintTechnique tag) {
+    for (var d = 1; d <= 9; d++) {
+      for (final rowsAsBase in const [true, false]) {
+        final lineMask = List<int>.filled(9, 0);
+        for (var i = 0; i < 9; i++) {
+          for (var j = 0; j < 9; j++) {
+            final cell = rowsAsBase ? i * 9 + j : j * 9 + i;
+            if (_cell[cell] == 0 && candHas(_mask[cell], d)) {
+              lineMask[i] |= 1 << j;
+            }
+          }
+        }
+        final baseLines = [
+          for (var i = 0; i < 9; i++)
+            if (candCount(lineMask[i]) >= 2 && candCount(lineMask[i]) <= size + 2)
+              i,
+        ];
+        if (baseLines.length < size) continue;
+
+        for (final base in _combinations(baseLines, size)) {
+          var spanned = 0;
+          for (final i in base) {
+            spanned |= lineMask[i];
+          }
+          if (candCount(spanned) <= size || candCount(spanned) > size + 2) {
+            continue;
+          }
+          final spannedCols = [
+            for (var j = 0; j < 9; j++)
+              if (spanned & (1 << j) != 0) j,
+          ];
+          for (final coverCols in _combinations(spannedCols, size)) {
+            var cover = 0;
+            for (final j in coverCols) {
+              cover |= 1 << j;
+            }
+            // Fins = base positions outside the cover; every base line must
+            // still reach the cover.
+            var finBuddies = BitSet81.all();
+            var hasFin = false;
+            var allReach = true;
+            for (final i in base) {
+              if (lineMask[i] & cover == 0) allReach = false;
+              final finBits = lineMask[i] & ~cover;
+              for (var j = 0; j < 9; j++) {
+                if (finBits & (1 << j) == 0) continue;
+                hasFin = true;
+                final cell = rowsAsBase ? i * 9 + j : j * 9 + i;
+                finBuddies.intersect(BitsetGeometry.buddies[cell]);
+              }
+            }
+            if (!hasFin || !allReach) continue;
+
+            var changed = false;
+            for (final j in coverCols) {
+              for (var i = 0; i < 9; i++) {
+                if (base.contains(i)) continue;
+                final cell = rowsAsBase ? i * 9 + j : j * 9 + i;
+                if (_cell[cell] == 0 &&
+                    candHas(_mask[cell], d) &&
+                    finBuddies.contains(cell)) {
+                  _mask[cell] = candRemove(_mask[cell], d);
+                  changed = true;
+                }
+              }
+            }
+            if (changed) {
+              _history.add(tag);
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /// Every Almost Locked Set in [pool] (1..4 cells holding exactly one more
+  /// digit than cells) as (cells, digit-union mask).
+  List<(List<int>, int)> _alsSubsetsIn(List<int> pool) {
+    final out = <(List<int>, int)>[];
+    for (var size = 1; size <= 4 && size <= pool.length; size++) {
+      for (final combo in _combinations(pool, size)) {
+        var union = 0;
+        for (final i in combo) {
+          union |= _mask[i];
+        }
+        if (candCount(union) == size + 1) out.add((combo, union));
+      }
+    }
+    return out;
+  }
+
+  /// Sue de Coq (classic disjoint form, ported from the hint engine's
+  /// findSueDeCoq): 2-3 cells C on a box/line intersection with candidate
+  /// union V (|V| >= |C|+2), an ALS A on the rest of the line and an ALS B on
+  /// the rest of the box — cell-disjoint, digit-disjoint — with exactly |C|-2
+  /// digits of V outside A∪B. Then A's digits (+the leftover) fall off the
+  /// rest of the line and B's (+leftover) off the rest of the box.
+  bool _sueDeCoq() {
+    for (var box = 0; box < 9; box++) {
+      final br = box ~/ 3 * 3, bc = box % 3 * 3;
+      final boxCells = [
+        for (final i in _unitCells[18 + box])
+          if (_cell[i] == 0) i,
+      ];
+      for (final lineIsRow in const [true, false]) {
+        for (var t = 0; t < 3; t++) {
+          final lineIdx = lineIsRow ? br + t : bc + t;
+          final lineCells = [
+            for (final i in _unitCells[lineIsRow ? lineIdx : 9 + lineIdx])
+              if (_cell[i] == 0) i,
+          ];
+          final inter = [
+            for (final i in lineCells)
+              if (BitsetGeometry.boxOf(i) == box) i,
+          ];
+          if (inter.length < 2) continue;
+
+          for (var k = 2; k <= inter.length; k++) {
+            for (final c in _combinations(inter, k)) {
+              var v = 0;
+              for (final i in c) {
+                v |= _mask[i];
+              }
+              if (candCount(v) < k + 2) continue;
+              final linePool = [
+                for (final i in lineCells)
+                  if (!c.contains(i)) i,
+              ];
+              final boxPool = [
+                for (final i in boxCells)
+                  if (!c.contains(i)) i,
+              ];
+              for (final (aCells, aMask) in _alsSubsetsIn(linePool)) {
+                for (final (bCells, bMask) in _alsSubsetsIn(boxPool)) {
+                  if (aCells.any(bCells.contains)) continue;
+                  if (aMask & bMask != 0) continue;
+                  final rem = v & ~aMask & ~bMask;
+                  if (candCount(rem) != k - 2) continue;
+
+                  final goneLine = aMask | rem;
+                  final goneBox = bMask | rem;
+                  var changed = false;
+                  for (final i in linePool) {
+                    if (aCells.contains(i)) continue;
+                    final trimmed = _mask[i] & ~goneLine;
+                    if (trimmed != _mask[i]) {
+                      _mask[i] = trimmed;
+                      changed = true;
+                    }
+                  }
+                  for (final i in boxPool) {
+                    if (bCells.contains(i)) continue;
+                    final trimmed = _mask[i] & ~goneBox;
+                    if (trimmed != _mask[i]) {
+                      _mask[i] = trimmed;
+                      changed = true;
+                    }
+                  }
+                  if (changed) {
+                    _history.add(HintTechnique.sueDeCoq);
+                    return true;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /// Triple Firework (ported from the hint engine): a cross cell (r,c), three
+  /// digits each confined on row r to the box plus at most one shared row
+  /// wing, and on column c to the box plus one shared column wing. The three
+  /// cells {cross, rowWing, colWing} then hold exactly those three digits —
+  /// so they lose every other candidate, and the box's other cells lose all
+  /// three digits.
+  bool _tripleFirework() {
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        if (_cell[r * 9 + c] != 0) continue;
+        final br = r ~/ 3 * 3, bc = c ~/ 3 * 3;
+        final eligible = <int>[];
+        final rowOut = <int, int>{}, colOut = <int, int>{}; // digit -> cell
+        final rowOutN = <int, int>{}, colOutN = <int, int>{};
+        for (var d = 1; d <= 9; d++) {
+          var inRow = false, inCol = false, rN = 0, cN = 0, rCell = -1, cCell = -1;
+          for (var j = 0; j < 9; j++) {
+            if (_cell[r * 9 + j] == 0 && candHas(_mask[r * 9 + j], d)) {
+              inRow = true;
+              if (j ~/ 3 != c ~/ 3) {
+                rN++;
+                rCell = r * 9 + j;
+              }
+            }
+            if (_cell[j * 9 + c] == 0 && candHas(_mask[j * 9 + c], d)) {
+              inCol = true;
+              if (j ~/ 3 != r ~/ 3) {
+                cN++;
+                cCell = j * 9 + c;
+              }
+            }
+          }
+          if (inRow && inCol && rN <= 1 && cN <= 1) {
+            eligible.add(d);
+            rowOutN[d] = rN;
+            colOutN[d] = cN;
+            if (rN == 1) rowOut[d] = rCell;
+            if (cN == 1) colOut[d] = cCell;
+          }
+        }
+        if (eligible.length < 3) continue;
+
+        for (final triple in _combinations(eligible, 3)) {
+          final rowWings = {for (final d in triple) if (rowOutN[d] == 1) rowOut[d]!};
+          final colWings = {for (final d in triple) if (colOutN[d] == 1) colOut[d]!};
+          if (rowWings.length != 1 || colWings.length != 1) continue;
+          final rowWing = rowWings.first, colWing = colWings.first;
+          var digits = 0;
+          for (final d in triple) {
+            digits |= 1 << d;
+          }
+          final crossCell = r * 9 + c;
+          if (_mask[crossCell] & digits == 0 ||
+              _mask[rowWing] & digits == 0 ||
+              _mask[colWing] & digits == 0) {
+            continue;
+          }
+          var changed = false;
+          for (final cell in [crossCell, rowWing, colWing]) {
+            final trimmed = _mask[cell] & digits;
+            if (_cell[cell] == 0 && trimmed != _mask[cell]) {
+              _mask[cell] = trimmed;
+              changed = true;
+            }
+          }
+          for (var rr = br; rr < br + 3; rr++) {
+            if (rr == r) continue;
+            for (var cc = bc; cc < bc + 3; cc++) {
+              if (cc == c) continue;
+              final cell = rr * 9 + cc;
+              final trimmed = _mask[cell] & ~digits;
+              if (_cell[cell] == 0 && trimmed != _mask[cell]) {
+                _mask[cell] = trimmed;
+                changed = true;
+              }
+            }
+          }
+          if (changed) {
+            _history.add(HintTechnique.tripleFirework);
+            return true;
           }
         }
       }
