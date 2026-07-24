@@ -58,6 +58,7 @@ class BitsetSolver {
     HintTechnique.twoStringKite,
     HintTechnique.turbotFish,
     HintTechnique.xyWing,
+    HintTechnique.remotePair,
     HintTechnique.simpleColoring,
     HintTechnique.multiColoring,
     HintTechnique.xyzWing,
@@ -66,6 +67,17 @@ class BitsetSolver {
     HintTechnique.hiddenQuad,
     HintTechnique.swordfish,
     HintTechnique.jellyfish,
+    HintTechnique.finnedXWing,
+    HintTechnique.sashimiXWing,
+    HintTechnique.bugPlusOne,
+    HintTechnique.uniqueRectangleType1,
+    HintTechnique.uniqueRectangleType2,
+    HintTechnique.uniqueRectangleType3,
+    HintTechnique.uniqueRectangleType4,
+    HintTechnique.xChain,
+    HintTechnique.wxyzWing,
+    HintTechnique.alsXZ,
+    HintTechnique.xyChain,
   ];
 
   late List<int> _cell; // 81 placed values (0 = empty)
@@ -171,6 +183,18 @@ class BitsetSolver {
         HintTechnique.wWing => _wWing(),
         HintTechnique.simpleColoring => _simpleColoring(),
         HintTechnique.multiColoring => _multiColoring(),
+        HintTechnique.remotePair => _remotePair(),
+        HintTechnique.finnedXWing => _finnedXWing(wantSashimi: false),
+        HintTechnique.sashimiXWing => _finnedXWing(wantSashimi: true),
+        HintTechnique.bugPlusOne => _bugPlusOne(),
+        HintTechnique.uniqueRectangleType1 => _uniqueRectangle(1),
+        HintTechnique.uniqueRectangleType2 => _uniqueRectangle(2),
+        HintTechnique.uniqueRectangleType3 => _uniqueRectangle(3),
+        HintTechnique.uniqueRectangleType4 => _uniqueRectangle(4),
+        HintTechnique.xChain => _xChain(),
+        HintTechnique.wxyzWing => _alsXZ(wxyzOnly: true),
+        HintTechnique.alsXZ => _alsXZ(wxyzOnly: false),
+        HintTechnique.xyChain => _xyChain(),
         _ => false,
       };
 
@@ -599,6 +623,564 @@ class BitsetSolver {
           return true;
         }
       }
+    }
+    return false;
+  }
+
+  /// X-Chain: a single-digit alternating chain that starts and ends with a
+  /// strong link (conjugate pair), so one of the two ends must be the digit
+  /// — cells seeing both ends lose it. Iterative deepening 4..12 nodes like
+  /// the hint engine's `_searchAic(useBivalue: false)`, preferring short
+  /// chains.
+  bool _xChain() {
+    for (var d = 1; d <= 9; d++) {
+      final positions = BitSet81();
+      for (var i = 0; i < 81; i++) {
+        if (_cell[i] == 0 && candHas(_mask[i], d)) positions.add(i);
+      }
+      // Strong neighbours: conjugate-pair partners per unit.
+      final strong = <int, List<int>>{};
+      for (var u = 0; u < 27; u++) {
+        final inUnit = BitsetGeometry.units[u] & positions;
+        if (inUnit.count != 2) continue;
+        final pair = inUnit.toList();
+        strong.putIfAbsent(pair[0], () => []).add(pair[1]);
+        strong.putIfAbsent(pair[1], () => []).add(pair[0]);
+      }
+      if (strong.length < 4) continue;
+
+      final path = <int>[];
+      // Extends [path] (whose last link was strong) by weak+strong pairs.
+      bool extend(int maxNodes) {
+        final last = path.last;
+        // Even node count & both end-links strong -> try eliminations.
+        if (path.length >= 4 && path.length.isEven) {
+          final elim = BitsetGeometry.buddies[path.first] &
+              BitsetGeometry.buddies[last] &
+              positions;
+          for (final p in path) {
+            elim.remove(p);
+          }
+          if (elim.isNotEmpty) {
+            elim.forEach((cell) {
+              _mask[cell] = candRemove(_mask[cell], d);
+            });
+            return true;
+          }
+        }
+        if (path.length + 2 > maxNodes) return false;
+        // Weak step to any seen candidate, then a strong step from there.
+        final weak = BitsetGeometry.buddies[last] & positions;
+        var found = false;
+        weak.forEach((via) {
+          if (found || path.contains(via)) return;
+          final nexts = strong[via];
+          if (nexts == null) return;
+          for (final next in nexts) {
+            if (found || path.contains(next) || next == via) continue;
+            path
+              ..add(via)
+              ..add(next);
+            if (extend(maxNodes)) {
+              found = true;
+              return;
+            }
+            path
+              ..removeLast()
+              ..removeLast();
+          }
+        });
+        return found;
+      }
+
+      for (var maxNodes = 4; maxNodes <= 12; maxNodes += 2) {
+        for (final start in strong.keys.toList()..sort()) {
+          for (final second in strong[start]!) {
+            path
+              ..clear()
+              ..add(start)
+              ..add(second);
+            if (extend(maxNodes)) {
+              _history.add(HintTechnique.xChain);
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /// XY-Chain: a chain of bivalue cells, each passing its "other" digit to
+  /// the next peer cell that holds it; when the passed digit comes back to
+  /// the start's reserved z (chain of 4+ cells), one end must be z — cells
+  /// seeing both ends lose z. Mirrors the engine's finder (min 4 cells so
+  /// naked-pair/XY-Wing shapes stay with their own techniques; depth 25).
+  bool _xyChain() {
+    final bivalue = <int>[];
+    for (var i = 0; i < 81; i++) {
+      if (_cell[i] == 0 && candCount(_mask[i]) == 2) bivalue.add(i);
+    }
+    if (bivalue.length < 4) return false;
+
+    final path = <int>[];
+    bool extend(int current, int needed, int z) {
+      if (path.length >= 25) return false;
+      final nexts = BitsetGeometry.buddies[current];
+      for (final next in bivalue) {
+        if (path.contains(next)) continue;
+        if (!nexts.contains(next)) continue;
+        if (!candHas(_mask[next], needed)) continue;
+        final other = candDigits(candRemove(_mask[next], needed)).first;
+        path.add(next);
+        if (other == z && path.length >= 4) {
+          final elim = BitsetGeometry.buddies[path.first] &
+              BitsetGeometry.buddies[next];
+          for (final p in path) {
+            elim.remove(p);
+          }
+          var changed = false;
+          elim.forEach((cell) {
+            if (_cell[cell] == 0 && candHas(_mask[cell], z)) {
+              _mask[cell] = candRemove(_mask[cell], z);
+              changed = true;
+            }
+          });
+          if (changed) return true;
+        }
+        if (extend(next, other, z)) return true;
+        path.removeLast();
+      }
+      return false;
+    }
+
+    for (final start in bivalue) {
+      final digits = candDigits(_mask[start]);
+      for (final z in digits) {
+        final a = digits.firstWhere((d) => d != z);
+        path
+          ..clear()
+          ..add(start);
+        if (extend(start, a, z)) {
+          _history.add(HintTechnique.xyChain);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /// ALS-XZ (single restricted common): two cell-disjoint Almost Locked
+  /// Sets A and B with a restricted common digit x (every x-cell of A sees
+  /// every x-cell of B, so x can't be in both) and another common digit z —
+  /// at least one of A/B keeps z, so cells seeing every z-cell of both lose
+  /// z. With [wxyzOnly], only the classic WXYZ-Wing shape is reported (one
+  /// ALS is a single bivalue cell and the pattern spans 4 cells).
+  bool _alsXZ({required bool wxyzOnly}) {
+    // Every ALS of 1..4 cells per unit: k cells holding k+1 digits.
+    final alsList = <(BitSet81, int)>[]; // (cells, digit-union mask)
+    final seen = <String>{};
+    for (var u = 0; u < 27; u++) {
+      final empties = [
+        for (final i in _unitCells[u])
+          if (_cell[i] == 0 && candCount(_mask[i]) >= 2) i,
+      ];
+      for (var k = 1; k <= 4 && k <= empties.length; k++) {
+        for (final combo in _combinations(empties, k)) {
+          var union = 0;
+          for (final i in combo) {
+            union |= _mask[i];
+          }
+          if (candCount(union) != k + 1) continue;
+          final cells = BitSet81();
+          for (final i in combo) {
+            cells.add(i);
+          }
+          if (seen.add('${cells.hashCode}:$union')) {
+            alsList.add((cells, union));
+          }
+        }
+      }
+    }
+
+    for (var i = 0; i < alsList.length; i++) {
+      for (var j = i + 1; j < alsList.length; j++) {
+        final (aCells, aMask) = alsList[i];
+        final (bCells, bMask) = alsList[j];
+        if (aCells.intersects(bCells)) continue;
+        if (wxyzOnly &&
+            !(aCells.count + bCells.count == 4 &&
+                (aCells.count == 1 || bCells.count == 1))) {
+          continue;
+        }
+        final commons = aMask & bMask;
+        if (candCount(commons) < 2) continue;
+
+        for (final x in candDigits(commons)) {
+          // Restricted common: every x-cell of A sees every x-cell of B.
+          var xa = BitSet81(), xb = BitSet81();
+          aCells.forEach((c) {
+            if (candHas(_mask[c], x)) xa.add(c);
+          });
+          bCells.forEach((c) {
+            if (candHas(_mask[c], x)) xb.add(c);
+          });
+          if (xa.isEmpty || xb.isEmpty) continue;
+          var restricted = true;
+          xa.forEach((ca) {
+            if (restricted && !BitsetGeometry.buddies[ca].containsAll(xb)) {
+              restricted = false;
+            }
+          });
+          if (!restricted) continue;
+
+          for (final z in candDigits(commons)) {
+            if (z == x) continue;
+            // Cells seeing EVERY z-cell of A and B lose z.
+            var sight = BitSet81.all();
+            var zCells = BitSet81();
+            for (final cellsOf in [aCells, bCells]) {
+              cellsOf.forEach((c) {
+                if (candHas(_mask[c], z)) {
+                  sight.intersect(BitsetGeometry.buddies[c]);
+                  zCells.add(c);
+                }
+              });
+            }
+            sight.subtract(aCells);
+            sight.subtract(bCells);
+            var changed = false;
+            sight.forEach((cell) {
+              if (_cell[cell] == 0 && candHas(_mask[cell], z)) {
+                _mask[cell] = candRemove(_mask[cell], z);
+                changed = true;
+              }
+            });
+            if (changed) {
+              _history.add(
+                  wxyzOnly ? HintTechnique.wxyzWing : HintTechnique.alsXZ);
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /// Remote Pair: a simple path of same-pair bivalue cells, each step a
+  /// peer link. Odd link-count paths of 4+ cells force opposite values on
+  /// the two ends, so cells seeing both ends lose BOTH digits. DFS like the
+  /// hint engine's (depth-capped; pools are tiny).
+  bool _remotePair() {
+    final byPair = <int, List<int>>{};
+    for (var i = 0; i < 81; i++) {
+      if (_cell[i] == 0 && candCount(_mask[i]) == 2) {
+        byPair.putIfAbsent(_mask[i], () => []).add(i);
+      }
+    }
+    for (final entry in byPair.entries) {
+      final pool = entry.value;
+      if (pool.length < 4) continue;
+      final pairMask = entry.key;
+      final path = <int>[];
+      bool extend(int last) {
+        if (path.length >= 4 && (path.length - 1).isOdd) {
+          final elim =
+              BitsetGeometry.buddies[path.first] & BitsetGeometry.buddies[last];
+          for (final p in path) {
+            elim.remove(p);
+          }
+          var changed = false;
+          elim.forEach((cell) {
+            if (_cell[cell] == 0 && _mask[cell] & pairMask != 0) {
+              final trimmed = _mask[cell] & ~pairMask;
+              if (trimmed != _mask[cell]) {
+                _mask[cell] = trimmed;
+                changed = true;
+              }
+            }
+          });
+          if (changed) return true;
+        }
+        if (path.length >= 20) return false;
+        for (final next in pool) {
+          if (path.contains(next)) continue;
+          if (!BitsetGeometry.buddies[last].contains(next)) continue;
+          path.add(next);
+          if (extend(next)) return true;
+          path.removeLast();
+        }
+        return false;
+      }
+
+      for (final start in pool) {
+        path
+          ..clear()
+          ..add(start);
+        if (extend(start)) {
+          _history.add(HintTechnique.remotePair);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  /// Finned/Sashimi X-Wing (rows-as-base then cols-as-base, like the hint
+  /// engine): a clean base line with exactly 2 cover positions + a fin line
+  /// with overlap and extra fins. Finned keeps both cover positions in the
+  /// fin line (overlap 2), Sashimi only one (overlap 1). Eliminations: plain
+  /// X-Wing targets that additionally see EVERY fin cell.
+  bool _finnedXWing({required bool wantSashimi}) {
+    for (var d = 1; d <= 9; d++) {
+      for (final rowsAsBase in const [true, false]) {
+        final lineMask = List<int>.filled(9, 0);
+        for (var i = 0; i < 9; i++) {
+          for (var j = 0; j < 9; j++) {
+            final cell = rowsAsBase ? i * 9 + j : j * 9 + i;
+            if (_cell[cell] == 0 && candHas(_mask[cell], d)) {
+              lineMask[i] |= 1 << j;
+            }
+          }
+        }
+        for (var clean = 0; clean < 9; clean++) {
+          if (candCount(lineMask[clean]) != 2) continue;
+          final cover = lineMask[clean];
+          for (var fin = 0; fin < 9; fin++) {
+            if (fin == clean || lineMask[fin] == 0) continue;
+            final fins = lineMask[fin] & ~cover;
+            final overlap = lineMask[fin] & cover;
+            if (fins == 0 || overlap == 0) continue;
+            if ((candCount(overlap) == 1) != wantSashimi) continue;
+
+            // Fin cells as board indices; targets must see all of them.
+            var finBuddies = BitSet81.all();
+            for (var j = 0; j < 9; j++) {
+              if (fins & (1 << j) == 0) continue;
+              final cell = rowsAsBase ? fin * 9 + j : j * 9 + fin;
+              finBuddies.intersect(BitsetGeometry.buddies[cell]);
+            }
+            var changed = false;
+            for (var j = 0; j < 9; j++) {
+              if (cover & (1 << j) == 0) continue;
+              for (var i = 0; i < 9; i++) {
+                if (i == clean || i == fin) continue;
+                final cell = rowsAsBase ? i * 9 + j : j * 9 + i;
+                if (_cell[cell] == 0 &&
+                    candHas(_mask[cell], d) &&
+                    finBuddies.contains(cell)) {
+                  _mask[cell] = candRemove(_mask[cell], d);
+                  changed = true;
+                }
+              }
+            }
+            if (changed) {
+              _history.add(wantSashimi
+                  ? HintTechnique.sashimiXWing
+                  : HintTechnique.finnedXWing);
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /// BUG+1: every empty cell bivalue except exactly one trivalue cell; for
+  /// each of its 3 candidates, if EXCLUDING it would leave every unit's
+  /// remaining candidates appearing exactly twice (the deadly BUG shape),
+  /// that candidate must be the cell's value — place it.
+  bool _bugPlusOne() {
+    var extra = -1;
+    for (var i = 0; i < 81; i++) {
+      if (_cell[i] != 0) continue;
+      final n = candCount(_mask[i]);
+      if (n == 2) continue;
+      if (n == 3 && extra == -1) {
+        extra = i;
+        continue;
+      }
+      return false; // second 3-cell, or any other count — not a BUG+1 shape
+    }
+    if (extra == -1) return false;
+
+    for (final digit in candDigits(_mask[extra])) {
+      final reduced = candRemove(_mask[extra], digit);
+      var deadly = true;
+      for (var u = 0; u < 27 && deadly; u++) {
+        final counts = List<int>.filled(10, 0);
+        for (final i in _unitCells[u]) {
+          if (_cell[i] != 0) continue;
+          final m = i == extra ? reduced : _mask[i];
+          for (final d in candDigits(m)) {
+            counts[d]++;
+          }
+        }
+        for (var d = 1; d <= 9; d++) {
+          if (counts[d] != 0 && counts[d] != 2) {
+            deadly = false;
+            break;
+          }
+        }
+      }
+      if (deadly) {
+        _place(extra, digit);
+        _history.add(HintTechnique.bugPlusOne);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Unique Rectangle types 1-4, sharing the hint engine's base scan: 4 empty
+  /// cells at 2 rows x 2 cols spanning exactly 2 boxes whose masks share
+  /// exactly 2 common digits (the deadly pair).
+  bool _uniqueRectangle(int type) {
+    for (var r1 = 0; r1 < 9; r1++) {
+      for (var r2 = r1 + 1; r2 < 9; r2++) {
+        final sameBoxRow = r1 ~/ 3 == r2 ~/ 3;
+        for (var c1 = 0; c1 < 9; c1++) {
+          for (var c2 = c1 + 1; c2 < 9; c2++) {
+            if (sameBoxRow == (c1 ~/ 3 == c2 ~/ 3)) continue;
+            final cells = [r1 * 9 + c1, r1 * 9 + c2, r2 * 9 + c1, r2 * 9 + c2];
+            if (cells.any((i) => _cell[i] != 0 || candCount(_mask[i]) < 2)) {
+              continue;
+            }
+            var common = _mask[cells[0]];
+            for (final i in cells.skip(1)) {
+              common &= _mask[i];
+            }
+            if (candCount(common) != 2) continue;
+            // Box groups: share a column when the rows share a box-row band,
+            // a row otherwise (same as the engine's _URBase geometry).
+            final g1 = sameBoxRow
+                ? [r1 * 9 + c1, r2 * 9 + c1]
+                : [r1 * 9 + c1, r1 * 9 + c2];
+            final g2 = sameBoxRow
+                ? [r1 * 9 + c2, r2 * 9 + c2]
+                : [r2 * 9 + c1, r2 * 9 + c2];
+            if (_urType(type, common, cells, g1, g2)) return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  bool _urType(
+      int type, int pairMask, List<int> cells, List<int> g1, List<int> g2) {
+    bool pure(List<int> g) => g.every((i) => _mask[i] == pairMask);
+
+    switch (type) {
+      case 1:
+        final pureCells = cells.where((i) => _mask[i] == pairMask).length;
+        if (pureCells != 3) return false;
+        final extra = cells.firstWhere((i) => _mask[i] != pairMask);
+        final trimmed = _mask[extra] & ~pairMask;
+        if (trimmed == _mask[extra]) return false;
+        _mask[extra] = trimmed;
+        _history.add(HintTechnique.uniqueRectangleType1);
+        return true;
+
+      case 2:
+        if (pure(g1) == pure(g2)) return false;
+        final roof = pure(g1) ? g2 : g1;
+        final e0 = _mask[roof[0]] & ~pairMask;
+        final e1 = _mask[roof[1]] & ~pairMask;
+        if (candCount(e0) != 1 || e0 != e1) return false;
+        final c = candDigits(e0).first;
+        final elim =
+            BitsetGeometry.buddies[roof[0]] & BitsetGeometry.buddies[roof[1]];
+        for (final i in cells) {
+          elim.remove(i);
+        }
+        var changed = false;
+        elim.forEach((i) {
+          if (_cell[i] == 0 && candHas(_mask[i], c)) {
+            _mask[i] = candRemove(_mask[i], c);
+            changed = true;
+          }
+        });
+        if (!changed) return false;
+        _history.add(HintTechnique.uniqueRectangleType2);
+        return true;
+
+      case 3:
+        if (pure(g1) == pure(g2)) return false;
+        final roof3 = pure(g1) ? g2 : g1;
+        final virtual = (_mask[roof3[0]] | _mask[roof3[1]]) & ~pairMask;
+        final vCount = candCount(virtual);
+        if (vCount < 2 || vCount > 3) return false;
+        final sameRow = roof3[0] ~/ 9 == roof3[1] ~/ 9;
+        final line = sameRow ? roof3[0] ~/ 9 : 9 + roof3[0] % 9;
+        final box = 18 + BitsetGeometry.boxOf(roof3[0]);
+        for (final u in [box, line]) {
+          final pool = [
+            for (final i in _unitCells[u])
+              if (!roof3.contains(i) &&
+                  _cell[i] == 0 &&
+                  candCount(_mask[i]) >= 1 &&
+                  candCount(_mask[i]) <= vCount)
+                i,
+          ];
+          final externalCount = vCount - 1;
+          if (pool.length < externalCount) continue;
+          for (final ext in _combinations(pool, externalCount)) {
+            var union = virtual;
+            for (final i in ext) {
+              union |= _mask[i];
+            }
+            if (candCount(union) != vCount) continue;
+            var changed = false;
+            for (final i in _unitCells[u]) {
+              if (roof3.contains(i) || ext.contains(i) || _cell[i] != 0) {
+                continue;
+              }
+              final trimmed = _mask[i] & ~union;
+              if (trimmed != _mask[i]) {
+                _mask[i] = trimmed;
+                changed = true;
+              }
+            }
+            if (changed) {
+              _history.add(HintTechnique.uniqueRectangleType3);
+              return true;
+            }
+          }
+        }
+        return false;
+
+      case 4:
+        if (pure(g1) == pure(g2)) return false;
+        final roof4 = pure(g1) ? g2 : g1;
+        final sameRow4 = roof4[0] ~/ 9 == roof4[1] ~/ 9;
+        final line4 = sameRow4 ? roof4[0] ~/ 9 : 9 + roof4[0] % 9;
+        for (final locked in candDigits(pairMask)) {
+          final withLocked = [
+            for (final i in _unitCells[line4])
+              if (_cell[i] == 0 && candHas(_mask[i], locked)) i,
+          ];
+          if (withLocked.length != 2 ||
+              !withLocked.contains(roof4[0]) ||
+              !withLocked.contains(roof4[1])) {
+            continue;
+          }
+          final other = candDigits(pairMask).firstWhere((d) => d != locked);
+          var changed = false;
+          for (final i in roof4) {
+            if (candHas(_mask[i], other)) {
+              _mask[i] = candRemove(_mask[i], other);
+              changed = true;
+            }
+          }
+          if (changed) {
+            _history.add(HintTechnique.uniqueRectangleType4);
+            return true;
+          }
+        }
+        return false;
     }
     return false;
   }

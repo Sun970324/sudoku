@@ -8,43 +8,17 @@ import 'package:sudoku/services/generation/board_generator.dart';
 import 'package:sudoku/services/generation/clue_remover.dart';
 import 'package:sudoku/services/generation/human_solver.dart';
 
-// The existing HumanSolver restricted to exactly the techniques BitsetSolver
-// covers (singles + intersections + subsets + basic fish + single-digit
-// patterns + wings + simple coloring). Locked Pair/Triple are included here
-// because BitsetSolver's Naked Subset run produces their eliminations too.
-// Order mirrors humanSolverTechniqueOrder's relative order.
-const _phase1Human = <HintTechnique>[
-  HintTechnique.fullHouse,
-  HintTechnique.nakedSingle,
-  HintTechnique.hiddenSingle,
-  HintTechnique.intersectionPointing,
-  HintTechnique.intersectionClaiming,
-  HintTechnique.lockedPair,
-  HintTechnique.nakedPair,
-  HintTechnique.hiddenPair,
-  HintTechnique.lockedTriple,
-  HintTechnique.nakedTriple,
-  HintTechnique.hiddenTriple,
-  HintTechnique.xWing,
-  HintTechnique.skyscraper,
-  HintTechnique.twoStringKite,
-  HintTechnique.turbotFish,
-  HintTechnique.xyWing,
-  HintTechnique.simpleColoring,
-  HintTechnique.multiColoring,
-  HintTechnique.xyzWing,
-  HintTechnique.wWing,
-  HintTechnique.swordfish,
-  HintTechnique.jellyfish,
-  HintTechnique.nakedQuad,
-  HintTechnique.hiddenQuad,
-];
+// THE parity milestone: the differential runs the existing HumanSolver with
+// its FULL generation technique order — BitsetSolver must solve everything it
+// solves. (Locked Pair/Triple come out of BitsetSolver's Naked Subset run;
+// wxyzWing/alsXZ out of its ALS-XZ pass — different labels, same power.)
+const _humanFull = humanSolverTechniqueOrder;
 
 void main() {
   test('BitsetSolver never places a wrong digit, and solves every board the '
       'equivalent HumanSolver solves — to the identical grid (differential)',
       () {
-    final human = HumanSolver(techniqueOrder: _phase1Human);
+    final human = HumanSolver(techniqueOrder: _humanFull);
     final bit = BitsetSolver();
     final rng = Random(7);
 
@@ -52,8 +26,9 @@ void main() {
     var probed = 0;
     for (var i = 0; i < 300; i++) {
       final solution = BoardGenerator(random: rng).generateSolvedBoard();
-      // Vary givens so both easy (singles) and subset/intersection boards appear.
-      final target = 30 + rng.nextInt(8); // 30..37
+      // 26..37 givens: dense boards exercise singles/subsets, sparse ones
+      // reach the chain/ALS tail of the order.
+      final target = 26 + rng.nextInt(12);
       final dug = ClueRemover(random: rng).removeClues(solution, target);
       probed++;
 
@@ -177,6 +152,102 @@ void main() {
       expect(after, isNotNull);
       expect(after![1][4], isNot(contains(6)));
       expect(after[1][2], contains(6));
+    });
+  });
+
+  group('phase-3 port fixtures (remote pair / UR — zero or unverifiable '
+      'live coverage in the random probe)', () {
+    List<List<Set<int>>> candidatesFrom(Map<List<int>, Set<int>> entries) {
+      final grid =
+          List.generate(9, (_) => List.generate(9, (_) => <int>{}));
+      entries.forEach((cell, digits) {
+        grid[cell[0]][cell[1]] = {...digits};
+      });
+      return grid;
+    }
+
+    final emptyBoard = List.generate(9, (_) => List.filled(9, 0));
+
+    test('Remote Pair: 4-cell {1,2} chain — (0,7) sees both ends and loses '
+        'BOTH digits', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.remotePair,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1, 2},
+          [0, 4]: {1, 2},
+          [5, 4]: {1, 2},
+          [5, 7]: {1, 2},
+          [0, 7]: {1, 2, 9},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![0][7], {9});
+    });
+
+    test('Remote Pair: differing pairs break the alternation — no find', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.remotePair,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1, 2},
+          [0, 4]: {1, 3},
+          [5, 4]: {1, 2},
+          [5, 7]: {1, 2},
+          [0, 7]: {1, 2, 9},
+        }),
+      );
+      expect(after, isNull);
+    });
+
+    test('UR Type 1: three pure {1,2} corners — the extra corner loses both '
+        'deadly digits', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.uniqueRectangleType1,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1, 2},
+          [1, 0]: {1, 2},
+          [0, 3]: {1, 2},
+          [1, 3]: {1, 2, 3},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![1][3], {3});
+    });
+
+    test('UR Type 1: all four corners pure — nothing to resolve', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.uniqueRectangleType1,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1, 2},
+          [1, 0]: {1, 2},
+          [0, 3]: {1, 2},
+          [1, 3]: {1, 2},
+        }),
+      );
+      expect(after, isNull);
+    });
+
+    test('UR Type 4: digit 1 conjugate-locked on the roof column strips '
+        'digit 2 from both roof cells', () {
+      // Floor (column 0) pure {1,2}; roof (column 3) carries extras. Digit 1
+      // appears in column 3 only at the two roof cells, so 2 would complete
+      // the deadly rectangle and is removed from both.
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.uniqueRectangleType4,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1, 2},
+          [1, 0]: {1, 2},
+          [0, 3]: {1, 2, 3},
+          [1, 3]: {1, 2, 4},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![0][3], {1, 3});
+      expect(after[1][3], {1, 4});
     });
   });
 
