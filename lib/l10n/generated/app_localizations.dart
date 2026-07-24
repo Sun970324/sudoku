@@ -2665,6 +2665,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Practice the harder techniques on boards built to feature them, walked through step by step.'**
   String get practicePremiumBody;
+
+  /// No description provided for @categorySingles.
+  ///
+  /// In en, this message translates to:
+  /// **'Singles'**
+  String get categorySingles;
+
+  /// No description provided for @categoryIntersections.
+  ///
+  /// In en, this message translates to:
+  /// **'Intersections'**
+  String get categoryIntersections;
+
+  /// No description provided for @categorySubsets.
+  ///
+  /// In en, this message translates to:
+  /// **'Subsets'**
+  String get categorySubsets;
+
+  /// No description provided for @categorySingleDigitPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Single Digit Patterns'**
+  String get categorySingleDigitPatterns;
+
+  /// No description provided for @categoryBasicFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Fish'**
+  String get categoryBasicFish;
+
+  /// No description provided for @categoryColoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Coloring'**
+  String get categoryColoring;
+
+  /// No description provided for @categoryWings.
+  ///
+  /// In en, this message translates to:
+  /// **'Wings'**
+  String get categoryWings;
+
+  /// No description provided for @categoryFinnedFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finned Fish'**
+  String get categoryFinnedFish;
+
+  /// No description provided for @categoryUniqueness.
+  ///
+  /// In en, this message translates to:
+  /// **'Uniqueness'**
+  String get categoryUniqueness;
+
+  /// No description provided for @categoryChainsAndLoops.
+  ///
+  /// In en, this message translates to:
+  /// **'Chains and Loops'**
+  String get categoryChainsAndLoops;
+
+  /// No description provided for @categoryAlmostLockedSets.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost Locked Sets'**
+  String get categoryAlmostLockedSets;
 }
 
 class _AppLocalizationsDelegate

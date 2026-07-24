@@ -12,23 +12,23 @@ import 'generation/technique_board_miner.dart';
 import 'storage_service.dart';
 
 /// Optional bundled starter boards (see tool/generate_technique_boards.dart)
-/// used to fill any item still empty after a lazy load. Absent until the
+/// used to fill any category still empty after a lazy load. Absent until the
 /// bundle is mined for a release — until then [take] falls back to live
 /// mining.
 const _assetPath = 'assets/data/technique_boards.json';
 
-/// Keeps up to [capacity] boards queued per [PracticeItem] for the technique
-/// practice screen (learning mode; beginner/easy items free, the rest a
-/// premium perk) and the debug 힌트 데모: every queued board shows its item's
-/// technique in a full-engine solve (HoDoKu LEARNING acceptance — see
-/// [boardShowsItem]). [take] pops a RANDOM queued
-/// board so repeat visits differ, then refills in the background on an
-/// [Isolate] via [mineTechniqueBoard]. Persisted via [StorageService] so
-/// mined boards survive restarts.
+/// Keeps up to [capacity] boards queued per [TechniqueCategory] for the
+/// technique practice screen (Singles/Intersections free, the rest a premium
+/// perk) and the debug 힌트 데모. Every queued board is a genuine practice case
+/// for its category — solvable within the category ceiling and actually
+/// needing it (see [mineCategoryBoard]/[boardRequiresCategory]). [take] pops a
+/// RANDOM queued board so repeat visits differ, then refills in the background
+/// on an [Isolate]. Persisted via [StorageService] so mined boards survive
+/// restarts.
 class TechniqueQueueManager extends ChangeNotifier {
   TechniqueQueueManager({
     StorageService? storage,
-    Future<SudokuPuzzle?> Function(Set<HintTechnique> techniques)? mineBoard,
+    Future<SudokuPuzzle?> Function(TechniqueCategory category)? mineBoard,
     Random? random,
   })  : _storage = storage ?? StorageService(),
         _mineBoard = mineBoard ?? _isolateMineBoard,
@@ -39,27 +39,27 @@ class TechniqueQueueManager extends ChangeNotifier {
   static const capacity = 3;
 
   /// How many isolates race to mine one board on the on-demand path (a user
-  /// tapped an item with an empty queue). Each explores different random
+  /// tapped a category with an empty queue). Each explores different random
   /// boards, so the first to hit wins — roughly an N× wall-clock speedup for
-  /// rare techniques, where a single search can take many seconds.
+  /// rare categories, where a single search can take many seconds.
   static const _onDemandParallelism = 3;
 
-  /// How many items may be mined at once during background refill/warm-up —
-  /// bounded so pre-warming the whole list doesn't peg every core.
+  /// How many categories may be mined at once during background refill/warm-up
+  /// — bounded so pre-warming the whole list doesn't peg every core.
   static const _maxConcurrentMines = 2;
 
-  /// The practice list the UI iterates.
-  static List<PracticeItem> get items => practiceItems;
+  /// The category list the UI iterates (ascending difficulty).
+  static List<TechniqueCategory> get categories => TechniqueCategory.values;
 
   /// Runs up to [k] mines concurrently and resolves with the first non-null
   /// board (or null if all come back empty). Losing isolates finish in the
   /// background — harmless, their results are dropped.
-  Future<SudokuPuzzle?> _mineRaced(Set<HintTechnique> techniques, int k) {
-    if (k <= 1) return _mineBoard(techniques);
+  Future<SudokuPuzzle?> _mineRaced(TechniqueCategory category, int k) {
+    if (k <= 1) return _mineBoard(category);
     final completer = Completer<SudokuPuzzle?>();
     var remaining = k;
     for (var i = 0; i < k; i++) {
-      _mineBoard(techniques).then((p) {
+      _mineBoard(category).then((p) {
         if (p != null && !completer.isCompleted) completer.complete(p);
       }, onError: (_) {}).whenComplete(() {
         if (--remaining == 0 && !completer.isCompleted) {
@@ -71,11 +71,12 @@ class TechniqueQueueManager extends ChangeNotifier {
   }
 
   final StorageService _storage;
-  final Future<SudokuPuzzle?> Function(Set<HintTechnique>) _mineBoard;
+  final Future<SudokuPuzzle?> Function(TechniqueCategory) _mineBoard;
   final Random _random;
 
   final Map<String, List<SudokuPuzzle>> _queues = {
-    for (final item in practiceItems) item.id: <SudokuPuzzle>[],
+    for (final category in TechniqueCategory.values)
+      category.name: <SudokuPuzzle>[],
   };
   final Map<String, List<SudokuPuzzle>> _bundled = {};
   final Set<String> _pending = {};
@@ -83,38 +84,31 @@ class TechniqueQueueManager extends ChangeNotifier {
   Future<void>? _loading;
   Future<void>? _warming;
 
-  int countFor(String itemId) => _queues[itemId]?.length ?? 0;
+  int countFor(TechniqueCategory category) =>
+      _queues[category.name]?.length ?? 0;
 
-  static PracticeItem? _itemById(String id) {
-    for (final item in practiceItems) {
-      if (item.id == id) return item;
-    }
-    return null;
-  }
-
-  /// Pops a random queued board for [itemId] (falling back to a random
+  /// Pops a random queued board for [category] (falling back to a random
   /// bundled one, then to live mining) and schedules a background refill.
-  Future<SudokuPuzzle?> take(String itemId) async {
-    final item = _itemById(itemId);
-    if (item == null) return null;
+  Future<SudokuPuzzle?> take(TechniqueCategory category) async {
+    final key = category.name;
     await (_loading ??= _load());
-    final queue = _queues[itemId]!;
+    final queue = _queues[key]!;
     SudokuPuzzle? puzzle;
     if (queue.isNotEmpty) {
       puzzle = queue.removeAt(_random.nextInt(queue.length));
       unawaited(_persist());
     } else {
-      final bundled = _bundled[itemId];
+      final bundled = _bundled[key];
       if (bundled != null && bundled.isNotEmpty) {
         puzzle = bundled[_random.nextInt(bundled.length)];
       } else {
         // No bundle yet — mine one on the spot (first-run path), racing a few
-        // isolates so a rare technique doesn't leave the user waiting on a
+        // isolates so a rare category doesn't leave the user waiting on a
         // single slow search.
-        puzzle = await _mineRaced(item.techniques, _onDemandParallelism);
+        puzzle = await _mineRaced(category, _onDemandParallelism);
       }
     }
-    _scheduleRefillIfNeeded(itemId);
+    _scheduleRefillIfNeeded(category);
     notifyListeners();
     return puzzle;
   }
@@ -131,14 +125,14 @@ class TechniqueQueueManager extends ChangeNotifier {
     try {
       final raw = await rootBundle.loadString(_assetPath);
       final json = jsonDecode(raw) as Map<String, dynamic>;
-      for (final item in practiceItems) {
-        final seeded = json[item.id] as List<dynamic>?;
+      for (final category in TechniqueCategory.values) {
+        final seeded = json[category.name] as List<dynamic>?;
         if (seeded == null) continue;
-        _bundled[item.id] = seeded
+        _bundled[category.name] = seeded
             .map((p) => SudokuPuzzle.fromJson(p as Map<String, dynamic>))
             .toList();
-        if (_queues[item.id]!.isEmpty) {
-          _queues[item.id] = [..._bundled[item.id]!];
+        if (_queues[category.name]!.isEmpty) {
+          _queues[category.name] = [..._bundled[category.name]!];
         }
       }
     } catch (_) {
@@ -146,70 +140,68 @@ class TechniqueQueueManager extends ChangeNotifier {
     }
   }
 
-  void _scheduleRefillIfNeeded(String itemId) {
-    if ((_queues[itemId]?.length ?? capacity) >= capacity) return;
-    if (!_pending.add(itemId)) return;
+  void _scheduleRefillIfNeeded(TechniqueCategory category) {
+    if ((_queues[category.name]?.length ?? capacity) >= capacity) return;
+    if (!_pending.add(category.name)) return;
     _activeProcessing ??=
         _processPending().whenComplete(() => _activeProcessing = null);
   }
 
   Future<void> _processPending() async {
     // A small worker pool drains _pending [_maxConcurrentMines] at a time, so
-    // refilling several items (or one item to capacity) doesn't serialize on a
+    // refilling several categories (or one to capacity) doesn't serialize on a
     // single slow search.
     Future<void> worker() async {
       while (_pending.isNotEmpty) {
-        final itemId = _pending.first;
-        _pending.remove(itemId);
-        await _mineOneInto(itemId);
+        final key = _pending.first;
+        _pending.remove(key);
+        await _mineOneInto(key);
       }
     }
 
     await Future.wait([for (var i = 0; i < _maxConcurrentMines; i++) worker()]);
   }
 
-  /// Mines one board for [itemId] and appends it, re-queuing the item if it's
-  /// still below capacity. A failure for one item must not stop the others.
-  Future<void> _mineOneInto(String itemId) async {
-    final item = _itemById(itemId);
-    if (item == null) return;
+  /// Mines one board for the category named [key] and appends it, re-queuing it
+  /// if still below capacity. A failure for one category must not stop others.
+  Future<void> _mineOneInto(String key) async {
+    final category = TechniqueCategory.values.asNameMap()[key];
+    if (category == null) return;
     try {
-      final mined = await _mineBoard(item.techniques);
+      final mined = await _mineBoard(category);
       if (mined == null) return; // budget ran out; retried on next take
-      _queues[itemId]!.add(mined);
+      _queues[key]!.add(mined);
       await _persist();
       notifyListeners();
-      if (_queues[itemId]!.length < capacity) _pending.add(itemId);
+      if (_queues[key]!.length < capacity) _pending.add(key);
     } catch (_) {
       // Swallow — background mining is best-effort.
     }
   }
 
-  /// Pre-mines one board for every currently-empty item (the practice screen
-  /// calls this on open), so tapping an item is instant instead of waiting on
-  /// a live mine. Only fills to a single board — capacity refills lazily after
-  /// a real [take] — so a cold first open doesn't churn the whole list to
+  /// Pre-mines one board for every currently-empty category (the practice
+  /// screen calls this on open), so tapping one is instant instead of waiting
+  /// on a live mine. Only fills to a single board — capacity refills lazily
+  /// after a real [take] — so a cold first open doesn't churn the whole list to
   /// capacity. Idempotent: a run already in flight is reused.
   Future<void> warmUp() =>
       _warming ??= _warmUp().whenComplete(() => _warming = null);
 
   Future<void> _warmUp() async {
     await (_loading ??= _load());
-    final empty = <String>[
-      for (final item in practiceItems)
-        if (countFor(item.id) == 0) item.id,
+    final empty = <TechniqueCategory>[
+      for (final category in TechniqueCategory.values)
+        if (countFor(category) == 0) category,
     ];
     var next = 0;
     Future<void> worker() async {
       while (next < empty.length) {
-        final itemId = empty[next++];
-        if (countFor(itemId) > 0) continue; // filled by another path meanwhile
-        final item = _itemById(itemId);
-        if (item == null) continue;
+        final category = empty[next++];
+        if (countFor(category) > 0) continue; // filled by another path meanwhile
         try {
-          final mined = await _mineBoard(item.techniques);
+          final mined = await _mineBoard(category);
           if (mined == null) continue;
-          _queues[itemId]!.add(mined);
+          _queues[category.name]!.add(mined);
           await _persist();
           notifyListeners();
         } catch (_) {
@@ -232,10 +224,10 @@ class TechniqueQueueManager extends ChangeNotifier {
   }
 }
 
-Future<SudokuPuzzle?> _isolateMineBoard(Set<HintTechnique> techniques) async {
-  final json = await Isolate.run(() => _mineBoardJson(techniques));
+Future<SudokuPuzzle?> _isolateMineBoard(TechniqueCategory category) async {
+  final json = await Isolate.run(() => _mineBoardJson(category));
   return json == null ? null : SudokuPuzzle.fromJson(json);
 }
 
-Map<String, dynamic>? _mineBoardJson(Set<HintTechnique> techniques) =>
-    mineTechniqueBoard(techniques)?.toJson();
+Map<String, dynamic>? _mineBoardJson(TechniqueCategory category) =>
+    mineCategoryBoard(category)?.toJson();

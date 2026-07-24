@@ -445,5 +445,16 @@
   "practicePreparingBoard": "보드 준비 중…",
   "practiceNoBoard": "연습 보드를 찾지 못했어요 — 다시 시도해 주세요.",
   "practiceTechniqueNotYet": "아직 이 기법이 나올 차례가 아니에요 — 조금 더 풀면 등장해요.",
-  "practicePremiumBody": "상급 기법을 그 기법이 나오도록 만든 보드에서 단계별 안내와 함께 연습하세요."
+  "practicePremiumBody": "상급 기법을 그 기법이 나오도록 만든 보드에서 단계별 안내와 함께 연습하세요.",
+  "categorySingles": "싱글",
+  "categoryIntersections": "교집합(인터섹션)",
+  "categorySubsets": "서브셋",
+  "categorySingleDigitPatterns": "단일 숫자 패턴",
+  "categoryBasicFish": "기본 피시",
+  "categoryColoring": "컬러링",
+  "categoryWings": "윙",
+  "categoryFinnedFish": "핀드 피시",
+  "categoryUniqueness": "유일성",
+  "categoryChainsAndLoops": "체인·루프",
+  "categoryAlmostLockedSets": "ALS(거의 잠긴 집합)"
 }

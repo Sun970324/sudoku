@@ -1214,5 +1214,16 @@
   "practicePreparingBoard": "Preparing a board…",
   "practiceNoBoard": "Couldn't find a practice board — please try again.",
   "practiceTechniqueNotYet": "This technique isn't in play yet — solve a little more and it'll come up.",
-  "practicePremiumBody": "Practice the harder techniques on boards built to feature them, walked through step by step."
+  "practicePremiumBody": "Practice the harder techniques on boards built to feature them, walked through step by step.",
+  "categorySingles": "Singles",
+  "categoryIntersections": "Intersections",
+  "categorySubsets": "Subsets",
+  "categorySingleDigitPatterns": "Single Digit Patterns",
+  "categoryBasicFish": "Basic Fish",
+  "categoryColoring": "Coloring",
+  "categoryWings": "Wings",
+  "categoryFinnedFish": "Finned Fish",
+  "categoryUniqueness": "Uniqueness",
+  "categoryChainsAndLoops": "Chains and Loops",
+  "categoryAlmostLockedSets": "Almost Locked Sets"
 }

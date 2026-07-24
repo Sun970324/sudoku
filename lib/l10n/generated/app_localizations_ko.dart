@@ -1556,4 +1556,37 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get practicePremiumBody =>
       '상급 기법을 그 기법이 나오도록 만든 보드에서 단계별 안내와 함께 연습하세요.';
+
+  @override
+  String get categorySingles => '싱글';
+
+  @override
+  String get categoryIntersections => '교집합(인터섹션)';
+
+  @override
+  String get categorySubsets => '서브셋';
+
+  @override
+  String get categorySingleDigitPatterns => '단일 숫자 패턴';
+
+  @override
+  String get categoryBasicFish => '기본 피시';
+
+  @override
+  String get categoryColoring => '컬러링';
+
+  @override
+  String get categoryWings => '윙';
+
+  @override
+  String get categoryFinnedFish => '핀드 피시';
+
+  @override
+  String get categoryUniqueness => '유일성';
+
+  @override
+  String get categoryChainsAndLoops => '체인·루프';
+
+  @override
+  String get categoryAlmostLockedSets => 'ALS(거의 잠긴 집합)';
 }

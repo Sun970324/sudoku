@@ -1596,4 +1596,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get practicePremiumBody =>
       'Practice the harder techniques on boards built to feature them, walked through step by step.';
+
+  @override
+  String get categorySingles => 'Singles';
+
+  @override
+  String get categoryIntersections => 'Intersections';
+
+  @override
+  String get categorySubsets => 'Subsets';
+
+  @override
+  String get categorySingleDigitPatterns => 'Single Digit Patterns';
+
+  @override
+  String get categoryBasicFish => 'Basic Fish';
+
+  @override
+  String get categoryColoring => 'Coloring';
+
+  @override
+  String get categoryWings => 'Wings';
+
+  @override
+  String get categoryFinnedFish => 'Finned Fish';
+
+  @override
+  String get categoryUniqueness => 'Uniqueness';
+
+  @override
+  String get categoryChainsAndLoops => 'Chains and Loops';
+
+  @override
+  String get categoryAlmostLockedSets => 'Almost Locked Sets';
 }

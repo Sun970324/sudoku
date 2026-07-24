@@ -27,64 +27,52 @@ void main() {
 
   test('take() live-mines a board when nothing is queued, and refills back '
       'to capacity in the background', () async {
-    final mined = <Set<HintTechnique>>[];
-    final manager = TechniqueQueueManager(mineBoard: (techs) async {
-      mined.add(techs);
+    final mined = <TechniqueCategory>[];
+    final manager = TechniqueQueueManager(mineBoard: (category) async {
+      mined.add(category);
       return _fakePuzzle();
     });
 
-    final puzzle = await manager.take('xWing');
+    final puzzle = await manager.take(TechniqueCategory.basicFish);
 
     expect(puzzle, isNotNull);
     await manager.waitUntilIdle();
-    expect(manager.countFor('xWing'), TechniqueQueueManager.capacity);
+    expect(manager.countFor(TechniqueCategory.basicFish),
+        TechniqueQueueManager.capacity);
     expect(mined, isNotEmpty);
   });
 
   test('take() refills the queue to capacity and persists it', () async {
     final manager =
         TechniqueQueueManager(mineBoard: (_) async => _fakePuzzle());
-    await manager.take('xyWing');
+    await manager.take(TechniqueCategory.wings);
     await manager.waitUntilIdle();
-    expect(manager.countFor('xyWing'), TechniqueQueueManager.capacity);
+    expect(manager.countFor(TechniqueCategory.wings),
+        TechniqueQueueManager.capacity);
 
     // A fresh manager (same mock prefs store) loads the persisted queue
     // without mining anything.
     final reloaded = TechniqueQueueManager(
         mineBoard: (_) async => fail('should not mine on a warm queue'));
-    final puzzle = await reloaded.take('xyWing');
+    final puzzle = await reloaded.take(TechniqueCategory.wings);
     expect(puzzle, isNotNull);
   });
 
-  test('warmUp pre-mines exactly one board for every empty item (not to '
+  test('warmUp pre-mines exactly one board for every empty category (not to '
       'capacity)', () async {
-    final mined = <Set<HintTechnique>>[];
-    final manager = TechniqueQueueManager(mineBoard: (techs) async {
-      mined.add(techs);
+    final mined = <TechniqueCategory>[];
+    final manager = TechniqueQueueManager(mineBoard: (category) async {
+      mined.add(category);
       return _fakePuzzle();
     });
 
     await manager.warmUp();
 
-    for (final item in TechniqueQueueManager.items) {
-      expect(manager.countFor(item.id), 1,
-          reason: '${item.id} should be warmed to a single board');
+    for (final category in TechniqueQueueManager.categories) {
+      expect(manager.countFor(category), 1,
+          reason: '${category.name} should be warmed to a single board');
     }
-    // One mine per item — warm-up fills to one, never to capacity.
-    expect(mined.length, TechniqueQueueManager.items.length);
-  });
-
-  test('an unknown item id returns null', () async {
-    final manager = TechniqueQueueManager(mineBoard: (_) async => null);
-    expect(await manager.take('bugPlusOne'), isNull);
-    expect(await manager.take('nonsense'), isNull);
-  });
-
-  test('the practice list excludes BUG+1', () {
-    final ids = TechniqueQueueManager.items.map((i) => i.id).toSet();
-    expect(ids, isNot(contains('bugPlusOne')));
-    for (final item in TechniqueQueueManager.items) {
-      expect(item.techniques, isNot(contains(HintTechnique.bugPlusOne)));
-    }
+    // One mine per category — warm-up fills to one, never to capacity.
+    expect(mined.length, TechniqueQueueManager.categories.length);
   });
 }

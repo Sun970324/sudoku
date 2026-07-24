@@ -343,15 +343,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   widget.settings,
                   onReplayTutorial: _showTutorial,
                   onHintDemo: kDebugMode
-                      ? (item) async {
+                      ? (category) async {
                           final puzzle = await TechniqueQueueManager.instance
-                              .take(item.id);
+                              .take(category);
                           if (!mounted || puzzle == null) return;
                           _openGame(GameScreen.newGame(
-                            difficulty:
-                                techniqueDifficulty[item.techniques.first]!,
+                            difficulty: categoryDifficulty(category),
                             puzzle: puzzle,
-                            debugDemoTechniques: item.techniques,
+                            debugDemoTechniques:
+                                techniquesInCategory(category).toSet(),
                           ));
                         }
                       : null,

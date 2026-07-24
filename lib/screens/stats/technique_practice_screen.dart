@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
 import '../../models/difficulty.dart';
 import '../../models/hint.dart';
 import '../../models/sudoku_puzzle.dart';
-import '../../services/generation/technique_board_miner.dart';
 import '../../services/technique_queue_manager.dart';
 import '../../state/premium_controller.dart';
 import '../../theme/app_palette.dart';
@@ -16,10 +13,10 @@ import '../../widgets/pop_card.dart';
 import '../game_screen.dart';
 import '../premium/premium_lock_screen.dart';
 
-/// Learning mode: pick a technique to drill on a board built to feature it,
-/// then walk through it step by step via the game's "이 기법 보기" action.
-/// beginner/easy items are free; the rest are a premium perk. The codex
-/// ([TechniqueCodexScreen]) stays the separate progress view.
+/// Learning mode: pick a technique *category* (HoDoKu-style) to drill on a
+/// board built to feature it, then walk through it step by step via the game's
+/// "이 기법 보기" action. Singles/Intersections are free; the rest are a premium
+/// perk. The codex ([TechniqueCodexScreen]) stays the separate progress view.
 class TechniquePracticeScreen extends StatefulWidget {
   const TechniquePracticeScreen({super.key});
 
@@ -29,31 +26,31 @@ class TechniquePracticeScreen extends StatefulWidget {
 }
 
 class _TechniquePracticeScreenState extends State<TechniquePracticeScreen> {
-  /// The item currently mining/loading a board — its row shows a spinner and
-  /// further taps are ignored until it resolves.
-  String? _loadingItemId;
+  /// The category currently mining/loading a board — its row shows a spinner
+  /// and further taps are ignored until it resolves.
+  TechniqueCategory? _loadingCategory;
+
+  /// The two easiest categories are the free taster; the rest are premium.
+  static const _freeCategories = {
+    TechniqueCategory.singles,
+    TechniqueCategory.intersections,
+  };
 
   @override
   void initState() {
     super.initState();
-    // Pre-mine a board for every empty item in the background, so tapping one
-    // is instant instead of waiting on a live mine.
+    // Pre-mine a board for every empty category in the background, so tapping
+    // one is instant instead of waiting on a live mine.
     TechniqueQueueManager.instance.warmUp();
   }
 
-  /// An item's tier is its hardest member technique (matching how
-  /// [mineTechniqueBoard] tags the board it mines).
-  static Difficulty _tierOf(PracticeItem item) => Difficulty.values[
-      item.techniques.map((t) => techniqueDifficulty[t]!.index).reduce(max)];
+  static bool _isFree(TechniqueCategory category) =>
+      _freeCategories.contains(category);
 
-  /// beginner/easy items are the free taster; medium and up are premium.
-  static bool _isFree(PracticeItem item) =>
-      _tierOf(item).index <= Difficulty.easy.index;
-
-  Future<void> _startPractice(PracticeItem item) async {
-    if (_loadingItemId != null) return;
+  Future<void> _startPractice(TechniqueCategory category) async {
+    if (_loadingCategory != null) return;
     final l10n = AppLocalizations.of(context)!;
-    if (!_isFree(item) && !PremiumController.instance.isPremium) {
+    if (!_isFree(category) && !PremiumController.instance.isPremium) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -63,16 +60,16 @@ class _TechniquePracticeScreenState extends State<TechniquePracticeScreen> {
       );
       return;
     }
-    setState(() => _loadingItemId = item.id);
+    setState(() => _loadingCategory = category);
     SudokuPuzzle? puzzle;
     try {
-      puzzle = await TechniqueQueueManager.instance.take(item.id);
+      puzzle = await TechniqueQueueManager.instance.take(category);
     } catch (_) {
       // A mining failure must not leave the row spinning forever.
       puzzle = null;
     }
     if (!mounted) return;
-    setState(() => _loadingItemId = null);
+    setState(() => _loadingCategory = null);
     if (puzzle == null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(l10n.practiceNoBoard)));
@@ -82,9 +79,9 @@ class _TechniquePracticeScreenState extends State<TechniquePracticeScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => GameScreen.newGame(
-          difficulty: _tierOf(item),
+          difficulty: categoryDifficulty(category),
           puzzle: puzzle,
-          practiceTechniques: item.techniques,
+          practiceTechniques: techniquesInCategory(category).toSet(),
         ),
       ),
     );
@@ -112,66 +109,33 @@ class _TechniquePracticeScreenState extends State<TechniquePracticeScreen> {
                 style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 15),
               ),
             ),
-            for (final tier in Difficulty.values)
-              ..._tierSection(context, l10n, isDark, tier),
+            for (final category in TechniqueCategory.values)
+              _CategoryCard(
+                category: category,
+                accent: AppPalette.difficultyColor(
+                    categoryDifficulty(category), isDark),
+                locked:
+                    !_isFree(category) && !PremiumController.instance.isPremium,
+                loading: _loadingCategory == category,
+                onTap: () => _startPractice(category),
+              ),
           ],
         ),
       ),
     );
   }
-
-  /// One tier's card (header + practice-item rows), or nothing if no item maps
-  /// to [tier].
-  List<Widget> _tierSection(
-    BuildContext context,
-    AppLocalizations l10n,
-    bool isDark,
-    Difficulty tier,
-  ) {
-    final items =
-        TechniqueQueueManager.items.where((it) => _tierOf(it) == tier).toList();
-    if (items.isEmpty) return const [];
-    final accent = AppPalette.difficultyColor(tier, isDark);
-    return [
-      const SizedBox(height: 16),
-      PopCard(
-        tint: accent,
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              tier.label(context),
-              style: TextStyle(
-                  fontFamily: 'Mulmaru', fontSize: 17, color: accent),
-            ),
-            const SizedBox(height: 4),
-            for (final item in items)
-              _PracticeRow(
-                item: item,
-                accent: accent,
-                locked:
-                    !_isFree(item) && !PremiumController.instance.isPremium,
-                loading: _loadingItemId == item.id,
-                onTap: () => _startPractice(item),
-              ),
-          ],
-        ),
-      ),
-    ];
-  }
 }
 
-class _PracticeRow extends StatelessWidget {
-  const _PracticeRow({
-    required this.item,
+class _CategoryCard extends StatelessWidget {
+  const _CategoryCard({
+    required this.category,
     required this.accent,
     required this.locked,
     required this.loading,
     required this.onTap,
   });
 
-  final PracticeItem item;
+  final TechniqueCategory category;
   final Color accent;
   final bool locked;
   final bool loading;
@@ -179,29 +143,85 @@ class _PracticeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Group items (e.g. Swordfish · Jellyfish) list every member technique;
-    // a single-technique item is just its own label.
-    final name = item.techniques.map((t) => t.label(context)).join(' · ');
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    return InkWell(
-      onTap: loading ? null : onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: Row(
-          children: [
-            Expanded(child: Text(name)),
-            if (loading)
-              const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            else if (locked)
-              Icon(Icons.lock_outline, size: 16, color: muted)
-            else
-              Icon(Icons.play_arrow_rounded, size: 20, color: accent),
-          ],
+    // The member techniques inside the category, so the learner sees what a
+    // category drills (e.g. Basic Fish → X-Wing · Swordfish · Jellyfish).
+    final members = techniquesInCategory(category)
+        .map((t) => t.label(context))
+        .join(' · ');
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: PopCard(
+        tint: accent,
+        padding: EdgeInsets.zero,
+        child: InkWell(
+          onTap: loading ? null : onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            category.label(context),
+                            style: TextStyle(
+                                fontFamily: 'Mulmaru',
+                                fontSize: 17,
+                                color: accent),
+                          ),
+                          const SizedBox(width: 8),
+                          _DifficultyBadge(
+                              tier: categoryDifficulty(category), accent: accent),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(members,
+                          style: TextStyle(fontSize: 13, color: muted)),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                if (loading)
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                else if (locked)
+                  Icon(Icons.lock_outline, size: 18, color: muted)
+                else
+                  Icon(Icons.play_arrow_rounded, size: 22, color: accent),
+              ],
+            ),
+          ),
         ),
+      ),
+    );
+  }
+}
+
+/// The category's hardest-member tier, shown as a small pill next to its name.
+class _DifficultyBadge extends StatelessWidget {
+  const _DifficultyBadge({required this.tier, required this.accent});
+
+  final Difficulty tier;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      decoration: BoxDecoration(
+        color: accent.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        tier.label(context),
+        style: TextStyle(fontSize: 11, color: accent),
       ),
     );
   }

@@ -426,6 +426,44 @@ Difficulty categoryDifficulty(TechniqueCategory category) => techniqueCategory
     .map((e) => techniqueDifficulty[e.key]!)
     .reduce((a, b) => a.index >= b.index ? a : b);
 
+/// Every technique in [category], in [techniqueCategory] declaration order
+/// (grouped, then ascending difficulty within the group).
+List<HintTechnique> techniquesInCategory(TechniqueCategory category) => [
+      for (final e in techniqueCategory.entries)
+        if (e.value == category) e.key,
+    ];
+
+extension TechniqueCategoryInfo on TechniqueCategory {
+  /// Localized display name — see [AppLocalizations].
+  String label(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (this) {
+      case TechniqueCategory.singles:
+        return l10n.categorySingles;
+      case TechniqueCategory.intersections:
+        return l10n.categoryIntersections;
+      case TechniqueCategory.subsets:
+        return l10n.categorySubsets;
+      case TechniqueCategory.singleDigitPatterns:
+        return l10n.categorySingleDigitPatterns;
+      case TechniqueCategory.basicFish:
+        return l10n.categoryBasicFish;
+      case TechniqueCategory.coloring:
+        return l10n.categoryColoring;
+      case TechniqueCategory.wings:
+        return l10n.categoryWings;
+      case TechniqueCategory.finnedFish:
+        return l10n.categoryFinnedFish;
+      case TechniqueCategory.uniqueness:
+        return l10n.categoryUniqueness;
+      case TechniqueCategory.chainsAndLoops:
+        return l10n.categoryChainsAndLoops;
+      case TechniqueCategory.almostLockedSets:
+        return l10n.categoryAlmostLockedSets;
+    }
+  }
+}
+
 enum HintType { reveal, eliminate }
 
 class HintCell {
