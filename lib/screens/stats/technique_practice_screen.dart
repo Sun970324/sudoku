@@ -42,7 +42,7 @@ class _TechniquePracticeScreenState extends State<TechniquePracticeScreen> {
   }
 
   /// An item's tier is its hardest member technique (matching how
-  /// [mineTechniqueBoard] tags the board and [boardShowsItem] caps its solve).
+  /// [mineTechniqueBoard] tags the board it mines).
   static Difficulty _tierOf(PracticeItem item) => Difficulty.values[
       item.techniques.map((t) => techniqueDifficulty[t]!.index).reduce(max)];
 

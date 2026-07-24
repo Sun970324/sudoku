@@ -6,6 +6,7 @@ import '../../models/sudoku_grid.dart';
 import '../../models/sudoku_puzzle.dart';
 import 'board_generator.dart';
 import 'clue_remover.dart';
+import 'difficulty_evaluator.dart';
 import 'human_solver.dart';
 import 'minimalizer.dart';
 
@@ -22,6 +23,12 @@ import 'minimalizer.dart';
 /// moderate band (~26–33 givens) where the technique still appears without
 /// the solve-cost blowup. (Truly rare expert boards are better pre-mined into
 /// the bundle than found on demand — see tool/generate_technique_boards.dart.)
+///
+/// This depth tuning is the one deliberate deviation from HoDoKu, whose
+/// LEARNING generator digs every board to minimal: HoDoKu's bit-based solver
+/// makes full solves of minimal boards nearly free, while this app's chain/ALS
+/// finders are the measured cost above — the acceptance semantics
+/// ([boardShowsItem]) are HoDoKu's, only the boards probed differ.
 List<int> digTargetsFor(Difficulty tier) {
   switch (tier) {
     case Difficulty.beginner:
@@ -121,28 +128,43 @@ const practiceItems = <PracticeItem>[
   PracticeItem('aic', {HintTechnique.aic, HintTechnique.alsAic}),
 ];
 
-/// Whether solving [board] with only the techniques up to [item]'s tier
-/// naturally USES [item] (a single technique, or a group of interchangeable
-/// ones): the board solves within that difficulty ceiling AND the item's
-/// technique actually appears in the solve. Capping at the item's tier —
-/// not the full engine — means it isn't quietly resolved by a harder
-/// technique the learner hasn't met; the board is a genuine practice case
-/// for [item]. (The stricter "unsolvable without it" notion was measured to
-/// be near-impossible for most techniques — they substitute for each other
-/// — so this is the practical bar.)
+/// HoDoKu's LEARNING acceptance (ref/release2.2.0
+/// BackgroundGenerator.generate): solve [board] with the FULL engine —
+/// [minableOrder], no tier cap — and accept iff the solve finishes AND
+/// [item]'s technique (one of a group of interchangeable ones) appears in
+/// the path. Because the solver is strictly cheapest-first, [item] fires
+/// exactly where it is the cheapest idea that works, so a harder technique
+/// can never steal its spot; dropping the old tier cap only rescues boards
+/// that showed the item but then needed one harder step to FINISH — pure
+/// yield. (The stricter "unsolvable without it" notion was measured to be
+/// near-impossible for most techniques — they substitute for each other —
+/// so contains-in-path is the practical bar, exactly HoDoKu's.)
 bool boardShowsItem(
   Set<HintTechnique> item,
   List<List<int>> board, {
   HumanSolver Function(List<HintTechnique>)? solverFor,
 }) {
-  final tier = item.map(_tierRank).reduce(max);
-  final ceiling = [
-    for (final t in minableOrder)
-      if (_tierRank(t) <= tier) t,
-  ];
   final make = solverFor ?? (o) => HumanSolver(techniqueOrder: o);
-  final result = make(ceiling).solve(board);
+  final result = make(minableOrder).solve(board);
   return result.solved && result.history.any(item.contains);
+}
+
+/// HoDoKu's PRACTISING acceptance: [boardShowsItem]'s contains-check plus
+/// the board's evaluated overall tier must equal [difficulty] — a playable
+/// puzzle at the player's chosen level whose solve path features the
+/// practiced technique. (Level match is what separates PRACTISING from
+/// LEARNING in BackgroundGenerator.generate.)
+bool boardShowsItemAtDifficulty(
+  Set<HintTechnique> item,
+  List<List<int>> board,
+  Difficulty difficulty, {
+  HumanSolver Function(List<HintTechnique>)? solverFor,
+}) {
+  final make = solverFor ?? (o) => HumanSolver(techniqueOrder: o);
+  final result = make(minableOrder).solve(board);
+  if (!result.solved || !result.history.any(item.contains)) return false;
+  return DifficultyEvaluator().evaluate(result).highestDifficulty ==
+      difficulty;
 }
 
 /// Mines one puzzle that shows [item] per [boardShowsItem] — the refill

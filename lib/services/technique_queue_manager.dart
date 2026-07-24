@@ -20,8 +20,8 @@ const _assetPath = 'assets/data/technique_boards.json';
 /// Keeps up to [capacity] boards queued per [PracticeItem] for the technique
 /// practice screen (learning mode; beginner/easy items free, the rest a
 /// premium perk) and the debug 힌트 데모: every queued board shows its item's
-/// technique in a ceiling-capped solve (see [boardShowsItem]). [take] pops a
-/// RANDOM queued
+/// technique in a full-engine solve (HoDoKu LEARNING acceptance — see
+/// [boardShowsItem]). [take] pops a RANDOM queued
 /// board so repeat visits differ, then refills in the background on an
 /// [Isolate] via [mineTechniqueBoard]. Persisted via [StorageService] so
 /// mined boards survive restarts.
