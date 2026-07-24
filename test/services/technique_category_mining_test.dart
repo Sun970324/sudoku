@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/models/hint.dart';
 import 'package:sudoku/models/sudoku_puzzle.dart';
-import 'package:sudoku/services/generation/human_solver.dart';
+import 'package:sudoku/services/generation/bitset/bitset_solver.dart';
 import 'package:sudoku/services/generation/technique_board_miner.dart';
 
 int _givens(SudokuPuzzle p) =>
@@ -25,12 +25,12 @@ void main() {
     expect(board, isNotNull);
 
     // Solvable using nothing but the three singles.
-    final singlesOnly = HumanSolver(techniqueOrder: const [
+    final singlesOnly = BitsetSolver().solve(board!.puzzle.toJson(), enabled: {
       HintTechnique.fullHouse,
       HintTechnique.nakedSingle,
       HintTechnique.hiddenSingle,
-    ]);
-    expect(singlesOnly.solve(board!.puzzle.toJson()).solved, isTrue);
+    });
+    expect(singlesOnly.solved, isTrue);
 
     // And a real puzzle, not the old ~55-given near-complete board.
     expect(_givens(board), lessThan(45),
@@ -47,9 +47,9 @@ void main() {
     // Requires the Subsets ceiling...
     expect(boardRequiresCategory(TechniqueCategory.subsets, cells), isTrue);
     // ...and genuinely can't be finished with only the easier ceiling.
-    final easier =
-        HumanSolver(techniqueOrder: categoryCeilingOrder(
-            TechniqueCategory.intersections));
-    expect(easier.solve(cells).solved, isFalse);
+    final easier = BitsetSolver().solve(cells, enabled: {
+      ...categoryCeilingOrder(TechniqueCategory.intersections),
+    });
+    expect(easier.solved, isFalse);
   });
 }

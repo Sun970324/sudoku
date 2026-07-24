@@ -4,8 +4,9 @@ import '../../models/hint.dart';
 import '../../models/sudoku_grid.dart';
 import '../../models/sudoku_puzzle.dart';
 import '../sudoku_solver.dart';
+import 'bitset/bitset_solver.dart';
 import 'board_generator.dart';
-import 'human_solver.dart';
+import 'human_solver.dart' show humanSolverTechniqueOrder;
 
 /// Every technique that can be mined, ordered easiest → hardest: the
 /// generation order, then the hint-only techniques (all Expert, absent from
@@ -55,10 +56,11 @@ List<HintTechnique> categoryCeilingOrder(TechniqueCategory category) {
 bool boardRequiresCategory(
   TechniqueCategory category,
   List<List<int>> board, {
-  HumanSolver Function(List<HintTechnique>)? solverFor,
+  BitsetSolver? solver,
 }) {
-  final make = solverFor ?? (o) => HumanSolver(techniqueOrder: o);
-  final result = make(categoryCeilingOrder(category)).solve(board);
+  final ceiling = categoryCeilingOrder(category);
+  final result =
+      (solver ?? BitsetSolver()).solve(board, techniqueOrder: ceiling);
   if (!result.solved) return false;
   final maxRank = result.history
       .map((t) => techniqueCategory[t]!.index)
@@ -80,14 +82,15 @@ SudokuPuzzle? mineCategoryBoard(
   Random? random,
 }) {
   final rng = random ?? Random();
-  final ceiling = HumanSolver(techniqueOrder: categoryCeilingOrder(category));
+  final ceiling = categoryCeilingOrder(category);
+  final solver = BitsetSolver();
   final uniqueness = SudokuSolver();
   final difficulty = categoryDifficulty(category);
 
   for (var seed = 0; seed < maxSeeds; seed++) {
     final solution = BoardGenerator(random: rng).generateSolvedBoard();
-    final dug = _digWithinCeiling(solution, rng, uniqueness, ceiling);
-    final result = ceiling.solve(dug);
+    final dug = _digWithinCeiling(solution, rng, uniqueness, solver, ceiling);
+    final result = solver.solve(dug, techniqueOrder: ceiling);
     if (!result.solved) continue;
     final maxRank = result.history
         .map((t) => techniqueCategory[t]!.index)
@@ -113,7 +116,8 @@ List<List<int>> _digWithinCeiling(
   List<List<int>> solution,
   Random rng,
   SudokuSolver uniqueness,
-  HumanSolver ceiling,
+  BitsetSolver solver,
+  List<HintTechnique> ceiling,
 ) {
   final puzzle = solution.map((r) => List<int>.from(r)).toList();
   final cells = [for (var i = 0; i < 81; i++) i]..shuffle(rng);
@@ -123,7 +127,7 @@ List<List<int>> _digWithinCeiling(
     if (backup == 0) continue;
     puzzle[r][c] = 0;
     if (uniqueness.countSolutions(puzzle, limit: 2) == 1 &&
-        ceiling.solve(puzzle).solved) {
+        solver.solve(puzzle, techniqueOrder: ceiling).solved) {
       continue; // keep it removed
     }
     puzzle[r][c] = backup; // undo

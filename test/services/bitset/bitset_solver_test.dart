@@ -6,6 +6,7 @@ import 'package:sudoku/models/sudoku_grid.dart';
 import 'package:sudoku/services/generation/bitset/bitset_solver.dart';
 import 'package:sudoku/services/generation/board_generator.dart';
 import 'package:sudoku/services/generation/clue_remover.dart';
+import 'package:sudoku/services/generation/technique_board_miner.dart';
 import 'package:sudoku/services/generation/human_solver.dart';
 
 // THE parity milestone: the differential runs the existing HumanSolver with
@@ -504,5 +505,9 @@ void main() {
               HintTechnique.hiddenSingle,
             }.contains(t)),
         isTrue);
+  });
+  test('BitsetSolver.order is exactly minableOrder — same arsenal, same '
+      'priority, so bitset scoring matches the app tiering', () {
+    expect(BitsetSolver.order, orderedEquals(minableOrder));
   });
 }

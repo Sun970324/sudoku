@@ -60,7 +60,12 @@ class BitsetSolveResult {
 }
 
 class BitsetSolver {
-  /// Techniques this solver knows, in ascending-difficulty priority order.
+  /// Every technique this solver knows, ascending-difficulty — identical to
+  /// the miner's `minableOrder` (asserted in tests), so a bitset solve uses
+  /// the exact same arsenal in the exact same priority as the app's canonical
+  /// order. That makes it a full drop-in difficulty authority: generation,
+  /// mining and every re-scoring site can restrict it (via `enabled`) or run
+  /// it whole and get the app's own tiering.
   static const order = <HintTechnique>[
     HintTechnique.fullHouse,
     HintTechnique.nakedSingle,
@@ -83,12 +88,12 @@ class BitsetSolver {
     HintTechnique.multiColoring,
     HintTechnique.xyzWing,
     HintTechnique.wWing,
-    HintTechnique.nakedQuad,
-    HintTechnique.hiddenQuad,
     HintTechnique.swordfish,
     HintTechnique.jellyfish,
     HintTechnique.finnedXWing,
     HintTechnique.sashimiXWing,
+    HintTechnique.nakedQuad,
+    HintTechnique.hiddenQuad,
     HintTechnique.bugPlusOne,
     HintTechnique.uniqueRectangleType1,
     HintTechnique.uniqueRectangleType2,
@@ -98,6 +103,16 @@ class BitsetSolver {
     HintTechnique.wxyzWing,
     HintTechnique.alsXZ,
     HintTechnique.xyChain,
+    // Previously hint-only (absent from the generation order); now the bitset
+    // arsenal is fast enough to score with the full set.
+    HintTechnique.finnedSwordfish,
+    HintTechnique.finnedJellyfish,
+    HintTechnique.groupedXChain,
+    HintTechnique.groupedAic,
+    HintTechnique.sueDeCoq,
+    HintTechnique.tripleFirework,
+    HintTechnique.alsAic,
+    HintTechnique.aic,
   ];
 
   late List<int> _cell; // 81 placed values (0 = empty)
@@ -118,6 +133,7 @@ class BitsetSolver {
   BitsetSolveResult solve(
     List<List<int>> input, {
     Set<HintTechnique>? enabled,
+    List<HintTechnique>? techniqueOrder,
     Difficulty? maxDifficulty,
   }) {
     _cell = List<int>.filled(81, 0);
@@ -138,7 +154,12 @@ class BitsetSolver {
       _mask[i] = m;
     }
 
-    bool on(HintTechnique t) => enabled == null || enabled.contains(t);
+    // [techniqueOrder] overrides both the order AND the technique set (e.g.
+    // the miner's category-major ceiling order, whose priority differs from
+    // [order]); otherwise [order] is used, filtered by [enabled].
+    final steps = techniqueOrder ?? order;
+    bool on(HintTechnique t) =>
+        techniqueOrder != null || enabled == null || enabled.contains(t);
     final scoreCeiling =
         maxDifficulty == null ? null : difficultyScoreBands[maxDifficulty];
     var score = 0;
@@ -147,7 +168,7 @@ class BitsetSolver {
 
     while (!_contradiction()) {
       var progressed = false;
-      for (final t in order) {
+      for (final t in steps) {
         if (!on(t)) continue;
         if (_apply(t)) {
           progressed = true;

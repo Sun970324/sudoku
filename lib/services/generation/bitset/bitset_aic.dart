@@ -19,6 +19,14 @@ class BitsetAic {
   static const _maxAicNodes = 12;
   static const _maxAlsCells = 4;
 
+  /// Cap on chain-extension steps per search. The iterative-deepening DFS can
+  /// explode on dense minimal boards (measured ~18s on a pathological expert
+  /// board), so past this many extensions the search gives up and reports
+  /// nothing — the solve then simply can't use this technique on that board
+  /// and moves on / rejects it. Normal searches finish in a tiny fraction of
+  /// this, so real eliminations are never lost; only the runaway tail is cut.
+  static const _maxExtensions = 30000;
+
   static int _node(int cell, int digit) => cell * 9 + (digit - 1);
   static int _nodeCell(int node) => node ~/ 9;
   static int _nodeDigit(int node) => node % 9 + 1;
@@ -151,6 +159,7 @@ class BitsetAic {
 
     for (var limit = 4; limit <= _maxAicNodes; limit += 2) {
       for (final start in ctx.strong.keys.toList()..sort()) {
+        if (ctx.budget <= 0) return const []; // runaway search — give up
         for (final second in ctx.strong[start]!.toList()..sort()) {
           final elim =
               _extend(ctx, [start, second], {start, second}, limit, useBivalue);
@@ -168,6 +177,8 @@ class BitsetAic {
     int maxNodes,
     bool useBivalue,
   ) {
+    if (ctx.budget <= 0) return null;
+    ctx.budget--;
     final elim = _eliminationsFor(ctx, path, useBivalue);
     if (elim != null) return elim;
     if (path.length >= maxNodes) return null;
@@ -311,6 +322,10 @@ class _Ctx {
   final setsByDigit = List.generate(9, (_) => <int>[]);
   final alsLinkSize = <int, int>{};
   final alsLinkCells = <int, List<int>>{};
+
+  /// Remaining chain-extension steps before the search bails (see
+  /// [BitsetAic._maxExtensions]).
+  int budget = BitsetAic._maxExtensions;
 }
 
 class _SetNode {
