@@ -155,10 +155,15 @@ extension HintTechniqueInfo on HintTechnique {
 /// roadmap was built and requested in, not necessarily the exact ordering
 /// other solver guides use (e.g. Naked/Hidden Pair/Triple are often rated
 /// easier than X-Wing elsewhere, but are deliberately tried after it here).
+///
+/// Naked Single leads Hidden Single (matching HoDoKu and
+/// [humanSolverTechniqueOrder]): a cell already narrowed to one candidate is
+/// the most obvious next move, so the hint should point straight at it rather
+/// than at a hidden single elsewhere.
 const hintTechniqueOrder = [
   HintTechnique.fullHouse,
-  HintTechnique.hiddenSingle,
   HintTechnique.nakedSingle,
+  HintTechnique.hiddenSingle,
   HintTechnique.intersectionPointing,
   HintTechnique.intersectionClaiming,
   HintTechnique.lockedPair,

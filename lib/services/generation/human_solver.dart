@@ -11,11 +11,9 @@ import '../hint_engine.dart';
 /// Triple/Quad explicitly; they're folded in as an escalating
 /// Pair→Triple→Quad family right before X-Wing, mirroring the equivalent
 /// grouping already established in [hintTechniqueOrder] (the separate,
-/// player-facing order). Deliberately separate from [hintTechniqueOrder]
-/// itself — generator.md asks for Naked Single before Hidden Single, while
-/// the player-facing hint engine was intentionally reordered earlier
-/// (Hidden before Naked) for a better in-game hint experience. Both are
-/// correct for their own purpose; this is not an inconsistency.
+/// player-facing order). Both orders now agree on Naked Single before Hidden
+/// Single — a cell already down to one candidate is the most obvious move, so
+/// neither generation nor the in-game hint should skip past it.
 const humanSolverTechniqueOrder = [
   // Bronze
   HintTechnique.fullHouse,

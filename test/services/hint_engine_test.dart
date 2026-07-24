@@ -2319,19 +2319,20 @@ void main() {
       expect(engine.findHint(board)!.technique, HintTechnique.fullHouse);
     });
 
-    test('falls through to Hidden Single when no Full House applies', () {
-      // This board has a naked single at (0,0) (candidates {1}), but row 0
-      // also happens to confine digit 9 to (0,8) alone — a hidden single —
-      // and Hidden Single is now tried before Naked Single, so that's what
-      // findHint should surface.
+    test('prefers the Naked Single even when a Hidden Single is also '
+        'available — a cell already down to one candidate is the most '
+        'obvious move', () {
+      // This board has a naked single at (0,0) (candidates {1}) AND row 0
+      // confines digit 9 to (0,8) alone (a hidden single). Naked Single is
+      // tried before Hidden Single, so findHint surfaces the naked single.
       final board = _emptyBoard();
       board[0] = [0, 2, 3, 4, 5, 6, 7, 8, 0];
       board[1][0] = 9;
       final hint = engine.findHint(board)!;
-      expect(hint.technique, HintTechnique.hiddenSingle);
+      expect(hint.technique, HintTechnique.nakedSingle);
       expect(hint.row, 0);
-      expect(hint.col, 8);
-      expect(hint.value, 9);
+      expect(hint.col, 0);
+      expect(hint.value, 1);
     });
 
     test('falls through to Naked Single when no Full House or Hidden '
@@ -2371,8 +2372,8 @@ void main() {
     test('hintTechniqueOrder matches the documented progression', () {
       expect(hintTechniqueOrder, [
         HintTechnique.fullHouse,
-        HintTechnique.hiddenSingle,
         HintTechnique.nakedSingle,
+        HintTechnique.hiddenSingle,
         HintTechnique.intersectionPointing,
         HintTechnique.intersectionClaiming,
         HintTechnique.lockedPair,
