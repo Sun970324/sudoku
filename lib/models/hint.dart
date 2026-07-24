@@ -331,6 +331,101 @@ Difficulty scoreBand(int score) {
   return Difficulty.expert;
 }
 
+/// Type-based grouping of techniques — HoDoKu's `SolutionCategory`, orthogonal
+/// to [techniqueDifficulty]. A technique's category is intrinsic and never
+/// shifts under score recalibration (unlike its tier), so it's the stable
+/// primary axis for the technique codex and practice mode; difficulty stays a
+/// secondary attribute (a badge, and the generator's input). Declaration order
+/// is the ascending-difficulty learning order used for progression and for the
+/// practice "ceiling" (a category's practice board is solved with every
+/// technique in this-or-earlier categories — see the technique board miner).
+enum TechniqueCategory {
+  singles,
+  intersections,
+  subsets,
+  singleDigitPatterns,
+  basicFish,
+  coloring,
+  wings,
+  finnedFish,
+  uniqueness,
+  chainsAndLoops,
+  almostLockedSets,
+}
+
+/// Which [TechniqueCategory] each technique belongs to — total over every
+/// technique the app implements (asserted in tests). Groupings follow
+/// HoDoKu/community convention; app-only or ambiguous members are noted inline.
+const techniqueCategory = <HintTechnique, TechniqueCategory>{
+  HintTechnique.fullHouse: TechniqueCategory.singles,
+  HintTechnique.nakedSingle: TechniqueCategory.singles,
+  HintTechnique.hiddenSingle: TechniqueCategory.singles,
+
+  HintTechnique.intersectionPointing: TechniqueCategory.intersections,
+  HintTechnique.intersectionClaiming: TechniqueCategory.intersections,
+
+  HintTechnique.lockedPair: TechniqueCategory.subsets,
+  HintTechnique.nakedPair: TechniqueCategory.subsets,
+  HintTechnique.hiddenPair: TechniqueCategory.subsets,
+  HintTechnique.lockedTriple: TechniqueCategory.subsets,
+  HintTechnique.nakedTriple: TechniqueCategory.subsets,
+  HintTechnique.hiddenTriple: TechniqueCategory.subsets,
+  HintTechnique.nakedQuad: TechniqueCategory.subsets,
+  HintTechnique.hiddenQuad: TechniqueCategory.subsets,
+
+  HintTechnique.skyscraper: TechniqueCategory.singleDigitPatterns,
+  HintTechnique.twoStringKite: TechniqueCategory.singleDigitPatterns,
+  HintTechnique.turbotFish: TechniqueCategory.singleDigitPatterns,
+
+  HintTechnique.xWing: TechniqueCategory.basicFish,
+  HintTechnique.swordfish: TechniqueCategory.basicFish,
+  HintTechnique.jellyfish: TechniqueCategory.basicFish,
+
+  HintTechnique.simpleColoring: TechniqueCategory.coloring,
+
+  HintTechnique.xyWing: TechniqueCategory.wings,
+  HintTechnique.xyzWing: TechniqueCategory.wings,
+  HintTechnique.wWing: TechniqueCategory.wings,
+  // WXYZ-Wing is an ALS pattern at heart, but the community files it with the
+  // wings by name/shape; kept here so "Wings" holds the whole *-Wing family.
+  HintTechnique.wxyzWing: TechniqueCategory.wings,
+
+  HintTechnique.finnedXWing: TechniqueCategory.finnedFish,
+  HintTechnique.sashimiXWing: TechniqueCategory.finnedFish,
+  HintTechnique.finnedSwordfish: TechniqueCategory.finnedFish,
+  HintTechnique.finnedJellyfish: TechniqueCategory.finnedFish,
+
+  HintTechnique.bugPlusOne: TechniqueCategory.uniqueness,
+  HintTechnique.uniqueRectangleType1: TechniqueCategory.uniqueness,
+  HintTechnique.uniqueRectangleType2: TechniqueCategory.uniqueness,
+  HintTechnique.uniqueRectangleType3: TechniqueCategory.uniqueness,
+  HintTechnique.uniqueRectangleType4: TechniqueCategory.uniqueness,
+
+  // Remote Pair is a conjugate-bivalue chain; grouped with the chains.
+  HintTechnique.remotePair: TechniqueCategory.chainsAndLoops,
+  HintTechnique.xChain: TechniqueCategory.chainsAndLoops,
+  HintTechnique.xyChain: TechniqueCategory.chainsAndLoops,
+  HintTechnique.aic: TechniqueCategory.chainsAndLoops,
+  HintTechnique.groupedXChain: TechniqueCategory.chainsAndLoops,
+  HintTechnique.groupedAic: TechniqueCategory.chainsAndLoops,
+
+  HintTechnique.alsXZ: TechniqueCategory.almostLockedSets,
+  HintTechnique.alsAic: TechniqueCategory.almostLockedSets,
+  HintTechnique.sueDeCoq: TechniqueCategory.almostLockedSets,
+  // Firework is app-only (no HoDoKu 2.2 home); an ALS-adjacent multi-digit
+  // pattern, filed with ALS as the closest fit.
+  HintTechnique.tripleFirework: TechniqueCategory.almostLockedSets,
+};
+
+/// A category's difficulty tier for display/ordering: the tier of its hardest
+/// member (categories span tiers, so this is the "ceiling" a learner reaches
+/// within it).
+Difficulty categoryDifficulty(TechniqueCategory category) => techniqueCategory
+    .entries
+    .where((e) => e.value == category)
+    .map((e) => techniqueDifficulty[e.key]!)
+    .reduce((a, b) => a.index >= b.index ? a : b);
+
 enum HintType { reveal, eliminate }
 
 class HintCell {

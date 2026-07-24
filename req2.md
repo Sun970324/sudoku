@@ -109,3 +109,7 @@ Sepia Paper (프리미엄) — 따뜻한 크림/브라운, 종이 느낌.
 설정 시트 "테마" 섹션에 팩 선택(각 팩 미니 미리보기 칩). 비프리미엄은 프리미엄 팩에 잠금 표시 → 탭 시 PremiumLockScreen(description=테마 설명).
 비프리미엄은 Classic만 적용 가능.
 작업 범위: models/theme_pack.dart(신규) · board_colors.dart/app_palette.dart/app_theme.dart 위임 리팩터 · settings_controller+storage 활성팩 · settings_sheet 선택 UI · l10n(팩 이름·설명). 회귀 검증 위해 클래식 픽셀 동일 확인.
+
+
+번들 프리마이닝: fish/UR/aic는 어떤 수락으로도 실시간 ~0% — HoDoKu도 캐시로 버티는 부분이라 이게 유일한 공급원
+P3 프랙티싱 모드 UI: 기법+난이도 실전 퍼즐 진입점 (수락 함수는 준비됨)
