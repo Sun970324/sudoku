@@ -512,7 +512,10 @@ class _ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final tierColor = profile.tier.color(AppPalette.isDark(context));
+    final isUnranked = profile.seasonGames < 5;
+    final tierColor = isUnranked
+        ? (AppPalette.isDark(context) ? Colors.grey.shade400 : Colors.grey.shade600)
+        : profile.tier.color(AppPalette.isDark(context));
     return PopCard(
       tint: tierColor,
       padding: const EdgeInsets.all(20),
@@ -521,7 +524,7 @@ class _ProfileCard extends StatelessWidget {
           Text(profile.username,
               style: const TextStyle(fontFamily: 'Mulmaru', fontSize: 22)),
           const SizedBox(height: 10),
-          TierBadge(tier: profile.tier, large: true),
+          TierBadge(tier: profile.tier, large: true, unranked: isUnranked),
           const SizedBox(height: 10),
           Text(
             l10n.ratingAndRecord(profile.rating, profile.wins, profile.losses),
@@ -530,7 +533,7 @@ class _ProfileCard extends StatelessWidget {
           // Placement progress for the season's first 5 ranked games (the
           // server's high-K calibration window is longer — 30 games — but 5
           // is what reads as "placements" without dragging on).
-          if (profile.seasonGames < 5) ...[
+          if (isUnranked) ...[
             const SizedBox(height: 6),
             Text(
               l10n.placementProgress(profile.seasonGames, 5),

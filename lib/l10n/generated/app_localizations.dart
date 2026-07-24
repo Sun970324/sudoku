@@ -1926,6 +1926,90 @@ abstract class AppLocalizations {
   /// **'Opponent'**
   String get opponentProgressLabel;
 
+  /// No description provided for @raceSelfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get raceSelfLabel;
+
+  /// No description provided for @raceLeadingBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Leading by {cells}'**
+  String raceLeadingBy(int cells);
+
+  /// No description provided for @raceTrailingBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Trailing by {cells}'**
+  String raceTrailingBy(int cells);
+
+  /// No description provided for @raceTied.
+  ///
+  /// In en, this message translates to:
+  /// **'Tied'**
+  String get raceTied;
+
+  /// No description provided for @keepSolvingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Solving'**
+  String get keepSolvingAction;
+
+  /// No description provided for @exitAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exitAction;
+
+  /// No description provided for @raceOpponentGaveUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'(Win) Your opponent gave up'**
+  String get raceOpponentGaveUpTitle;
+
+  /// No description provided for @raceOpponentGaveUpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep solving the puzzle?'**
+  String get raceOpponentGaveUpBody;
+
+  /// No description provided for @raceOpponentDisconnectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'(Win) Your opponent left'**
+  String get raceOpponentDisconnectedTitle;
+
+  /// No description provided for @raceOpponentDisconnectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep solving the puzzle?'**
+  String get raceOpponentDisconnectedBody;
+
+  /// No description provided for @raceOpponentFinishedFirstTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'(Loss) Your opponent finished first'**
+  String get raceOpponentFinishedFirstTitle;
+
+  /// No description provided for @raceOpponentFinishedFirstBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going anyway?'**
+  String get raceOpponentFinishedFirstBody;
+
+  /// No description provided for @raceOpponentMistakesForfeitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'(Win) Your opponent made 3 mistakes'**
+  String get raceOpponentMistakesForfeitTitle;
+
+  /// No description provided for @raceOpponentMistakesForfeitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep solving the puzzle?'**
+  String get raceOpponentMistakesForfeitBody;
+
   /// No description provided for @raceResultTitle.
   ///
   /// In en, this message translates to:
@@ -1979,6 +2063,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Challenger'**
   String get tierChallenger;
+
+  /// No description provided for @tierUnranked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unranked'**
+  String get tierUnranked;
 
   /// No description provided for @yourRatingChangeLabel.
   ///

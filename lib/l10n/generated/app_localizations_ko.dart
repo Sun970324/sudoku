@@ -1081,6 +1081,52 @@ class AppLocalizationsKo extends AppLocalizations {
   String get opponentProgressLabel => '상대방';
 
   @override
+  String get raceSelfLabel => '나';
+
+  @override
+  String raceLeadingBy(int cells) {
+    return '$cells칸 앞서는 중';
+  }
+
+  @override
+  String raceTrailingBy(int cells) {
+    return '$cells칸 뒤처지는 중';
+  }
+
+  @override
+  String get raceTied => '동률';
+
+  @override
+  String get keepSolvingAction => '계속 풀기';
+
+  @override
+  String get exitAction => '나가기';
+
+  @override
+  String get raceOpponentGaveUpTitle => '(승리) 상대가 포기했습니다';
+
+  @override
+  String get raceOpponentGaveUpBody => '스도쿠를 계속 진행하시겠습니까?';
+
+  @override
+  String get raceOpponentDisconnectedTitle => '(승리) 상대가 나갔습니다';
+
+  @override
+  String get raceOpponentDisconnectedBody => '스도쿠를 계속 진행하시겠습니까?';
+
+  @override
+  String get raceOpponentFinishedFirstTitle => '(패배) 상대가 먼저 스도쿠를 완성했습니다';
+
+  @override
+  String get raceOpponentFinishedFirstBody => '계속 진행하시겠습니까?';
+
+  @override
+  String get raceOpponentMistakesForfeitTitle => '(승리) 상대가 3번 이상 틀렸습니다';
+
+  @override
+  String get raceOpponentMistakesForfeitBody => '계속 진행하시겠습니까?';
+
+  @override
   String get raceResultTitle => '레이스 결과';
 
   @override
@@ -1106,6 +1152,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get tierChallenger => '챌린저';
+
+  @override
+  String get tierUnranked => '언랭크';
 
   @override
   String yourRatingChangeLabel(int oldRating, int newRating, String delta) {

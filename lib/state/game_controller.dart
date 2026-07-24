@@ -441,6 +441,21 @@ class GameController extends ChangeNotifier {
   List<List<int>> get boardSnapshot =>
       _board.map((row) => List<int>.from(row)).toList();
 
+  /// Cells currently holding their correct (solution-matching) value — a
+  /// wrong entry doesn't count even though the cell is non-empty. Used by
+  /// race mode to report/compare live progress.
+  int get correctFilledCount {
+    var count = 0;
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        if (_board[r][c] != 0 && _board[r][c] == _puzzle.solutionValue(r, c)) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
   /// Selection is allowed on any cell, including fixed givens, so the player
   /// can tap them to see same-number highlighting. Editing a fixed cell's
   /// value is still blocked separately (see inputValue/toggleNote). Tapping

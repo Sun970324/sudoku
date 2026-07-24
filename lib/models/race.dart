@@ -20,6 +20,25 @@ RaceStatus _raceStatusFromDb(String value) {
   }
 }
 
+/// Why a `finished` race ended — see migration 0020. Null (unknown) for any
+/// race decided before that migration shipped.
+enum RaceFinishReason { completed, gaveUp, disconnected, mistakes }
+
+RaceFinishReason? _raceFinishReasonFromDb(String? value) {
+  switch (value) {
+    case 'completed':
+      return RaceFinishReason.completed;
+    case 'gave_up':
+      return RaceFinishReason.gaveUp;
+    case 'disconnected':
+      return RaceFinishReason.disconnected;
+    case 'mistakes':
+      return RaceFinishReason.mistakes;
+    default:
+      return null;
+  }
+}
+
 class Race {
   const Race({
     required this.id,
@@ -31,6 +50,7 @@ class Race {
     this.isPrivate = false,
     this.puzzle,
     this.winnerId,
+    this.finishReason,
     this.playerARatingAfter,
     this.playerARatingDelta,
     this.playerBRatingAfter,
@@ -50,6 +70,7 @@ class Race {
       // column — absent means a ranked race.
       isPrivate: json['is_private'] as bool? ?? false,
       winnerId: json['winner_id'] as String?,
+      finishReason: _raceFinishReasonFromDb(json['finish_reason'] as String?),
       playerARatingAfter: json['player_a_rating_after'] as int?,
       playerARatingDelta: json['player_a_rating_delta'] as int?,
       playerBRatingAfter: json['player_b_rating_after'] as int?,
@@ -78,6 +99,7 @@ class Race {
   final bool isPrivate;
   final SudokuPuzzle? puzzle;
   final String? winnerId;
+  final RaceFinishReason? finishReason;
   final int? playerARatingAfter;
   final int? playerARatingDelta;
   final int? playerBRatingAfter;
