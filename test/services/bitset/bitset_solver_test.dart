@@ -8,8 +8,10 @@ import 'package:sudoku/services/generation/clue_remover.dart';
 import 'package:sudoku/services/generation/human_solver.dart';
 
 // The existing HumanSolver restricted to exactly the techniques BitsetSolver
-// covers (singles + intersections + subsets). Locked Pair/Triple are included
-// here because BitsetSolver's Naked Subset run produces their eliminations too.
+// covers (singles + intersections + subsets + basic fish + single-digit
+// patterns + wings + simple coloring). Locked Pair/Triple are included here
+// because BitsetSolver's Naked Subset run produces their eliminations too.
+// Order mirrors humanSolverTechniqueOrder's relative order.
 const _phase1Human = <HintTechnique>[
   HintTechnique.fullHouse,
   HintTechnique.nakedSingle,
@@ -22,6 +24,16 @@ const _phase1Human = <HintTechnique>[
   HintTechnique.lockedTriple,
   HintTechnique.nakedTriple,
   HintTechnique.hiddenTriple,
+  HintTechnique.xWing,
+  HintTechnique.skyscraper,
+  HintTechnique.twoStringKite,
+  HintTechnique.turbotFish,
+  HintTechnique.xyWing,
+  HintTechnique.simpleColoring,
+  HintTechnique.xyzWing,
+  HintTechnique.wWing,
+  HintTechnique.swordfish,
+  HintTechnique.jellyfish,
   HintTechnique.nakedQuad,
   HintTechnique.hiddenQuad,
 ];
@@ -83,6 +95,87 @@ void main() {
     expect(res.board, equals(solution));
     expect(res.history, isNotEmpty);
     expect(res.history.every(BitsetSolver.order.contains), isTrue);
+  });
+
+  group('fish port fixtures (mirroring hint_engine_test positions — '
+      'swordfish/jellyfish are too rare on random boards for the '
+      'differential to reach them)', () {
+    // A synthetic candidate grid on an empty board: only the listed cells
+    // hold the listed candidates (all other cells get a full mask so they
+    // never look like accidental singles/subsets to the technique under
+    // test... they aren't consulted by _fish at all, but keep it faithful).
+    List<List<Set<int>>> candidatesFrom(Map<List<int>, Set<int>> entries) {
+      final grid = List.generate(
+          9, (_) => List.generate(9, (_) => <int>{}));
+      entries.forEach((cell, digits) {
+        grid[cell[0]][cell[1]] = {...digits};
+      });
+      return grid;
+    }
+
+    final emptyBoard = List.generate(9, (_) => List.filled(9, 0));
+
+    test('Swordfish: rows 0/3/6 cover columns {1,4,7} — (1,4) loses 7, '
+        'near-miss (1,2) untouched', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.swordfish,
+        emptyBoard,
+        candidatesFrom({
+          [0, 1]: {7},
+          [0, 4]: {7},
+          [3, 4]: {7},
+          [3, 7]: {7},
+          [6, 1]: {7},
+          [6, 7]: {7},
+          [1, 4]: {7},
+          [1, 2]: {7},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![1][4], isNot(contains(7)));
+      expect(after[1][2], contains(7));
+      expect(after[0][1], contains(7)); // base cells keep the digit
+    });
+
+    test('Swordfish: three rows covering only two columns (disguised '
+        'X-Wing) is not a Swordfish', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.swordfish,
+        emptyBoard,
+        candidatesFrom({
+          [0, 1]: {7},
+          [0, 4]: {7},
+          [3, 1]: {7},
+          [3, 4]: {7},
+          [6, 1]: {7},
+          [6, 4]: {7},
+        }),
+      );
+      expect(after, isNull);
+    });
+
+    test('Jellyfish: rows 0/2/4/6 cover columns {1,4,7,8} — (1,4) loses 6, '
+        'near-miss (1,2) untouched', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.jellyfish,
+        emptyBoard,
+        candidatesFrom({
+          [0, 1]: {6},
+          [0, 4]: {6},
+          [2, 4]: {6},
+          [2, 7]: {6},
+          [4, 1]: {6},
+          [4, 8]: {6},
+          [6, 7]: {6},
+          [6, 8]: {6},
+          [1, 4]: {6},
+          [1, 2]: {6},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![1][4], isNot(contains(6)));
+      expect(after[1][2], contains(6));
+    });
   });
 
   test('enabled filter restricts which techniques run', () {
