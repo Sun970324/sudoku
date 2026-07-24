@@ -96,6 +96,12 @@ class RaceController extends ChangeNotifier {
   String get selfId => _raceService.selfId;
   bool get isWinner => _race?.winnerId == selfId;
 
+  /// Why the race ended, once [phase] reaches [RacePhase.finished] — drives
+  /// the reason-specific "you won/lost because ___" pause dialog for
+  /// whichever side is still mid-puzzle when the race gets decided out from
+  /// under them. Null before then (or for a race decided pre-migration-0020).
+  RaceFinishReason? get finishReason => _race?.finishReason;
+
   /// Whether this is a friendly (room-code) match — no rating at stake, so
   /// result UI should show a friendly-match label instead of waiting for
   /// rating deltas that will never arrive.
@@ -145,6 +151,11 @@ class RaceController extends ChangeNotifier {
   /// `finished` stream updates from saving twice.
   bool _gameStarted = false;
   bool _replaySaved = false;
+
+  /// Guards the self-reported 3-mistake forfeit in [_onGameChanged] so a
+  /// repeated notifyListeners while still waiting on that RPC (or after it
+  /// resolves) can't fire [RaceService.abortRace] a second time.
+  bool _mistakeForfeitSent = false;
 
   /// Set by [restore] so the racing transition resumes this board instead of
   /// starting a fresh one — the reconnect-after-app-kill path.
@@ -437,28 +448,22 @@ class RaceController extends ChangeNotifier {
 
   void _broadcastProgress() {
     _channel?.sendBroadcastMessage(event: 'progress', payload: {
-      'filledCount': _filledCount(),
+      'filledCount': game.correctFilledCount,
       'mistakes': game.mistakes,
     });
   }
 
-  int _filledCount() {
-    final board = game.boardSnapshot;
-    var count = 0;
-    for (var r = 0; r < 9; r++) {
-      for (var c = 0; c < 9; c++) {
-        if (board[r][c] != 0 && board[r][c] == game.puzzle.solutionValue(r, c)) {
-          count++;
-        }
-      }
-    }
-    return count;
-  }
-
   void _onGameChanged() {
     final race = _race;
-    if (race != null && game.status == GameStatus.won) {
+    if (race == null) return;
+    if (game.status == GameStatus.won) {
       unawaited(_raceService.submitFinish(race.id, game.boardSnapshot));
+    } else if (game.status == GameStatus.gameOver && !_mistakeForfeitSent) {
+      // Local 3rd-mistake game-over (GameController.maxMistakes) — self-
+      // report the forfeit so the opponent's client can end the race and
+      // show the "you won — opponent made 3 mistakes" message.
+      _mistakeForfeitSent = true;
+      unawaited(_raceService.abortRace(race.id, reason: 'mistakes'));
     }
   }
 

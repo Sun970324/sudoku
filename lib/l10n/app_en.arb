@@ -774,6 +774,30 @@
     }
   },
   "opponentProgressLabel": "Opponent",
+  "raceSelfLabel": "You",
+  "raceLeadingBy": "Leading by {cells}",
+  "@raceLeadingBy": {
+    "placeholders": {
+      "cells": {"type": "int"}
+    }
+  },
+  "raceTrailingBy": "Trailing by {cells}",
+  "@raceTrailingBy": {
+    "placeholders": {
+      "cells": {"type": "int"}
+    }
+  },
+  "raceTied": "Tied",
+  "keepSolvingAction": "Keep Solving",
+  "exitAction": "Exit",
+  "raceOpponentGaveUpTitle": "(Win) Your opponent gave up",
+  "raceOpponentGaveUpBody": "Keep solving the puzzle?",
+  "raceOpponentDisconnectedTitle": "(Win) Your opponent left",
+  "raceOpponentDisconnectedBody": "Keep solving the puzzle?",
+  "raceOpponentFinishedFirstTitle": "(Loss) Your opponent finished first",
+  "raceOpponentFinishedFirstBody": "Keep going anyway?",
+  "raceOpponentMistakesForfeitTitle": "(Win) Your opponent made 3 mistakes",
+  "raceOpponentMistakesForfeitBody": "Keep solving the puzzle?",
   "raceResultTitle": "Race Result",
   "raceWon": "You Won!",
   "raceLost": "You Lost",
@@ -783,6 +807,7 @@
   "tierDiamond": "Diamond",
   "tierMaster": "Master",
   "tierChallenger": "Challenger",
+  "tierUnranked": "Unranked",
 
   "yourRatingChangeLabel": "You: {oldRating} → {newRating} ({delta})",
   "@yourRatingChangeLabel": {

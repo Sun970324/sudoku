@@ -130,8 +130,12 @@ class RaceService {
     return result as bool;
   }
 
-  Future<void> abortRace(String raceId) async {
-    await _client.rpc('abort_race', params: {'p_race_id': raceId});
+  /// [reason] is 'gave_up' (the default, an explicit give-up) or 'mistakes'
+  /// (a self-reported 3rd-mistake forfeit) — see migration 0020. Either way
+  /// this resolves the race exactly like a loss for the caller.
+  Future<void> abortRace(String raceId, {String reason = 'gave_up'}) async {
+    await _client.rpc('abort_race',
+        params: {'p_race_id': raceId, 'p_reason': reason});
   }
 
   /// Refreshes the caller's own liveness marker so the opponent can't claim

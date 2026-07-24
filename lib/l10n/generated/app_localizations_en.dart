@@ -1111,6 +1111,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get opponentProgressLabel => 'Opponent';
 
   @override
+  String get raceSelfLabel => 'You';
+
+  @override
+  String raceLeadingBy(int cells) {
+    return 'Leading by $cells';
+  }
+
+  @override
+  String raceTrailingBy(int cells) {
+    return 'Trailing by $cells';
+  }
+
+  @override
+  String get raceTied => 'Tied';
+
+  @override
+  String get keepSolvingAction => 'Keep Solving';
+
+  @override
+  String get exitAction => 'Exit';
+
+  @override
+  String get raceOpponentGaveUpTitle => '(Win) Your opponent gave up';
+
+  @override
+  String get raceOpponentGaveUpBody => 'Keep solving the puzzle?';
+
+  @override
+  String get raceOpponentDisconnectedTitle => '(Win) Your opponent left';
+
+  @override
+  String get raceOpponentDisconnectedBody => 'Keep solving the puzzle?';
+
+  @override
+  String get raceOpponentFinishedFirstTitle =>
+      '(Loss) Your opponent finished first';
+
+  @override
+  String get raceOpponentFinishedFirstBody => 'Keep going anyway?';
+
+  @override
+  String get raceOpponentMistakesForfeitTitle =>
+      '(Win) Your opponent made 3 mistakes';
+
+  @override
+  String get raceOpponentMistakesForfeitBody => 'Keep solving the puzzle?';
+
+  @override
   String get raceResultTitle => 'Race Result';
 
   @override
@@ -1136,6 +1184,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tierChallenger => 'Challenger';
+
+  @override
+  String get tierUnranked => 'Unranked';
 
   @override
   String yourRatingChangeLabel(int oldRating, int newRating, String delta) {
