@@ -1,8 +1,8 @@
 // One-off build-time generator for assets/data/technique_boards.json — the
-// per-practice-item bundled boards behind the "힌트 데모" queue (see
-// TechniqueQueueManager). Every board SHOWS its item's technique per
-// [boardShowsItem]: solving within that item's difficulty ceiling actually
-// uses it. Rare/heavy items (AIC, Sue de Coq, Triple Firework) can take many
+// per-category bundled boards behind the technique-practice queue (see
+// TechniqueQueueManager). Every board is a genuine practice case for its
+// category per [boardRequiresCategory]: solvable within the category ceiling
+// and actually needing it. Rare/heavy categories (Chains, ALS) can take many
 // seeds — run this offline (e.g. overnight) when preparing a release.
 //
 //   flutter test tool/generate_technique_boards.dart
@@ -14,13 +14,15 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sudoku/models/hint.dart';
 import 'package:sudoku/services/generation/technique_board_miner.dart';
 
-const _perItem = 3;
-const _rareExtra = {'tripleFirework': 5};
+const _perCategory = 3;
+const _rareExtra = {'chainsAndLoops': 5, 'almostLockedSets': 5};
 const _maxSeeds = 60000;
 
-int _want(PracticeItem item) => _rareExtra[item.id] ?? _perItem;
+int _want(TechniqueCategory category) =>
+    _rareExtra[category.name] ?? _perCategory;
 
 final _log = File('/tmp/mine_progress.txt');
 void _note(String line) =>
@@ -31,19 +33,19 @@ Future<void> main() async {
   _log.writeAsStringSync('');
   final rng = Random(7);
   final result = <String, dynamic>{};
-  for (final item in practiceItems) {
+  for (final category in TechniqueCategory.values) {
     final boards = <Map<String, dynamic>>[];
-    while (boards.length < _want(item)) {
-      _note('mining ${item.id} ${boards.length + 1}/${_want(item)}...');
+    while (boards.length < _want(category)) {
+      _note('mining ${category.name} ${boards.length + 1}/${_want(category)}...');
       final puzzle =
-          mineTechniqueBoard(item.techniques, maxSeeds: _maxSeeds, random: rng);
+          mineCategoryBoard(category, maxSeeds: _maxSeeds, random: rng);
       if (puzzle == null) {
-        _note('BUDGET EXHAUSTED for ${item.id}');
-        throw StateError('mining budget exhausted for ${item.id}');
+        _note('BUDGET EXHAUSTED for ${category.name}');
+        throw StateError('mining budget exhausted for ${category.name}');
       }
       boards.add(puzzle.toJson());
     }
-    result[item.id] = boards;
+    result[category.name] = boards;
   }
   final file = File('assets/data/technique_boards.json');
   await file.create(recursive: true);
