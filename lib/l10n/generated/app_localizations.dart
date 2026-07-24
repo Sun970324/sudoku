@@ -101,8 +101,56 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Sudoku'**
+  /// **'Sudoku League'**
   String get appTitle;
+
+  /// No description provided for @offlineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get offlineTitle;
+
+  /// No description provided for @offlineBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline, so this feature isn\'t available right now.'**
+  String get offlineBody;
+
+  /// No description provided for @offlineAvailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What you can do offline'**
+  String get offlineAvailableTitle;
+
+  /// No description provided for @offlineAvailablePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play Sudoku across every difficulty'**
+  String get offlineAvailablePlay;
+
+  /// No description provided for @offlineAvailableResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume a game in progress'**
+  String get offlineAvailableResume;
+
+  /// No description provided for @offlineAvailableStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your records and stats'**
+  String get offlineAvailableStats;
+
+  /// No description provided for @offlineRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get offlineRetry;
+
+  /// No description provided for @offlineStillDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Still no internet connection'**
+  String get offlineStillDisconnected;
 
   /// No description provided for @homeButton.
   ///
@@ -122,17 +170,239 @@ abstract class AppLocalizations {
   /// **'Apply'**
   String get applyAction;
 
+  /// No description provided for @hintRevealMoreAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show more'**
+  String get hintRevealMoreAction;
+
   /// No description provided for @continueAction.
   ///
   /// In en, this message translates to:
   /// **'Continue'**
   String get continueAction;
 
-  /// No description provided for @continueGame.
+  /// No description provided for @cancelAction.
   ///
   /// In en, this message translates to:
-  /// **'Resume'**
-  String get continueGame;
+  /// **'Cancel'**
+  String get cancelAction;
+
+  /// No description provided for @tutorialNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get tutorialNext;
+
+  /// No description provided for @tutorialSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get tutorialSkip;
+
+  /// No description provided for @tutorialDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get tutorialDone;
+
+  /// No description provided for @tutorialReplayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay tutorial'**
+  String get tutorialReplayLabel;
+
+  /// No description provided for @tutorialHomeDifficultyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a difficulty'**
+  String get tutorialHomeDifficultyTitle;
+
+  /// No description provided for @tutorialHomeDifficultyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Spin this wheel to choose how hard your puzzle will be.'**
+  String get tutorialHomeDifficultyBody;
+
+  /// No description provided for @tutorialHomeStartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start playing'**
+  String get tutorialHomeStartTitle;
+
+  /// No description provided for @tutorialHomeStartBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to begin a new puzzle at the difficulty you picked.'**
+  String get tutorialHomeStartBody;
+
+  /// No description provided for @tutorialHomeIconsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top menu'**
+  String get tutorialHomeIconsTitle;
+
+  /// No description provided for @tutorialHomeIconsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'These icons open stats, enter a shared puzzle code, your profile, and settings.'**
+  String get tutorialHomeIconsBody;
+
+  /// No description provided for @tutorialHomeRaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race'**
+  String get tutorialHomeRaceTitle;
+
+  /// No description provided for @tutorialHomeRaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Take on a friend or other players in a real-time sudoku match.'**
+  String get tutorialHomeRaceBody;
+
+  /// No description provided for @tutorialHomeDailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get tutorialHomeDailyTitle;
+
+  /// No description provided for @tutorialHomeDailyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve today\'s puzzle and check where you rank.'**
+  String get tutorialHomeDailyBody;
+
+  /// No description provided for @tutorialGameGridTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The board'**
+  String get tutorialGameGridTitle;
+
+  /// No description provided for @tutorialGameGridBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap an empty cell to select it, then choose a number to fill it in.'**
+  String get tutorialGameGridBody;
+
+  /// No description provided for @tutorialGameNumbersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter numbers'**
+  String get tutorialGameNumbersTitle;
+
+  /// No description provided for @tutorialGameNumbersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a number here to place it in the selected cell.'**
+  String get tutorialGameNumbersBody;
+
+  /// No description provided for @tutorialGameNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Note mode'**
+  String get tutorialGameNoteTitle;
+
+  /// No description provided for @tutorialGameNoteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn this on to pencil in small candidate numbers before committing.'**
+  String get tutorialGameNoteBody;
+
+  /// No description provided for @tutorialGameHintTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Need a hand?'**
+  String get tutorialGameHintTitle;
+
+  /// No description provided for @tutorialGameHintBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Stuck? Get a hint by watching a short ad — the badge marks ad-gated helpers.'**
+  String get tutorialGameHintBody;
+
+  /// No description provided for @tutorialGameMistakesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mistake limit'**
+  String get tutorialGameMistakesTitle;
+
+  /// No description provided for @tutorialGameMistakesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The game ends after 3 mistakes, so place each number carefully.'**
+  String get tutorialGameMistakesBody;
+
+  /// No description provided for @tutorialQuickInputTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick input'**
+  String get tutorialQuickInputTitle;
+
+  /// No description provided for @tutorialQuickInputBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn this on to pick a number first, then tap cells to fill them fast. Memo digits work the same way.'**
+  String get tutorialQuickInputBody;
+
+  /// No description provided for @tutorialRaceProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your standing'**
+  String get tutorialRaceProfileTitle;
+
+  /// No description provided for @tutorialRaceProfileBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tier, rating, and win-loss record show up here.'**
+  String get tutorialRaceProfileBody;
+
+  /// No description provided for @tutorialRaceTrendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating trend'**
+  String get tutorialRaceTrendTitle;
+
+  /// No description provided for @tutorialRaceTrendBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating charts here as you play more ranked races.'**
+  String get tutorialRaceTrendBody;
+
+  /// No description provided for @tutorialRaceFriendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play a friend'**
+  String get tutorialRaceFriendTitle;
+
+  /// No description provided for @tutorialRaceFriendBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a room code to race a friend one-on-one.'**
+  String get tutorialRaceFriendBody;
+
+  /// No description provided for @tutorialRaceRankedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked match'**
+  String get tutorialRaceRankedTitle;
+
+  /// No description provided for @tutorialRaceRankedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Get matched with a similar opponent — your tier sets the difficulty.'**
+  String get tutorialRaceRankedBody;
+
+  /// No description provided for @tutorialRaceLeaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get tutorialRaceLeaderboardTitle;
+
+  /// No description provided for @tutorialRaceLeaderboardBody.
+  ///
+  /// In en, this message translates to:
+  /// **'See how you rank against everyone else.'**
+  String get tutorialRaceLeaderboardBody;
 
   /// No description provided for @startGame.
   ///
@@ -140,11 +410,29 @@ abstract class AppLocalizations {
   /// **'Start'**
   String get startGame;
 
-  /// No description provided for @viewStats.
+  /// No description provided for @generatingPuzzle.
   ///
   /// In en, this message translates to:
-  /// **'View Stats'**
-  String get viewStats;
+  /// **'Generating...'**
+  String get generatingPuzzle;
+
+  /// No description provided for @privacyPolicyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicyTitle;
+
+  /// No description provided for @termsOfServiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfServiceTitle;
+
+  /// No description provided for @raceButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Race'**
+  String get raceButton;
 
   /// No description provided for @themeSectionTitle.
   ///
@@ -181,6 +469,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sound Effects'**
   String get soundLabel;
+
+  /// No description provided for @wrongNoteWarningLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevent on Wrong Notes'**
+  String get wrongNoteWarningLabel;
+
+  /// No description provided for @wrongNoteWarningDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocks notes for a number already placed in the same row, column, or box.'**
+  String get wrongNoteWarningDescription;
+
+  /// No description provided for @autoRemoveNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-clear Notes on Confirm'**
+  String get autoRemoveNotesLabel;
+
+  /// No description provided for @autoRemoveNotesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Placing a number clears matching notes in the same row, column, and box.'**
+  String get autoRemoveNotesDescription;
 
   /// No description provided for @languageSectionTitle.
   ///
@@ -260,6 +572,18 @@ abstract class AppLocalizations {
   /// **'Please clear the wrong answer first.'**
   String get clearWrongFirst;
 
+  /// No description provided for @hintNoTechniqueWithNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No technique can be applied with your current notes.'**
+  String get hintNoTechniqueWithNotes;
+
+  /// No description provided for @hintAutoGenerateCandidatesPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate candidate notes automatically and analyze again?'**
+  String get hintAutoGenerateCandidatesPrompt;
+
   /// No description provided for @adNotLoaded.
   ///
   /// In en, this message translates to:
@@ -275,8 +599,68 @@ abstract class AppLocalizations {
   /// No description provided for @perfectClearBadge.
   ///
   /// In en, this message translates to:
-  /// **'No Mistakes! Perfect Clear'**
+  /// **'Perfect Clear'**
   String get perfectClearBadge;
+
+  /// No description provided for @perfectClearFlavor1.
+  ///
+  /// In en, this message translates to:
+  /// **'Hint? What\'s that? 😎'**
+  String get perfectClearFlavor1;
+
+  /// No description provided for @perfectClearFlavor2.
+  ///
+  /// In en, this message translates to:
+  /// **'You didn\'t even give yourself a chance to mess up.'**
+  String get perfectClearFlavor2;
+
+  /// No description provided for @perfectClearFlavor3.
+  ///
+  /// In en, this message translates to:
+  /// **'The numbers practically lined themselves up.'**
+  String get perfectClearFlavor3;
+
+  /// No description provided for @perfectClearFlavor4.
+  ///
+  /// In en, this message translates to:
+  /// **'Was 9×9 too easy for you?'**
+  String get perfectClearFlavor4;
+
+  /// No description provided for @perfectClearFlavor5.
+  ///
+  /// In en, this message translates to:
+  /// **'The puzzle never stood a chance. 🏆'**
+  String get perfectClearFlavor5;
+
+  /// No description provided for @perfectClearFlavor6.
+  ///
+  /// In en, this message translates to:
+  /// **'Okay, that\'s almost unfair.'**
+  String get perfectClearFlavor6;
+
+  /// No description provided for @perfectClearFlavor7.
+  ///
+  /// In en, this message translates to:
+  /// **'The numbers were on your side today.'**
+  String get perfectClearFlavor7;
+
+  /// No description provided for @perfectClearFlavor8.
+  ///
+  /// In en, this message translates to:
+  /// **'9 numbers. 81 cells. 0 mistakes.'**
+  String get perfectClearFlavor8;
+
+  /// No description provided for @perfectClearFlavor9.
+  ///
+  /// In en, this message translates to:
+  /// **'The hint button is out of a job today.'**
+  String get perfectClearFlavor9;
+
+  /// No description provided for @perfectClearFlavor10.
+  ///
+  /// In en, this message translates to:
+  /// **'Certified Sudoku Master! 👑'**
+  String get perfectClearFlavor10;
 
   /// No description provided for @mistakesAndHints.
   ///
@@ -350,6 +734,108 @@ abstract class AppLocalizations {
   /// **'Stats'**
   String get statsTitle;
 
+  /// No description provided for @tutorialStatsCalendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily calendar'**
+  String get tutorialStatsCalendarTitle;
+
+  /// No description provided for @tutorialStatsCalendarBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve the daily Sudoku to stamp the calendar. Keep your streak going!'**
+  String get tutorialStatsCalendarBody;
+
+  /// No description provided for @tutorialStatsRecordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Records by difficulty'**
+  String get tutorialStatsRecordsTitle;
+
+  /// No description provided for @tutorialStatsRecordsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch tabs to see completions, average, and best times per difficulty.'**
+  String get tutorialStatsRecordsBody;
+
+  /// No description provided for @tutorialStatsCodexTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technique codex'**
+  String get tutorialStatsCodexTitle;
+
+  /// No description provided for @tutorialStatsCodexBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Solving techniques you\'ve met through hints collect here.'**
+  String get tutorialStatsCodexBody;
+
+  /// No description provided for @tutorialStatsReplayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get tutorialStatsReplayTitle;
+
+  /// No description provided for @tutorialStatsReplayBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch your past games move by move.'**
+  String get tutorialStatsReplayBody;
+
+  /// No description provided for @dailyCalendarSignInHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see your daily sudoku history.'**
+  String get dailyCalendarSignInHint;
+
+  /// No description provided for @dailyCalendarLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your daily history.'**
+  String get dailyCalendarLoadError;
+
+  /// No description provided for @dailyCalendarDayDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{month}/{day} · {time} · {mistakes} mistakes'**
+  String dailyCalendarDayDetail(int month, int day, String time, int mistakes);
+
+  /// No description provided for @statsCompletedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get statsCompletedLabel;
+
+  /// No description provided for @statsPerfectLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect clears'**
+  String get statsPerfectLabel;
+
+  /// No description provided for @statsAverageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Average time'**
+  String get statsAverageLabel;
+
+  /// No description provided for @statsBestLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Best time'**
+  String get statsBestLabel;
+
+  /// No description provided for @statsNoRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'-'**
+  String get statsNoRecord;
+
+  /// No description provided for @statsTopPercentBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Top {percent}%'**
+  String statsTopPercentBadge(int percent);
+
   /// No description provided for @playedWonLabel.
   ///
   /// In en, this message translates to:
@@ -361,6 +847,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **' · Best {time}'**
   String bestTimeSuffix(String time);
+
+  /// No description provided for @raceHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race History'**
+  String get raceHistoryTitle;
+
+  /// No description provided for @raceHistoryResultWon.
+  ///
+  /// In en, this message translates to:
+  /// **'Win'**
+  String get raceHistoryResultWon;
+
+  /// No description provided for @raceHistoryResultLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss'**
+  String get raceHistoryResultLost;
+
+  /// No description provided for @raceHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No races yet.'**
+  String get raceHistoryEmpty;
 
   /// No description provided for @undoLabel.
   ///
@@ -392,28 +902,34 @@ abstract class AppLocalizations {
   /// **'Hint'**
   String get hintLabel;
 
+  /// No description provided for @inputModeQuick.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick'**
+  String get inputModeQuick;
+
   /// No description provided for @difficultyBeginner.
   ///
   /// In en, this message translates to:
-  /// **'Beginner'**
+  /// **'Bronze'**
   String get difficultyBeginner;
 
   /// No description provided for @difficultyEasy.
   ///
   /// In en, this message translates to:
-  /// **'Easy'**
+  /// **'Silver'**
   String get difficultyEasy;
 
   /// No description provided for @difficultyMedium.
   ///
   /// In en, this message translates to:
-  /// **'Medium'**
+  /// **'Gold'**
   String get difficultyMedium;
 
   /// No description provided for @difficultyHard.
   ///
   /// In en, this message translates to:
-  /// **'Hard'**
+  /// **'Diamond'**
   String get difficultyHard;
 
   /// No description provided for @difficultyMaster.
@@ -425,7 +941,7 @@ abstract class AppLocalizations {
   /// No description provided for @difficultyExpert.
   ///
   /// In en, this message translates to:
-  /// **'Expert'**
+  /// **'Challenger'**
   String get difficultyExpert;
 
   /// No description provided for @techniqueFullHouse.
@@ -494,11 +1010,47 @@ abstract class AppLocalizations {
   /// **'Intersection (Claiming)'**
   String get techniqueIntersectionClaiming;
 
+  /// No description provided for @techniqueLockedPair.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked Pair'**
+  String get techniqueLockedPair;
+
+  /// No description provided for @techniqueLockedTriple.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked Triple'**
+  String get techniqueLockedTriple;
+
   /// No description provided for @techniqueXWing.
   ///
   /// In en, this message translates to:
   /// **'X-Wing'**
   String get techniqueXWing;
+
+  /// No description provided for @techniqueSkyscraper.
+  ///
+  /// In en, this message translates to:
+  /// **'Skyscraper'**
+  String get techniqueSkyscraper;
+
+  /// No description provided for @techniqueTwoStringKite.
+  ///
+  /// In en, this message translates to:
+  /// **'2-String Kite'**
+  String get techniqueTwoStringKite;
+
+  /// No description provided for @techniqueTurbotFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Turbot Fish'**
+  String get techniqueTurbotFish;
+
+  /// No description provided for @techniqueRemotePair.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote Pair'**
+  String get techniqueRemotePair;
 
   /// No description provided for @techniqueSimpleColoring.
   ///
@@ -506,11 +1058,35 @@ abstract class AppLocalizations {
   /// **'Simple Coloring'**
   String get techniqueSimpleColoring;
 
+  /// No description provided for @techniqueMultiColoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Coloring'**
+  String get techniqueMultiColoring;
+
+  /// No description provided for @explanationMultiColoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit}\'s candidates split into two separate color clusters; the relationship between their colors forces {digit} out of certain cells no matter which color turns out true, so {digit} can be removed from its candidates there.'**
+  String explanationMultiColoring(Object digit);
+
   /// No description provided for @techniqueXYWing.
   ///
   /// In en, this message translates to:
   /// **'XY-Wing'**
   String get techniqueXYWing;
+
+  /// No description provided for @techniqueXYZWing.
+  ///
+  /// In en, this message translates to:
+  /// **'XYZ-Wing'**
+  String get techniqueXYZWing;
+
+  /// No description provided for @techniqueWWing.
+  ///
+  /// In en, this message translates to:
+  /// **'W-Wing'**
+  String get techniqueWWing;
 
   /// No description provided for @techniqueSwordfish.
   ///
@@ -548,6 +1124,18 @@ abstract class AppLocalizations {
   /// **'Jellyfish'**
   String get techniqueJellyfish;
 
+  /// No description provided for @techniqueFinnedSwordfish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finned Swordfish'**
+  String get techniqueFinnedSwordfish;
+
+  /// No description provided for @techniqueFinnedJellyfish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finned Jellyfish'**
+  String get techniqueFinnedJellyfish;
+
   /// No description provided for @techniqueUniqueRectangleType1.
   ///
   /// In en, this message translates to:
@@ -571,6 +1159,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unique Rectangle Type 4'**
   String get techniqueUniqueRectangleType4;
+
+  /// No description provided for @techniqueXChain.
+  ///
+  /// In en, this message translates to:
+  /// **'X-Chain'**
+  String get techniqueXChain;
+
+  /// No description provided for @techniqueAic.
+  ///
+  /// In en, this message translates to:
+  /// **'AIC'**
+  String get techniqueAic;
+
+  /// No description provided for @techniqueGroupedXChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped X-Chain'**
+  String get techniqueGroupedXChain;
+
+  /// No description provided for @techniqueGroupedAic.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped AIC'**
+  String get techniqueGroupedAic;
+
+  /// No description provided for @techniqueWXYZWing.
+  ///
+  /// In en, this message translates to:
+  /// **'WXYZ-Wing'**
+  String get techniqueWXYZWing;
+
+  /// No description provided for @techniqueAlsXZ.
+  ///
+  /// In en, this message translates to:
+  /// **'ALS-XZ'**
+  String get techniqueAlsXZ;
+
+  /// No description provided for @techniqueSueDeCoq.
+  ///
+  /// In en, this message translates to:
+  /// **'Sue de Coq'**
+  String get techniqueSueDeCoq;
+
+  /// No description provided for @techniqueTripleFirework.
+  ///
+  /// In en, this message translates to:
+  /// **'Triple Firework'**
+  String get techniqueTripleFirework;
+
+  /// No description provided for @techniqueAlsAic.
+  ///
+  /// In en, this message translates to:
+  /// **'ALS Chain'**
+  String get techniqueAlsAic;
 
   /// No description provided for @unitRow.
   ///
@@ -666,12 +1308,50 @@ abstract class AppLocalizations {
   String explanationFish(int digit, String linesDesc, String crossDesc,
       String crossUnitName, int size);
 
+  /// No description provided for @explanationSkyscraper.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms a Skyscraper: two strong links join so that at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.'**
+  String explanationSkyscraper(int digit, String cell1, String cell2);
+
+  /// No description provided for @explanationTwoStringKite.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms a 2-String Kite joined through a shared box, so at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.'**
+  String explanationTwoStringKite(int digit, String cell1, String cell2);
+
+  /// No description provided for @explanationTurbotFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms a Turbot Fish chain, so at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.'**
+  String explanationTurbotFish(int digit, String cell1, String cell2);
+
   /// No description provided for @explanationFinnedFish.
   ///
   /// In en, this message translates to:
   /// **'{mainLineDesc} forms a clean X-Wing shape with only two candidate cells for digit {digit}. {finLineDesc} also has extra candidates at {finsDesc} (fins), so it\'s not a pure X-Wing — but cells that see every fin can still have {digit} removed from their candidates.'**
   String explanationFinnedFish(
       String mainLineDesc, int digit, String finLineDesc, String finsDesc);
+
+  /// No description provided for @explanationFinnedFishN.
+  ///
+  /// In en, this message translates to:
+  /// **'{baseLinesDesc} confine digit {digit} to a {size}-line fish shape, except for extra candidates (fins) at {finsDesc}. If every fin is false this is a true fish; otherwise one of the fins is {digit}. Either way, cells that see every fin can have {digit} removed from their candidates.'**
+  String explanationFinnedFishN(
+      String baseLinesDesc, int digit, int size, String finsDesc);
+
+  /// No description provided for @explanationLockedSubset.
+  ///
+  /// In en, this message translates to:
+  /// **'{cellsDesc} lie where {lineDesc} crosses {boxDesc}, and together their only candidates are {digitsDesc} ({size} digits). Those cells take all {size} digits, so {digitsDesc} can be removed from the rest of {lineDesc} AND the rest of {boxDesc}.'**
+  String explanationLockedSubset(String lineDesc, String boxDesc,
+      String cellsDesc, String digitsDesc, int size);
+
+  /// No description provided for @explanationRemotePair.
+  ///
+  /// In en, this message translates to:
+  /// **'{chainDesc} all hold only {a} and {b}, and each sees the next, so their values alternate along the chain. The two ends sit an odd number of steps apart, so one is {a} and the other is {b} — meaning any cell seeing both ends can have BOTH {a} and {b} removed.'**
+  String explanationRemotePair(String chainDesc, int a, int b);
 
   /// No description provided for @explanationSimpleColoringRule1.
   ///
@@ -691,6 +1371,113 @@ abstract class AppLocalizations {
   /// **'Pivot cell {pivotDesc} has candidates {x} and {y}. Wing cell {w1Desc} is either {sharedDigitW1} or {z}; wing cell {w2Desc} is either {otherPivotDigit} or {z}. If the pivot is {sharedDigitW1}, {w1Desc} becomes {z}; if it\'s {otherPivotDigit}, {w2Desc} becomes {z}. Either way, cells that see both wings can have {z} removed from their candidates.'**
   String explanationXYWing(String pivotDesc, int x, int y, String w1Desc,
       int sharedDigitW1, int z, String w2Desc, int otherPivotDigit);
+
+  /// No description provided for @explanationXYZWing.
+  ///
+  /// In en, this message translates to:
+  /// **'The pivot {pivotDesc} has three candidates ({pivotDigits}), and its wings {w1Desc} and {w2Desc} each hold {z} plus one of the others. Whichever digit the pivot takes, {z} ends up on the pivot or one of the wings — so any cell seeing all three can have {z} removed.'**
+  String explanationXYZWing(String pivotDesc, String pivotDigits, String w1Desc,
+      String w2Desc, int z);
+
+  /// No description provided for @explanationWWing.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} both hold only {a} and {b}, and {unitDesc} has just two places for {b} — one seeing each of them. If both were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}, and any cell seeing both can have {a} removed.'**
+  String explanationWWing(
+      String cell1, String cell2, int a, int b, String unitDesc);
+
+  /// No description provided for @explanationGroupedXChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms an alternating chain along {chainDesc}, using clusters of neighbouring candidates as single links. The strong links still guarantee at least one end is {digit}, so any cell that sees both ends can have {digit} removed.'**
+  String explanationGroupedXChain(String chainDesc, int digit);
+
+  /// No description provided for @explanationGroupedAic.
+  ///
+  /// In en, this message translates to:
+  /// **'The alternating inference chain {chainDesc} uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.'**
+  String explanationGroupedAic(String chainDesc);
+
+  /// No description provided for @explanationWXYZWing.
+  ///
+  /// In en, this message translates to:
+  /// **'{chainDesc}: a WXYZ-Wing — a bivalue cell and a 3-cell Almost Locked Set joined through a shared digit. At least one chain end is true, so any candidate seeing both ends can be removed.'**
+  String explanationWXYZWing(String chainDesc);
+
+  /// No description provided for @explanationAlsXZ.
+  ///
+  /// In en, this message translates to:
+  /// **'{chainDesc}: two Almost Locked Sets joined by a restricted common digit. If either set loses it the other locks, so at least one end is true — any candidate seeing both ends can be removed.'**
+  String explanationAlsXZ(String chainDesc);
+
+  /// No description provided for @explanationAlsAic.
+  ///
+  /// In en, this message translates to:
+  /// **'The alternating inference chain {chainDesc} uses Almost Locked Sets as links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.'**
+  String explanationAlsAic(String chainDesc);
+
+  /// No description provided for @explanationSueDeCoq.
+  ///
+  /// In en, this message translates to:
+  /// **'The crossing cells {cells} interlock exactly with an Almost Locked Set on their line and one in their box. Every involved digit ({digits}) must land inside these three clusters, so matching candidates outside them can be removed.'**
+  String explanationSueDeCoq(String cells, String digits);
+
+  /// No description provided for @hintStepSueDeCoqIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Where the box meets the line, {cells} — {cellCount} cells — together hold {digits}: {digitCount} candidate kinds, at least two more than cells.'**
+  String hintStepSueDeCoqIntro(
+      String cells, int cellCount, String digits, int digitCount);
+
+  /// No description provided for @hintStepSueDeCoqLine.
+  ///
+  /// In en, this message translates to:
+  /// **'On the same line, {cells} ({cellCount} cells) hold only {digits} — {digitCount} kinds, exactly one more than cells: an Almost Locked Set. On this line those digits fit only here or in the crossing cells.'**
+  String hintStepSueDeCoqLine(
+      String cells, int cellCount, String digits, int digitCount);
+
+  /// No description provided for @hintStepSueDeCoqBox.
+  ///
+  /// In en, this message translates to:
+  /// **'In the box, {cells} ({cellCount} cells) likewise hold only {digits} — {digitCount} kinds, another Almost Locked Set. Its digits fit only there or in the crossing cells; every digit\'s place adds up exactly.'**
+  String hintStepSueDeCoqBox(
+      String cells, int cellCount, String digits, int digitCount);
+
+  /// No description provided for @explanationTripleFirework.
+  ///
+  /// In en, this message translates to:
+  /// **'Digits {digits} form fireworks: on both the row and the column they escape the box by just one wing cell each. The box can hold each digit only once, so the cross cell and the two wings ({cells}) must take exactly these three digits — removing their other candidates, and these digits from the box\'s non-cross cells.'**
+  String explanationTripleFirework(String digits, String cells);
+
+  /// No description provided for @hintStepFireworkRow.
+  ///
+  /// In en, this message translates to:
+  /// **'On this row, candidates for {digits} sit only in {cells} — outside the box that is just {cell}.'**
+  String hintStepFireworkRow(String digits, String cells, String cell);
+
+  /// No description provided for @hintStepFireworkCol.
+  ///
+  /// In en, this message translates to:
+  /// **'Same on this column — {digits} sit only in {cells}, with {cell} the lone escape from the box.'**
+  String hintStepFireworkCol(String digits, String cells, String cell);
+
+  /// No description provided for @hintStepFireworkTriple.
+  ///
+  /// In en, this message translates to:
+  /// **'The box can hold {digits} only once each, so for all three to fit, the three cells {cells} must take exactly one apiece.'**
+  String hintStepFireworkTriple(String cells, String digits);
+
+  /// No description provided for @explanationXChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} forms an alternating chain along {chainDesc}. Because the strong links guarantee at least one end is {digit}, any cell that sees both ends can have {digit} removed.'**
+  String explanationXChain(String chainDesc, int digit);
+
+  /// No description provided for @explanationAic.
+  ///
+  /// In en, this message translates to:
+  /// **'The alternating inference chain {chainDesc} forces at least one of its two ends to be true, so any candidate that conflicts with both ends can be removed.'**
+  String explanationAic(String chainDesc);
 
   /// No description provided for @explanationXYChain.
   ///
@@ -720,7 +1507,7 @@ abstract class AppLocalizations {
   /// No description provided for @explanationUniqueRectangleType3.
   ///
   /// In en, this message translates to:
-  /// **'Combining the extra candidates of {cellA} and {cellB}, they form a set of only {digitsDesc} together with other cells in that unit. So {digitsDesc} can be removed from the rest of that unit\'s cells.'**
+  /// **'One of {cellA} and {cellB} must take an extra candidate (if both kept only the rectangle pair, the puzzle would have two solutions). Treating their extra candidates as one virtual cell, they form a set of only {digitsDesc} with other cells in that unit — so {digitsDesc} can be removed from the rest of that unit.'**
   String explanationUniqueRectangleType3(
       String cellA, String cellB, String digitsDesc);
 
@@ -734,8 +1521,1324 @@ abstract class AppLocalizations {
   /// No description provided for @noteRepairNotice.
   ///
   /// In en, this message translates to:
-  /// **'Notes needed to be corrected first. {explanation}'**
+  /// **'Some cells\' notes didn\'t match the board, so they were corrected first. {explanation}'**
   String noteRepairNotice(String explanation);
+
+  /// No description provided for @myPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My Page'**
+  String get myPageTitle;
+
+  /// No description provided for @errorOccurred.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred: {message}'**
+  String errorOccurred(String message);
+
+  /// No description provided for @signInPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to race other players'**
+  String get signInPromptTitle;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @signInWithApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Apple'**
+  String get signInWithApple;
+
+  /// No description provided for @signInAsGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get signInAsGuest;
+
+  /// No description provided for @ratingAndRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating {rating} · {wins}W {losses}L'**
+  String ratingAndRecord(int rating, int wins, int losses);
+
+  /// No description provided for @winRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Race win rate {percent}%'**
+  String winRateLabel(int percent);
+
+  /// No description provided for @tierPromotionRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts to {nextTier}'**
+  String tierPromotionRemaining(int points, String nextTier);
+
+  /// No description provided for @tierTopReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Top tier reached'**
+  String get tierTopReached;
+
+  /// No description provided for @ratingTrendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating Trend'**
+  String get ratingTrendTitle;
+
+  /// No description provided for @ratingTrendEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No ranked games yet.\nPlay a ranked race to check your skill.'**
+  String get ratingTrendEmpty;
+
+  /// No description provided for @linkAccountPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re signed in as a guest. Link an account to keep your progress.'**
+  String get linkAccountPrompt;
+
+  /// No description provided for @linkGoogleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Google Account'**
+  String get linkGoogleAction;
+
+  /// No description provided for @linkAppleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Apple Account'**
+  String get linkAppleAction;
+
+  /// No description provided for @signOutAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out'**
+  String get signOutAction;
+
+  /// No description provided for @shareCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Puzzle'**
+  String get shareCodeTitle;
+
+  /// No description provided for @enterCodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Code'**
+  String get enterCodeTitle;
+
+  /// No description provided for @shareCodeTextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Code'**
+  String get shareCodeTextLabel;
+
+  /// No description provided for @invalidTextCodeError.
+  ///
+  /// In en, this message translates to:
+  /// **'That text code isn\'t valid.'**
+  String get invalidTextCodeError;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @enterTextCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Room code or puzzle code'**
+  String get enterTextCodeHint;
+
+  /// No description provided for @roomJoinRequiresSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to join a friend match. You can sign in from the race lobby.'**
+  String get roomJoinRequiresSignIn;
+
+  /// No description provided for @loadButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter'**
+  String get loadButton;
+
+  /// No description provided for @raceLobbyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race'**
+  String get raceLobbyTitle;
+
+  /// No description provided for @friendMatchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Play with a Friend'**
+  String get friendMatchButton;
+
+  /// No description provided for @rankedMatchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked Match'**
+  String get rankedMatchButton;
+
+  /// No description provided for @leaderboardButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranking'**
+  String get leaderboardButton;
+
+  /// No description provided for @leaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranking'**
+  String get leaderboardTitle;
+
+  /// No description provided for @leaderboardMyRankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rank: #{rank} of {total}'**
+  String leaderboardMyRankLabel(int rank, int total);
+
+  /// No description provided for @leaderboardMyRankUnranked.
+  ///
+  /// In en, this message translates to:
+  /// **'No ranked record yet'**
+  String get leaderboardMyRankUnranked;
+
+  /// No description provided for @leaderboardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No ranked players yet.'**
+  String get leaderboardEmpty;
+
+  /// No description provided for @leaderboardLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the ranking.'**
+  String get leaderboardLoadFailed;
+
+  /// No description provided for @seasonName.
+  ///
+  /// In en, this message translates to:
+  /// **'Season {number}'**
+  String seasonName(int number);
+
+  /// No description provided for @seasonDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'D-{days}'**
+  String seasonDaysLeft(int days);
+
+  /// No description provided for @pastSeasonsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past Seasons'**
+  String get pastSeasonsTitle;
+
+  /// No description provided for @seasonStandingDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'#{rank} · {wins}W {losses}L'**
+  String seasonStandingDetail(int rank, int wins, int losses);
+
+  /// No description provided for @placementProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Placements {played}/{total}'**
+  String placementProgress(int played, int total);
+
+  /// No description provided for @seasonEndedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Season {number} Complete!'**
+  String seasonEndedTitle(int number);
+
+  /// No description provided for @seasonEndedNewStart.
+  ///
+  /// In en, this message translates to:
+  /// **'A new season has begun — you restart at rating {rating}!'**
+  String seasonEndedNewStart(int rating);
+
+  /// No description provided for @okAction.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get okAction;
+
+  /// No description provided for @friendMatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play with a Friend'**
+  String get friendMatchTitle;
+
+  /// No description provided for @createRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose difficulty'**
+  String get createRoomTitle;
+
+  /// No description provided for @createRoomAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Room'**
+  String get createRoomAction;
+
+  /// No description provided for @joinRoomTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Room'**
+  String get joinRoomTitle;
+
+  /// No description provided for @waitingForFriendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Friend'**
+  String get waitingForFriendTitle;
+
+  /// No description provided for @joinRoomAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get joinRoomAction;
+
+  /// No description provided for @roomCodeFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Room code'**
+  String get roomCodeFieldLabel;
+
+  /// No description provided for @roomCodeInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Room not found or expired.'**
+  String get roomCodeInvalid;
+
+  /// No description provided for @roomCodeShareHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this code with your friend'**
+  String get roomCodeShareHint;
+
+  /// No description provided for @waitingForFriend.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your friend to join...'**
+  String get waitingForFriend;
+
+  /// No description provided for @matchmakingElapsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting {time}'**
+  String matchmakingElapsed(String time);
+
+  /// No description provided for @friendlyMatchLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Friendly match · no rating change'**
+  String get friendlyMatchLabel;
+
+  /// No description provided for @matchmakingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find Opponent'**
+  String get matchmakingTitle;
+
+  /// No description provided for @matchmakingSearching.
+  ///
+  /// In en, this message translates to:
+  /// **'Searching for an opponent...'**
+  String get matchmakingSearching;
+
+  /// No description provided for @matchmakingPreparingPuzzle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing puzzle...'**
+  String get matchmakingPreparingPuzzle;
+
+  /// No description provided for @matchmakingReadyCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking readiness...'**
+  String get matchmakingReadyCheck;
+
+  /// No description provided for @matchmakingTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve today\'s Daily puzzle and check where you rank.'**
+  String get matchmakingTip1;
+
+  /// No description provided for @matchmakingTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish a puzzle with no hints and no mistakes for a Perfect Clear.'**
+  String get matchmakingTip2;
+
+  /// No description provided for @matchmakingTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'In ranked matches, the puzzle difficulty is set by your tier.'**
+  String get matchmakingTip3;
+
+  /// No description provided for @matchmakingTip4.
+  ///
+  /// In en, this message translates to:
+  /// **'Use note mode to pencil in candidate numbers and solve faster.'**
+  String get matchmakingTip4;
+
+  /// No description provided for @matchmakingTip5.
+  ///
+  /// In en, this message translates to:
+  /// **'Share a room code to race a friend one-on-one.'**
+  String get matchmakingTip5;
+
+  /// No description provided for @matchmakingTip6.
+  ///
+  /// In en, this message translates to:
+  /// **'Win races to raise your rating and climb to a higher tier.'**
+  String get matchmakingTip6;
+
+  /// No description provided for @matchmakingTip7.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiers go Bronze > Silver > Gold > Diamond > Master > Challenger. Aim for Challenger.'**
+  String get matchmakingTip7;
+
+  /// No description provided for @raceAbortConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Give up the race?'**
+  String get raceAbortConfirmTitle;
+
+  /// No description provided for @opponentDisconnectedCountdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent disconnected — you win in {seconds}s'**
+  String opponentDisconnectedCountdown(int seconds);
+
+  /// No description provided for @opponentProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opponent'**
+  String get opponentProgressLabel;
+
+  /// No description provided for @raceSelfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get raceSelfLabel;
+
+  /// No description provided for @raceLeadingBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Leading by {cells}'**
+  String raceLeadingBy(int cells);
+
+  /// No description provided for @raceTrailingBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Trailing by {cells}'**
+  String raceTrailingBy(int cells);
+
+  /// No description provided for @raceTied.
+  ///
+  /// In en, this message translates to:
+  /// **'Tied'**
+  String get raceTied;
+
+  /// No description provided for @keepSolvingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Solving'**
+  String get keepSolvingAction;
+
+  /// No description provided for @exitAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exitAction;
+
+  /// No description provided for @raceOpponentGaveUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'(Win) Your opponent gave up'**
+  String get raceOpponentGaveUpTitle;
+
+  /// No description provided for @raceOpponentGaveUpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep solving the puzzle?'**
+  String get raceOpponentGaveUpBody;
+
+  /// No description provided for @raceOpponentDisconnectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'(Win) Your opponent left'**
+  String get raceOpponentDisconnectedTitle;
+
+  /// No description provided for @raceOpponentDisconnectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep solving the puzzle?'**
+  String get raceOpponentDisconnectedBody;
+
+  /// No description provided for @raceOpponentFinishedFirstTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'(Loss) Your opponent finished first'**
+  String get raceOpponentFinishedFirstTitle;
+
+  /// No description provided for @raceOpponentFinishedFirstBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep going anyway?'**
+  String get raceOpponentFinishedFirstBody;
+
+  /// No description provided for @raceOpponentMistakesForfeitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'(Win) Your opponent made 3 mistakes'**
+  String get raceOpponentMistakesForfeitTitle;
+
+  /// No description provided for @raceOpponentMistakesForfeitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep solving the puzzle?'**
+  String get raceOpponentMistakesForfeitBody;
+
+  /// No description provided for @raceResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Race Result'**
+  String get raceResultTitle;
+
+  /// No description provided for @raceWon.
+  ///
+  /// In en, this message translates to:
+  /// **'You Won!'**
+  String get raceWon;
+
+  /// No description provided for @raceLost.
+  ///
+  /// In en, this message translates to:
+  /// **'You Lost'**
+  String get raceLost;
+
+  /// No description provided for @tierBronze.
+  ///
+  /// In en, this message translates to:
+  /// **'Bronze'**
+  String get tierBronze;
+
+  /// No description provided for @tierSilver.
+  ///
+  /// In en, this message translates to:
+  /// **'Silver'**
+  String get tierSilver;
+
+  /// No description provided for @tierGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get tierGold;
+
+  /// No description provided for @tierDiamond.
+  ///
+  /// In en, this message translates to:
+  /// **'Diamond'**
+  String get tierDiamond;
+
+  /// No description provided for @tierMaster.
+  ///
+  /// In en, this message translates to:
+  /// **'Master'**
+  String get tierMaster;
+
+  /// No description provided for @tierChallenger.
+  ///
+  /// In en, this message translates to:
+  /// **'Challenger'**
+  String get tierChallenger;
+
+  /// No description provided for @tierUnranked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unranked'**
+  String get tierUnranked;
+
+  /// No description provided for @yourRatingChangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You: {oldRating} → {newRating} ({delta})'**
+  String yourRatingChangeLabel(int oldRating, int newRating, String delta);
+
+  /// No description provided for @opponentRatingChangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{username}: {oldRating} → {newRating} ({delta})'**
+  String opponentRatingChangeLabel(
+      String username, int oldRating, int newRating, String delta);
+
+  /// No description provided for @homeRatingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{tier} · Rating {rating}'**
+  String homeRatingLabel(String tier, int rating);
+
+  /// No description provided for @dailyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Sudoku'**
+  String get dailyButton;
+
+  /// No description provided for @dailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Sudoku'**
+  String get dailyTitle;
+
+  /// No description provided for @dailyLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing today\'s puzzle...'**
+  String get dailyLoading;
+
+  /// No description provided for @dailySignInPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to play the Daily Sudoku'**
+  String get dailySignInPromptTitle;
+
+  /// No description provided for @dailyResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Result'**
+  String get dailyResultTitle;
+
+  /// No description provided for @dailyMyRankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranked #{rank} of {total} today'**
+  String dailyMyRankLabel(int rank, int total);
+
+  /// No description provided for @dailyLeaderboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 10'**
+  String get dailyLeaderboardTitle;
+
+  /// No description provided for @dailyEmptyLeaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'No one has finished yet.'**
+  String get dailyEmptyLeaderboard;
+
+  /// No description provided for @dailyReplayAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Play Again'**
+  String get dailyReplayAction;
+
+  /// No description provided for @dailyNotRankedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Only your first clear is recorded.'**
+  String get dailyNotRankedNotice;
+
+  /// No description provided for @dailySubmitFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t submit your result.'**
+  String get dailySubmitFailed;
+
+  /// No description provided for @retryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryAction;
+
+  /// No description provided for @hintStepPrevAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get hintStepPrevAction;
+
+  /// No description provided for @hintStepNextAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get hintStepNextAction;
+
+  /// No description provided for @hintStepXYWingPivot.
+  ///
+  /// In en, this message translates to:
+  /// **'The pivot {pivot} has only two candidates: {x} and {y}.'**
+  String hintStepXYWingPivot(String pivot, int x, int y);
+
+  /// No description provided for @hintStepWingCase.
+  ///
+  /// In en, this message translates to:
+  /// **'If the pivot is {digit}, {wing} loses {digit} — so it must be {z}.'**
+  String hintStepWingCase(int digit, String wing, int z);
+
+  /// No description provided for @hintStepXYWingConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Either way, one of the two wings is {z}. Any cell that sees both wings can\'t be {z}.'**
+  String hintStepXYWingConclusion(int z);
+
+  /// No description provided for @hintStepXYZWingPivot.
+  ///
+  /// In en, this message translates to:
+  /// **'The pivot {pivot} has three candidates: {digits}.'**
+  String hintStepXYZWingPivot(String pivot, String digits);
+
+  /// No description provided for @hintStepXYZWingPivotZ.
+  ///
+  /// In en, this message translates to:
+  /// **'And the pivot could be {z} itself — that\'s the third case.'**
+  String hintStepXYZWingPivotZ(int z);
+
+  /// No description provided for @hintStepXYZWingConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'In every case, one of the three cells is {z}. Any cell that sees all three can\'t be {z}.'**
+  String hintStepXYZWingConclusion(int z);
+
+  /// No description provided for @hintStepWWingPair.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} hold exactly the same pair: {a} and {b}.'**
+  String hintStepWWingPair(String cell1, String cell2, int a, int b);
+
+  /// No description provided for @hintStepWWingBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'In {unitDesc}, {b} fits in only two places — and each one sees one of the pair cells.'**
+  String hintStepWWingBridge(String unitDesc, int b);
+
+  /// No description provided for @hintStepWWingForced.
+  ///
+  /// In en, this message translates to:
+  /// **'If both those cells were {b}, {unitDesc} would have nowhere left for {b}. So at least one of them is {a}.'**
+  String hintStepWWingForced(String unitDesc, int a, int b);
+
+  /// No description provided for @hintStepWWingConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Any cell that sees both pair cells can\'t be {a}.'**
+  String hintStepWWingConclusion(int a);
+
+  /// No description provided for @hintStepChainStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start at {cell}: if it isn\'t {z}, it must be {a}.'**
+  String hintStepChainStart(String cell, int z, int a);
+
+  /// No description provided for @hintStepChainHop.
+  ///
+  /// In en, this message translates to:
+  /// **'Then {cell} can\'t be {carry}, so it must be {next}.'**
+  String hintStepChainHop(String cell, int carry, int next);
+
+  /// No description provided for @hintStepAicStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start at candidate {digit} in {cell}, and suppose this cell is NOT {digit} —'**
+  String hintStepAicStart(String cell, int digit);
+
+  /// No description provided for @hintStepAicStrongUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'then {cell} must be {digit}.'**
+  String hintStepAicStrongUnit(String cell, int digit);
+
+  /// No description provided for @hintStepAicStrongCell.
+  ///
+  /// In en, this message translates to:
+  /// **'then the remaining {digit} is forced.'**
+  String hintStepAicStrongCell(int digit);
+
+  /// No description provided for @hintStepAicStartGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Start at the {digit} candidates clustered in {cells}, and suppose NONE of them is {digit} —'**
+  String hintStepAicStartGroup(String cells, int digit);
+
+  /// No description provided for @hintStepAicStrongGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'then one of {cells} must be {digit}.'**
+  String hintStepAicStrongGroup(String cells, int digit);
+
+  /// No description provided for @hintStepAicWeakUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Now {cell} can no longer be {digit}.'**
+  String hintStepAicWeakUnit(String cell, int digit);
+
+  /// No description provided for @hintStepAicWeakCell.
+  ///
+  /// In en, this message translates to:
+  /// **'Now this cell\'s other candidate {digit} is ruled out.'**
+  String hintStepAicWeakCell(int digit);
+
+  /// No description provided for @hintStepAicEitherEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'So there are only two cases: either {startCell} really is {startDigit}, or — as we just followed — {endCell} ends up {endDigit}. Either way, one of the two must be true.'**
+  String hintStepAicEitherEnds(
+      String startCell, int startDigit, String endCell, int endDigit);
+
+  /// No description provided for @hintStepAicConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Any candidate that sees both ends can be removed.'**
+  String get hintStepAicConclusion;
+
+  /// No description provided for @hintStepChainConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'So either the start is {z}, or the end is {z}. Any cell that sees both ends can\'t be {z}.'**
+  String hintStepChainConclusion(int z);
+
+  /// No description provided for @hintStepRemotePairIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Every cell in this chain holds the same pair: {a} and {b}.'**
+  String hintStepRemotePairIntro(int a, int b);
+
+  /// No description provided for @hintStepRemotePairAlternate.
+  ///
+  /// In en, this message translates to:
+  /// **'Neighbors see each other, so the values must alternate {a}, {b}, {a}, {b} along the chain.'**
+  String hintStepRemotePairAlternate(int a, int b);
+
+  /// No description provided for @hintStepRemotePairEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'The two ends are an odd number of hops apart, so one is {a} and the other is {b} — always.'**
+  String hintStepRemotePairEnds(int a, int b);
+
+  /// No description provided for @hintStepRemotePairConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Any cell that sees both ends can be neither {a} nor {b}.'**
+  String hintStepRemotePairConclusion(int a, int b);
+
+  /// No description provided for @hintStepSingleDigitStrong1.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} are the only two spots for {digit} in their unit — one of them must be {digit}.'**
+  String hintStepSingleDigitStrong1(int digit, String cell1, String cell2);
+
+  /// No description provided for @hintStepSingleDigitStrong2.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} are another only-two-spots pair, and the two middle cells see each other.'**
+  String hintStepSingleDigitStrong2(int digit, String cell1, String cell2);
+
+  /// No description provided for @hintStepSingleDigitForced.
+  ///
+  /// In en, this message translates to:
+  /// **'The middle cells can\'t both be {digit}, so at least one of the free ends {cell1} and {cell2} must be {digit}.'**
+  String hintStepSingleDigitForced(int digit, String cell1, String cell2);
+
+  /// No description provided for @hintStepSingleDigitConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Any cell that sees both free ends can\'t be {digit}.'**
+  String hintStepSingleDigitConclusion(int digit);
+
+  /// No description provided for @hintStepColoringChain.
+  ///
+  /// In en, this message translates to:
+  /// **'Cells linked as the only two spots for {digit} form a chain — neighbors are opposites, so they split into two colors.'**
+  String hintStepColoringChain(int digit);
+
+  /// No description provided for @hintStepColoringRule1Clash.
+  ///
+  /// In en, this message translates to:
+  /// **'{cell1} and {cell2} share a color AND see each other — a color can\'t hold {digit} twice, so that whole color is wrong.'**
+  String hintStepColoringRule1Clash(int digit, String cell1, String cell2);
+
+  /// No description provided for @hintStepColoringRule1Conclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'Every cell of the wrong color loses {digit}.'**
+  String hintStepColoringRule1Conclusion(int digit);
+
+  /// No description provided for @hintStepColoringRule2Conclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'One of the two colors must be true. A cell that sees both colors can\'t be {digit} either way.'**
+  String hintStepColoringRule2Conclusion(int digit);
+
+  /// No description provided for @hintStepXWingLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit} fits in only two spots in each of {linesDesc}.'**
+  String hintStepXWingLines(int digit, String linesDesc);
+
+  /// No description provided for @hintStepXWingRect.
+  ///
+  /// In en, this message translates to:
+  /// **'The four spots form a rectangle — however it resolves, {crossDesc} each get exactly one {digit} inside it.'**
+  String hintStepXWingRect(int digit, String crossDesc);
+
+  /// No description provided for @hintStepXWingConclusion.
+  ///
+  /// In en, this message translates to:
+  /// **'So the rest of those two {crossUnitName} can\'t hold {digit}.'**
+  String hintStepXWingConclusion(int digit, String crossUnitName);
+
+  /// No description provided for @hintStepFullHouseIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Only one cell in {unitDesc} is still empty.'**
+  String hintStepFullHouseIntro(String unitDesc);
+
+  /// No description provided for @hintStepNakedSingleIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Narrow down {cell}: cross off every digit already placed in its row, column, and box.'**
+  String hintStepNakedSingleIntro(String cell);
+
+  /// No description provided for @hintStepHiddenSingleIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'One area has only a single spot left where {digit} can go — the highlighted digits block every other cell.'**
+  String hintStepHiddenSingleIntro(int digit);
+
+  /// No description provided for @hintStepBugIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'If every empty cell kept exactly two candidates, the puzzle would end up with two solutions. Exactly one cell holds three — that cell is the way out.'**
+  String get hintStepBugIntro;
+
+  /// No description provided for @hintStepNakedSubsetIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'In {unitDesc}, the {count} highlighted cells hold only {digits} between them.'**
+  String hintStepNakedSubsetIntro(int count, String digits, String unitDesc);
+
+  /// No description provided for @hintStepHiddenSubsetIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'In {unitDesc}, {digits} can only go in the {count} highlighted cells.'**
+  String hintStepHiddenSubsetIntro(int count, String digits, String unitDesc);
+
+  /// No description provided for @hintStepPointingIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside {boxDesc}, every spot for {digit} sits on {lineDesc}.'**
+  String hintStepPointingIntro(int digit, String boxDesc, String lineDesc);
+
+  /// No description provided for @hintStepClaimingIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'In {lineDesc}, every spot for {digit} sits inside {boxDesc}.'**
+  String hintStepClaimingIntro(int digit, String lineDesc, String boxDesc);
+
+  /// No description provided for @hintStepFishIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Look at {linesDesc}: the spots where {digit} can go there are pinned to just a few crossing lines.'**
+  String hintStepFishIntro(int digit, String linesDesc);
+
+  /// No description provided for @hintStepURIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible.'**
+  String get hintStepURIntro;
+
+  /// No description provided for @replayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get replayTitle;
+
+  /// No description provided for @replayEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No games to replay yet.'**
+  String get replayEmpty;
+
+  /// No description provided for @premiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get premiumTitle;
+
+  /// No description provided for @premiumIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sudoku League Premium'**
+  String get premiumIntroTitle;
+
+  /// No description provided for @premiumBenefitAssistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited hints & auto-notes'**
+  String get premiumBenefitAssistTitle;
+
+  /// No description provided for @premiumBenefitAssistBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use hints and auto-notes freely — no ads.'**
+  String get premiumBenefitAssistBody;
+
+  /// No description provided for @premiumBenefitReplayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get premiumBenefitReplayTitle;
+
+  /// No description provided for @premiumBenefitReplayBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Review recent games move by move and resume solving — races included.'**
+  String get premiumBenefitReplayBody;
+
+  /// No description provided for @premiumBenefitFavoriteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get premiumBenefitFavoriteTitle;
+
+  /// No description provided for @premiumBenefitFavoriteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Save puzzles you like and solve them again anytime.'**
+  String get premiumBenefitFavoriteBody;
+
+  /// No description provided for @premiumBenefitThemeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'5 theme packs'**
+  String get premiumBenefitThemeTitle;
+
+  /// No description provided for @premiumBenefitThemeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium themes that restyle the board and the whole app.'**
+  String get premiumBenefitThemeBody;
+
+  /// No description provided for @premiumPlanLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Lifetime'**
+  String get premiumPlanLifetime;
+
+  /// No description provided for @premiumPlanLifetimePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$3.99'**
+  String get premiumPlanLifetimePrice;
+
+  /// No description provided for @premiumPlanLifetimeDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay once, yours forever'**
+  String get premiumPlanLifetimeDetail;
+
+  /// No description provided for @premiumPlanMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get premiumPlanMonthly;
+
+  /// No description provided for @premiumPlanMonthlyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$0.99'**
+  String get premiumPlanMonthlyPrice;
+
+  /// No description provided for @premiumPlanMonthlyDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Renews every month'**
+  String get premiumPlanMonthlyDetail;
+
+  /// No description provided for @premiumCtaStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Premium'**
+  String get premiumCtaStart;
+
+  /// No description provided for @premiumMockDone.
+  ///
+  /// In en, this message translates to:
+  /// **'(Mock) Premium activated!'**
+  String get premiumMockDone;
+
+  /// No description provided for @premiumComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases will be available at official launch.'**
+  String get premiumComingSoon;
+
+  /// No description provided for @replayPremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay your recent games move by move and pick up solving again — retrace every entry and note in the exact order you made them.'**
+  String get replayPremiumBody;
+
+  /// No description provided for @replayResumeFromHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Solve from here'**
+  String get replayResumeFromHere;
+
+  /// No description provided for @raceReplayUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No replay saved for this game on this device.'**
+  String get raceReplayUnavailable;
+
+  /// No description provided for @favoritesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesTitle;
+
+  /// No description provided for @favoritePremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Save puzzles to your favorites and replay them fresh whenever you like.'**
+  String get favoritePremiumBody;
+
+  /// No description provided for @favoritesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved puzzles yet.'**
+  String get favoritesEmpty;
+
+  /// No description provided for @favoriteSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to favorites.'**
+  String get favoriteSaved;
+
+  /// No description provided for @favoriteRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from favorites.'**
+  String get favoriteRemoved;
+
+  /// No description provided for @favoriteFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites are full (max {count}).'**
+  String favoriteFull(int count);
+
+  /// No description provided for @themePackSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Pack'**
+  String get themePackSectionTitle;
+
+  /// No description provided for @boardFontSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Board Font'**
+  String get boardFontSectionTitle;
+
+  /// No description provided for @boardFontClassic.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic'**
+  String get boardFontClassic;
+
+  /// No description provided for @boardFontDot.
+  ///
+  /// In en, this message translates to:
+  /// **'Dot'**
+  String get boardFontDot;
+
+  /// No description provided for @themePackClassic.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic'**
+  String get themePackClassic;
+
+  /// No description provided for @themePackMidnightNeon.
+  ///
+  /// In en, this message translates to:
+  /// **'Midnight Neon'**
+  String get themePackMidnightNeon;
+
+  /// No description provided for @themePackSepiaPaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Sepia Paper'**
+  String get themePackSepiaPaper;
+
+  /// No description provided for @themePackMonochrome.
+  ///
+  /// In en, this message translates to:
+  /// **'Monochrome'**
+  String get themePackMonochrome;
+
+  /// No description provided for @themePackForest.
+  ///
+  /// In en, this message translates to:
+  /// **'Forest'**
+  String get themePackForest;
+
+  /// No description provided for @themePackOcean.
+  ///
+  /// In en, this message translates to:
+  /// **'Ocean'**
+  String get themePackOcean;
+
+  /// No description provided for @themePremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Restyle the board and the whole app with premium theme packs — five distinct looks to choose from.'**
+  String get themePremiumBody;
+
+  /// No description provided for @codexTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technique Codex'**
+  String get codexTitle;
+
+  /// No description provided for @codexProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Discovered {met} / {total}'**
+  String codexProgress(int met, int total);
+
+  /// No description provided for @codexUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'{uses}× · {puzzles} puzzles'**
+  String codexUsage(int uses, int puzzles);
+
+  /// No description provided for @codexUndiscovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet'**
+  String get codexUndiscovered;
+
+  /// No description provided for @practiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Technique Practice'**
+  String get practiceTitle;
+
+  /// No description provided for @practiceIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a technique to practice on a board built to feature it.'**
+  String get practiceIntro;
+
+  /// No description provided for @practiceShowTechnique.
+  ///
+  /// In en, this message translates to:
+  /// **'Show this technique'**
+  String get practiceShowTechnique;
+
+  /// No description provided for @practicePreparingBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing a board…'**
+  String get practicePreparingBoard;
+
+  /// No description provided for @practiceNoBoard.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t find a practice board — please try again.'**
+  String get practiceNoBoard;
+
+  /// No description provided for @practiceTechniqueNotYet.
+  ///
+  /// In en, this message translates to:
+  /// **'This technique isn\'t in play yet — solve a little more and it\'ll come up.'**
+  String get practiceTechniqueNotYet;
+
+  /// No description provided for @practicePremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice the harder techniques on boards built to feature them, walked through step by step.'**
+  String get practicePremiumBody;
+
+  /// No description provided for @categorySingles.
+  ///
+  /// In en, this message translates to:
+  /// **'Singles'**
+  String get categorySingles;
+
+  /// No description provided for @categoryIntersections.
+  ///
+  /// In en, this message translates to:
+  /// **'Intersections'**
+  String get categoryIntersections;
+
+  /// No description provided for @categorySubsets.
+  ///
+  /// In en, this message translates to:
+  /// **'Subsets'**
+  String get categorySubsets;
+
+  /// No description provided for @categorySingleDigitPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Single Digit Patterns'**
+  String get categorySingleDigitPatterns;
+
+  /// No description provided for @categoryBasicFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Fish'**
+  String get categoryBasicFish;
+
+  /// No description provided for @categoryColoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Coloring'**
+  String get categoryColoring;
+
+  /// No description provided for @categoryWings.
+  ///
+  /// In en, this message translates to:
+  /// **'Wings'**
+  String get categoryWings;
+
+  /// No description provided for @categoryMiscellaneous.
+  ///
+  /// In en, this message translates to:
+  /// **'Miscellaneous'**
+  String get categoryMiscellaneous;
+
+  /// No description provided for @categoryFinnedFish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finned Fish'**
+  String get categoryFinnedFish;
+
+  /// No description provided for @categoryUniqueness.
+  ///
+  /// In en, this message translates to:
+  /// **'Uniqueness'**
+  String get categoryUniqueness;
+
+  /// No description provided for @categoryChainsAndLoops.
+  ///
+  /// In en, this message translates to:
+  /// **'Chains and Loops'**
+  String get categoryChainsAndLoops;
+
+  /// No description provided for @categoryAlmostLockedSets.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost Locked Sets'**
+  String get categoryAlmostLockedSets;
 }
 
 class _AppLocalizationsDelegate

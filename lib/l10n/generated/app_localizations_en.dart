@@ -9,7 +9,32 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Sudoku';
+  String get appTitle => 'Sudoku League';
+
+  @override
+  String get offlineTitle => 'No internet connection';
+
+  @override
+  String get offlineBody =>
+      'You\'re offline, so this feature isn\'t available right now.';
+
+  @override
+  String get offlineAvailableTitle => 'What you can do offline';
+
+  @override
+  String get offlineAvailablePlay => 'Play Sudoku across every difficulty';
+
+  @override
+  String get offlineAvailableResume => 'Resume a game in progress';
+
+  @override
+  String get offlineAvailableStats => 'Check your records and stats';
+
+  @override
+  String get offlineRetry => 'Try again';
+
+  @override
+  String get offlineStillDisconnected => 'Still no internet connection';
 
   @override
   String get homeButton => 'Home';
@@ -21,16 +46,152 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applyAction => 'Apply';
 
   @override
+  String get hintRevealMoreAction => 'Show more';
+
+  @override
   String get continueAction => 'Continue';
 
   @override
-  String get continueGame => 'Resume';
+  String get cancelAction => 'Cancel';
+
+  @override
+  String get tutorialNext => 'Next';
+
+  @override
+  String get tutorialSkip => 'Skip';
+
+  @override
+  String get tutorialDone => 'Got it';
+
+  @override
+  String get tutorialReplayLabel => 'Replay tutorial';
+
+  @override
+  String get tutorialHomeDifficultyTitle => 'Pick a difficulty';
+
+  @override
+  String get tutorialHomeDifficultyBody =>
+      'Spin this wheel to choose how hard your puzzle will be.';
+
+  @override
+  String get tutorialHomeStartTitle => 'Start playing';
+
+  @override
+  String get tutorialHomeStartBody =>
+      'Tap here to begin a new puzzle at the difficulty you picked.';
+
+  @override
+  String get tutorialHomeIconsTitle => 'Top menu';
+
+  @override
+  String get tutorialHomeIconsBody =>
+      'These icons open stats, enter a shared puzzle code, your profile, and settings.';
+
+  @override
+  String get tutorialHomeRaceTitle => 'Race';
+
+  @override
+  String get tutorialHomeRaceBody =>
+      'Take on a friend or other players in a real-time sudoku match.';
+
+  @override
+  String get tutorialHomeDailyTitle => 'Daily';
+
+  @override
+  String get tutorialHomeDailyBody =>
+      'Solve today\'s puzzle and check where you rank.';
+
+  @override
+  String get tutorialGameGridTitle => 'The board';
+
+  @override
+  String get tutorialGameGridBody =>
+      'Tap an empty cell to select it, then choose a number to fill it in.';
+
+  @override
+  String get tutorialGameNumbersTitle => 'Enter numbers';
+
+  @override
+  String get tutorialGameNumbersBody =>
+      'Tap a number here to place it in the selected cell.';
+
+  @override
+  String get tutorialGameNoteTitle => 'Note mode';
+
+  @override
+  String get tutorialGameNoteBody =>
+      'Turn this on to pencil in small candidate numbers before committing.';
+
+  @override
+  String get tutorialGameHintTitle => 'Need a hand?';
+
+  @override
+  String get tutorialGameHintBody =>
+      'Stuck? Get a hint by watching a short ad — the badge marks ad-gated helpers.';
+
+  @override
+  String get tutorialGameMistakesTitle => 'Mistake limit';
+
+  @override
+  String get tutorialGameMistakesBody =>
+      'The game ends after 3 mistakes, so place each number carefully.';
+
+  @override
+  String get tutorialQuickInputTitle => 'Quick input';
+
+  @override
+  String get tutorialQuickInputBody =>
+      'Turn this on to pick a number first, then tap cells to fill them fast. Memo digits work the same way.';
+
+  @override
+  String get tutorialRaceProfileTitle => 'Your standing';
+
+  @override
+  String get tutorialRaceProfileBody =>
+      'Your tier, rating, and win-loss record show up here.';
+
+  @override
+  String get tutorialRaceTrendTitle => 'Rating trend';
+
+  @override
+  String get tutorialRaceTrendBody =>
+      'Your rating charts here as you play more ranked races.';
+
+  @override
+  String get tutorialRaceFriendTitle => 'Play a friend';
+
+  @override
+  String get tutorialRaceFriendBody =>
+      'Share a room code to race a friend one-on-one.';
+
+  @override
+  String get tutorialRaceRankedTitle => 'Ranked match';
+
+  @override
+  String get tutorialRaceRankedBody =>
+      'Get matched with a similar opponent — your tier sets the difficulty.';
+
+  @override
+  String get tutorialRaceLeaderboardTitle => 'Leaderboard';
+
+  @override
+  String get tutorialRaceLeaderboardBody =>
+      'See how you rank against everyone else.';
 
   @override
   String get startGame => 'Start';
 
   @override
-  String get viewStats => 'View Stats';
+  String get generatingPuzzle => 'Generating...';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get termsOfServiceTitle => 'Terms of Service';
+
+  @override
+  String get raceButton => 'Race';
 
   @override
   String get themeSectionTitle => 'Theme';
@@ -49,6 +210,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get soundLabel => 'Sound Effects';
+
+  @override
+  String get wrongNoteWarningLabel => 'Prevent on Wrong Notes';
+
+  @override
+  String get wrongNoteWarningDescription =>
+      'Blocks notes for a number already placed in the same row, column, or box.';
+
+  @override
+  String get autoRemoveNotesLabel => 'Auto-clear Notes on Confirm';
+
+  @override
+  String get autoRemoveNotesDescription =>
+      'Placing a number clears matching notes in the same row, column, and box.';
 
   @override
   String get languageSectionTitle => 'Language';
@@ -92,6 +267,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearWrongFirst => 'Please clear the wrong answer first.';
 
   @override
+  String get hintNoTechniqueWithNotes =>
+      'No technique can be applied with your current notes.';
+
+  @override
+  String get hintAutoGenerateCandidatesPrompt =>
+      'Generate candidate notes automatically and analyze again?';
+
+  @override
   String get adNotLoaded =>
       'The ad hasn\'t loaded yet. Please try again in a moment.';
 
@@ -99,7 +282,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resultTitle => 'Result';
 
   @override
-  String get perfectClearBadge => 'No Mistakes! Perfect Clear';
+  String get perfectClearBadge => 'Perfect Clear';
+
+  @override
+  String get perfectClearFlavor1 => 'Hint? What\'s that? 😎';
+
+  @override
+  String get perfectClearFlavor2 =>
+      'You didn\'t even give yourself a chance to mess up.';
+
+  @override
+  String get perfectClearFlavor3 =>
+      'The numbers practically lined themselves up.';
+
+  @override
+  String get perfectClearFlavor4 => 'Was 9×9 too easy for you?';
+
+  @override
+  String get perfectClearFlavor5 => 'The puzzle never stood a chance. 🏆';
+
+  @override
+  String get perfectClearFlavor6 => 'Okay, that\'s almost unfair.';
+
+  @override
+  String get perfectClearFlavor7 => 'The numbers were on your side today.';
+
+  @override
+  String get perfectClearFlavor8 => '9 numbers. 81 cells. 0 mistakes.';
+
+  @override
+  String get perfectClearFlavor9 => 'The hint button is out of a job today.';
+
+  @override
+  String get perfectClearFlavor10 => 'Certified Sudoku Master! 👑';
 
   @override
   String mistakesAndHints(int mistakes, int hints) {
@@ -148,6 +363,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsTitle => 'Stats';
 
   @override
+  String get tutorialStatsCalendarTitle => 'Daily calendar';
+
+  @override
+  String get tutorialStatsCalendarBody =>
+      'Solve the daily Sudoku to stamp the calendar. Keep your streak going!';
+
+  @override
+  String get tutorialStatsRecordsTitle => 'Records by difficulty';
+
+  @override
+  String get tutorialStatsRecordsBody =>
+      'Switch tabs to see completions, average, and best times per difficulty.';
+
+  @override
+  String get tutorialStatsCodexTitle => 'Technique codex';
+
+  @override
+  String get tutorialStatsCodexBody =>
+      'Solving techniques you\'ve met through hints collect here.';
+
+  @override
+  String get tutorialStatsReplayTitle => 'Replay';
+
+  @override
+  String get tutorialStatsReplayBody => 'Watch your past games move by move.';
+
+  @override
+  String get dailyCalendarSignInHint =>
+      'Sign in to see your daily sudoku history.';
+
+  @override
+  String get dailyCalendarLoadError => 'Couldn\'t load your daily history.';
+
+  @override
+  String dailyCalendarDayDetail(int month, int day, String time, int mistakes) {
+    return '$month/$day · $time · $mistakes mistakes';
+  }
+
+  @override
+  String get statsCompletedLabel => 'Completed';
+
+  @override
+  String get statsPerfectLabel => 'Perfect clears';
+
+  @override
+  String get statsAverageLabel => 'Average time';
+
+  @override
+  String get statsBestLabel => 'Best time';
+
+  @override
+  String get statsNoRecord => '-';
+
+  @override
+  String statsTopPercentBadge(int percent) {
+    return 'Top $percent%';
+  }
+
+  @override
   String playedWonLabel(int played, int won) {
     return 'Played $played · Won $won';
   }
@@ -156,6 +430,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String bestTimeSuffix(String time) {
     return ' · Best $time';
   }
+
+  @override
+  String get raceHistoryTitle => 'Race History';
+
+  @override
+  String get raceHistoryResultWon => 'Win';
+
+  @override
+  String get raceHistoryResultLost => 'Loss';
+
+  @override
+  String get raceHistoryEmpty => 'No races yet.';
 
   @override
   String get undoLabel => 'Undo';
@@ -173,22 +459,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hintLabel => 'Hint';
 
   @override
-  String get difficultyBeginner => 'Beginner';
+  String get inputModeQuick => 'Quick';
 
   @override
-  String get difficultyEasy => 'Easy';
+  String get difficultyBeginner => 'Bronze';
 
   @override
-  String get difficultyMedium => 'Medium';
+  String get difficultyEasy => 'Silver';
 
   @override
-  String get difficultyHard => 'Hard';
+  String get difficultyMedium => 'Gold';
+
+  @override
+  String get difficultyHard => 'Diamond';
 
   @override
   String get difficultyMaster => 'Master';
 
   @override
-  String get difficultyExpert => 'Expert';
+  String get difficultyExpert => 'Challenger';
 
   @override
   String get techniqueFullHouse => 'Full House';
@@ -224,13 +513,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueIntersectionClaiming => 'Intersection (Claiming)';
 
   @override
+  String get techniqueLockedPair => 'Locked Pair';
+
+  @override
+  String get techniqueLockedTriple => 'Locked Triple';
+
+  @override
   String get techniqueXWing => 'X-Wing';
+
+  @override
+  String get techniqueSkyscraper => 'Skyscraper';
+
+  @override
+  String get techniqueTwoStringKite => '2-String Kite';
+
+  @override
+  String get techniqueTurbotFish => 'Turbot Fish';
+
+  @override
+  String get techniqueRemotePair => 'Remote Pair';
 
   @override
   String get techniqueSimpleColoring => 'Simple Coloring';
 
   @override
+  String get techniqueMultiColoring => 'Multi-Coloring';
+
+  @override
+  String explanationMultiColoring(Object digit) {
+    return 'Digit $digit\'s candidates split into two separate color clusters; the relationship between their colors forces $digit out of certain cells no matter which color turns out true, so $digit can be removed from its candidates there.';
+  }
+
+  @override
   String get techniqueXYWing => 'XY-Wing';
+
+  @override
+  String get techniqueXYZWing => 'XYZ-Wing';
+
+  @override
+  String get techniqueWWing => 'W-Wing';
 
   @override
   String get techniqueSwordfish => 'Swordfish';
@@ -251,6 +572,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueJellyfish => 'Jellyfish';
 
   @override
+  String get techniqueFinnedSwordfish => 'Finned Swordfish';
+
+  @override
+  String get techniqueFinnedJellyfish => 'Finned Jellyfish';
+
+  @override
   String get techniqueUniqueRectangleType1 => 'Unique Rectangle Type 1';
 
   @override
@@ -261,6 +588,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get techniqueUniqueRectangleType4 => 'Unique Rectangle Type 4';
+
+  @override
+  String get techniqueXChain => 'X-Chain';
+
+  @override
+  String get techniqueAic => 'AIC';
+
+  @override
+  String get techniqueGroupedXChain => 'Grouped X-Chain';
+
+  @override
+  String get techniqueGroupedAic => 'Grouped AIC';
+
+  @override
+  String get techniqueWXYZWing => 'WXYZ-Wing';
+
+  @override
+  String get techniqueAlsXZ => 'ALS-XZ';
+
+  @override
+  String get techniqueSueDeCoq => 'Sue de Coq';
+
+  @override
+  String get techniqueTripleFirework => 'Triple Firework';
+
+  @override
+  String get techniqueAlsAic => 'ALS Chain';
 
   @override
   String unitRow(int row) {
@@ -338,9 +692,41 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String explanationSkyscraper(int digit, String cell1, String cell2) {
+    return 'Digit $digit forms a Skyscraper: two strong links join so that at least one of $cell1 and $cell2 must be $digit. Any cell that sees both can have $digit removed from its candidates.';
+  }
+
+  @override
+  String explanationTwoStringKite(int digit, String cell1, String cell2) {
+    return 'Digit $digit forms a 2-String Kite joined through a shared box, so at least one of $cell1 and $cell2 must be $digit. Any cell that sees both can have $digit removed from its candidates.';
+  }
+
+  @override
+  String explanationTurbotFish(int digit, String cell1, String cell2) {
+    return 'Digit $digit forms a Turbot Fish chain, so at least one of $cell1 and $cell2 must be $digit. Any cell that sees both can have $digit removed from its candidates.';
+  }
+
+  @override
   String explanationFinnedFish(
       String mainLineDesc, int digit, String finLineDesc, String finsDesc) {
     return '$mainLineDesc forms a clean X-Wing shape with only two candidate cells for digit $digit. $finLineDesc also has extra candidates at $finsDesc (fins), so it\'s not a pure X-Wing — but cells that see every fin can still have $digit removed from their candidates.';
+  }
+
+  @override
+  String explanationFinnedFishN(
+      String baseLinesDesc, int digit, int size, String finsDesc) {
+    return '$baseLinesDesc confine digit $digit to a $size-line fish shape, except for extra candidates (fins) at $finsDesc. If every fin is false this is a true fish; otherwise one of the fins is $digit. Either way, cells that see every fin can have $digit removed from their candidates.';
+  }
+
+  @override
+  String explanationLockedSubset(String lineDesc, String boxDesc,
+      String cellsDesc, String digitsDesc, int size) {
+    return '$cellsDesc lie where $lineDesc crosses $boxDesc, and together their only candidates are $digitsDesc ($size digits). Those cells take all $size digits, so $digitsDesc can be removed from the rest of $lineDesc AND the rest of $boxDesc.';
+  }
+
+  @override
+  String explanationRemotePair(String chainDesc, int a, int b) {
+    return '$chainDesc all hold only $a and $b, and each sees the next, so their values alternate along the chain. The two ends sit an odd number of steps apart, so one is $a and the other is $b — meaning any cell seeing both ends can have BOTH $a and $b removed.';
   }
 
   @override
@@ -357,6 +743,96 @@ class AppLocalizationsEn extends AppLocalizations {
   String explanationXYWing(String pivotDesc, int x, int y, String w1Desc,
       int sharedDigitW1, int z, String w2Desc, int otherPivotDigit) {
     return 'Pivot cell $pivotDesc has candidates $x and $y. Wing cell $w1Desc is either $sharedDigitW1 or $z; wing cell $w2Desc is either $otherPivotDigit or $z. If the pivot is $sharedDigitW1, $w1Desc becomes $z; if it\'s $otherPivotDigit, $w2Desc becomes $z. Either way, cells that see both wings can have $z removed from their candidates.';
+  }
+
+  @override
+  String explanationXYZWing(String pivotDesc, String pivotDigits, String w1Desc,
+      String w2Desc, int z) {
+    return 'The pivot $pivotDesc has three candidates ($pivotDigits), and its wings $w1Desc and $w2Desc each hold $z plus one of the others. Whichever digit the pivot takes, $z ends up on the pivot or one of the wings — so any cell seeing all three can have $z removed.';
+  }
+
+  @override
+  String explanationWWing(
+      String cell1, String cell2, int a, int b, String unitDesc) {
+    return '$cell1 and $cell2 both hold only $a and $b, and $unitDesc has just two places for $b — one seeing each of them. If both were $b, that unit would have nowhere left for $b. So at least one of them is $a, and any cell seeing both can have $a removed.';
+  }
+
+  @override
+  String explanationGroupedXChain(String chainDesc, int digit) {
+    return 'Digit $digit forms an alternating chain along $chainDesc, using clusters of neighbouring candidates as single links. The strong links still guarantee at least one end is $digit, so any cell that sees both ends can have $digit removed.';
+  }
+
+  @override
+  String explanationGroupedAic(String chainDesc) {
+    return 'The alternating inference chain $chainDesc uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.';
+  }
+
+  @override
+  String explanationWXYZWing(String chainDesc) {
+    return '$chainDesc: a WXYZ-Wing — a bivalue cell and a 3-cell Almost Locked Set joined through a shared digit. At least one chain end is true, so any candidate seeing both ends can be removed.';
+  }
+
+  @override
+  String explanationAlsXZ(String chainDesc) {
+    return '$chainDesc: two Almost Locked Sets joined by a restricted common digit. If either set loses it the other locks, so at least one end is true — any candidate seeing both ends can be removed.';
+  }
+
+  @override
+  String explanationAlsAic(String chainDesc) {
+    return 'The alternating inference chain $chainDesc uses Almost Locked Sets as links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.';
+  }
+
+  @override
+  String explanationSueDeCoq(String cells, String digits) {
+    return 'The crossing cells $cells interlock exactly with an Almost Locked Set on their line and one in their box. Every involved digit ($digits) must land inside these three clusters, so matching candidates outside them can be removed.';
+  }
+
+  @override
+  String hintStepSueDeCoqIntro(
+      String cells, int cellCount, String digits, int digitCount) {
+    return 'Where the box meets the line, $cells — $cellCount cells — together hold $digits: $digitCount candidate kinds, at least two more than cells.';
+  }
+
+  @override
+  String hintStepSueDeCoqLine(
+      String cells, int cellCount, String digits, int digitCount) {
+    return 'On the same line, $cells ($cellCount cells) hold only $digits — $digitCount kinds, exactly one more than cells: an Almost Locked Set. On this line those digits fit only here or in the crossing cells.';
+  }
+
+  @override
+  String hintStepSueDeCoqBox(
+      String cells, int cellCount, String digits, int digitCount) {
+    return 'In the box, $cells ($cellCount cells) likewise hold only $digits — $digitCount kinds, another Almost Locked Set. Its digits fit only there or in the crossing cells; every digit\'s place adds up exactly.';
+  }
+
+  @override
+  String explanationTripleFirework(String digits, String cells) {
+    return 'Digits $digits form fireworks: on both the row and the column they escape the box by just one wing cell each. The box can hold each digit only once, so the cross cell and the two wings ($cells) must take exactly these three digits — removing their other candidates, and these digits from the box\'s non-cross cells.';
+  }
+
+  @override
+  String hintStepFireworkRow(String digits, String cells, String cell) {
+    return 'On this row, candidates for $digits sit only in $cells — outside the box that is just $cell.';
+  }
+
+  @override
+  String hintStepFireworkCol(String digits, String cells, String cell) {
+    return 'Same on this column — $digits sit only in $cells, with $cell the lone escape from the box.';
+  }
+
+  @override
+  String hintStepFireworkTriple(String cells, String digits) {
+    return 'The box can hold $digits only once each, so for all three to fit, the three cells $cells must take exactly one apiece.';
+  }
+
+  @override
+  String explanationXChain(String chainDesc, int digit) {
+    return 'Digit $digit forms an alternating chain along $chainDesc. Because the strong links guarantee at least one end is $digit, any cell that sees both ends can have $digit removed.';
+  }
+
+  @override
+  String explanationAic(String chainDesc) {
+    return 'The alternating inference chain $chainDesc forces at least one of its two ends to be true, so any candidate that conflicts with both ends can be removed.';
   }
 
   @override
@@ -383,7 +859,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String explanationUniqueRectangleType3(
       String cellA, String cellB, String digitsDesc) {
-    return 'Combining the extra candidates of $cellA and $cellB, they form a set of only $digitsDesc together with other cells in that unit. So $digitsDesc can be removed from the rest of that unit\'s cells.';
+    return 'One of $cellA and $cellB must take an extra candidate (if both kept only the rectangle pair, the puzzle would have two solutions). Treating their extra candidates as one virtual cell, they form a set of only $digitsDesc with other cells in that unit — so $digitsDesc can be removed from the rest of that unit.';
   }
 
   @override
@@ -394,6 +870,825 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String noteRepairNotice(String explanation) {
-    return 'Notes needed to be corrected first. $explanation';
+    return 'Some cells\' notes didn\'t match the board, so they were corrected first. $explanation';
   }
+
+  @override
+  String get myPageTitle => 'My Page';
+
+  @override
+  String errorOccurred(String message) {
+    return 'An error occurred: $message';
+  }
+
+  @override
+  String get signInPromptTitle => 'Sign in to race other players';
+
+  @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get signInWithApple => 'Sign in with Apple';
+
+  @override
+  String get signInAsGuest => 'Continue as Guest';
+
+  @override
+  String ratingAndRecord(int rating, int wins, int losses) {
+    return 'Rating $rating · ${wins}W ${losses}L';
+  }
+
+  @override
+  String winRateLabel(int percent) {
+    return 'Race win rate $percent%';
+  }
+
+  @override
+  String tierPromotionRemaining(int points, String nextTier) {
+    return '$points pts to $nextTier';
+  }
+
+  @override
+  String get tierTopReached => 'Top tier reached';
+
+  @override
+  String get ratingTrendTitle => 'Rating Trend';
+
+  @override
+  String get ratingTrendEmpty =>
+      'No ranked games yet.\nPlay a ranked race to check your skill.';
+
+  @override
+  String get linkAccountPrompt =>
+      'You\'re signed in as a guest. Link an account to keep your progress.';
+
+  @override
+  String get linkGoogleAction => 'Link Google Account';
+
+  @override
+  String get linkAppleAction => 'Link Apple Account';
+
+  @override
+  String get signOutAction => 'Sign Out';
+
+  @override
+  String get shareCodeTitle => 'Share Puzzle';
+
+  @override
+  String get enterCodeTitle => 'Enter Code';
+
+  @override
+  String get shareCodeTextLabel => 'Text Code';
+
+  @override
+  String get invalidTextCodeError => 'That text code isn\'t valid.';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get enterTextCodeHint => 'Room code or puzzle code';
+
+  @override
+  String get roomJoinRequiresSignIn =>
+      'Sign in to join a friend match. You can sign in from the race lobby.';
+
+  @override
+  String get loadButton => 'Enter';
+
+  @override
+  String get raceLobbyTitle => 'Race';
+
+  @override
+  String get friendMatchButton => 'Play with a Friend';
+
+  @override
+  String get rankedMatchButton => 'Ranked Match';
+
+  @override
+  String get leaderboardButton => 'Ranking';
+
+  @override
+  String get leaderboardTitle => 'Ranking';
+
+  @override
+  String leaderboardMyRankLabel(int rank, int total) {
+    return 'Your rank: #$rank of $total';
+  }
+
+  @override
+  String get leaderboardMyRankUnranked => 'No ranked record yet';
+
+  @override
+  String get leaderboardEmpty => 'No ranked players yet.';
+
+  @override
+  String get leaderboardLoadFailed => 'Couldn\'t load the ranking.';
+
+  @override
+  String seasonName(int number) {
+    return 'Season $number';
+  }
+
+  @override
+  String seasonDaysLeft(int days) {
+    return 'D-$days';
+  }
+
+  @override
+  String get pastSeasonsTitle => 'Past Seasons';
+
+  @override
+  String seasonStandingDetail(int rank, int wins, int losses) {
+    return '#$rank · ${wins}W ${losses}L';
+  }
+
+  @override
+  String placementProgress(int played, int total) {
+    return 'Placements $played/$total';
+  }
+
+  @override
+  String seasonEndedTitle(int number) {
+    return 'Season $number Complete!';
+  }
+
+  @override
+  String seasonEndedNewStart(int rating) {
+    return 'A new season has begun — you restart at rating $rating!';
+  }
+
+  @override
+  String get okAction => 'OK';
+
+  @override
+  String get friendMatchTitle => 'Play with a Friend';
+
+  @override
+  String get createRoomTitle => 'Choose difficulty';
+
+  @override
+  String get createRoomAction => 'Create Room';
+
+  @override
+  String get joinRoomTitle => 'Join Room';
+
+  @override
+  String get waitingForFriendTitle => 'Waiting for Friend';
+
+  @override
+  String get joinRoomAction => 'Join';
+
+  @override
+  String get roomCodeFieldLabel => 'Room code';
+
+  @override
+  String get roomCodeInvalid => 'Room not found or expired.';
+
+  @override
+  String get roomCodeShareHint => 'Share this code with your friend';
+
+  @override
+  String get waitingForFriend => 'Waiting for your friend to join...';
+
+  @override
+  String matchmakingElapsed(String time) {
+    return 'Waiting $time';
+  }
+
+  @override
+  String get friendlyMatchLabel => 'Friendly match · no rating change';
+
+  @override
+  String get matchmakingTitle => 'Find Opponent';
+
+  @override
+  String get matchmakingSearching => 'Searching for an opponent...';
+
+  @override
+  String get matchmakingPreparingPuzzle => 'Preparing puzzle...';
+
+  @override
+  String get matchmakingReadyCheck => 'Checking readiness...';
+
+  @override
+  String get matchmakingTip1 =>
+      'Solve today\'s Daily puzzle and check where you rank.';
+
+  @override
+  String get matchmakingTip2 =>
+      'Finish a puzzle with no hints and no mistakes for a Perfect Clear.';
+
+  @override
+  String get matchmakingTip3 =>
+      'In ranked matches, the puzzle difficulty is set by your tier.';
+
+  @override
+  String get matchmakingTip4 =>
+      'Use note mode to pencil in candidate numbers and solve faster.';
+
+  @override
+  String get matchmakingTip5 =>
+      'Share a room code to race a friend one-on-one.';
+
+  @override
+  String get matchmakingTip6 =>
+      'Win races to raise your rating and climb to a higher tier.';
+
+  @override
+  String get matchmakingTip7 =>
+      'Tiers go Bronze > Silver > Gold > Diamond > Master > Challenger. Aim for Challenger.';
+
+  @override
+  String get raceAbortConfirmTitle => 'Give up the race?';
+
+  @override
+  String opponentDisconnectedCountdown(int seconds) {
+    return 'Opponent disconnected — you win in ${seconds}s';
+  }
+
+  @override
+  String get opponentProgressLabel => 'Opponent';
+
+  @override
+  String get raceSelfLabel => 'You';
+
+  @override
+  String raceLeadingBy(int cells) {
+    return 'Leading by $cells';
+  }
+
+  @override
+  String raceTrailingBy(int cells) {
+    return 'Trailing by $cells';
+  }
+
+  @override
+  String get raceTied => 'Tied';
+
+  @override
+  String get keepSolvingAction => 'Keep Solving';
+
+  @override
+  String get exitAction => 'Exit';
+
+  @override
+  String get raceOpponentGaveUpTitle => '(Win) Your opponent gave up';
+
+  @override
+  String get raceOpponentGaveUpBody => 'Keep solving the puzzle?';
+
+  @override
+  String get raceOpponentDisconnectedTitle => '(Win) Your opponent left';
+
+  @override
+  String get raceOpponentDisconnectedBody => 'Keep solving the puzzle?';
+
+  @override
+  String get raceOpponentFinishedFirstTitle =>
+      '(Loss) Your opponent finished first';
+
+  @override
+  String get raceOpponentFinishedFirstBody => 'Keep going anyway?';
+
+  @override
+  String get raceOpponentMistakesForfeitTitle =>
+      '(Win) Your opponent made 3 mistakes';
+
+  @override
+  String get raceOpponentMistakesForfeitBody => 'Keep solving the puzzle?';
+
+  @override
+  String get raceResultTitle => 'Race Result';
+
+  @override
+  String get raceWon => 'You Won!';
+
+  @override
+  String get raceLost => 'You Lost';
+
+  @override
+  String get tierBronze => 'Bronze';
+
+  @override
+  String get tierSilver => 'Silver';
+
+  @override
+  String get tierGold => 'Gold';
+
+  @override
+  String get tierDiamond => 'Diamond';
+
+  @override
+  String get tierMaster => 'Master';
+
+  @override
+  String get tierChallenger => 'Challenger';
+
+  @override
+  String get tierUnranked => 'Unranked';
+
+  @override
+  String yourRatingChangeLabel(int oldRating, int newRating, String delta) {
+    return 'You: $oldRating → $newRating ($delta)';
+  }
+
+  @override
+  String opponentRatingChangeLabel(
+      String username, int oldRating, int newRating, String delta) {
+    return '$username: $oldRating → $newRating ($delta)';
+  }
+
+  @override
+  String homeRatingLabel(String tier, int rating) {
+    return '$tier · Rating $rating';
+  }
+
+  @override
+  String get dailyButton => 'Daily Sudoku';
+
+  @override
+  String get dailyTitle => 'Daily Sudoku';
+
+  @override
+  String get dailyLoading => 'Preparing today\'s puzzle...';
+
+  @override
+  String get dailySignInPromptTitle => 'Sign in to play the Daily Sudoku';
+
+  @override
+  String get dailyResultTitle => 'Today\'s Result';
+
+  @override
+  String dailyMyRankLabel(int rank, int total) {
+    return 'Ranked #$rank of $total today';
+  }
+
+  @override
+  String get dailyLeaderboardTitle => 'Top 10';
+
+  @override
+  String get dailyEmptyLeaderboard => 'No one has finished yet.';
+
+  @override
+  String get dailyReplayAction => 'Play Again';
+
+  @override
+  String get dailyNotRankedNotice => 'Only your first clear is recorded.';
+
+  @override
+  String get dailySubmitFailed => 'Couldn\'t submit your result.';
+
+  @override
+  String get retryAction => 'Retry';
+
+  @override
+  String get hintStepPrevAction => 'Back';
+
+  @override
+  String get hintStepNextAction => 'Next';
+
+  @override
+  String hintStepXYWingPivot(String pivot, int x, int y) {
+    return 'The pivot $pivot has only two candidates: $x and $y.';
+  }
+
+  @override
+  String hintStepWingCase(int digit, String wing, int z) {
+    return 'If the pivot is $digit, $wing loses $digit — so it must be $z.';
+  }
+
+  @override
+  String hintStepXYWingConclusion(int z) {
+    return 'Either way, one of the two wings is $z. Any cell that sees both wings can\'t be $z.';
+  }
+
+  @override
+  String hintStepXYZWingPivot(String pivot, String digits) {
+    return 'The pivot $pivot has three candidates: $digits.';
+  }
+
+  @override
+  String hintStepXYZWingPivotZ(int z) {
+    return 'And the pivot could be $z itself — that\'s the third case.';
+  }
+
+  @override
+  String hintStepXYZWingConclusion(int z) {
+    return 'In every case, one of the three cells is $z. Any cell that sees all three can\'t be $z.';
+  }
+
+  @override
+  String hintStepWWingPair(String cell1, String cell2, int a, int b) {
+    return '$cell1 and $cell2 hold exactly the same pair: $a and $b.';
+  }
+
+  @override
+  String hintStepWWingBridge(String unitDesc, int b) {
+    return 'In $unitDesc, $b fits in only two places — and each one sees one of the pair cells.';
+  }
+
+  @override
+  String hintStepWWingForced(String unitDesc, int a, int b) {
+    return 'If both those cells were $b, $unitDesc would have nowhere left for $b. So at least one of them is $a.';
+  }
+
+  @override
+  String hintStepWWingConclusion(int a) {
+    return 'Any cell that sees both pair cells can\'t be $a.';
+  }
+
+  @override
+  String hintStepChainStart(String cell, int z, int a) {
+    return 'Start at $cell: if it isn\'t $z, it must be $a.';
+  }
+
+  @override
+  String hintStepChainHop(String cell, int carry, int next) {
+    return 'Then $cell can\'t be $carry, so it must be $next.';
+  }
+
+  @override
+  String hintStepAicStart(String cell, int digit) {
+    return 'Start at candidate $digit in $cell, and suppose this cell is NOT $digit —';
+  }
+
+  @override
+  String hintStepAicStrongUnit(String cell, int digit) {
+    return 'then $cell must be $digit.';
+  }
+
+  @override
+  String hintStepAicStrongCell(int digit) {
+    return 'then the remaining $digit is forced.';
+  }
+
+  @override
+  String hintStepAicStartGroup(String cells, int digit) {
+    return 'Start at the $digit candidates clustered in $cells, and suppose NONE of them is $digit —';
+  }
+
+  @override
+  String hintStepAicStrongGroup(String cells, int digit) {
+    return 'then one of $cells must be $digit.';
+  }
+
+  @override
+  String hintStepAicWeakUnit(String cell, int digit) {
+    return 'Now $cell can no longer be $digit.';
+  }
+
+  @override
+  String hintStepAicWeakCell(int digit) {
+    return 'Now this cell\'s other candidate $digit is ruled out.';
+  }
+
+  @override
+  String hintStepAicEitherEnds(
+      String startCell, int startDigit, String endCell, int endDigit) {
+    return 'So there are only two cases: either $startCell really is $startDigit, or — as we just followed — $endCell ends up $endDigit. Either way, one of the two must be true.';
+  }
+
+  @override
+  String get hintStepAicConclusion =>
+      'Any candidate that sees both ends can be removed.';
+
+  @override
+  String hintStepChainConclusion(int z) {
+    return 'So either the start is $z, or the end is $z. Any cell that sees both ends can\'t be $z.';
+  }
+
+  @override
+  String hintStepRemotePairIntro(int a, int b) {
+    return 'Every cell in this chain holds the same pair: $a and $b.';
+  }
+
+  @override
+  String hintStepRemotePairAlternate(int a, int b) {
+    return 'Neighbors see each other, so the values must alternate $a, $b, $a, $b along the chain.';
+  }
+
+  @override
+  String hintStepRemotePairEnds(int a, int b) {
+    return 'The two ends are an odd number of hops apart, so one is $a and the other is $b — always.';
+  }
+
+  @override
+  String hintStepRemotePairConclusion(int a, int b) {
+    return 'Any cell that sees both ends can be neither $a nor $b.';
+  }
+
+  @override
+  String hintStepSingleDigitStrong1(int digit, String cell1, String cell2) {
+    return '$cell1 and $cell2 are the only two spots for $digit in their unit — one of them must be $digit.';
+  }
+
+  @override
+  String hintStepSingleDigitStrong2(int digit, String cell1, String cell2) {
+    return '$cell1 and $cell2 are another only-two-spots pair, and the two middle cells see each other.';
+  }
+
+  @override
+  String hintStepSingleDigitForced(int digit, String cell1, String cell2) {
+    return 'The middle cells can\'t both be $digit, so at least one of the free ends $cell1 and $cell2 must be $digit.';
+  }
+
+  @override
+  String hintStepSingleDigitConclusion(int digit) {
+    return 'Any cell that sees both free ends can\'t be $digit.';
+  }
+
+  @override
+  String hintStepColoringChain(int digit) {
+    return 'Cells linked as the only two spots for $digit form a chain — neighbors are opposites, so they split into two colors.';
+  }
+
+  @override
+  String hintStepColoringRule1Clash(int digit, String cell1, String cell2) {
+    return '$cell1 and $cell2 share a color AND see each other — a color can\'t hold $digit twice, so that whole color is wrong.';
+  }
+
+  @override
+  String hintStepColoringRule1Conclusion(int digit) {
+    return 'Every cell of the wrong color loses $digit.';
+  }
+
+  @override
+  String hintStepColoringRule2Conclusion(int digit) {
+    return 'One of the two colors must be true. A cell that sees both colors can\'t be $digit either way.';
+  }
+
+  @override
+  String hintStepXWingLines(int digit, String linesDesc) {
+    return 'Digit $digit fits in only two spots in each of $linesDesc.';
+  }
+
+  @override
+  String hintStepXWingRect(int digit, String crossDesc) {
+    return 'The four spots form a rectangle — however it resolves, $crossDesc each get exactly one $digit inside it.';
+  }
+
+  @override
+  String hintStepXWingConclusion(int digit, String crossUnitName) {
+    return 'So the rest of those two $crossUnitName can\'t hold $digit.';
+  }
+
+  @override
+  String hintStepFullHouseIntro(String unitDesc) {
+    return 'Only one cell in $unitDesc is still empty.';
+  }
+
+  @override
+  String hintStepNakedSingleIntro(String cell) {
+    return 'Narrow down $cell: cross off every digit already placed in its row, column, and box.';
+  }
+
+  @override
+  String hintStepHiddenSingleIntro(int digit) {
+    return 'One area has only a single spot left where $digit can go — the highlighted digits block every other cell.';
+  }
+
+  @override
+  String get hintStepBugIntro =>
+      'If every empty cell kept exactly two candidates, the puzzle would end up with two solutions. Exactly one cell holds three — that cell is the way out.';
+
+  @override
+  String hintStepNakedSubsetIntro(int count, String digits, String unitDesc) {
+    return 'In $unitDesc, the $count highlighted cells hold only $digits between them.';
+  }
+
+  @override
+  String hintStepHiddenSubsetIntro(int count, String digits, String unitDesc) {
+    return 'In $unitDesc, $digits can only go in the $count highlighted cells.';
+  }
+
+  @override
+  String hintStepPointingIntro(int digit, String boxDesc, String lineDesc) {
+    return 'Inside $boxDesc, every spot for $digit sits on $lineDesc.';
+  }
+
+  @override
+  String hintStepClaimingIntro(int digit, String lineDesc, String boxDesc) {
+    return 'In $lineDesc, every spot for $digit sits inside $boxDesc.';
+  }
+
+  @override
+  String hintStepFishIntro(int digit, String linesDesc) {
+    return 'Look at $linesDesc: the spots where $digit can go there are pinned to just a few crossing lines.';
+  }
+
+  @override
+  String get hintStepURIntro =>
+      'The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible.';
+
+  @override
+  String get replayTitle => 'Replay';
+
+  @override
+  String get replayEmpty => 'No games to replay yet.';
+
+  @override
+  String get premiumTitle => 'Premium';
+
+  @override
+  String get premiumIntroTitle => 'Sudoku League Premium';
+
+  @override
+  String get premiumBenefitAssistTitle => 'Unlimited hints & auto-notes';
+
+  @override
+  String get premiumBenefitAssistBody =>
+      'Use hints and auto-notes freely — no ads.';
+
+  @override
+  String get premiumBenefitReplayTitle => 'Replay';
+
+  @override
+  String get premiumBenefitReplayBody =>
+      'Review recent games move by move and resume solving — races included.';
+
+  @override
+  String get premiumBenefitFavoriteTitle => 'Favorites';
+
+  @override
+  String get premiumBenefitFavoriteBody =>
+      'Save puzzles you like and solve them again anytime.';
+
+  @override
+  String get premiumBenefitThemeTitle => '5 theme packs';
+
+  @override
+  String get premiumBenefitThemeBody =>
+      'Premium themes that restyle the board and the whole app.';
+
+  @override
+  String get premiumPlanLifetime => 'Lifetime';
+
+  @override
+  String get premiumPlanLifetimePrice => '\$3.99';
+
+  @override
+  String get premiumPlanLifetimeDetail => 'Pay once, yours forever';
+
+  @override
+  String get premiumPlanMonthly => 'Monthly';
+
+  @override
+  String get premiumPlanMonthlyPrice => '\$0.99';
+
+  @override
+  String get premiumPlanMonthlyDetail => 'Renews every month';
+
+  @override
+  String get premiumCtaStart => 'Get Premium';
+
+  @override
+  String get premiumMockDone => '(Mock) Premium activated!';
+
+  @override
+  String get premiumComingSoon =>
+      'Purchases will be available at official launch.';
+
+  @override
+  String get replayPremiumBody =>
+      'Replay your recent games move by move and pick up solving again — retrace every entry and note in the exact order you made them.';
+
+  @override
+  String get replayResumeFromHere => 'Solve from here';
+
+  @override
+  String get raceReplayUnavailable =>
+      'No replay saved for this game on this device.';
+
+  @override
+  String get favoritesTitle => 'Favorites';
+
+  @override
+  String get favoritePremiumBody =>
+      'Save puzzles to your favorites and replay them fresh whenever you like.';
+
+  @override
+  String get favoritesEmpty => 'No saved puzzles yet.';
+
+  @override
+  String get favoriteSaved => 'Saved to favorites.';
+
+  @override
+  String get favoriteRemoved => 'Removed from favorites.';
+
+  @override
+  String favoriteFull(int count) {
+    return 'Favorites are full (max $count).';
+  }
+
+  @override
+  String get themePackSectionTitle => 'Theme Pack';
+
+  @override
+  String get boardFontSectionTitle => 'Board Font';
+
+  @override
+  String get boardFontClassic => 'Classic';
+
+  @override
+  String get boardFontDot => 'Dot';
+
+  @override
+  String get themePackClassic => 'Classic';
+
+  @override
+  String get themePackMidnightNeon => 'Midnight Neon';
+
+  @override
+  String get themePackSepiaPaper => 'Sepia Paper';
+
+  @override
+  String get themePackMonochrome => 'Monochrome';
+
+  @override
+  String get themePackForest => 'Forest';
+
+  @override
+  String get themePackOcean => 'Ocean';
+
+  @override
+  String get themePremiumBody =>
+      'Restyle the board and the whole app with premium theme packs — five distinct looks to choose from.';
+
+  @override
+  String get codexTitle => 'Technique Codex';
+
+  @override
+  String codexProgress(int met, int total) {
+    return 'Discovered $met / $total';
+  }
+
+  @override
+  String codexUsage(int uses, int puzzles) {
+    return '$uses× · $puzzles puzzles';
+  }
+
+  @override
+  String get codexUndiscovered => 'Not yet';
+
+  @override
+  String get practiceTitle => 'Technique Practice';
+
+  @override
+  String get practiceIntro =>
+      'Pick a technique to practice on a board built to feature it.';
+
+  @override
+  String get practiceShowTechnique => 'Show this technique';
+
+  @override
+  String get practicePreparingBoard => 'Preparing a board…';
+
+  @override
+  String get practiceNoBoard =>
+      'Couldn\'t find a practice board — please try again.';
+
+  @override
+  String get practiceTechniqueNotYet =>
+      'This technique isn\'t in play yet — solve a little more and it\'ll come up.';
+
+  @override
+  String get practicePremiumBody =>
+      'Practice the harder techniques on boards built to feature them, walked through step by step.';
+
+  @override
+  String get categorySingles => 'Singles';
+
+  @override
+  String get categoryIntersections => 'Intersections';
+
+  @override
+  String get categorySubsets => 'Subsets';
+
+  @override
+  String get categorySingleDigitPatterns => 'Single Digit Patterns';
+
+  @override
+  String get categoryBasicFish => 'Basic Fish';
+
+  @override
+  String get categoryColoring => 'Coloring';
+
+  @override
+  String get categoryWings => 'Wings';
+
+  @override
+  String get categoryMiscellaneous => 'Miscellaneous';
+
+  @override
+  String get categoryFinnedFish => 'Finned Fish';
+
+  @override
+  String get categoryUniqueness => 'Uniqueness';
+
+  @override
+  String get categoryChainsAndLoops => 'Chains and Loops';
+
+  @override
+  String get categoryAlmostLockedSets => 'Almost Locked Sets';
 }

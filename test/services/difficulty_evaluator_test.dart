@@ -30,34 +30,37 @@ void main() {
     }
   });
 
-  test('highestDifficulty is the tier of the hardest technique used, not '
-      'the technique with the largest priority-order index — priority '
-      'order and tier order are not monotonic (nakedQuad is Expert-tier '
-      'despite sitting before xWing, a Master-tier technique, in '
-      'humanSolverTechniqueOrder)', () {
-    final result = _resultFor([HintTechnique.xWing, HintTechnique.nakedQuad]);
+  test('highestDifficulty is the max tier across every technique used, by '
+      'techniqueDifficulty — not by any single technique\'s position', () {
+    // A mixed history whose hardest technique (Swordfish, Master) is not the
+    // last one used, so the tier comes from the tier map, not "last entry".
+    final result = _resultFor([
+      HintTechnique.hiddenSingle, // easy
+      HintTechnique.swordfish, // master
+      HintTechnique.nakedPair, // medium
+    ]);
 
     final evaluated = evaluator.evaluate(result);
 
-    expect(evaluated.highestDifficulty, Difficulty.expert);
-    expect(evaluated.highestTechnique, HintTechnique.nakedQuad);
+    expect(evaluated.highestDifficulty, Difficulty.master);
+    expect(evaluated.highestTechnique, HintTechnique.swordfish);
   });
 
   test('within the same tier, highestTechnique is broken by whichever has '
       'the larger humanSolverTechniqueOrder index', () {
     final result =
-        _resultFor([HintTechnique.nakedPair, HintTechnique.hiddenTriple]);
+        _resultFor([HintTechnique.nakedTriple, HintTechnique.hiddenTriple]);
 
-    expect(techniqueDifficulty[HintTechnique.nakedPair], Difficulty.hard);
-    expect(techniqueDifficulty[HintTechnique.hiddenTriple], Difficulty.hard);
+    expect(techniqueDifficulty[HintTechnique.nakedTriple], Difficulty.medium);
+    expect(techniqueDifficulty[HintTechnique.hiddenTriple], Difficulty.medium);
     expect(
       humanSolverTechniqueOrder.indexOf(HintTechnique.hiddenTriple),
-      greaterThan(humanSolverTechniqueOrder.indexOf(HintTechnique.nakedPair)),
+      greaterThan(humanSolverTechniqueOrder.indexOf(HintTechnique.nakedTriple)),
     );
 
     final evaluated = evaluator.evaluate(result);
 
-    expect(evaluated.highestDifficulty, Difficulty.hard);
+    expect(evaluated.highestDifficulty, Difficulty.medium);
     expect(evaluated.highestTechnique, HintTechnique.hiddenTriple);
   });
 
@@ -104,35 +107,76 @@ void main() {
     final evaluated = evaluator.evaluate(result);
 
     expect(evaluated.solved, isFalse);
+    expect(evaluated.highestDifficulty, Difficulty.easy);
+    expect(evaluated.highestTechnique, HintTechnique.intersectionPointing);
+  });
+
+  test('score is the sum of every applied step\'s techniqueBaseScore', () {
+    // nakedSingle 4 + 4, hiddenSingle 14 → 22.
+    final evaluated = evaluator.evaluate(_resultFor([
+      HintTechnique.nakedSingle,
+      HintTechnique.nakedSingle,
+      HintTechnique.hiddenSingle,
+    ]));
+
+    expect(evaluated.score, 22);
+  });
+
+  test('a high cumulative score promotes the tier above the hardest '
+      'technique\'s floor, while floorDifficulty keeps the floor', () {
+    // 10 Intersection Pointings: floor tier is easy, but 10 * 50 = 500 lands
+    // in the medium score band ([450, 700)), so the puzzle promotes.
+    final evaluated = evaluator.evaluate(_resultFor(
+      List.filled(10, HintTechnique.intersectionPointing),
+    ));
+
+    expect(evaluated.score, 500);
+    expect(evaluated.floorDifficulty, Difficulty.easy);
     expect(evaluated.highestDifficulty, Difficulty.medium);
     expect(evaluated.highestTechnique, HintTechnique.intersectionPointing);
   });
 
-  test('every tier example from generator.md maps to the expected '
+  test('a low cumulative score never demotes below the hardest technique\'s '
+      'tier — the floor is a floor', () {
+    // A single XYZ-Wing (master, base 180) scores only 180, well inside the
+    // beginner band, but the floor keeps it at master.
+    final evaluated =
+        evaluator.evaluate(_resultFor([HintTechnique.xyzWing]));
+
+    expect(scoreBand(evaluated.score), Difficulty.beginner);
+    expect(evaluated.highestDifficulty, Difficulty.master);
+  });
+
+  test('one representative technique per tier maps to the expected '
       'difficulty', () {
     expect(
       evaluator.evaluate(_resultFor([HintTechnique.nakedSingle]))
           .highestDifficulty,
-      Difficulty.easy,
+      Difficulty.beginner,
     );
     expect(
       evaluator.evaluate(_resultFor([HintTechnique.hiddenSingle]))
           .highestDifficulty,
-      Difficulty.medium,
+      Difficulty.easy,
     );
     expect(
       evaluator
           .evaluate(_resultFor([HintTechnique.intersectionClaiming]))
           .highestDifficulty,
-      Difficulty.medium,
+      Difficulty.easy,
     );
     expect(
       evaluator.evaluate(_resultFor([HintTechnique.hiddenPair]))
           .highestDifficulty,
+      Difficulty.medium,
+    );
+    expect(
+      evaluator.evaluate(_resultFor([HintTechnique.xWing]))
+          .highestDifficulty,
       Difficulty.hard,
     );
     expect(
-      evaluator.evaluate(_resultFor([HintTechnique.swordfish]))
+      evaluator.evaluate(_resultFor([HintTechnique.xyzWing]))
           .highestDifficulty,
       Difficulty.master,
     );

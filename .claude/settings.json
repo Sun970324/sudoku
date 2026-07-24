@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat /Users/sun/.pub-cache/hosted/pub.dev/google_sign_in-7.2.0/README.md 2>&1 | head -150)",
+      "Read(//Users/sun/.pub-cache/hosted/pub.dev/google_sign_in-7.2.0/**)",
+      "Bash(grep -n \"getAppleIDCredential\\\\|identityToken\\\\|class SignInWithApple\" /Users/sun/.pub-cache/hosted/pub.dev/sign_in_with_apple-8.1.0/lib/src/*.dart 2>&1 | head -20)",
+      "Read(//Users/sun/.pub-cache/hosted/pub.dev/sign_in_with_apple-8.1.0/lib/src/**)",
+      "Bash(grep -rn \"signInAnonymously\\\\|signInWithIdToken\\\\|linkIdentity\" /Users/sun/.pub-cache/hosted/pub.dev/gotrue-2.26.0/lib/src/gotrue_client.dart 2>&1 | head -30)",
+      "Read(//Users/sun/.pub-cache/hosted/pub.dev/gotrue-2.26.0/lib/src/**)",
+      "Read(//Users/sun/.claude/plans/**)",
+      "Bash(flutter gen-l10n *)",
+      "Bash(grep -v \"new version\\\\|flutter upgrade\\\\|l10n.yaml\\\\|command line\\\\|^│\\\\|^└\\\\|^┌\\\\|^ *$\")",
+      "Bash(flutter analyze *)",
+      "Bash(grep -iv \"new version\\\\|flutter upgrade\\\\|l10n.yaml\\\\|command line\\\\|^│\\\\|^└\\\\|^┌\\\\|^ *$\")",
+      "Bash(flutter test *)",
+      "Bash(python3 -)",
+      "Bash(grep -iv \"because\\\\|to use\\\\|^$\")",
+      "Bash(supabase status *)",
+      "Bash(claude mcp *)"
+    ]
+  }
+}

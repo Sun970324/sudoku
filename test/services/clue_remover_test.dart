@@ -50,24 +50,17 @@ void main() {
     expect(_solved, equals(original));
   });
 
-  test('isAcceptable rejecting everything leaves the board unchanged even '
-      'though every removal would preserve uniqueness', () {
-    final puzzle = ClueRemover(random: Random(6)).removeClues(
-      _solved,
-      30,
-      isAcceptable: (_) => false,
-    );
-    expect(puzzle, equals(_solved));
-  });
-
-  test('isAcceptable only narrows removals, never widens beyond the '
-      'uniqueness check', () {
-    final puzzle = ClueRemover(random: Random(7)).removeClues(
-      _solved,
-      30,
-      isAcceptable: (_) => true,
-    );
+  test('symmetric removal keeps a 180°-rotationally symmetric givens pattern '
+      'and a unique solution', () {
+    final puzzle = ClueRemover(random: Random(8))
+        .removeClues(_solved, 30, symmetric: true);
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        expect(puzzle[r][c] != 0, puzzle[8 - r][8 - c] != 0,
+            reason: 'cell ($r, $c) and its rotational partner '
+                '(${8 - r}, ${8 - c}) must both be given or both empty');
+      }
+    }
     expect(solver.countSolutions(puzzle, limit: 2), 1);
-    expect(_givenCount(puzzle), lessThanOrEqualTo(35));
   });
 }

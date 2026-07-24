@@ -1,21 +1,74 @@
 {
   "@@locale": "en",
 
-  "appTitle": "Sudoku",
+  "appTitle": "Sudoku League",
+  "offlineTitle": "No internet connection",
+  "offlineBody": "You're offline, so this feature isn't available right now.",
+  "offlineAvailableTitle": "What you can do offline",
+  "offlineAvailablePlay": "Play Sudoku across every difficulty",
+  "offlineAvailableResume": "Resume a game in progress",
+  "offlineAvailableStats": "Check your records and stats",
+  "offlineRetry": "Try again",
+  "offlineStillDisconnected": "Still no internet connection",
   "homeButton": "Home",
   "closeAction": "Close",
   "applyAction": "Apply",
+  "hintRevealMoreAction": "Show more",
   "continueAction": "Continue",
+  "cancelAction": "Cancel",
 
-  "continueGame": "Resume",
+  "tutorialNext": "Next",
+  "tutorialSkip": "Skip",
+  "tutorialDone": "Got it",
+  "tutorialReplayLabel": "Replay tutorial",
+  "tutorialHomeDifficultyTitle": "Pick a difficulty",
+  "tutorialHomeDifficultyBody": "Spin this wheel to choose how hard your puzzle will be.",
+  "tutorialHomeStartTitle": "Start playing",
+  "tutorialHomeStartBody": "Tap here to begin a new puzzle at the difficulty you picked.",
+  "tutorialHomeIconsTitle": "Top menu",
+  "tutorialHomeIconsBody": "These icons open stats, enter a shared puzzle code, your profile, and settings.",
+  "tutorialHomeRaceTitle": "Race",
+  "tutorialHomeRaceBody": "Take on a friend or other players in a real-time sudoku match.",
+  "tutorialHomeDailyTitle": "Daily",
+  "tutorialHomeDailyBody": "Solve today's puzzle and check where you rank.",
+  "tutorialGameGridTitle": "The board",
+  "tutorialGameGridBody": "Tap an empty cell to select it, then choose a number to fill it in.",
+  "tutorialGameNumbersTitle": "Enter numbers",
+  "tutorialGameNumbersBody": "Tap a number here to place it in the selected cell.",
+  "tutorialGameNoteTitle": "Note mode",
+  "tutorialGameNoteBody": "Turn this on to pencil in small candidate numbers before committing.",
+  "tutorialGameHintTitle": "Need a hand?",
+  "tutorialGameHintBody": "Stuck? Get a hint by watching a short ad — the badge marks ad-gated helpers.",
+  "tutorialGameMistakesTitle": "Mistake limit",
+  "tutorialGameMistakesBody": "The game ends after 3 mistakes, so place each number carefully.",
+  "tutorialQuickInputTitle": "Quick input",
+  "tutorialQuickInputBody": "Turn this on to pick a number first, then tap cells to fill them fast. Memo digits work the same way.",
+  "tutorialRaceProfileTitle": "Your standing",
+  "tutorialRaceProfileBody": "Your tier, rating, and win-loss record show up here.",
+  "tutorialRaceTrendTitle": "Rating trend",
+  "tutorialRaceTrendBody": "Your rating charts here as you play more ranked races.",
+  "tutorialRaceFriendTitle": "Play a friend",
+  "tutorialRaceFriendBody": "Share a room code to race a friend one-on-one.",
+  "tutorialRaceRankedTitle": "Ranked match",
+  "tutorialRaceRankedBody": "Get matched with a similar opponent — your tier sets the difficulty.",
+  "tutorialRaceLeaderboardTitle": "Leaderboard",
+  "tutorialRaceLeaderboardBody": "See how you rank against everyone else.",
+
   "startGame": "Start",
-  "viewStats": "View Stats",
+  "generatingPuzzle": "Generating...",
+  "privacyPolicyTitle": "Privacy Policy",
+  "termsOfServiceTitle": "Terms of Service",
+  "raceButton": "Race",
   "themeSectionTitle": "Theme",
   "followSystemTheme": "Follow System",
   "lightTheme": "Light Mode",
   "darkTheme": "Dark Mode",
   "hapticsLabel": "Vibration",
   "soundLabel": "Sound Effects",
+  "wrongNoteWarningLabel": "Prevent on Wrong Notes",
+  "wrongNoteWarningDescription": "Blocks notes for a number already placed in the same row, column, or box.",
+  "autoRemoveNotesLabel": "Auto-clear Notes on Confirm",
+  "autoRemoveNotesDescription": "Placing a number clears matching notes in the same row, column, and box.",
   "languageSectionTitle": "Language",
   "followSystemLanguage": "Follow System",
   "koreanLanguage": "한국어",
@@ -36,10 +89,22 @@
   "giveUpAction": "Give Up and Exit",
   "noHintAvailable": "No hint is available right now.",
   "clearWrongFirst": "Please clear the wrong answer first.",
+  "hintNoTechniqueWithNotes": "No technique can be applied with your current notes.",
+  "hintAutoGenerateCandidatesPrompt": "Generate candidate notes automatically and analyze again?",
   "adNotLoaded": "The ad hasn't loaded yet. Please try again in a moment.",
 
   "resultTitle": "Result",
-  "perfectClearBadge": "No Mistakes! Perfect Clear",
+  "perfectClearBadge": "Perfect Clear",
+  "perfectClearFlavor1": "Hint? What's that? 😎",
+  "perfectClearFlavor2": "You didn't even give yourself a chance to mess up.",
+  "perfectClearFlavor3": "The numbers practically lined themselves up.",
+  "perfectClearFlavor4": "Was 9×9 too easy for you?",
+  "perfectClearFlavor5": "The puzzle never stood a chance. 🏆",
+  "perfectClearFlavor6": "Okay, that's almost unfair.",
+  "perfectClearFlavor7": "The numbers were on your side today.",
+  "perfectClearFlavor8": "9 numbers. 81 cells. 0 mistakes.",
+  "perfectClearFlavor9": "The hint button is out of a job today.",
+  "perfectClearFlavor10": "Certified Sudoku Master! 👑",
   "mistakesAndHints": "Mistakes: {mistakes} · Hints used: {hints}",
   "@mistakesAndHints": {
     "placeholders": {
@@ -79,6 +144,36 @@
   },
 
   "statsTitle": "Stats",
+  "tutorialStatsCalendarTitle": "Daily calendar",
+  "tutorialStatsCalendarBody": "Solve the daily Sudoku to stamp the calendar. Keep your streak going!",
+  "tutorialStatsRecordsTitle": "Records by difficulty",
+  "tutorialStatsRecordsBody": "Switch tabs to see completions, average, and best times per difficulty.",
+  "tutorialStatsCodexTitle": "Technique codex",
+  "tutorialStatsCodexBody": "Solving techniques you've met through hints collect here.",
+  "tutorialStatsReplayTitle": "Replay",
+  "tutorialStatsReplayBody": "Watch your past games move by move.",
+  "dailyCalendarSignInHint": "Sign in to see your daily sudoku history.",
+  "dailyCalendarLoadError": "Couldn't load your daily history.",
+  "dailyCalendarDayDetail": "{month}/{day} · {time} · {mistakes} mistakes",
+  "@dailyCalendarDayDetail": {
+    "placeholders": {
+      "month": {"type": "int"},
+      "day": {"type": "int"},
+      "time": {"type": "String"},
+      "mistakes": {"type": "int"}
+    }
+  },
+  "statsCompletedLabel": "Completed",
+  "statsPerfectLabel": "Perfect clears",
+  "statsAverageLabel": "Average time",
+  "statsBestLabel": "Best time",
+  "statsNoRecord": "-",
+  "statsTopPercentBadge": "Top {percent}%",
+  "@statsTopPercentBadge": {
+    "placeholders": {
+      "percent": {"type": "int"}
+    }
+  },
   "playedWonLabel": "Played {played} · Won {won}",
   "@playedWonLabel": {
     "placeholders": {
@@ -92,19 +187,24 @@
       "time": {"type": "String"}
     }
   },
+  "raceHistoryTitle": "Race History",
+  "raceHistoryResultWon": "Win",
+  "raceHistoryResultLost": "Loss",
+  "raceHistoryEmpty": "No races yet.",
 
   "undoLabel": "Undo",
   "eraseLabel": "Erase",
   "noteLabel": "Notes",
   "autoFillLabel": "Auto Notes",
   "hintLabel": "Hint",
+  "inputModeQuick": "Quick",
 
-  "difficultyBeginner": "Beginner",
-  "difficultyEasy": "Easy",
-  "difficultyMedium": "Medium",
-  "difficultyHard": "Hard",
+  "difficultyBeginner": "Bronze",
+  "difficultyEasy": "Silver",
+  "difficultyMedium": "Gold",
+  "difficultyHard": "Diamond",
   "difficultyMaster": "Master",
-  "difficultyExpert": "Expert",
+  "difficultyExpert": "Challenger",
 
   "techniqueFullHouse": "Full House",
   "techniqueNakedSingle": "Naked Single",
@@ -117,19 +217,40 @@
   "techniqueHiddenQuad": "Hidden Quad",
   "techniqueIntersectionPointing": "Intersection (Pointing)",
   "techniqueIntersectionClaiming": "Intersection (Claiming)",
+  "techniqueLockedPair": "Locked Pair",
+  "techniqueLockedTriple": "Locked Triple",
   "techniqueXWing": "X-Wing",
+  "techniqueSkyscraper": "Skyscraper",
+  "techniqueTwoStringKite": "2-String Kite",
+  "techniqueTurbotFish": "Turbot Fish",
+  "techniqueRemotePair": "Remote Pair",
   "techniqueSimpleColoring": "Simple Coloring",
+  "techniqueMultiColoring": "Multi-Coloring",
+  "explanationMultiColoring": "Digit {digit}'s candidates split into two separate color clusters; the relationship between their colors forces {digit} out of certain cells no matter which color turns out true, so {digit} can be removed from its candidates there.",
   "techniqueXYWing": "XY-Wing",
+  "techniqueXYZWing": "XYZ-Wing",
+  "techniqueWWing": "W-Wing",
   "techniqueSwordfish": "Swordfish",
   "techniqueFinnedXWing": "Finned X-Wing",
   "techniqueSashimiXWing": "Sashimi X-Wing",
   "techniqueBugPlusOne": "BUG+1",
   "techniqueXYChain": "XY-Chain",
   "techniqueJellyfish": "Jellyfish",
+  "techniqueFinnedSwordfish": "Finned Swordfish",
+  "techniqueFinnedJellyfish": "Finned Jellyfish",
   "techniqueUniqueRectangleType1": "Unique Rectangle Type 1",
   "techniqueUniqueRectangleType2": "Unique Rectangle Type 2",
   "techniqueUniqueRectangleType3": "Unique Rectangle Type 3",
   "techniqueUniqueRectangleType4": "Unique Rectangle Type 4",
+  "techniqueXChain": "X-Chain",
+  "techniqueAic": "AIC",
+  "techniqueGroupedXChain": "Grouped X-Chain",
+  "techniqueGroupedAic": "Grouped AIC",
+  "techniqueWXYZWing": "WXYZ-Wing",
+  "techniqueAlsXZ": "ALS-XZ",
+  "techniqueSueDeCoq": "Sue de Coq",
+  "techniqueTripleFirework": "Triple Firework",
+  "techniqueAlsAic": "ALS Chain",
 
   "unitRow": "Row {row}",
   "@unitRow": {
@@ -239,6 +360,30 @@
       "size": {"type": "int"}
     }
   },
+  "explanationSkyscraper": "Digit {digit} forms a Skyscraper: two strong links join so that at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.",
+  "@explanationSkyscraper": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "explanationTwoStringKite": "Digit {digit} forms a 2-String Kite joined through a shared box, so at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.",
+  "@explanationTwoStringKite": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "explanationTurbotFish": "Digit {digit} forms a Turbot Fish chain, so at least one of {cell1} and {cell2} must be {digit}. Any cell that sees both can have {digit} removed from its candidates.",
+  "@explanationTurbotFish": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
   "explanationFinnedFish": "{mainLineDesc} forms a clean X-Wing shape with only two candidate cells for digit {digit}. {finLineDesc} also has extra candidates at {finsDesc} (fins), so it's not a pure X-Wing — but cells that see every fin can still have {digit} removed from their candidates.",
   "@explanationFinnedFish": {
     "placeholders": {
@@ -246,6 +391,33 @@
       "digit": {"type": "int"},
       "finLineDesc": {"type": "String"},
       "finsDesc": {"type": "String"}
+    }
+  },
+  "explanationFinnedFishN": "{baseLinesDesc} confine digit {digit} to a {size}-line fish shape, except for extra candidates (fins) at {finsDesc}. If every fin is false this is a true fish; otherwise one of the fins is {digit}. Either way, cells that see every fin can have {digit} removed from their candidates.",
+  "@explanationFinnedFishN": {
+    "placeholders": {
+      "baseLinesDesc": {"type": "String"},
+      "digit": {"type": "int"},
+      "size": {"type": "int"},
+      "finsDesc": {"type": "String"}
+    }
+  },
+  "explanationLockedSubset": "{cellsDesc} lie where {lineDesc} crosses {boxDesc}, and together their only candidates are {digitsDesc} ({size} digits). Those cells take all {size} digits, so {digitsDesc} can be removed from the rest of {lineDesc} AND the rest of {boxDesc}.",
+  "@explanationLockedSubset": {
+    "placeholders": {
+      "lineDesc": {"type": "String"},
+      "boxDesc": {"type": "String"},
+      "cellsDesc": {"type": "String"},
+      "digitsDesc": {"type": "String"},
+      "size": {"type": "int"}
+    }
+  },
+  "explanationRemotePair": "{chainDesc} all hold only {a} and {b}, and each sees the next, so their values alternate along the chain. The two ends sit an odd number of steps apart, so one is {a} and the other is {b} — meaning any cell seeing both ends can have BOTH {a} and {b} removed.",
+  "@explanationRemotePair": {
+    "placeholders": {
+      "chainDesc": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"}
     }
   },
   "explanationSimpleColoringRule1": "Chaining digit {digit}'s candidates, {cellA} and {cellB} — both in the same color group — share a row, column, or box. Since they can't both be {digit}, this whole group can't be {digit}. So {digit} can be removed from this group's cells.",
@@ -276,7 +448,135 @@
       "otherPivotDigit": {"type": "int"}
     }
   },
-  "explanationXYChain": "The cells chained in order {chainDesc} each have only two candidates, so if one end of the chain isn't {z}, the other end must be. So {z} can be removed from cells that see both ends of the chain.",
+  "explanationXYZWing": "The pivot {pivotDesc} has three candidates ({pivotDigits}), and its wings {w1Desc} and {w2Desc} each hold {z} plus one of the others. Whichever digit the pivot takes, {z} ends up on the pivot or one of the wings — so any cell seeing all three can have {z} removed.",
+  "@explanationXYZWing": {
+    "placeholders": {
+      "pivotDesc": {"type": "String"},
+      "pivotDigits": {"type": "String"},
+      "w1Desc": {"type": "String"},
+      "w2Desc": {"type": "String"},
+      "z": {"type": "int"}
+    }
+  },
+  "explanationWWing": "{cell1} and {cell2} both hold only {a} and {b}, and {unitDesc} has just two places for {b} — one seeing each of them. If both were {b}, that unit would have nowhere left for {b}. So at least one of them is {a}, and any cell seeing both can have {a} removed.",
+  "@explanationWWing": {
+    "placeholders": {
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"},
+      "unitDesc": {"type": "String"}
+    }
+  },
+  "explanationGroupedXChain": "Digit {digit} forms an alternating chain along {chainDesc}, using clusters of neighbouring candidates as single links. The strong links still guarantee at least one end is {digit}, so any cell that sees both ends can have {digit} removed.",
+  "@explanationGroupedXChain": {
+    "placeholders": {
+      "chainDesc": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "explanationGroupedAic": "The alternating inference chain {chainDesc} uses clusters of neighbouring candidates as single links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.",
+  "@explanationGroupedAic": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+  "explanationWXYZWing": "{chainDesc}: a WXYZ-Wing — a bivalue cell and a 3-cell Almost Locked Set joined through a shared digit. At least one chain end is true, so any candidate seeing both ends can be removed.",
+  "@explanationWXYZWing": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+  "explanationAlsXZ": "{chainDesc}: two Almost Locked Sets joined by a restricted common digit. If either set loses it the other locks, so at least one end is true — any candidate seeing both ends can be removed.",
+  "@explanationAlsXZ": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+  "explanationAlsAic": "The alternating inference chain {chainDesc} uses Almost Locked Sets as links. At least one of its two ends must be true, so any candidate that conflicts with both ends can be removed.",
+  "@explanationAlsAic": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+  "explanationSueDeCoq": "The crossing cells {cells} interlock exactly with an Almost Locked Set on their line and one in their box. Every involved digit ({digits}) must land inside these three clusters, so matching candidates outside them can be removed.",
+  "@explanationSueDeCoq": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "digits": {"type": "String"}
+    }
+  },
+  "hintStepSueDeCoqIntro": "Where the box meets the line, {cells} — {cellCount} cells — together hold {digits}: {digitCount} candidate kinds, at least two more than cells.",
+  "@hintStepSueDeCoqIntro": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "cellCount": {"type": "int"},
+      "digits": {"type": "String"},
+      "digitCount": {"type": "int"}
+    }
+  },
+  "hintStepSueDeCoqLine": "On the same line, {cells} ({cellCount} cells) hold only {digits} — {digitCount} kinds, exactly one more than cells: an Almost Locked Set. On this line those digits fit only here or in the crossing cells.",
+  "@hintStepSueDeCoqLine": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "cellCount": {"type": "int"},
+      "digits": {"type": "String"},
+      "digitCount": {"type": "int"}
+    }
+  },
+  "hintStepSueDeCoqBox": "In the box, {cells} ({cellCount} cells) likewise hold only {digits} — {digitCount} kinds, another Almost Locked Set. Its digits fit only there or in the crossing cells; every digit's place adds up exactly.",
+  "@hintStepSueDeCoqBox": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "cellCount": {"type": "int"},
+      "digits": {"type": "String"},
+      "digitCount": {"type": "int"}
+    }
+  },
+  "explanationTripleFirework": "Digits {digits} form fireworks: on both the row and the column they escape the box by just one wing cell each. The box can hold each digit only once, so the cross cell and the two wings ({cells}) must take exactly these three digits — removing their other candidates, and these digits from the box's non-cross cells.",
+  "@explanationTripleFirework": {
+    "placeholders": {
+      "digits": {"type": "String"},
+      "cells": {"type": "String"}
+    }
+  },
+  "hintStepFireworkRow": "On this row, candidates for {digits} sit only in {cells} — outside the box that is just {cell}.",
+  "@hintStepFireworkRow": {
+    "placeholders": {
+      "digits": {"type": "String"},
+      "cells": {"type": "String"},
+      "cell": {"type": "String"}
+    }
+  },
+  "hintStepFireworkCol": "Same on this column — {digits} sit only in {cells}, with {cell} the lone escape from the box.",
+  "@hintStepFireworkCol": {
+    "placeholders": {
+      "digits": {"type": "String"},
+      "cells": {"type": "String"},
+      "cell": {"type": "String"}
+    }
+  },
+  "hintStepFireworkTriple": "The box can hold {digits} only once each, so for all three to fit, the three cells {cells} must take exactly one apiece.",
+  "@hintStepFireworkTriple": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "digits": {"type": "String"}
+    }
+  },
+  "explanationXChain": "Digit {digit} forms an alternating chain along {chainDesc}. Because the strong links guarantee at least one end is {digit}, any cell that sees both ends can have {digit} removed.",
+  "@explanationXChain": {
+    "placeholders": {
+      "chainDesc": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "explanationAic": "The alternating inference chain {chainDesc} forces at least one of its two ends to be true, so any candidate that conflicts with both ends can be removed.",
+  "@explanationAic": {
+    "placeholders": {
+      "chainDesc": {"type": "String"}
+    }
+  },
+    "explanationXYChain": "The cells chained in order {chainDesc} each have only two candidates, so if one end of the chain isn't {z}, the other end must be. So {z} can be removed from cells that see both ends of the chain.",
   "@explanationXYChain": {
     "placeholders": {
       "chainDesc": {"type": "String"},
@@ -309,7 +609,7 @@
       "c": {"type": "int"}
     }
   },
-  "explanationUniqueRectangleType3": "Combining the extra candidates of {cellA} and {cellB}, they form a set of only {digitsDesc} together with other cells in that unit. So {digitsDesc} can be removed from the rest of that unit's cells.",
+  "explanationUniqueRectangleType3": "One of {cellA} and {cellB} must take an extra candidate (if both kept only the rectangle pair, the puzzle would have two solutions). Treating their extra candidates as one virtual cell, they form a set of only {digitsDesc} with other cells in that unit — so {digitsDesc} can be removed from the rest of that unit.",
   "@explanationUniqueRectangleType3": {
     "placeholders": {
       "cellA": {"type": "String"},
@@ -326,10 +626,632 @@
       "otherDigit": {"type": "int"}
     }
   },
-  "noteRepairNotice": "Notes needed to be corrected first. {explanation}",
+  "noteRepairNotice": "Some cells' notes didn't match the board, so they were corrected first. {explanation}",
   "@noteRepairNotice": {
     "placeholders": {
       "explanation": {"type": "String"}
     }
-  }
+  },
+
+  "myPageTitle": "My Page",
+  "errorOccurred": "An error occurred: {message}",
+  "@errorOccurred": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "signInPromptTitle": "Sign in to race other players",
+  "signInWithGoogle": "Sign in with Google",
+  "signInWithApple": "Sign in with Apple",
+  "signInAsGuest": "Continue as Guest",
+  "ratingAndRecord": "Rating {rating} · {wins}W {losses}L",
+  "@ratingAndRecord": {
+    "placeholders": {
+      "rating": {"type": "int"},
+      "wins": {"type": "int"},
+      "losses": {"type": "int"}
+    }
+  },
+  "winRateLabel": "Race win rate {percent}%",
+  "@winRateLabel": {
+    "placeholders": {
+      "percent": {"type": "int"}
+    }
+  },
+  "tierPromotionRemaining": "{points} pts to {nextTier}",
+  "@tierPromotionRemaining": {
+    "placeholders": {
+      "points": {"type": "int"},
+      "nextTier": {"type": "String"}
+    }
+  },
+  "tierTopReached": "Top tier reached",
+  "ratingTrendTitle": "Rating Trend",
+  "ratingTrendEmpty": "No ranked games yet.\nPlay a ranked race to check your skill.",
+  "linkAccountPrompt": "You're signed in as a guest. Link an account to keep your progress.",
+  "linkGoogleAction": "Link Google Account",
+  "linkAppleAction": "Link Apple Account",
+  "signOutAction": "Sign Out",
+
+  "shareCodeTitle": "Share Puzzle",
+  "enterCodeTitle": "Enter Code",
+  "shareCodeTextLabel": "Text Code",
+  "invalidTextCodeError": "That text code isn't valid.",
+  "copiedToClipboard": "Copied to clipboard",
+  "enterTextCodeHint": "Room code or puzzle code",
+  "roomJoinRequiresSignIn": "Sign in to join a friend match. You can sign in from the race lobby.",
+  "loadButton": "Enter",
+
+  "raceLobbyTitle": "Race",
+  "friendMatchButton": "Play with a Friend",
+  "rankedMatchButton": "Ranked Match",
+  "leaderboardButton": "Ranking",
+  "leaderboardTitle": "Ranking",
+  "leaderboardMyRankLabel": "Your rank: #{rank} of {total}",
+  "@leaderboardMyRankLabel": {
+    "placeholders": {
+      "rank": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "leaderboardMyRankUnranked": "No ranked record yet",
+  "leaderboardEmpty": "No ranked players yet.",
+  "leaderboardLoadFailed": "Couldn't load the ranking.",
+  "seasonName": "Season {number}",
+  "@seasonName": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "seasonDaysLeft": "D-{days}",
+  "@seasonDaysLeft": {
+    "placeholders": {
+      "days": {"type": "int"}
+    }
+  },
+  "pastSeasonsTitle": "Past Seasons",
+  "seasonStandingDetail": "#{rank} · {wins}W {losses}L",
+  "@seasonStandingDetail": {
+    "placeholders": {
+      "rank": {"type": "int"},
+      "wins": {"type": "int"},
+      "losses": {"type": "int"}
+    }
+  },
+  "placementProgress": "Placements {played}/{total}",
+  "@placementProgress": {
+    "placeholders": {
+      "played": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "seasonEndedTitle": "Season {number} Complete!",
+  "@seasonEndedTitle": {
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "seasonEndedNewStart": "A new season has begun — you restart at rating {rating}!",
+  "@seasonEndedNewStart": {
+    "placeholders": {
+      "rating": {"type": "int"}
+    }
+  },
+  "okAction": "OK",
+  "friendMatchTitle": "Play with a Friend",
+  "createRoomTitle": "Choose difficulty",
+  "createRoomAction": "Create Room",
+  "joinRoomTitle": "Join Room",
+  "waitingForFriendTitle": "Waiting for Friend",
+  "joinRoomAction": "Join",
+  "roomCodeFieldLabel": "Room code",
+  "roomCodeInvalid": "Room not found or expired.",
+  "roomCodeShareHint": "Share this code with your friend",
+  "waitingForFriend": "Waiting for your friend to join...",
+  "matchmakingElapsed": "Waiting {time}",
+  "@matchmakingElapsed": {
+    "placeholders": {
+      "time": {"type": "String"}
+    }
+  },
+  "friendlyMatchLabel": "Friendly match \u00b7 no rating change",
+  "matchmakingTitle": "Find Opponent",
+  "matchmakingSearching": "Searching for an opponent...",
+  "matchmakingPreparingPuzzle": "Preparing puzzle...",
+  "matchmakingReadyCheck": "Checking readiness...",
+  "matchmakingTip1": "Solve today's Daily puzzle and check where you rank.",
+  "matchmakingTip2": "Finish a puzzle with no hints and no mistakes for a Perfect Clear.",
+  "matchmakingTip3": "In ranked matches, the puzzle difficulty is set by your tier.",
+  "matchmakingTip4": "Use note mode to pencil in candidate numbers and solve faster.",
+  "matchmakingTip5": "Share a room code to race a friend one-on-one.",
+  "matchmakingTip6": "Win races to raise your rating and climb to a higher tier.",
+  "matchmakingTip7": "Tiers go Bronze > Silver > Gold > Diamond > Master > Challenger. Aim for Challenger.",
+  "raceAbortConfirmTitle": "Give up the race?",
+  "opponentDisconnectedCountdown": "Opponent disconnected — you win in {seconds}s",
+  "@opponentDisconnectedCountdown": {
+    "placeholders": {
+      "seconds": {"type": "int"}
+    }
+  },
+  "opponentProgressLabel": "Opponent",
+  "raceSelfLabel": "You",
+  "raceLeadingBy": "Leading by {cells}",
+  "@raceLeadingBy": {
+    "placeholders": {
+      "cells": {"type": "int"}
+    }
+  },
+  "raceTrailingBy": "Trailing by {cells}",
+  "@raceTrailingBy": {
+    "placeholders": {
+      "cells": {"type": "int"}
+    }
+  },
+  "raceTied": "Tied",
+  "keepSolvingAction": "Keep Solving",
+  "exitAction": "Exit",
+  "raceOpponentGaveUpTitle": "(Win) Your opponent gave up",
+  "raceOpponentGaveUpBody": "Keep solving the puzzle?",
+  "raceOpponentDisconnectedTitle": "(Win) Your opponent left",
+  "raceOpponentDisconnectedBody": "Keep solving the puzzle?",
+  "raceOpponentFinishedFirstTitle": "(Loss) Your opponent finished first",
+  "raceOpponentFinishedFirstBody": "Keep going anyway?",
+  "raceOpponentMistakesForfeitTitle": "(Win) Your opponent made 3 mistakes",
+  "raceOpponentMistakesForfeitBody": "Keep solving the puzzle?",
+  "raceResultTitle": "Race Result",
+  "raceWon": "You Won!",
+  "raceLost": "You Lost",
+  "tierBronze": "Bronze",
+  "tierSilver": "Silver",
+  "tierGold": "Gold",
+  "tierDiamond": "Diamond",
+  "tierMaster": "Master",
+  "tierChallenger": "Challenger",
+  "tierUnranked": "Unranked",
+
+  "yourRatingChangeLabel": "You: {oldRating} → {newRating} ({delta})",
+  "@yourRatingChangeLabel": {
+    "placeholders": {
+      "oldRating": {"type": "int"},
+      "newRating": {"type": "int"},
+      "delta": {"type": "String"}
+    }
+  },
+  "opponentRatingChangeLabel": "{username}: {oldRating} → {newRating} ({delta})",
+  "@opponentRatingChangeLabel": {
+    "placeholders": {
+      "username": {"type": "String"},
+      "oldRating": {"type": "int"},
+      "newRating": {"type": "int"},
+      "delta": {"type": "String"}
+    }
+  },
+  "homeRatingLabel": "{tier} · Rating {rating}",
+  "@homeRatingLabel": {
+    "placeholders": {
+      "tier": {"type": "String"},
+      "rating": {"type": "int"}
+    }
+  },
+
+  "dailyButton": "Daily Sudoku",
+  "dailyTitle": "Daily Sudoku",
+  "dailyLoading": "Preparing today's puzzle...",
+  "dailySignInPromptTitle": "Sign in to play the Daily Sudoku",
+  "dailyResultTitle": "Today's Result",
+  "dailyMyRankLabel": "Ranked #{rank} of {total} today",
+  "@dailyMyRankLabel": {
+    "placeholders": {
+      "rank": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "dailyLeaderboardTitle": "Top 10",
+  "dailyEmptyLeaderboard": "No one has finished yet.",
+  "dailyReplayAction": "Play Again",
+  "dailyNotRankedNotice": "Only your first clear is recorded.",
+  "dailySubmitFailed": "Couldn't submit your result.",
+  "retryAction": "Retry",
+
+  "hintStepPrevAction": "Back",
+  "hintStepNextAction": "Next",
+  "hintStepXYWingPivot": "The pivot {pivot} has only two candidates: {x} and {y}.",
+  "@hintStepXYWingPivot": {
+    "placeholders": {
+      "pivot": {"type": "String"},
+      "x": {"type": "int"},
+      "y": {"type": "int"}
+    }
+  },
+  "hintStepWingCase": "If the pivot is {digit}, {wing} loses {digit} — so it must be {z}.",
+  "@hintStepWingCase": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "wing": {"type": "String"},
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepXYWingConclusion": "Either way, one of the two wings is {z}. Any cell that sees both wings can't be {z}.",
+  "@hintStepXYWingConclusion": {
+    "placeholders": {
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepXYZWingPivot": "The pivot {pivot} has three candidates: {digits}.",
+  "@hintStepXYZWingPivot": {
+    "placeholders": {
+      "pivot": {"type": "String"},
+      "digits": {"type": "String"}
+    }
+  },
+  "hintStepXYZWingPivotZ": "And the pivot could be {z} itself — that's the third case.",
+  "@hintStepXYZWingPivotZ": {
+    "placeholders": {
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepXYZWingConclusion": "In every case, one of the three cells is {z}. Any cell that sees all three can't be {z}.",
+  "@hintStepXYZWingConclusion": {
+    "placeholders": {
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepWWingPair": "{cell1} and {cell2} hold exactly the same pair: {a} and {b}.",
+  "@hintStepWWingPair": {
+    "placeholders": {
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepWWingBridge": "In {unitDesc}, {b} fits in only two places — and each one sees one of the pair cells.",
+  "@hintStepWWingBridge": {
+    "placeholders": {
+      "unitDesc": {"type": "String"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepWWingForced": "If both those cells were {b}, {unitDesc} would have nowhere left for {b}. So at least one of them is {a}.",
+  "@hintStepWWingForced": {
+    "placeholders": {
+      "unitDesc": {"type": "String"},
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepWWingConclusion": "Any cell that sees both pair cells can't be {a}.",
+  "@hintStepWWingConclusion": {
+    "placeholders": {
+      "a": {"type": "int"}
+    }
+  },
+  "hintStepChainStart": "Start at {cell}: if it isn't {z}, it must be {a}.",
+  "@hintStepChainStart": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "z": {"type": "int"},
+      "a": {"type": "int"}
+    }
+  },
+  "hintStepChainHop": "Then {cell} can't be {carry}, so it must be {next}.",
+  "@hintStepChainHop": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "carry": {"type": "int"},
+      "next": {"type": "int"}
+    }
+  },
+  "hintStepAicStart": "Start at candidate {digit} in {cell}, and suppose this cell is NOT {digit} —",
+  "@hintStepAicStart": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStrongUnit": "then {cell} must be {digit}.",
+  "@hintStepAicStrongUnit": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStrongCell": "then the remaining {digit} is forced.",
+  "@hintStepAicStrongCell": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStartGroup": "Start at the {digit} candidates clustered in {cells}, and suppose NONE of them is {digit} —",
+  "@hintStepAicStartGroup": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicStrongGroup": "then one of {cells} must be {digit}.",
+  "@hintStepAicStrongGroup": {
+    "placeholders": {
+      "cells": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicWeakUnit": "Now {cell} can no longer be {digit}.",
+  "@hintStepAicWeakUnit": {
+    "placeholders": {
+      "cell": {"type": "String"},
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicWeakCell": "Now this cell's other candidate {digit} is ruled out.",
+  "@hintStepAicWeakCell": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepAicEitherEnds": "So there are only two cases: either {startCell} really is {startDigit}, or — as we just followed — {endCell} ends up {endDigit}. Either way, one of the two must be true.",
+  "@hintStepAicEitherEnds": {
+    "placeholders": {
+      "startCell": {"type": "String"},
+      "startDigit": {"type": "int"},
+      "endCell": {"type": "String"},
+      "endDigit": {"type": "int"}
+    }
+  },
+  "hintStepAicConclusion": "Any candidate that sees both ends can be removed.",
+  "hintStepChainConclusion": "So either the start is {z}, or the end is {z}. Any cell that sees both ends can't be {z}.",
+  "@hintStepChainConclusion": {
+    "placeholders": {
+      "z": {"type": "int"}
+    }
+  },
+  "hintStepRemotePairIntro": "Every cell in this chain holds the same pair: {a} and {b}.",
+  "@hintStepRemotePairIntro": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepRemotePairAlternate": "Neighbors see each other, so the values must alternate {a}, {b}, {a}, {b} along the chain.",
+  "@hintStepRemotePairAlternate": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepRemotePairEnds": "The two ends are an odd number of hops apart, so one is {a} and the other is {b} — always.",
+  "@hintStepRemotePairEnds": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepRemotePairConclusion": "Any cell that sees both ends can be neither {a} nor {b}.",
+  "@hintStepRemotePairConclusion": {
+    "placeholders": {
+      "a": {"type": "int"},
+      "b": {"type": "int"}
+    }
+  },
+  "hintStepSingleDigitStrong1": "{cell1} and {cell2} are the only two spots for {digit} in their unit — one of them must be {digit}.",
+  "@hintStepSingleDigitStrong1": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "hintStepSingleDigitStrong2": "{cell1} and {cell2} are another only-two-spots pair, and the two middle cells see each other.",
+  "@hintStepSingleDigitStrong2": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "hintStepSingleDigitForced": "The middle cells can't both be {digit}, so at least one of the free ends {cell1} and {cell2} must be {digit}.",
+  "@hintStepSingleDigitForced": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "hintStepSingleDigitConclusion": "Any cell that sees both free ends can't be {digit}.",
+  "@hintStepSingleDigitConclusion": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepColoringChain": "Cells linked as the only two spots for {digit} form a chain — neighbors are opposites, so they split into two colors.",
+  "@hintStepColoringChain": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepColoringRule1Clash": "{cell1} and {cell2} share a color AND see each other — a color can't hold {digit} twice, so that whole color is wrong.",
+  "@hintStepColoringRule1Clash": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "cell1": {"type": "String"},
+      "cell2": {"type": "String"}
+    }
+  },
+  "hintStepColoringRule1Conclusion": "Every cell of the wrong color loses {digit}.",
+  "@hintStepColoringRule1Conclusion": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepColoringRule2Conclusion": "One of the two colors must be true. A cell that sees both colors can't be {digit} either way.",
+  "@hintStepColoringRule2Conclusion": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepXWingLines": "Digit {digit} fits in only two spots in each of {linesDesc}.",
+  "@hintStepXWingLines": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "linesDesc": {"type": "String"}
+    }
+  },
+  "hintStepXWingRect": "The four spots form a rectangle — however it resolves, {crossDesc} each get exactly one {digit} inside it.",
+  "@hintStepXWingRect": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "crossDesc": {"type": "String"}
+    }
+  },
+  "hintStepXWingConclusion": "So the rest of those two {crossUnitName} can't hold {digit}.",
+  "@hintStepXWingConclusion": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "crossUnitName": {"type": "String"}
+    }
+  },
+  "hintStepFullHouseIntro": "Only one cell in {unitDesc} is still empty.",
+  "@hintStepFullHouseIntro": {
+    "placeholders": {
+      "unitDesc": {"type": "String"}
+    }
+  },
+  "hintStepNakedSingleIntro": "Narrow down {cell}: cross off every digit already placed in its row, column, and box.",
+  "@hintStepNakedSingleIntro": {
+    "placeholders": {
+      "cell": {"type": "String"}
+    }
+  },
+  "hintStepHiddenSingleIntro": "One area has only a single spot left where {digit} can go — the highlighted digits block every other cell.",
+  "@hintStepHiddenSingleIntro": {
+    "placeholders": {
+      "digit": {"type": "int"}
+    }
+  },
+  "hintStepBugIntro": "If every empty cell kept exactly two candidates, the puzzle would end up with two solutions. Exactly one cell holds three — that cell is the way out.",
+  "hintStepNakedSubsetIntro": "In {unitDesc}, the {count} highlighted cells hold only {digits} between them.",
+  "@hintStepNakedSubsetIntro": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "digits": {"type": "String"},
+      "unitDesc": {"type": "String"}
+    }
+  },
+  "hintStepHiddenSubsetIntro": "In {unitDesc}, {digits} can only go in the {count} highlighted cells.",
+  "@hintStepHiddenSubsetIntro": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "digits": {"type": "String"},
+      "unitDesc": {"type": "String"}
+    }
+  },
+  "hintStepPointingIntro": "Inside {boxDesc}, every spot for {digit} sits on {lineDesc}.",
+  "@hintStepPointingIntro": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "boxDesc": {"type": "String"},
+      "lineDesc": {"type": "String"}
+    }
+  },
+  "hintStepClaimingIntro": "In {lineDesc}, every spot for {digit} sits inside {boxDesc}.",
+  "@hintStepClaimingIntro": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "lineDesc": {"type": "String"},
+      "boxDesc": {"type": "String"}
+    }
+  },
+  "hintStepFishIntro": "Look at {linesDesc}: the spots where {digit} can go there are pinned to just a few crossing lines.",
+  "@hintStepFishIntro": {
+    "placeholders": {
+      "digit": {"type": "int"},
+      "linesDesc": {"type": "String"}
+    }
+  },
+  "hintStepURIntro": "The highlighted cells form a rectangle sharing one candidate pair. If all four kept only that pair, the puzzle would have two solutions — which is impossible.",
+
+  "replayTitle": "Replay",
+  "replayEmpty": "No games to replay yet.",
+  "premiumTitle": "Premium",
+  "premiumIntroTitle": "Sudoku League Premium",
+  "premiumBenefitAssistTitle": "Unlimited hints & auto-notes",
+  "premiumBenefitAssistBody": "Use hints and auto-notes freely — no ads.",
+  "premiumBenefitReplayTitle": "Replay",
+  "premiumBenefitReplayBody": "Review recent games move by move and resume solving — races included.",
+  "premiumBenefitFavoriteTitle": "Favorites",
+  "premiumBenefitFavoriteBody": "Save puzzles you like and solve them again anytime.",
+  "premiumBenefitThemeTitle": "5 theme packs",
+  "premiumBenefitThemeBody": "Premium themes that restyle the board and the whole app.",
+  "premiumPlanLifetime": "Lifetime",
+  "premiumPlanLifetimePrice": "$3.99",
+  "premiumPlanLifetimeDetail": "Pay once, yours forever",
+  "premiumPlanMonthly": "Monthly",
+  "premiumPlanMonthlyPrice": "$0.99",
+  "premiumPlanMonthlyDetail": "Renews every month",
+  "premiumCtaStart": "Get Premium",
+  "premiumMockDone": "(Mock) Premium activated!",
+  "premiumComingSoon": "Purchases will be available at official launch.",
+  "replayPremiumBody": "Replay your recent games move by move and pick up solving again — retrace every entry and note in the exact order you made them.",
+  "replayResumeFromHere": "Solve from here",
+  "raceReplayUnavailable": "No replay saved for this game on this device.",
+
+  "favoritesTitle": "Favorites",
+  "favoritePremiumBody": "Save puzzles to your favorites and replay them fresh whenever you like.",
+  "favoritesEmpty": "No saved puzzles yet.",
+  "favoriteSaved": "Saved to favorites.",
+  "favoriteRemoved": "Removed from favorites.",
+  "favoriteFull": "Favorites are full (max {count}).",
+  "@favoriteFull": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "themePackSectionTitle": "Theme Pack",
+  "boardFontSectionTitle": "Board Font",
+  "boardFontClassic": "Classic",
+  "boardFontDot": "Dot",
+  "themePackClassic": "Classic",
+  "themePackMidnightNeon": "Midnight Neon",
+  "themePackSepiaPaper": "Sepia Paper",
+  "themePackMonochrome": "Monochrome",
+  "themePackForest": "Forest",
+  "themePackOcean": "Ocean",
+  "themePremiumBody": "Restyle the board and the whole app with premium theme packs — five distinct looks to choose from.",
+
+  "codexTitle": "Technique Codex",
+  "codexProgress": "Discovered {met} / {total}",
+  "@codexProgress": {
+    "placeholders": {
+      "met": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "codexUsage": "{uses}× · {puzzles} puzzles",
+  "@codexUsage": {
+    "placeholders": {
+      "uses": {"type": "int"},
+      "puzzles": {"type": "int"}
+    }
+  },
+  "codexUndiscovered": "Not yet",
+  "practiceTitle": "Technique Practice",
+  "practiceIntro": "Pick a technique to practice on a board built to feature it.",
+  "practiceShowTechnique": "Show this technique",
+  "practicePreparingBoard": "Preparing a board…",
+  "practiceNoBoard": "Couldn't find a practice board — please try again.",
+  "practiceTechniqueNotYet": "This technique isn't in play yet — solve a little more and it'll come up.",
+  "practicePremiumBody": "Practice the harder techniques on boards built to feature them, walked through step by step.",
+  "categorySingles": "Singles",
+  "categoryIntersections": "Intersections",
+  "categorySubsets": "Subsets",
+  "categorySingleDigitPatterns": "Single Digit Patterns",
+  "categoryBasicFish": "Basic Fish",
+  "categoryColoring": "Coloring",
+  "categoryWings": "Wings",
+  "categoryMiscellaneous": "Miscellaneous",
+  "categoryFinnedFish": "Finned Fish",
+  "categoryUniqueness": "Uniqueness",
+  "categoryChainsAndLoops": "Chains and Loops",
+  "categoryAlmostLockedSets": "Almost Locked Sets"
 }

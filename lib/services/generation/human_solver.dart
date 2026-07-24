@@ -1,3 +1,4 @@
+import '../../models/difficulty.dart';
 import '../../models/hint.dart';
 import '../../models/sudoku_grid.dart';
 import '../hint_engine.dart';
@@ -16,30 +17,55 @@ import '../hint_engine.dart';
 /// (Hidden before Naked) for a better in-game hint experience. Both are
 /// correct for their own purpose; this is not an inconsistency.
 const humanSolverTechniqueOrder = [
+  // Bronze
   HintTechnique.fullHouse,
   HintTechnique.nakedSingle,
+  // Silver
   HintTechnique.hiddenSingle,
   HintTechnique.intersectionPointing,
   HintTechnique.intersectionClaiming,
+  // Gold — pairs
+  HintTechnique.lockedPair,
   HintTechnique.nakedPair,
   HintTechnique.hiddenPair,
+  // Diamond — triples, single-digit fish/chains, basic wings
+  HintTechnique.lockedTriple,
   HintTechnique.nakedTriple,
   HintTechnique.hiddenTriple,
-  HintTechnique.nakedQuad,
-  HintTechnique.hiddenQuad,
   HintTechnique.xWing,
-  HintTechnique.simpleColoring,
+  HintTechnique.skyscraper,
+  HintTechnique.twoStringKite,
+  HintTechnique.turbotFish,
   HintTechnique.xyWing,
+  HintTechnique.remotePair,
+  // Master — single-digit colouring, 3-cover fish, compound wings,
+  // finned/sashimi, quads. Simple Coloring leads the band: placed any later
+  // it is fully preempted by the single-digit techniques (Skyscraper /
+  // Turbot / X-Chain) that resolve the same colourable components, so it
+  // would never fire in generation at all.
+  HintTechnique.simpleColoring,
+  HintTechnique.multiColoring,
+  HintTechnique.xyzWing,
+  HintTechnique.wWing,
   HintTechnique.swordfish,
+  HintTechnique.jellyfish,
   HintTechnique.finnedXWing,
   HintTechnique.sashimiXWing,
+  HintTechnique.nakedQuad,
+  HintTechnique.hiddenQuad,
+  // Challenger — uniqueness, chains, ALS
   HintTechnique.bugPlusOne,
-  HintTechnique.xyChain,
-  HintTechnique.jellyfish,
   HintTechnique.uniqueRectangleType1,
   HintTechnique.uniqueRectangleType2,
   HintTechnique.uniqueRectangleType3,
   HintTechnique.uniqueRectangleType4,
+  HintTechnique.xChain,
+  HintTechnique.wxyzWing,
+  HintTechnique.alsXZ,
+  // Deliberately last (user request): the solver only reaches for XY-Chain
+  // when nothing more local applies. Its tier still comes from
+  // [techniqueDifficulty], not this position.
+  HintTechnique.xyChain,
 ];
 
 /// The outcome of [HumanSolver.solve]: how far a human-technique-only
@@ -86,20 +112,50 @@ class SolveResult {
 /// since every digit in this grid is derived purely from this solver's own
 /// valid deductions, so a full recompute after every reveal is always safe.
 class HumanSolver {
-  HumanSolver({HintEngine? hintEngine}) : _hintEngine = hintEngine ?? HintEngine();
+  HumanSolver({HintEngine? hintEngine, List<HintTechnique>? techniqueOrder})
+      : _hintEngine = hintEngine ?? HintEngine(),
+        _techniqueOrder = techniqueOrder ?? humanSolverTechniqueOrder;
 
   final HintEngine _hintEngine;
 
-  SolveResult solve(List<List<int>> board) {
+  /// The priority order [_findNext] scans. Defaults to
+  /// [humanSolverTechniqueOrder] (generation/difficulty semantics); the
+  /// technique-board miner passes an extended order that appends the
+  /// hint-only techniques, so "solve history contains X" is a checkable
+  /// condition for them too.
+  final List<HintTechnique> _techniqueOrder;
+
+  /// Solves as far as human techniques reach. With [maxDifficulty] set, the
+  /// solve aborts early the moment it becomes clear the puzzle exceeds that
+  /// tier — HoDoKu's generation-time optimisation (SudokuSolver.getHint:
+  /// "Wenn das Puzzle zu schwer ist, gleich abbrechen"): a candidate that
+  /// needs an over-tier technique, or whose cumulative score leaves the
+  /// tier's band, is going to be rejected anyway, so finishing the solve is
+  /// pure waste. An aborted result has `solved == false` (indistinguishable
+  /// from "stuck" — callers reject both); the offending technique is NOT
+  /// added to [SolveResult.history].
+  SolveResult solve(List<List<int>> board, {Difficulty? maxDifficulty}) {
     final working = board.map((row) => List<int>.from(row)).toList();
     final history = <HintTechnique>[];
     final techniqueCounts = <HintTechnique, int>{};
     List<List<Set<int>>>? candidates;
+    final scoreCeiling =
+        maxDifficulty == null ? null : difficultyScoreBands[maxDifficulty];
+    var score = 0;
 
     while (true) {
       candidates ??= _freshCandidates(working);
       final hint = _findNext(working, candidates);
       if (hint == null) break;
+
+      if (maxDifficulty != null &&
+          techniqueDifficulty[hint.technique]!.index > maxDifficulty.index) {
+        break; // over-tier step found — too hard, abort unapplied
+      }
+      score += techniqueBaseScore[hint.technique]!;
+      if (scoreCeiling != null && score >= scoreCeiling) {
+        break; // cumulative score already past the tier's band — too hard
+      }
 
       history.add(hint.technique);
       techniqueCounts[hint.technique] =
@@ -124,7 +180,7 @@ class HumanSolver {
   }
 
   Hint? _findNext(List<List<int>> board, List<List<Set<int>>> candidates) {
-    for (final technique in humanSolverTechniqueOrder) {
+    for (final technique in _techniqueOrder) {
       final hint = switch (technique) {
         HintTechnique.fullHouse => _hintEngine.findFullHouse(board),
         HintTechnique.nakedSingle =>
@@ -135,6 +191,10 @@ class HumanSolver {
           _hintEngine.findIntersectionPointing(board, candidates),
         HintTechnique.intersectionClaiming =>
           _hintEngine.findIntersectionClaiming(board, candidates),
+        HintTechnique.lockedPair =>
+          _hintEngine.findLockedPair(board, candidates),
+        HintTechnique.lockedTriple =>
+          _hintEngine.findLockedTriple(board, candidates),
         HintTechnique.nakedPair =>
           _hintEngine.findNakedPair(board, candidates),
         HintTechnique.hiddenPair =>
@@ -148,9 +208,21 @@ class HumanSolver {
         HintTechnique.hiddenQuad =>
           _hintEngine.findHiddenQuad(board, candidates),
         HintTechnique.xWing => _hintEngine.findXWing(board, candidates),
+        HintTechnique.skyscraper =>
+          _hintEngine.findSkyscraper(board, candidates),
+        HintTechnique.twoStringKite =>
+          _hintEngine.findTwoStringKite(board, candidates),
+        HintTechnique.turbotFish =>
+          _hintEngine.findTurbotFish(board, candidates),
+        HintTechnique.remotePair =>
+          _hintEngine.findRemotePair(board, candidates),
         HintTechnique.simpleColoring =>
           _hintEngine.findSimpleColoring(board, candidates),
+        HintTechnique.multiColoring =>
+          _hintEngine.findMultiColoring(board, candidates),
         HintTechnique.xyWing => _hintEngine.findXYWing(board, candidates),
+        HintTechnique.xyzWing => _hintEngine.findXYZWing(board, candidates),
+        HintTechnique.wWing => _hintEngine.findWWing(board, candidates),
         HintTechnique.swordfish =>
           _hintEngine.findSwordfish(board, candidates),
         HintTechnique.finnedXWing =>
@@ -162,6 +234,15 @@ class HumanSolver {
         HintTechnique.xyChain => _hintEngine.findXYChain(board, candidates),
         HintTechnique.jellyfish =>
           _hintEngine.findJellyfish(board, candidates),
+        // Hint-only: deliberately absent from [humanSolverTechniqueOrder], so
+        // these arms are unreachable today. Wired to the real search anyway
+        // rather than `null`, so that adding them to that list is all it
+        // would take — a `null` here would instead make them silently
+        // find nothing.
+        HintTechnique.finnedSwordfish =>
+          _hintEngine.findFinnedSwordfish(board, candidates),
+        HintTechnique.finnedJellyfish =>
+          _hintEngine.findFinnedJellyfish(board, candidates),
         HintTechnique.uniqueRectangleType1 =>
           _hintEngine.findUniqueRectangleType1(board, candidates),
         HintTechnique.uniqueRectangleType2 =>
@@ -170,6 +251,22 @@ class HumanSolver {
           _hintEngine.findUniqueRectangleType3(board, candidates),
         HintTechnique.uniqueRectangleType4 =>
           _hintEngine.findUniqueRectangleType4(board, candidates),
+        // Hint-only: never in humanSolverTechniqueOrder, so unreachable here,
+        // but the switch must stay exhaustive over HintTechnique.
+        HintTechnique.xChain =>
+          _hintEngine.findXChain(board, candidates),
+        HintTechnique.aic => _hintEngine.findAic(board, candidates),
+        HintTechnique.groupedXChain =>
+          _hintEngine.findGroupedXChain(board, candidates),
+        HintTechnique.groupedAic =>
+          _hintEngine.findGroupedAic(board, candidates),
+        HintTechnique.wxyzWing => _hintEngine.findWXYZWing(board, candidates),
+        HintTechnique.alsXZ => _hintEngine.findAlsXZ(board, candidates),
+        HintTechnique.sueDeCoq =>
+          _hintEngine.findSueDeCoq(board, candidates),
+        HintTechnique.tripleFirework =>
+          _hintEngine.findTripleFirework(board, candidates),
+        HintTechnique.alsAic => _hintEngine.findAlsAic(board, candidates),
       };
       if (hint != null) return hint;
     }

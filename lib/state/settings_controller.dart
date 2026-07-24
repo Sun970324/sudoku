@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import '../services/haptic_service.dart';
 import '../services/sound_service.dart';
 import '../services/storage_service.dart';
+import '../theme/app_theme.dart';
+import '../theme/theme_pack.dart';
+import 'game_controller.dart';
+import 'premium_controller.dart';
 
 class SettingsController extends ChangeNotifier {
   SettingsController({StorageService? storage})
@@ -13,6 +17,10 @@ class SettingsController extends ChangeNotifier {
   Locale? _localeOverride;
   bool _hapticsEnabled = true;
   bool _soundEnabled = true;
+  bool _wrongNoteWarningEnabled = true;
+  bool _autoRemoveNotesEnabled = true;
+  ThemePack _themePack = ThemePack.classic;
+  BoardFont _boardFont = BoardFont.classic;
 
   ThemeMode get themeMode => _themeMode;
 
@@ -20,15 +28,58 @@ class SettingsController extends ChangeNotifier {
   Locale? get localeOverride => _localeOverride;
   bool get hapticsEnabled => _hapticsEnabled;
   bool get soundEnabled => _soundEnabled;
+  bool get wrongNoteWarningEnabled => _wrongNoteWarningEnabled;
+  bool get autoRemoveNotesEnabled => _autoRemoveNotesEnabled;
+  ThemePack get themePack => _themePack;
+  BoardFont get boardFont => _boardFont;
 
   Future<void> load() async {
     _themeMode = await _storage.loadThemeMode();
     _localeOverride = await _storage.loadLocaleOverride();
     _hapticsEnabled = await _storage.loadHapticsEnabled();
     _soundEnabled = await _storage.loadSoundEnabled();
+    _wrongNoteWarningEnabled = await _storage.loadWrongNoteWarningEnabled();
+    _autoRemoveNotesEnabled = await _storage.loadAutoRemoveNotesEnabled();
     HapticService.enabled = _hapticsEnabled;
     SoundService.enabled = _soundEnabled;
+    GameController.wrongNoteWarningEnabled = _wrongNoteWarningEnabled;
+    GameController.autoRemoveNotesEnabled = _autoRemoveNotesEnabled;
+    // No field/setter of its own: the quick-input toggle lives on the game
+    // screen (not the settings sheet), which persists changes directly via
+    // StorageService — load-time push into the static default is all that's
+    // needed here.
+    GameController.quickInputDefault = await _storage.loadQuickInputEnabled();
+    // Resolve the stored theme pack, clamping a premium pack back to classic
+    // when the entitlement is gone (expired/debug-toggled off) — requires
+    // PremiumController.load() to have run first, see main(). The stored
+    // name is left untouched so regaining premium restores the choice.
+    final pack = ThemePack.byName(await _storage.loadThemePackName());
+    _themePack = pack.isPremium && !PremiumController.instance.isPremium
+        ? ThemePack.classic
+        : pack;
+    ThemePack.active = _themePack;
+    // Board digit font — unknown/absent name falls back to classic.
+    final fontName = await _storage.loadBoardFontName();
+    _boardFont = BoardFont.values
+        .firstWhere((f) => f.name == fontName, orElse: () => BoardFont.classic);
+    AppTheme.activeBoardFont = _boardFont;
     notifyListeners();
+  }
+
+  Future<void> setThemePack(ThemePack pack) async {
+    if (pack == _themePack) return;
+    _themePack = pack;
+    ThemePack.active = pack;
+    notifyListeners();
+    await _storage.saveThemePackName(pack.id.name);
+  }
+
+  Future<void> setBoardFont(BoardFont font) async {
+    if (font == _boardFont) return;
+    _boardFont = font;
+    AppTheme.activeBoardFont = font;
+    notifyListeners();
+    await _storage.saveBoardFontName(font.name);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -59,5 +110,21 @@ class SettingsController extends ChangeNotifier {
     SoundService.enabled = enabled;
     notifyListeners();
     await _storage.saveSoundEnabled(enabled);
+  }
+
+  Future<void> setWrongNoteWarningEnabled(bool enabled) async {
+    if (enabled == _wrongNoteWarningEnabled) return;
+    _wrongNoteWarningEnabled = enabled;
+    GameController.wrongNoteWarningEnabled = enabled;
+    notifyListeners();
+    await _storage.saveWrongNoteWarningEnabled(enabled);
+  }
+
+  Future<void> setAutoRemoveNotesEnabled(bool enabled) async {
+    if (enabled == _autoRemoveNotesEnabled) return;
+    _autoRemoveNotesEnabled = enabled;
+    GameController.autoRemoveNotesEnabled = enabled;
+    notifyListeners();
+    await _storage.saveAutoRemoveNotesEnabled(enabled);
   }
 }

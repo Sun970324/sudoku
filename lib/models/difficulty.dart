@@ -21,9 +21,9 @@ extension DifficultyInfo on Difficulty {
   int get givenCount {
     switch (this) {
       case Difficulty.beginner:
-        return 45;
+        return 40;
       case Difficulty.easy:
-        return 37;
+        return 32;
       case Difficulty.medium:
         return 30;
       case Difficulty.hard:

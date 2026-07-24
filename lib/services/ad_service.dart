@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -10,12 +11,33 @@ class AdService {
 
   static final AdService instance = AdService._internal();
 
+  /// Devices registered to always receive test ads — bypasses AdMob's no-fill
+  /// throttling that otherwise hits real devices during development. Debug
+  /// builds only (see [initialize]); harmless if left, but no reason to ship.
+  static const _testDeviceIds = ['86e542f3ab2c88dbbeefb626ab59ac83'];
+
   RewardedAd? _rewardedAd;
   bool _isLoadingRewardedAd = false;
 
+  /// Set once [MobileAds.instance.initialize] has completed. Loading a rewarded
+  /// ad before the SDK is initialized fails (and can poison later requests), so
+  /// [preloadRewardedAd] refuses until this is true — a button tap during the
+  /// startup consent round-trip would otherwise fire a doomed load.
+  bool _initialized = false;
+
   Future<void> initialize() async {
     await _gatherConsent();
-    await MobileAds.instance.initialize();
+    final status = await MobileAds.instance.initialize();
+    // Applied after init (and awaited) so the test-device registration is in
+    // place before the first ad request below.
+    if (kDebugMode) {
+      await MobileAds.instance.updateRequestConfiguration(
+        RequestConfiguration(testDeviceIds: _testDeviceIds),
+      );
+    }
+    _initialized = true;
+    debugPrint('[AdService] MobileAds initialized: '
+        '${status.adapterStatuses.map((k, v) => MapEntry(k, v.state))}');
     preloadRewardedAd();
   }
 
@@ -32,7 +54,11 @@ class AdService {
           completer.complete();
         }
       },
-      (FormError error) => completer.complete(),
+      (FormError error) {
+        debugPrint('[AdService] consent info update error: '
+            '${error.errorCode} ${error.message}');
+        completer.complete();
+      },
     );
 
     return completer.future;
@@ -52,36 +78,26 @@ class AdService {
     );
   }
 
-  BannerAd createBannerAd({
-    required void Function(BannerAd ad) onAdLoaded,
-    required VoidCallback onAdFailedToLoad,
-  }) {
-    return BannerAd(
-      adUnitId: AdUnitIds.bannerAdUnitId,
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) => onAdLoaded(ad as BannerAd),
-        onAdFailedToLoad: (ad, error) {
-          ad.dispose();
-          onAdFailedToLoad();
-        },
-      ),
-    )..load();
-  }
-
   void preloadRewardedAd() {
+    if (!_initialized) {
+      debugPrint('[AdService] preload skipped — SDK not initialized yet');
+      return;
+    }
     if (_isLoadingRewardedAd || _rewardedAd != null) return;
     _isLoadingRewardedAd = true;
+    debugPrint('[AdService] requesting RewardedAd (${AdUnitIds.rewardedAdUnitId})');
     RewardedAd.load(
       adUnitId: AdUnitIds.rewardedAdUnitId,
       request: const AdRequest(),
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
+          debugPrint('[AdService] RewardedAd loaded (${AdUnitIds.rewardedAdUnitId})');
           _rewardedAd = ad;
           _isLoadingRewardedAd = false;
         },
         onAdFailedToLoad: (error) {
+          debugPrint('[AdService] RewardedAd failed to load: '
+              'code=${error.code} domain=${error.domain} ${error.message}');
           _isLoadingRewardedAd = false;
         },
       ),

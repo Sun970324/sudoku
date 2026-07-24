@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
 import '../theme/board_colors.dart';
 
 class SudokuCellWidget extends StatelessWidget {
@@ -78,6 +79,7 @@ class SudokuCellWidget extends StatelessWidget {
         // height and excluding it from the first/last line ties the
         // layout box to the actual glyph bounds.
         style: TextStyle(
+          fontFamily: AppTheme.boardFontFamily,
           fontSize: 28,
           fontWeight: FontWeight.w400,
           color: textColor,
@@ -158,6 +160,7 @@ class _NotesGrid extends StatelessWidget {
           child: Text(
             hasNote ? '$digit' : '',
             style: TextStyle(
+              fontFamily: AppTheme.boardFontFamily,
               fontSize: 10,
               color: BoardColors.noteText(isDark),
               fontWeight: FontWeight.w500,

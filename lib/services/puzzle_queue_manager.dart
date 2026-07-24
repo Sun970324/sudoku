@@ -1,12 +1,20 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../models/difficulty.dart';
 import '../models/sudoku_puzzle.dart';
 import 'generation/sudoku_generator.dart';
 import 'storage_service.dart';
+
+/// Bundled fallback puzzles (see tool/generate_seed_puzzles.dart) used to
+/// fill any tier still empty after [PuzzleQueueManager.loadFromDisk] — most
+/// notably the very first launch, before any background generation has had
+/// a chance to run.
+const _seedAssetPath = 'assets/data/seed_puzzles.json';
 
 /// Keeps up to [capacity] pre-generated puzzles queued per [Difficulty]
 /// tier, generated on a background [Isolate] so "새 게임" can return
@@ -16,7 +24,12 @@ import 'storage_service.dart';
 /// serially in ascending difficulty order to avoid running multiple heavy
 /// generations at once. The queue is persisted via [StorageService] so it
 /// survives app restarts.
-class PuzzleQueueManager {
+///
+/// Extends [ChangeNotifier] (notifying whenever a tier's count changes or a
+/// refill starts/stops) so screens like the home difficulty picker can
+/// disable "시작하기" and show a generating indicator while a tier is empty,
+/// instead of silently falling back to a slow synchronous generation.
+class PuzzleQueueManager extends ChangeNotifier {
   PuzzleQueueManager({
     StorageService? storage,
     Future<List<SudokuPuzzle>> Function(Difficulty difficulty, int count)?
@@ -46,11 +59,32 @@ class PuzzleQueueManager {
 
   /// Loads any previously-persisted queue. Call and await before first use
   /// (e.g. in `main()`) so an immediate "새 게임" tap doesn't race the disk
-  /// load and wrongly treat a non-empty persisted queue as empty.
+  /// load and wrongly treat a non-empty persisted queue as empty. Any tier
+  /// still empty afterwards (most notably on the very first launch, before
+  /// a real queue has ever been persisted) is filled from the bundled seed
+  /// asset instead, so "시작하기" isn't stuck disabled until the first
+  /// background generation finishes.
   Future<void> loadFromDisk() async {
     final loaded = await _storage.loadPuzzleQueue();
     for (final entry in loaded.entries) {
       _queues[entry.key] = entry.value;
+    }
+    if (Difficulty.values.every((d) => _queues[d]!.isNotEmpty)) return;
+    try {
+      final raw = await rootBundle.loadString(_seedAssetPath);
+      final json = jsonDecode(raw) as Map<String, dynamic>;
+      for (final difficulty in Difficulty.values) {
+        if (_queues[difficulty]!.isNotEmpty) continue;
+        final seeded = json[difficulty.name] as List<dynamic>?;
+        if (seeded == null) continue;
+        _queues[difficulty] = seeded
+            .map((p) => SudokuPuzzle.fromJson(p as Map<String, dynamic>))
+            .toList();
+      }
+      unawaited(_persist());
+    } catch (_) {
+      // Seed asset missing/corrupt — fine, warmUp() generates from scratch
+      // in the background same as before this fallback existed.
     }
   }
 
@@ -72,6 +106,35 @@ class PuzzleQueueManager {
     final puzzle = queue.removeAt(0);
     unawaited(_persist());
     _scheduleRefillIfNeeded(difficulty);
+    notifyListeners();
+    return puzzle;
+  }
+
+  /// Re-triggers a refill for [difficulty] if it's currently empty — a
+  /// no-op if one is already pending/in-flight (`_scheduleRefillIfNeeded`'s
+  /// own guard) or the tier isn't actually empty. Exists for callers like
+  /// the home screen that disable "시작하기" while a tier is empty: since
+  /// disabling the button also stops it from calling [take] (which is what
+  /// normally re-triggers a refill), a silently-swallowed generation
+  /// failure would otherwise leave that tier stuck forever with nothing
+  /// scheduled to retry it.
+  void ensureRefillScheduled(Difficulty difficulty) {
+    if (countFor(difficulty) == 0) _scheduleRefillIfNeeded(difficulty);
+  }
+
+  /// Same as [take], but pops from the back of the queue instead of the
+  /// front. [peek] (and therefore HomeScreen's difficulty-picker preview)
+  /// always shows the front puzzle, so a race's puzzle_provider using
+  /// plain [take] could hand out a puzzle either player had already seen
+  /// on the home screen — an unfair head start. Used only where that
+  /// matters (race puzzle uploads).
+  SudokuPuzzle? takeLast(Difficulty difficulty) {
+    final queue = _queues[difficulty]!;
+    if (queue.isEmpty) return null;
+    final puzzle = queue.removeLast();
+    unawaited(_persist());
+    _scheduleRefillIfNeeded(difficulty);
+    notifyListeners();
     return puzzle;
   }
 
@@ -94,6 +157,7 @@ class PuzzleQueueManager {
         final generated = await _generateBatch(next, needed);
         _queues[next]!.addAll(generated);
         await _persist();
+        notifyListeners();
       } catch (_) {
         // A generation failure for one tier must not stop the others; it'll
         // be retried the next time this tier drops to <=1 and take()/

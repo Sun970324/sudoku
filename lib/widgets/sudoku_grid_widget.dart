@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../models/hint.dart';
@@ -8,10 +10,60 @@ import '../theme/board_colors.dart';
 import 'sudoku_cell_widget.dart';
 import 'sudoku_grid_lines.dart';
 
+/// Control point for the quadratic bow given to a chain's weak links, so
+/// they read as distinct from the straight strong links and two links
+/// between the same pair of candidates don't overdraw each other.
+///
+/// Bows perpendicular to [from]->[to] by 12% of the link's length, capped at
+/// half a cell. Two details carry their weight:
+///
+/// * The normal is flipped to a canonical direction (downward, or rightward
+///   when it is horizontal) rather than following each link's own winding,
+///   so a link and its reverse bow the *same* way instead of crossing.
+/// * A control point that would land outside [gridSize] bows inward
+///   instead, keeping chains that hug an edge on the board.
+///
+/// Kept top-level and pure — a curve is impractical to assert on through a
+/// rendered widget, but this is trivially testable in isolation.
+@visibleForTesting
+Offset curveControlPoint(
+  Offset from,
+  Offset to,
+  double cellW,
+  Size gridSize,
+) {
+  final mid = (from + to) / 2;
+  final delta = to - from;
+  final len = delta.distance;
+  if (len == 0) return mid;
+
+  var nx = -delta.dy / len;
+  var ny = delta.dx / len;
+  if (ny < 0 || (ny == 0 && nx < 0)) {
+    nx = -nx;
+    ny = -ny;
+  }
+
+  final offset = math.min(len * 0.12, cellW * 0.5);
+  final margin = cellW * 0.15;
+  final cp = mid + Offset(nx, ny) * offset;
+  final outside = cp.dx < margin ||
+      cp.dx > gridSize.width - margin ||
+      cp.dy < margin ||
+      cp.dy > gridSize.height - margin;
+  return outside ? mid - Offset(nx, ny) * offset : cp;
+}
+
 class SudokuGridWidget extends StatefulWidget {
-  const SudokuGridWidget({super.key, required this.controller});
+  const SudokuGridWidget({super.key, required this.controller, this.onQuickInput});
 
   final GameController controller;
+
+  /// Called instead of the normal select/double-tap handling when a cell is
+  /// tapped while quick input mode has an active digit — the digit-first
+  /// flow, where the tapped cell receives [GameController.activeDigit]. The
+  /// tapped cell is already selected when this fires.
+  final ValueChanged<int>? onQuickInput;
 
   @override
   State<SudokuGridWidget> createState() => _SudokuGridWidgetState();
@@ -33,11 +85,16 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
   @override
   Widget build(BuildContext context) {
     final isDark = BoardColors.isDark(context);
-    final hint = controller.activeHint;
-    final hasUnitHighlight = hint != null &&
-        (hint.highlightedRows.isNotEmpty ||
-            hint.highlightedCols.isNotEmpty ||
-            hint.highlightedBoxes.isNotEmpty);
+    final hint = controller.visualizedHint;
+    // With a step walkthrough active, the current step decides which units
+    // are outlined (introducing them one at a time); otherwise the hint's
+    // full sets are shown at once, as before.
+    final step = controller.currentHintStep;
+    final unitRows = step?.rows ?? hint?.highlightedRows ?? const <int>{};
+    final unitCols = step?.cols ?? hint?.highlightedCols ?? const <int>{};
+    final unitBoxes = step?.boxes ?? hint?.highlightedBoxes ?? const <int>{};
+    final hasUnitHighlight =
+        unitRows.isNotEmpty || unitCols.isNotEmpty || unitBoxes.isNotEmpty;
     return AspectRatio(
       aspectRatio: 1,
       child: LayoutBuilder(
@@ -82,8 +139,8 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
                   child: IgnorePointer(
                     child: CustomPaint(
                       painter: SudokuGridLinesPainter(
-                        outerColor: BoardColors.outerBorder(isDark),
                         innerColor: BoardColors.innerBorder(isDark),
+                        outerColor: BoardColors.outerBorder(isDark),
                       ),
                     ),
                   ),
@@ -93,10 +150,24 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
                     child: IgnorePointer(
                       child: CustomPaint(
                         painter: _UnitHighlightPainter(
-                          rows: hint.highlightedRows,
-                          cols: hint.highlightedCols,
-                          boxes: hint.highlightedBoxes,
+                          rows: unitRows,
+                          cols: unitCols,
+                          boxes: unitBoxes,
                           color: BoardColors.unitHighlightBorder(isDark),
+                        ),
+                      ),
+                    ),
+                  ),
+                if (hint != null &&
+                    (hint.chainLinks.isNotEmpty ||
+                        (step?.emphasisNodes.isNotEmpty ?? false)))
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: CustomPaint(
+                        painter: _HintArrowPainter(
+                          hint: hint,
+                          step: step,
+                          color: BoardColors.hintArrow(isDark),
                         ),
                       ),
                     ),
@@ -132,16 +203,19 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
   }
 
   Widget _buildCell(BuildContext context, int row, int col) {
-    final hint = controller.activeHint;
+    final hint = controller.visualizedHint;
     final cell = HintCell(row, col);
 
-    // While a hint is showing, selection-driven highlighting (selected
-    // cell, its peers, same-value cells, same-value note highlights) is
-    // suppressed entirely so only the hint's own red/green cues are
-    // visible — otherwise a leftover selection blends confusingly with
-    // the hint's coloring.
-    final selectedRow = hint == null ? controller.selectedRow : null;
-    final selectedCol = hint == null ? controller.selectedCol : null;
+    // While a hint is showing, selection-driven highlighting (selected cell
+    // and its peers) is suppressed so only the hint's own red/green cues
+    // show — otherwise a leftover selection blends confusingly with the
+    // hint's coloring. Quick input suppresses it the same way: there you
+    // place the active digit into whatever cell you tap, so there's no
+    // meaningful selected cell or row/column/box peer highlight — only the
+    // same-number highlight (the active digit) remains.
+    final hideSelection = hint != null || controller.quickInputMode;
+    final selectedRow = hideSelection ? null : controller.selectedRow;
+    final selectedCol = hideSelection ? null : controller.selectedCol;
     final isSelected = selectedRow == row && selectedCol == col;
     final isPeer = !isSelected &&
         selectedRow != null &&
@@ -152,12 +226,20 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
     final selectedValue = hint == null ? controller.selectedValue : null;
     final cellValue = controller.valueAt(row, col);
 
+    // A reveal walkthrough introduces its reason cells first and holds the
+    // fill-target highlight back until the conclusion step; without steps
+    // everything shows at once, as before.
+    final revealStep = hint != null && hint.type == HintType.reveal
+        ? controller.currentHintStep
+        : null;
     final isHintFillTarget = hint != null &&
         hint.type == HintType.reveal &&
+        (revealStep == null || revealStep.showConclusion) &&
         hint.primaryCells.contains(cell);
     final isHintReasonCell = hint != null &&
         hint.type == HintType.reveal &&
         !isHintFillTarget &&
+        (revealStep == null || revealStep.cells.contains(cell)) &&
         hint.secondaryCells.contains(cell);
 
     final isSameValue =
@@ -171,10 +253,17 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
     var hintColorANotes = const <int>{};
     var hintColorBNotes = const <int>{};
     if (hint != null && hint.type == HintType.eliminate) {
-      hintRedNotes = {
-        for (final e in hint.eliminations)
-          if (e.row == row && e.col == col) e.digit,
-      };
+      // During a step walkthrough, the current step decides which cells'
+      // reason coloring is active and whether the red to-be-removed marks
+      // are shown yet; without steps everything is visible at once.
+      final step = controller.currentHintStep;
+      final cellActive = step == null || step.cells.contains(cell);
+      if (step == null || step.showConclusion) {
+        hintRedNotes = {
+          for (final e in hint.eliminations)
+            if (e.row == row && e.col == col) e.digit,
+        };
+      }
       final reasonDigits = {
         ...hint.eliminations.map((e) => e.digit),
         ...hint.primaryDigits,
@@ -182,9 +271,13 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
       final usesColorGroups =
           hint.colorGroupA.isNotEmpty || hint.colorGroupB.isNotEmpty;
       if (usesColorGroups) {
-        if (hint.colorGroupA.contains(cell)) hintColorANotes = reasonDigits;
-        if (hint.colorGroupB.contains(cell)) hintColorBNotes = reasonDigits;
-      } else if (hint.primaryCells.contains(cell)) {
+        if (cellActive && hint.colorGroupA.contains(cell)) {
+          hintColorANotes = reasonDigits;
+        }
+        if (cellActive && hint.colorGroupB.contains(cell)) {
+          hintColorBNotes = reasonDigits;
+        }
+      } else if (cellActive && hint.primaryCells.contains(cell)) {
         hintGreenNotes = reasonDigits;
       }
     }
@@ -219,6 +312,22 @@ class _SudokuGridWidgetState extends State<SudokuGridWidget> {
   /// every single tap wait out the double-tap disambiguation window before
   /// firing. Plain taps must stay instant.
   void _onCellTap(int row, int col, Set<int> notes) {
+    // Digit-first flow: with a pad-picked digit active, a cell tap places
+    // that digit (or toggles it as a note) instead of selecting. Selection
+    // still moves to the tapped cell — via selectCellForDrag, never
+    // toggle-off — so the existing input path and its highlights behave
+    // exactly as in select-then-type. Feedback (haptic/sound) is left to
+    // the input handler, which already distinguishes correct/wrong.
+    final activeDigit = controller.activeDigit;
+    final onQuickInput = widget.onQuickInput;
+    if (controller.quickInputMode &&
+        activeDigit != null &&
+        onQuickInput != null) {
+      controller.selectCellForDrag(row, col);
+      onQuickInput(activeDigit);
+      return;
+    }
+
     final now = DateTime.now();
     final isDoubleTap = row == _lastTapRow &&
         col == _lastTapCol &&
@@ -298,4 +407,230 @@ class _UnitHighlightPainter extends CustomPainter {
       old.cols != cols ||
       old.boxes != boxes ||
       old.color != color;
+}
+
+/// Draws the chain overlay for a chain-based eliminate hint — XY-Chain and
+/// the single-digit chains (Skyscraper / 2-String Kite / Turbot Fish), i.e.
+/// the ones that carry a [Hint.chainPath]. Fish/subset/pointing/wing/UR hints
+/// draw no overlay. The chain is a polyline through each node's candidate
+/// position (a single-digit chain routes to that digit's note slot; a
+/// multi-digit XY-Chain routes to cell centers), with **strong links solid
+/// and weak links dashed** ([Hint.chainStrongLinks]), a ring at each node,
+/// and a faint dashed connector from each convergence source (the chain's
+/// two ends, unless [Hint.elimSources] overrides them) to the candidate(s)
+/// it helps eliminate. Same square [Size] as the other overlays, so
+/// `cellW = size.width / 9`, `cellH = size.height / 9` map identically.
+class _HintArrowPainter extends CustomPainter {
+  const _HintArrowPainter({required this.hint, this.step, required this.color});
+
+  final Hint hint;
+
+  /// The walkthrough step currently shown, or null to draw the whole hint
+  /// at once. A step limits the links to a prefix ([HintStep.visibleLinks]),
+  /// gates the convergence connectors behind [HintStep.showConclusion],
+  /// and adds bold emphasis rings at [HintStep.emphasisNodes].
+  final HintStep? step;
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final links = step == null
+        ? hint.chainLinks
+        : hint.chainLinks.take(step!.visibleLinks).toList();
+    final emphasis = step?.emphasisNodes ?? const <HintChainNode>[];
+    if (links.isEmpty && emphasis.isEmpty) return;
+    final cellW = size.width / 9;
+    final cellH = size.height / 9;
+    // Kept under a sixth of a cell so a ring stays within its own candidate
+    // slot (slots are a third of a cell) instead of bleeding into its
+    // neighbours' — chains now anchor per-candidate, not per-cell.
+    final radius = cellW * 0.15;
+
+    // Every link end names its own digit, so a node always resolves to a
+    // specific pencil mark. A grouped node (several cells acting as one
+    // end) anchors at the centroid of its candidates.
+    Offset node(HintChainNode n) {
+      var sum = Offset.zero;
+      for (final c in n.cells) {
+        sum += _candidateCenter(c.row, c.col, n.digit, cellW, cellH);
+      }
+      return sum / n.cells.length.toDouble();
+    }
+
+    final linkPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..strokeCap = StrokeCap.round
+      ..color = color;
+
+    for (final link in links) {
+      final from = node(link.from);
+      final to = node(link.to);
+      final dir = to - from;
+      final len = dir.distance;
+      if (len < 1) continue;
+      // Stop the segment at the node rings so it doesn't cross the digits —
+      // but never trim away the whole link. Two nodes in the SAME cell (an
+      // XY-Chain's own bivalue link) sit only a third of a cell apart, which
+      // is less than two ring radii, so trimming by the full radius would
+      // silently drop exactly the links that explain the chain.
+      final u = dir / len;
+      final trim = math.min(radius, len * 0.3);
+      final a = from + u * trim;
+      final b = to - u * trim;
+      if (link.strong) {
+        canvas.drawLine(a, b, linkPaint);
+      } else {
+        final cp = curveControlPoint(a, b, cellW, size);
+        _drawDashedPath(
+          canvas,
+          Path()
+            ..moveTo(a.dx, a.dy)
+            ..quadraticBezierTo(cp.dx, cp.dy, b.dx, b.dy),
+          linkPaint,
+        );
+      }
+    }
+
+    // Convergence sources: the nodes whose "at least one of these is true"
+    // conclusion kills the eliminated candidates. A linear chain's are its
+    // two ends; hints whose sources aren't derivable that way (XYZ-Wing's
+    // pivot z, X-Wing's four corners) name them via [Hint.elimSources].
+    // Always derived from the FULL chain — a step's prefix slice must not
+    // change which nodes count as the conclusion's sources.
+    final sources = hint.elimSources ??
+        (hint.chainLinks.isEmpty
+            ? const <HintChainNode>[]
+            : [hint.chainLinks.first.from, hint.chainLinks.last.to]);
+    final showConclusion = step == null || step!.showConclusion;
+
+    final ringPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..color = color;
+    for (final n in {
+      for (final link in links) ...[link.from, link.to],
+      if (showConclusion) ...sources,
+    }) {
+      canvas.drawCircle(node(n), radius, ringPaint);
+    }
+
+    // Bold rings on the step's "look here now" candidates, drawn over the
+    // regular ones.
+    if (emphasis.isNotEmpty) {
+      final emphasisPaint = Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.4
+        ..color = color;
+      for (final n in emphasis) {
+        canvas.drawCircle(node(n), radius * 1.15, emphasisPaint);
+      }
+    }
+
+    if (!showConclusion) return;
+
+    // Faint dashed connectors from the sources to each eliminated candidate
+    // they see (the "this cell sees them all" conclusion).
+    final elimPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.6
+      ..strokeCap = StrokeCap.round
+      ..color = color.withValues(alpha: 0.55);
+    for (final e in hint.eliminations) {
+      final target = _candidateCenter(e.row, e.col, e.digit, cellW, cellH);
+      for (final source in _sourcesFor(e, sources.toSet(), node, target)) {
+        final from = node(source);
+        final dir = target - from;
+        final len = dir.distance;
+        if (len < radius + 3) continue;
+        final u = dir / len;
+        _drawDashedPath(
+          canvas,
+          Path()
+            ..moveTo((from + u * radius).dx, (from + u * radius).dy)
+            ..lineTo((target - u * 3).dx, (target - u * 3).dy),
+          elimPaint,
+        );
+      }
+    }
+  }
+
+  /// Which of [sources] get a convergence connector to elimination [e]. Only
+  /// nodes whose every cell sees [e]'s cell (and isn't it) qualify at all.
+  /// When the hint carries color groups (Simple Coloring), qualifying
+  /// sources collapse to the single nearest one per group — a Rule 2
+  /// elimination is seen by potentially the whole component, and one line
+  /// from each color says "sees both colors" without burying the board.
+  /// Sources in neither group (every other technique) are all kept.
+  Iterable<HintChainNode> _sourcesFor(
+    HintElimination e,
+    Set<HintChainNode> sources,
+    Offset Function(HintChainNode) node,
+    Offset target,
+  ) {
+    final seeing = sources.where((s) =>
+        !s.cells.any((c) => c.row == e.row && c.col == e.col) &&
+        s.cells.every((c) => _sees(c.row, c.col, e.row, e.col)));
+    if (hint.colorGroupA.isEmpty && hint.colorGroupB.isEmpty) return seeing;
+
+    HintChainNode? nearestA;
+    HintChainNode? nearestB;
+    final rest = <HintChainNode>[];
+    for (final s in seeing) {
+      final group = s.cells.every(hint.colorGroupA.contains)
+          ? hint.colorGroupA
+          : s.cells.every(hint.colorGroupB.contains)
+              ? hint.colorGroupB
+              : null;
+      if (group == null) {
+        rest.add(s);
+      } else if (identical(group, hint.colorGroupA)) {
+        if (nearestA == null ||
+            (node(s) - target).distance < (node(nearestA) - target).distance) {
+          nearestA = s;
+        }
+      } else {
+        if (nearestB == null ||
+            (node(s) - target).distance < (node(nearestB) - target).distance) {
+          nearestB = s;
+        }
+      }
+    }
+    return [if (nearestA != null) nearestA, if (nearestB != null) nearestB, ...rest];
+  }
+
+  /// Center of candidate [digit]'s slot in the cell's 3x3 notes grid
+  /// (row-major, digit d at sub-row (d-1)~/3, sub-col (d-1)%3), matching
+  /// `_NotesGrid` in sudoku_cell_widget.dart.
+  Offset _candidateCenter(
+          int row, int col, int digit, double cellW, double cellH) =>
+      Offset(
+        (col + ((digit - 1) % 3 + 0.5) / 3) * cellW,
+        (row + ((digit - 1) ~/ 3 + 0.5) / 3) * cellH,
+      );
+
+  bool _sees(int r1, int c1, int r2, int c2) =>
+      !(r1 == r2 && c1 == c2) &&
+      (r1 == r2 || c1 == c2 || (r1 ~/ 3 == r2 ~/ 3 && c1 ~/ 3 == c2 ~/ 3));
+
+  /// Dashes any [path], straight or curved — [ui.PathMetric.extractPath]
+  /// walks it by arc length, which a point-to-point dash loop can't do once
+  /// the segment is a bezier.
+  void _drawDashedPath(Canvas canvas, Path path, Paint paint) {
+    const dash = 5.0;
+    const gap = 4.0;
+    for (final metric in path.computeMetrics()) {
+      var d = 0.0;
+      while (d < metric.length) {
+        final end = math.min(d + dash, metric.length);
+        canvas.drawPath(metric.extractPath(d, end), paint);
+        d += dash + gap;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _HintArrowPainter old) =>
+      old.hint != hint || old.step != step || old.color != color;
 }

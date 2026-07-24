@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sudoku/models/difficulty.dart';
 import 'package:sudoku/models/hint.dart';
 import 'package:sudoku/services/generation/human_solver.dart';
 
@@ -101,26 +102,22 @@ void main() {
 
   test('Simple Coloring narrows candidates enough to unlock a subsequent '
       'Naked Single, on a real generated puzzle', () {
-    // A genuine puzzle produced by BoardGenerator + ClueRemover (22 givens)
-    // where singles/intersections/hidden-pair alone stall out and Simple
-    // Coloring is the technique that breaks the stall — confirmed by
-    // running this exact board: history[10] is simpleColoring and
-    // history[11] is an immediately-following nakedSingle, and the puzzle
-    // goes on to fully solve. Hand-crafting an equivalent board from
-    // scratch turned out to be impractical (a 2-3 cell conjugate pattern
-    // confined to one box/line is always also solvable by Intersection
-    // Pointing/Claiming, which is tried first — a real generated puzzle is
-    // what actually needs Simple Coloring).
+    // A genuine puzzle (BoardGenerator + ClueRemover 24 + Minimalizer, seed
+    // 100197) where Simple Coloring breaks a stall and the next step is a
+    // Naked Single — confirmed by running this exact board. Re-mined after
+    // the difficulty rebalance moved Simple Coloring to the head of the
+    // Master band (any later and the single-digit techniques ahead of it
+    // preempt it entirely — it fired on zero of 6000 boards from the tail).
     final board = [
-      [0, 0, 1, 0, 0, 0, 0, 8, 0],
-      [6, 0, 0, 0, 0, 4, 0, 0, 2],
-      [0, 2, 0, 9, 0, 0, 7, 0, 0],
-      [0, 0, 0, 0, 1, 6, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 4, 0, 1],
-      [0, 0, 0, 0, 3, 2, 0, 6, 0],
-      [4, 0, 6, 3, 0, 0, 0, 0, 0],
-      [3, 1, 0, 0, 0, 0, 5, 7, 0],
-      [0, 8, 5, 0, 0, 0, 0, 0, 4],
+      [1, 0, 0, 9, 0, 0, 0, 0, 0],
+      [0, 0, 0, 7, 0, 2, 0, 4, 0],
+      [0, 0, 3, 0, 4, 0, 0, 6, 2],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [4, 0, 9, 0, 3, 1, 0, 0, 0],
+      [6, 0, 0, 0, 7, 0, 0, 0, 1],
+      [7, 0, 0, 0, 2, 0, 0, 3, 5],
+      [2, 0, 4, 3, 9, 0, 0, 0, 0],
+      [0, 6, 0, 0, 0, 0, 0, 0, 0],
     ];
 
     final result = HumanSolver().solve(board);
@@ -165,72 +162,72 @@ void main() {
 
   test('Swordfish narrows candidates before the solver gets stuck, on a '
       'real generated puzzle', () {
-    // A genuine puzzle from BoardGenerator + ClueRemover (20 givens) where
-    // singles/intersections alone stall out and Swordfish is the last
-    // technique that still finds something before the solver runs out of
-    // known techniques entirely — confirmed by running this exact board:
-    // history's last entry (index 18 of 19) is swordfish, and solved is
-    // false (nothing beyond Swordfish is implemented yet to finish it).
+    // A genuine puzzle (BoardGenerator + ClueRemover 24 + Minimalizer, seed
+    // 80020) whose solve history includes Swordfish — confirmed by running
+    // this exact board. Asserts `contains` rather than `last`: once the
+    // fixed-shape ALS/chain techniques (X-Chain, WXYZ-Wing, ALS-XZ) were
+    // promoted into generation they sit after Swordfish, so "Swordfish is
+    // the final technique" is no longer a stable property — that Swordfish
+    // fires at all is the point.
     final board = [
-      [2, 0, 0, 4, 0, 0, 1, 0, 7],
-      [0, 0, 0, 8, 0, 0, 0, 2, 0],
-      [7, 0, 4, 0, 0, 5, 0, 0, 0],
-      [1, 0, 8, 0, 2, 7, 0, 0, 0],
-      [0, 0, 0, 9, 4, 0, 6, 0, 2],
-      [0, 0, 0, 6, 0, 0, 0, 0, 0],
-      [0, 0, 0, 0, 0, 0, 0, 1, 3],
-      [0, 0, 0, 0, 6, 0, 5, 0, 0],
-      [0, 3, 7, 0, 0, 0, 0, 0, 0],
+      [7, 0, 0, 1, 5, 3, 0, 0, 0],
+      [0, 0, 0, 0, 0, 9, 0, 7, 0],
+      [0, 9, 0, 0, 7, 0, 0, 0, 8],
+      [6, 7, 0, 0, 0, 0, 0, 0, 9],
+      [2, 0, 1, 0, 0, 0, 8, 0, 0],
+      [0, 0, 0, 3, 0, 0, 2, 0, 0],
+      [4, 0, 2, 0, 0, 0, 1, 8, 0],
+      [0, 0, 5, 0, 0, 2, 0, 0, 4],
+      [0, 0, 0, 0, 4, 0, 0, 0, 0],
     ];
 
     final result = HumanSolver().solve(board);
 
-    expect(result.solved, isFalse);
-    expect(result.history, isNotEmpty);
-    expect(result.history.last, HintTechnique.swordfish);
+    expect(result.history, contains(HintTechnique.swordfish));
   });
 
   test('Finned X-Wing narrows candidates before the solver gets stuck, on '
       'a real generated puzzle', () {
-    // A genuine puzzle (18 givens) where the solver progresses through
-    // singles/intersections, then Finned X-Wing fires (twice) before
-    // getting stuck — confirmed by running this exact board: history ends
-    // with two consecutive finnedXWing entries and solved is false.
+    // A genuine puzzle (BoardGenerator + ClueRemover 24 + Minimalizer, seed
+    // 80019) whose solve history includes Finned X-Wing — confirmed by
+    // running this exact board. Re-mined after the fixed-shape ALS/chain
+    // techniques were promoted into generation (they preempted the old
+    // fixture's route to Finned X-Wing).
     final board = [
-      [1, 0, 0, 0, 0, 0, 0, 0, 0],
-      [2, 0, 0, 8, 6, 0, 0, 0, 1],
-      [0, 9, 0, 0, 0, 7, 0, 0, 0],
-      [0, 0, 0, 0, 0, 3, 0, 8, 0],
-      [5, 0, 0, 0, 2, 0, 0, 0, 9],
-      [3, 0, 0, 0, 0, 0, 0, 0, 4],
-      [6, 0, 5, 0, 0, 4, 0, 0, 0],
-      [9, 0, 0, 0, 0, 1, 4, 0, 5],
-      [0, 1, 4, 5, 7, 0, 0, 0, 2],
+      [0, 0, 0, 0, 0, 4, 0, 0, 9],
+      [0, 4, 0, 5, 0, 0, 0, 0, 7],
+      [0, 5, 9, 0, 0, 1, 0, 0, 0],
+      [7, 0, 0, 0, 2, 0, 0, 0, 0],
+      [1, 2, 0, 0, 0, 0, 3, 0, 0],
+      [0, 0, 6, 0, 0, 0, 0, 1, 5],
+      [0, 7, 0, 0, 3, 0, 9, 0, 0],
+      [9, 0, 0, 0, 0, 0, 0, 3, 0],
+      [0, 0, 0, 7, 0, 0, 4, 0, 1],
     ];
 
     final result = HumanSolver().solve(board);
 
-    expect(result.solved, isFalse);
     expect(result.history, contains(HintTechnique.finnedXWing));
   });
 
   test('Sashimi X-Wing narrows candidates enough to unlock a subsequent '
       'Naked Single, on a real generated puzzle', () {
-    // A genuine puzzle (17 givens) where Sashimi X-Wing is the technique
-    // that breaks a stall — confirmed by running this exact board:
-    // history[45] is sashimiXWing and history[46] is an
+    // A genuine puzzle where Sashimi X-Wing is the technique that breaks a
+    // stall even with the single-digit chain techniques (Skyscraper,
+    // 2-String Kite, Turbot Fish) tried before it — confirmed by running
+    // this exact board: history[16] is sashimiXWing and history[17] is an
     // immediately-following nakedSingle, and the puzzle goes on to fully
     // solve.
     final board = [
-      [0, 0, 0, 1, 0, 5, 4, 0, 0],
-      [0, 0, 0, 0, 0, 4, 3, 5, 0],
-      [0, 6, 0, 0, 0, 0, 2, 0, 0],
-      [0, 2, 0, 4, 7, 0, 0, 3, 0],
-      [0, 0, 0, 0, 0, 0, 8, 0, 9],
       [0, 8, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 8, 2, 0, 0, 0, 7, 0],
-      [6, 3, 0, 5, 0, 0, 0, 0, 0],
-      [0, 4, 2, 0, 3, 7, 5, 0, 0],
+      [0, 0, 1, 0, 6, 8, 0, 0, 0],
+      [0, 0, 5, 0, 0, 1, 2, 0, 0],
+      [0, 0, 2, 0, 0, 0, 4, 3, 0],
+      [0, 7, 0, 0, 8, 2, 6, 0, 0],
+      [5, 0, 0, 0, 7, 3, 0, 0, 8],
+      [0, 0, 7, 0, 2, 0, 0, 0, 6],
+      [9, 0, 0, 0, 0, 0, 0, 1, 0],
+      [0, 0, 0, 0, 9, 7, 5, 0, 0],
     ];
 
     final result = HumanSolver().solve(board);
@@ -275,22 +272,21 @@ void main() {
 
   test('XY-Chain narrows candidates enough to unlock a subsequent Naked '
       'Single, on a real generated puzzle', () {
-    // A genuine puzzle (18 givens) where XY-Chain is the technique that
-    // breaks a stall after Simple Coloring/Intersection Claiming/XY-Wing
-    // all stop finding anything new — confirmed by running this exact
-    // board: history[50] is xyChain and history[51] is an
-    // immediately-following nakedSingle, and the puzzle goes on to fully
-    // solve.
+    // A genuine puzzle (BoardGenerator + ClueRemover 24 + Minimalizer, seed
+    // 100030) where XY-Chain breaks a stall and the next step is a Naked
+    // Single — confirmed by running this exact board. XY-Chain is last in
+    // humanSolverTechniqueOrder (the solver only reaches for it when nothing
+    // more local applies); re-mined after the difficulty rebalance.
     final board = [
-      [0, 2, 0, 0, 7, 0, 1, 0, 0],
-      [9, 0, 0, 0, 1, 0, 0, 8, 0],
-      [0, 1, 0, 5, 0, 0, 0, 7, 0],
-      [8, 0, 0, 0, 6, 0, 0, 3, 0],
-      [0, 0, 3, 0, 0, 0, 5, 1, 0],
-      [0, 4, 0, 0, 0, 1, 0, 6, 0],
-      [0, 0, 0, 0, 0, 3, 8, 0, 0],
-      [0, 8, 0, 7, 0, 0, 0, 5, 0],
-      [6, 0, 0, 0, 0, 9, 3, 0, 0],
+      [0, 0, 7, 0, 0, 0, 0, 6, 0],
+      [0, 0, 0, 0, 0, 0, 9, 8, 0],
+      [1, 0, 4, 0, 0, 0, 0, 0, 3],
+      [0, 1, 0, 5, 0, 0, 0, 0, 0],
+      [0, 9, 8, 4, 0, 7, 0, 0, 0],
+      [0, 3, 0, 0, 2, 0, 0, 0, 4],
+      [0, 4, 0, 0, 0, 2, 0, 0, 0],
+      [0, 0, 0, 8, 0, 5, 0, 0, 2],
+      [2, 0, 0, 6, 9, 0, 0, 7, 0],
     ];
 
     final result = HumanSolver().solve(board);
@@ -309,5 +305,45 @@ void main() {
     HumanSolver().solve(board);
 
     expect(board, equals(original));
+  });
+
+  test('maxDifficulty aborts a too-hard solve early: the aborted history is '
+      'a strict prefix of the unrestricted one, with nothing over-tier '
+      'applied', () {
+    // The Simple Coloring board above: it fully solves unrestricted, and
+    // Simple Coloring (Master band) plus the sheer step count push it well
+    // past a medium ceiling — so a medium-capped solve MUST abort, mirroring
+    // HoDoKu's generation-time "zu schwer -> gleich abbrechen".
+    final board = [
+      [1, 0, 0, 9, 0, 0, 0, 0, 0],
+      [0, 0, 0, 7, 0, 2, 0, 4, 0],
+      [0, 0, 3, 0, 4, 0, 0, 6, 2],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [4, 0, 9, 0, 3, 1, 0, 0, 0],
+      [6, 0, 0, 0, 7, 0, 0, 0, 1],
+      [7, 0, 0, 0, 2, 0, 0, 3, 5],
+      [2, 0, 4, 3, 9, 0, 0, 0, 0],
+      [0, 6, 0, 0, 0, 0, 0, 0, 0],
+    ];
+
+    final full = HumanSolver().solve(board);
+    expect(full.solved, isTrue, reason: 'fixture must solve unrestricted');
+
+    final capped =
+        HumanSolver().solve(board, maxDifficulty: Difficulty.medium);
+
+    expect(capped.solved, isFalse);
+    expect(capped.history.length, lessThan(full.history.length));
+    // Same deterministic solver, same order — identical path until abort.
+    expect(capped.history,
+        equals(full.history.sublist(0, capped.history.length)));
+    // The offending step is never applied, so nothing recorded outranks
+    // the cap... unless the abort was by cumulative score, where every
+    // applied step is individually within tier. Either way:
+    for (final t in capped.history) {
+      expect(techniqueDifficulty[t]!.index,
+          lessThanOrEqualTo(Difficulty.medium.index),
+          reason: '$t outranks the medium cap but was applied');
+    }
   });
 }

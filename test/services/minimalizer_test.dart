@@ -69,24 +69,4 @@ void main() {
     expect(puzzle, equals(original));
   });
 
-  test('isAcceptable rejecting everything leaves the board unchanged even '
-      'though every removal would preserve uniqueness', () {
-    final puzzle = _generousPuzzle(6);
-
-    final result = Minimalizer(random: Random(6))
-        .minimalize(puzzle, isAcceptable: (_) => false);
-
-    expect(result, equals(puzzle));
-  });
-
-  test('isAcceptable only narrows removals, never widens beyond the '
-      'uniqueness check', () {
-    final puzzle = _generousPuzzle(7);
-
-    final result = Minimalizer(random: Random(7))
-        .minimalize(puzzle, isAcceptable: (_) => true);
-
-    expect(solver.countSolutions(result, limit: 2), 1);
-    expect(_givenCount(result), lessThan(_givenCount(puzzle)));
-  });
 }

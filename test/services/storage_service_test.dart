@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudoku/models/difficulty.dart';
 import 'package:sudoku/models/game_snapshot.dart';
+import 'package:sudoku/models/stats.dart';
 import 'package:sudoku/models/sudoku_grid.dart';
 import 'package:sudoku/models/sudoku_puzzle.dart';
 import 'package:sudoku/services/storage_service.dart';
@@ -70,6 +71,37 @@ void main() {
     expect(await storage.loadInProgressGame(), isNull);
   });
 
+  test('loadRaceProgress returns null when nothing has been saved', () async {
+    final storage = StorageService();
+    expect(await storage.loadRaceProgress(), isNull);
+  });
+
+  test('saveRaceProgress/loadRaceProgress round-trips the race id and board',
+      () async {
+    final storage = StorageService();
+    final snapshot = buildSnapshot(elapsedSeconds: 73, mistakes: 2);
+
+    await storage.saveRaceProgress('race-abc', snapshot);
+    final loaded = await storage.loadRaceProgress();
+
+    expect(loaded, isNotNull);
+    expect(loaded!.raceId, 'race-abc');
+    expect(loaded.snapshot.elapsedSeconds, 73);
+    expect(loaded.snapshot.mistakes, 2);
+    expect(loaded.snapshot.board, snapshot.board);
+    expect(loaded.snapshot.puzzle.solution.cells,
+        snapshot.puzzle.solution.cells);
+  });
+
+  test('clearRaceProgress removes the saved race board', () async {
+    final storage = StorageService();
+    await storage.saveRaceProgress('race-abc', buildSnapshot());
+
+    await storage.clearRaceProgress();
+
+    expect(await storage.loadRaceProgress(), isNull);
+  });
+
   test('getStats starts empty for every difficulty', () async {
     final storage = StorageService();
     final stats = await storage.getStats();
@@ -119,6 +151,65 @@ void main() {
     expect(easy.played, 3);
     expect(easy.won, 3);
     expect(easy.bestTimeSeconds, 90);
+  });
+
+  test('recordGameResult accumulates perfect wins and the timed-win average',
+      () async {
+    final storage = StorageService();
+
+    // Perfect win (0 mistakes, 0 hints): counts toward perfectWins and the
+    // average.
+    await storage.recordGameResult(
+      difficulty: Difficulty.easy,
+      won: true,
+      finishTimeSeconds: 100,
+      mistakes: 0,
+      hintsUsed: 0,
+    );
+    // Won with mistakes: average yes, perfect no.
+    await storage.recordGameResult(
+      difficulty: Difficulty.easy,
+      won: true,
+      finishTimeSeconds: 200,
+      mistakes: 2,
+      hintsUsed: 0,
+    );
+    // Loss: touches none of the new fields.
+    await storage.recordGameResult(
+      difficulty: Difficulty.easy,
+      won: false,
+      mistakes: 3,
+    );
+
+    final easy = (await storage.getStats()).byDifficulty[Difficulty.easy]!;
+    expect(easy.perfectWins, 1);
+    expect(easy.timedWins, 2);
+    expect(easy.totalWinSeconds, 300);
+    expect(easy.averageWinSeconds, 150);
+  });
+
+  test('a win recorded without mistakes info never counts as perfect, and '
+      'legacy stats JSON without the new fields loads as zeros', () async {
+    final storage = StorageService();
+
+    await storage.recordGameResult(
+      difficulty: Difficulty.easy,
+      won: true,
+      finishTimeSeconds: 100,
+    );
+    final easy = (await storage.getStats()).byDifficulty[Difficulty.easy]!;
+    expect(easy.perfectWins, 0);
+    expect(easy.timedWins, 1);
+
+    // Legacy shape: only the fields that existed before this change. The
+    // average must be null (not zero or a division error) — old wins carry
+    // no time information.
+    final legacy = DifficultyStats.fromJson(
+        {'played': 5, 'won': 3, 'bestTimeSeconds': 80});
+    expect(legacy.perfectWins, 0);
+    expect(legacy.timedWins, 0);
+    expect(legacy.totalWinSeconds, 0);
+    expect(legacy.averageWinSeconds, isNull);
   });
 
   test('recordGameResult with a loss increments played but not won or best time',

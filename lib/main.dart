@@ -1,25 +1,55 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'config/supabase_config.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'models/game_snapshot.dart';
 import 'screens/home_screen.dart';
 import 'services/ad_service.dart';
+import 'services/connectivity_service.dart';
 import 'services/puzzle_queue_manager.dart';
 import 'services/storage_service.dart';
+import 'state/auth_controller.dart';
+import 'state/premium_controller.dart';
 import 'state/settings_controller.dart';
+import 'theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Attribution for the bundled Pixel Icon Library font (CC BY 4.0); shows up
+  // in the standard showLicensePage().
+  LicenseRegistry.addLicense(() async* {
+    yield const LicenseEntryWithLineBreaks(
+      ['Pixel Icon Library'],
+      'Pixel Icon Library by HackerNoon\n'
+      'https://pixeliconlibrary.com\n\n'
+      'Icons licensed under CC BY 4.0 '
+      '(https://creativecommons.org/licenses/by/4.0/).',
+    );
+  });
+  SupabaseConfig.assertConfigured();
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    publishableKey: SupabaseConfig.anonKey,
+  );
   AdService.instance.initialize();
+  await ConnectivityService.instance.initialize();
+  // Premium before settings: SettingsController.load clamps a premium theme
+  // pack back to classic when the entitlement is gone, so it must see the
+  // resolved premium state.
+  await PremiumController.instance.load();
   final settings = SettingsController();
   await settings.load();
   final puzzleQueue = PuzzleQueueManager();
   await puzzleQueue.loadFromDisk();
   puzzleQueue.warmUp();
   final resumeSnapshot = await StorageService().loadInProgressGame();
+  final auth = AuthController();
   runApp(SudokuApp(
     settings: settings,
     puzzleQueue: puzzleQueue,
+    auth: auth,
     resumeSnapshot: resumeSnapshot,
   ));
 }
@@ -29,11 +59,13 @@ class SudokuApp extends StatelessWidget {
     super.key,
     required this.settings,
     required this.puzzleQueue,
+    required this.auth,
     this.resumeSnapshot,
   });
 
   final SettingsController settings;
   final PuzzleQueueManager puzzleQueue;
+  final AuthController auth;
 
   /// A game already in progress at app launch — when non-null, [HomeScreen]
   /// pushes straight into that game right after its first frame, so the
@@ -51,21 +83,13 @@ class SudokuApp extends StatelessWidget {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: settings.localeOverride,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-          useMaterial3: true,
-        ),
-        darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            brightness: Brightness.dark,
-          ),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.light(),
+        darkTheme: AppTheme.dark(),
         themeMode: settings.themeMode,
         home: HomeScreen(
           settings: settings,
           puzzleQueue: puzzleQueue,
+          auth: auth,
           initialResumeSnapshot: resumeSnapshot,
         ),
       ),

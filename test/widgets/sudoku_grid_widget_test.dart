@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/l10n/generated/app_localizations.dart';
@@ -8,6 +10,7 @@ import 'package:sudoku/models/sudoku_puzzle.dart';
 import 'package:sudoku/services/hint_engine.dart';
 import 'package:sudoku/services/generation/sudoku_generator.dart';
 import 'package:sudoku/state/game_controller.dart';
+import 'package:sudoku/widgets/sudoku_cell_widget.dart';
 import 'package:sudoku/widgets/sudoku_grid_widget.dart';
 
 /// Returns an instant, trivial puzzle instead of actually generating one —
@@ -52,16 +55,100 @@ class _FixedHintEngine extends HintEngine {
       hint;
 }
 
+/// Always returns a reveal-type hint (Naked Single) — used to check the
+/// arrow overlay is gated to eliminate-type hints only.
+class _FixedRevealHintEngine extends HintEngine {
+  static final hint = Hint(
+    technique: HintTechnique.nakedSingle,
+    type: HintType.reveal,
+    explanation: 'test reveal',
+    primaryCells: {const HintCell(0, 0)},
+    row: 0,
+    col: 0,
+    value: 5,
+  );
+
+  @override
+  Hint? findHint(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) =>
+      hint;
+}
+
+/// Always returns a chain-type hint (Skyscraper) carrying chainLinks — the
+/// only hints the arrow overlay draws for.
+class _FixedChainHintEngine extends HintEngine {
+  static final hint = Hint(
+    technique: HintTechnique.skyscraper,
+    type: HintType.eliminate,
+    explanation: 'chain',
+    primaryCells: {
+      const HintCell(0, 0),
+      const HintCell(0, 3),
+      const HintCell(8, 0),
+      const HintCell(8, 5),
+    },
+    primaryDigits: {4},
+    eliminations: [const HintElimination(1, 5, 4)],
+    chainLinks: [
+      HintChainLink(
+        from: HintChainNode.single(const HintCell(0, 3), 4),
+        to: HintChainNode.single(const HintCell(0, 0), 4),
+        strong: true,
+      ),
+      HintChainLink(
+        from: HintChainNode.single(const HintCell(0, 0), 4),
+        to: HintChainNode.single(const HintCell(8, 0), 4),
+        strong: false,
+      ),
+      HintChainLink(
+        from: HintChainNode.single(const HintCell(8, 0), 4),
+        to: HintChainNode.single(const HintCell(8, 5), 4),
+        strong: true,
+      ),
+    ],
+  );
+
+  @override
+  Hint? findHint(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) =>
+      hint;
+}
+
+/// Runs hint searches inline instead of on a background isolate — keeps a
+/// fake engine's hint instance identical (an isolate returns a copy) and
+/// completes within the widget test's fake-async zone, which a real
+/// isolate never would.
+Future<R> _inlineSearch<R>(FutureOr<R> Function() computation) async =>
+    await computation();
+
+/// Requests a hint and drives the progressive reveal to its final stage —
+/// the board deliberately draws nothing until then (see
+/// [GameController.visualizedHint]), so every test that asserts on the
+/// overlay layers has to get there first.
+Future<void> _requestVisualizedHint(GameController controller) async {
+  await controller.requestHint();
+  while (controller.hintStage < 2) {
+    controller.advanceHintStage();
+  }
+}
+
 void main() {
   testWidgets(
       'a hint with highlighted units renders a unit-highlight CustomPaint '
       'layer', (tester) async {
     final controller = GameController(
+      searchRunner: _inlineSearch,
       generator: _InstantGenerator(),
       hintEngine: _FixedHintEngine(),
     );
     controller.startNewGame(Difficulty.beginner);
-    controller.requestHint();
+    await _requestVisualizedHint(controller);
     expect(controller.activeHint?.highlightedRows, {0, 3});
 
     await tester.pumpWidget(
@@ -80,7 +167,7 @@ void main() {
 
   testWidgets('no active hint renders no unit-highlight CustomPaint layer',
       (tester) async {
-    final controller = GameController(generator: _InstantGenerator());
+    final controller = GameController(searchRunner: _inlineSearch, generator: _InstantGenerator());
     controller.startNewGame(Difficulty.beginner);
     expect(controller.activeHint, isNull);
 
@@ -98,10 +185,130 @@ void main() {
     expect(unitHighlightPaints, isEmpty);
   });
 
+  testWidgets('a chain hint renders a hint-arrow CustomPaint layer',
+      (tester) async {
+    final controller = GameController(
+      searchRunner: _inlineSearch,
+      generator: _InstantGenerator(),
+      hintEngine: _FixedChainHintEngine(),
+    );
+    controller.startNewGame(Difficulty.beginner);
+    await _requestVisualizedHint(controller);
+    expect(controller.activeHint?.chainLinks, isNotEmpty);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: SudokuGridWidget(controller: controller)),
+      ),
+    );
+
+    final arrowPaints = tester
+        .widgetList<CustomPaint>(find.byType(CustomPaint))
+        .where((w) => w.painter.runtimeType.toString().contains('Arrow'));
+    expect(arrowPaints, isNotEmpty);
+  });
+
+  testWidgets(
+      'a non-chain eliminate hint (X-Wing) renders no hint-arrow layer',
+      (tester) async {
+    final controller = GameController(
+      searchRunner: _inlineSearch,
+      generator: _InstantGenerator(),
+      hintEngine: _FixedHintEngine(),
+    );
+    controller.startNewGame(Difficulty.beginner);
+    await _requestVisualizedHint(controller);
+    expect(controller.activeHint?.type, HintType.eliminate);
+    expect(controller.activeHint?.chainLinks, isEmpty);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: SudokuGridWidget(controller: controller)),
+      ),
+    );
+
+    final arrowPaints = tester
+        .widgetList<CustomPaint>(find.byType(CustomPaint))
+        .where((w) => w.painter.runtimeType.toString().contains('Arrow'));
+    expect(arrowPaints, isEmpty);
+  });
+
+  testWidgets('a reveal hint renders no hint-arrow layer', (tester) async {
+    final controller = GameController(
+      searchRunner: _inlineSearch,
+      generator: _InstantGenerator(),
+      hintEngine: _FixedRevealHintEngine(),
+    );
+    controller.startNewGame(Difficulty.beginner);
+    await _requestVisualizedHint(controller);
+    expect(controller.activeHint?.type, HintType.reveal);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: SudokuGridWidget(controller: controller)),
+      ),
+    );
+
+    final arrowPaints = tester
+        .widgetList<CustomPaint>(find.byType(CustomPaint))
+        .where((w) => w.painter.runtimeType.toString().contains('Arrow'));
+    expect(arrowPaints, isEmpty);
+  });
+
+  testWidgets(
+      'a step walkthrough shows the red elimination marks only at the '
+      'final step, and hides them again when paging back', (tester) async {
+    final controller = GameController(
+      searchRunner: _inlineSearch,
+      generator: _InstantGenerator(),
+      hintEngine: _FixedChainHintEngine(),
+    );
+    controller.startNewGame(Difficulty.beginner);
+    await _requestVisualizedHint(controller);
+
+    // The chain hint (Skyscraper) gets a walkthrough attached by
+    // requestHint, starting on its first step.
+    final steps = controller.hintSteps;
+    expect(steps, isNotEmpty);
+    expect(controller.currentHintStep, steps.first);
+
+    // Wrapped the same way GameScreen wires it (`ListenableBuilder` around
+    // the grid), so controller notifications actually rebuild the board.
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ListenableBuilder(
+            listenable: controller,
+            builder: (_, __) => SudokuGridWidget(controller: controller),
+          ),
+        ),
+      ),
+    );
+
+    bool anyRedNotes() => tester
+        .widgetList<SudokuCellWidget>(find.byType(SudokuCellWidget))
+        .any((w) => w.hintRedNotes.isNotEmpty);
+    expect(anyRedNotes(), isFalse);
+
+    while (controller.hintStepIndex < steps.length - 1) {
+      controller.nextHintStep();
+    }
+    await tester.pump();
+    expect(controller.currentHintStep!.showConclusion, isTrue);
+    expect(anyRedNotes(), isTrue);
+    // Paging past the end is a no-op, not an error.
+    controller.nextHintStep();
+    expect(controller.hintStepIndex, steps.length - 1);
+
+    controller.prevHintStep();
+    await tester.pump();
+    expect(anyRedNotes(), isFalse);
+  });
+
   testWidgets(
       'dragging across the grid updates the selected cell to follow the '
       'finger, without waiting for a release', (tester) async {
-    final controller = GameController(generator: _InstantGenerator());
+    final controller = GameController(searchRunner: _inlineSearch, generator: _InstantGenerator());
     controller.startNewGame(Difficulty.beginner);
 
     await tester.pumpWidget(

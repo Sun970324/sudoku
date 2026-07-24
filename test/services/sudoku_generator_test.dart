@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/models/difficulty.dart';
+import 'package:sudoku/models/hint.dart';
 import 'package:sudoku/services/generation/difficulty_evaluator.dart';
 import 'package:sudoku/services/generation/human_solver.dart';
 import 'package:sudoku/services/generation/sudoku_generator.dart';
@@ -39,22 +40,22 @@ void main() {
   final evaluator = DifficultyEvaluator();
   final generator = SudokuGenerator(random: Random(42));
 
-  // beginner/easy/medium are generated purely by given count (no technique
-  // ceiling/exact-match check at all — see SudokuGenerator's class doc), so
-  // they get a relaxed assertion set below instead of the full
-  // technique-gated ones that still apply to hard/master/expert.
+  // beginner/easy (Bronze/Silver) are generated purely by given count (no
+  // technique ceiling/exact-match check at all — see SudokuGenerator's class
+  // doc), so they get a relaxed assertion set below instead of the full
+  // technique-gated ones that apply to Gold and up (medium/hard/master/
+  // expert).
   const givenCountBasedTiers = {
     Difficulty.beginner,
     Difficulty.easy,
-    Difficulty.medium,
   };
 
   for (final difficulty in Difficulty.values) {
     group('generate(${difficulty.name})', () {
       // Generated once per tier (at group-registration time, not per test)
-      // — generation is now ceiling-bounded and calls HumanSolver many
-      // times internally, so regenerating per test would multiply an
-      // already-heavier cost across every assertion below for no benefit.
+      // — the HoDoKu-style loop retries whole boards until one is accepted,
+      // so regenerating per test would multiply that cost across every
+      // assertion below for no benefit.
       final puzzle = generator.generate(difficulty);
       final isGivenCountBased = givenCountBasedTiers.contains(difficulty);
 
@@ -75,18 +76,30 @@ void main() {
       });
 
       if (isGivenCountBased) {
-        test('given-cell count matches the tier\'s target exactly — dug '
-            'straight to it with no technique ceiling involved', () {
+        test('has a 180°-rotationally symmetric givens pattern (these tiers '
+            'are dug in symmetric pairs)', () {
+          for (var r = 0; r < 9; r++) {
+            for (var c = 0; c < 9; c++) {
+              expect(puzzle.puzzle.get(r, c) != 0,
+                  puzzle.puzzle.get(8 - r, 8 - c) != 0,
+                  reason: 'cell ($r, $c) and its rotational partner '
+                      '(${8 - r}, ${8 - c}) must both be given or both empty');
+            }
+          }
+        });
+
+        test('given-cell count lands at or near the tier target — symmetric '
+            'pair removal can stop a cell or two short of it', () {
           final givenCount = puzzle.puzzle.cells
               .expand((row) => row)
               .where((value) => value != 0)
               .length;
-          expect(givenCount, difficulty.givenCount);
+          expect(givenCount.toDouble(),
+              closeTo(difficulty.givenCount.toDouble(), 2));
         });
 
         test('is solvable via human techniques alone (no guessing) at this '
-            'generous a given count, even though it was never checked '
-            'during generation', () {
+            'generous a given count', () {
           final result = humanSolver.solve(puzzle.puzzle.cells);
           expect(result.solved, isTrue,
               reason: '$difficulty puzzles must fully solve via human '
@@ -96,10 +109,9 @@ void main() {
         test('given-cell count stays within the mathematical floor and the '
             'full board — not a target-difficulty band', () {
           // Per generator.md's "Hint Count 정책," given count is only a
-          // generation-speed hint, never a difficulty signal. Every tier's
-          // dig here is bounded by a difficulty ceiling (not just a given-
-          // count target), so easier tiers within this branch routinely
-          // plateau well above their givenCount. 17 is the proven
+          // generation-speed hint, never a difficulty signal. These tiers
+          // dig blind (uniqueness-only, HoDoKu-style), so the count lands
+          // wherever uniqueness pruning stops it. 17 is the proven
           // mathematical floor for any uniquely-solvable 9x9 Sudoku.
           final givenCount = puzzle.puzzle.cells
               .expand((row) => row)
@@ -109,10 +121,21 @@ void main() {
           expect(givenCount, lessThanOrEqualTo(81));
         });
 
-        test('the returned puzzle is conditionally minimal — no remaining '
-            'given can be removed without either breaking uniqueness or '
-            'exceeding the target difficulty', () {
-          final targetRank = Difficulty.values.indexOf(difficulty);
+        if (difficulty == Difficulty.expert) {
+          test('expert is held to a sparser givens cap (require.md #5) — '
+              'at most 23, via the acceptance condition in '
+              '_generateByTechnique', () {
+            final givenCount = puzzle.puzzle.cells
+                .expand((row) => row)
+                .where((value) => value != 0)
+                .length;
+            expect(givenCount, lessThanOrEqualTo(23));
+          });
+        }
+
+        test('the returned puzzle is minimal — no remaining given can be '
+            'removed without breaking uniqueness (the blind HoDoKu-style '
+            'dig tries every cell once, gated by uniqueness alone)', () {
           for (var r = 0; r < 9; r++) {
             for (var c = 0; c < 9; c++) {
               if (puzzle.puzzle.get(r, c) == 0) continue;
@@ -121,24 +144,16 @@ void main() {
                   .toList();
               withoutClue[r][c] = 0;
 
-              final stillUnique =
-                  solver.countSolutions(withoutClue, limit: 2) == 1;
-              final stillWithinCeiling = Difficulty.values.indexOf(
-                    evaluator
-                        .evaluate(humanSolver.solve(withoutClue))
-                        .highestDifficulty,
-                  ) <=
-                  targetRank;
-
-              expect(stillUnique && stillWithinCeiling, isFalse,
-                  reason: 'cell ($r, $c) should not be removable');
+              expect(solver.countSolutions(withoutClue, limit: 2),
+                  greaterThan(1),
+                  reason: 'removing cell ($r, $c) must break uniqueness');
             }
           }
         });
 
         test('is genuinely solvable via human techniques whose highest tier '
-            'exactly matches the target difficulty, not just given-count',
-            () {
+            'AND score band exactly match the target difficulty (HoDoKu '
+            'acceptance incl. rejectTooLowScore)', () {
           final result = humanSolver.solve(puzzle.puzzle.cells);
           final evaluated = evaluator.evaluate(result);
           expect(result.solved, isTrue,
@@ -147,6 +162,10 @@ void main() {
           expect(evaluated.highestDifficulty, difficulty,
               reason: 'the hardest technique used must belong to exactly '
                   'the $difficulty tier — solve history: ${result.history}');
+          expect(scoreBand(evaluated.score), difficulty,
+              reason: 'the cumulative score alone must land in the '
+                  '$difficulty band (rejectTooLowScore) — '
+                  'score: ${evaluated.score}');
         });
       }
     });

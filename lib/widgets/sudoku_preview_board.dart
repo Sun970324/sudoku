@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/sudoku_puzzle.dart';
+import '../theme/app_theme.dart';
 import '../theme/board_colors.dart';
 import 'sudoku_grid_lines.dart';
 
@@ -78,8 +79,8 @@ class _SudokuPreviewBoardState extends State<SudokuPreviewBoard> {
             child: IgnorePointer(
               child: CustomPaint(
                 painter: SudokuGridLinesPainter(
-                  outerColor: BoardColors.outerBorder(isDark),
                   innerColor: BoardColors.innerBorder(isDark),
+                  outerColor: BoardColors.outerBorder(isDark),
                 ),
               ),
             ),
@@ -126,6 +127,7 @@ class _SudokuPreviewBoardState extends State<SudokuPreviewBoard> {
                 child: Text(
                   '$value',
                   style: TextStyle(
+                    fontFamily: AppTheme.boardFontFamily,
                     fontSize: 28,
                     color: BoardColors.textFixed(isDark),
                     fontWeight: FontWeight.w500,

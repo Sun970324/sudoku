@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/generated/app_localizations.dart';
+import '../state/premium_controller.dart';
 import '../theme/board_colors.dart';
+import 'pixel_icon.dart';
 
 class GameControlsRow extends StatelessWidget {
   const GameControlsRow({
@@ -12,9 +14,12 @@ class GameControlsRow extends StatelessWidget {
     required this.onErase,
     required this.isNoteMode,
     required this.onToggleNoteMode,
-    required this.onHint,
-    required this.canAutoFillNotes,
-    required this.onAutoFillNotes,
+    this.onHint,
+    this.canAutoFillNotes = false,
+    this.onAutoFillNotes,
+    this.showAssists = true,
+    this.noteButtonKey,
+    this.hintButtonKey,
   });
 
   final bool canUndo;
@@ -23,48 +28,63 @@ class GameControlsRow extends StatelessWidget {
   final VoidCallback onErase;
   final bool isNoteMode;
   final VoidCallback onToggleNoteMode;
-  final VoidCallback onHint;
+  final VoidCallback? onHint;
   final bool canAutoFillNotes;
-  final VoidCallback onAutoFillNotes;
+  final VoidCallback? onAutoFillNotes;
+
+  /// Tutorial coach-mark anchors for the note-mode toggle and hint button.
+  final Key? noteButtonKey;
+  final Key? hintButtonKey;
+
+  /// The rewarded-ad assist actions (auto-fill notes + hint). Hidden in
+  /// races, which offer neither — leaving them visible showed a dead hint
+  /// button and a misleading "plays an ad" badge.
+  final bool showAssists;
 
   @override
   Widget build(BuildContext context) {
     final noteColor = isNoteMode ? Theme.of(context).colorScheme.primary : null;
     final l10n = AppLocalizations.of(context)!;
+    // Premium skips the rewarded ad for assists, so drop the "plays an ad" badge.
+    final showAdBadge = !PremiumController.instance.isPremium;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _ControlButton(
-          icon: Icons.undo,
+          icon: PixelIcons.undo,
           label: l10n.undoLabel,
           onPressed: canUndo ? onUndo : null,
         ),
         _ControlButton(
-          icon: Icons.backspace_outlined,
+          icon: PixelIcons.backspace,
           label: l10n.eraseLabel,
           onPressed: canErase ? onErase : null,
         ),
         _ControlButton(
-          icon: Icons.edit_note,
+          key: noteButtonKey,
+          icon: PixelIcons.editNote,
           label: l10n.noteLabel,
           onPressed: onToggleNoteMode,
           color: noteColor,
           bold: isNoteMode,
           noteModeBadge: isNoteMode,
         ),
-        _ControlButton(
-          icon: Icons.auto_fix_high,
-          label: l10n.autoFillLabel,
-          onPressed: canAutoFillNotes ? onAutoFillNotes : null,
-          showAdBadge: true,
-        ),
-        _ControlButton(
-          icon: Icons.lightbulb_outline,
-          label: l10n.hintLabel,
-          onPressed: onHint,
-          showAdBadge: true,
-        ),
+        if (showAssists) ...[
+          _ControlButton(
+            icon: PixelIcons.magicWand,
+            label: l10n.autoFillLabel,
+            onPressed: canAutoFillNotes ? onAutoFillNotes : null,
+            showAdBadge: showAdBadge,
+          ),
+          _ControlButton(
+            key: hintButtonKey,
+            icon: PixelIcons.lightbulb,
+            label: l10n.hintLabel,
+            onPressed: onHint,
+            showAdBadge: showAdBadge,
+          ),
+        ],
       ],
     );
   }
@@ -72,6 +92,7 @@ class GameControlsRow extends StatelessWidget {
 
 class _ControlButton extends StatelessWidget {
   const _ControlButton({
+    super.key,
     required this.icon,
     required this.label,
     required this.onPressed,
@@ -121,7 +142,15 @@ class _ControlButton extends StatelessWidget {
               CircleAvatar(
                 radius: 20,
                 backgroundColor: backgroundColor,
-                child: Icon(icon, color: iconColor, size: 20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: iconColor.withValues(alpha: enabled ? 0.35 : 0.12),
+                    ),
+                  ),
+                  child: Center(child: Icon(icon, color: iconColor, size: 20)),
+                ),
               ),
               // Marks that this action plays a rewarded ad before running.
               if (showAdBadge)
@@ -137,7 +166,7 @@ class _ControlButton extends StatelessWidget {
                           color: BoardColors.adBadgeBorder(isDark), width: 1.5),
                     ),
                     child: const Icon(
-                      Icons.play_arrow,
+                      PixelIcons.ad,
                       size: 10,
                       color: Colors.white,
                     ),

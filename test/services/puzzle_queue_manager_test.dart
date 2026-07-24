@@ -82,6 +82,32 @@ void main() {
     expect(manager.countFor(Difficulty.beginner), PuzzleQueueManager.capacity - 1);
   });
 
+  test('takeLast returns null on an empty tier', () {
+    final manager = PuzzleQueueManager(
+      generateBatch: _ImmediateBatchGenerator().call,
+    );
+    expect(manager.takeLast(Difficulty.easy), isNull);
+  });
+
+  test('takeLast pops from the back, leaving the front (and peek) untouched',
+      () async {
+    final fake = _ImmediateBatchGenerator();
+    final manager = PuzzleQueueManager(generateBatch: fake.call);
+
+    manager.warmUp();
+    await manager.waitUntilIdle();
+    expect(manager.countFor(Difficulty.beginner), PuzzleQueueManager.capacity);
+
+    final front = manager.peek(Difficulty.beginner);
+    final last = manager.takeLast(Difficulty.beginner);
+
+    expect(last, isNotNull);
+    expect(identical(last, front), isFalse);
+    expect(identical(manager.peek(Difficulty.beginner), front), isTrue);
+    expect(
+        manager.countFor(Difficulty.beginner), PuzzleQueueManager.capacity - 1);
+  });
+
   test('dropping a tier to 1 schedules a refill back to capacity', () async {
     final fake = _ImmediateBatchGenerator();
     final manager = PuzzleQueueManager(generateBatch: fake.call);
@@ -193,6 +219,22 @@ void main() {
 
     for (final difficulty in Difficulty.values) {
       expect(reloaded.countFor(difficulty), PuzzleQueueManager.capacity);
+    }
+  });
+
+  test(
+      'loadFromDisk falls back to the bundled seed asset for tiers still '
+      'empty after the disk load — e.g. the very first launch', () async {
+    final manager = PuzzleQueueManager(
+      storage: StorageService(),
+      generateBatch: _ImmediateBatchGenerator().call,
+    );
+
+    await manager.loadFromDisk();
+
+    for (final difficulty in Difficulty.values) {
+      expect(manager.countFor(difficulty), greaterThan(0));
+      expect(manager.peek(difficulty)!.difficulty, difficulty);
     }
   });
 }

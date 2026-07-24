@@ -1,3 +1,4 @@
+import 'game_replay.dart';
 import 'sudoku_puzzle.dart';
 
 class GameSnapshot {
@@ -8,6 +9,7 @@ class GameSnapshot {
     required this.mistakes,
     required this.elapsedSeconds,
     required this.hintsUsed,
+    this.events = const [],
   });
 
   factory GameSnapshot.fromJson(Map<String, dynamic> json) => GameSnapshot(
@@ -23,6 +25,12 @@ class GameSnapshot {
         mistakes: json['mistakes'] as int,
         elapsedSeconds: json['elapsedSeconds'] as int,
         hintsUsed: json['hintsUsed'] as int,
+        // Absent in snapshots saved before replay recording existed — an empty
+        // log just means that resumed game can't produce a complete replay.
+        events: (json['events'] as List<dynamic>?)
+                ?.map((e) => GameEvent.fromJson(e as Map<String, dynamic>))
+                .toList() ??
+            const [],
       );
 
   final SudokuPuzzle puzzle;
@@ -32,6 +40,10 @@ class GameSnapshot {
   final int elapsedSeconds;
   final int hintsUsed;
 
+  /// The recorded move log so far, carried through a save/resume so a game
+  /// interrupted by an app kill still yields a complete [GameReplay] on finish.
+  final List<GameEvent> events;
+
   Map<String, dynamic> toJson() => {
         'puzzle': puzzle.toJson(),
         'board': board,
@@ -39,5 +51,6 @@ class GameSnapshot {
         'mistakes': mistakes,
         'elapsedSeconds': elapsedSeconds,
         'hintsUsed': hintsUsed,
+        'events': events.map((e) => e.toJson()).toList(),
       };
 }

@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'dart:isolate';
 import 'dart:math';
 
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sudoku/l10n/generated/app_localizations.dart';
 import 'package:sudoku/models/difficulty.dart';
@@ -10,6 +13,12 @@ import 'package:sudoku/models/sudoku_puzzle.dart';
 import 'package:sudoku/services/hint_engine.dart';
 import 'package:sudoku/services/generation/sudoku_generator.dart';
 import 'package:sudoku/state/game_controller.dart';
+
+/// Runs hint searches inline instead of on a background isolate — keeps a
+/// fake engine's hint instance identical (an isolate returns a copy, which
+/// breaks the identity expectations below) and stays inside the test zone.
+Future<R> _inlineSearch<R>(FutureOr<R> Function() computation) async =>
+    await computation();
 
 /// A stand-in for [HintEngine] whose result is fully controlled by the test,
 /// so hint-application behavior can be verified independently of whatever
@@ -75,17 +84,59 @@ List<int> _candidates(GameController controller, int row, int col) =>
 List<List<int>> _echoAsSolution(List<List<int>> board) =>
     board.map((row) => row.map((v) => v == 0 ? 1 : v).toList()).toList();
 
+// A fixed easy board (and its solution) injected into every setUp below, so
+// these game-mechanic tests never depend on what the generator happens to
+// produce. It's the exact board the generator built for Random(7) before
+// symmetric digging changed that output — the shape the peer-note and
+// reveal-hint tests were written against (first empty editable cell is a
+// naked single with valid same-row / unrelated peers for its value).
+const _fixedEasyBoard = [
+  [0, 0, 5, 8, 4, 6, 0, 0, 0],
+  [3, 0, 0, 0, 1, 9, 0, 0, 8],
+  [0, 0, 0, 0, 0, 0, 0, 7, 0],
+  [0, 3, 7, 4, 0, 2, 5, 0, 0],
+  [0, 0, 0, 0, 8, 0, 3, 0, 0],
+  [2, 0, 9, 0, 0, 1, 0, 4, 0],
+  [0, 4, 6, 0, 7, 0, 0, 2, 3],
+  [5, 0, 0, 9, 3, 4, 0, 0, 0],
+  [7, 9, 0, 0, 0, 0, 0, 1, 0],
+];
+const _fixedEasySolution = [
+  [1, 7, 5, 8, 4, 6, 2, 3, 9],
+  [3, 2, 4, 7, 1, 9, 6, 5, 8],
+  [9, 6, 8, 5, 2, 3, 1, 7, 4],
+  [6, 3, 7, 4, 9, 2, 5, 8, 1],
+  [4, 5, 1, 6, 8, 7, 3, 9, 2],
+  [2, 8, 9, 3, 5, 1, 7, 4, 6],
+  [8, 4, 6, 1, 7, 5, 9, 2, 3],
+  [5, 1, 2, 9, 3, 4, 8, 6, 7],
+  [7, 9, 3, 2, 6, 8, 4, 1, 5],
+];
+
+SudokuPuzzle _fixedEasyPuzzle() => SudokuPuzzle(
+      puzzle:
+          SudokuGrid(_fixedEasyBoard.map((r) => List<int>.from(r)).toList()),
+      solution: SudokuGrid(
+          _fixedEasySolution.map((r) => List<int>.from(r)).toList()),
+      fixedMask:
+          _fixedEasyBoard.map((r) => r.map((v) => v != 0).toList()).toList(),
+      difficulty: Difficulty.easy,
+    );
+
 void main() {
   late GameController controller;
   late _FakeHintEngine hintEngine;
 
   setUp(() {
-    // Seeded generator makes the puzzle deterministic across test runs.
+    // A fixed board (see [_fixedEasyPuzzle]) keeps these tests independent of
+    // the generator; the seeded generator is only a fallback for the few
+    // tests that call startNewGame() again without supplying a puzzle.
     hintEngine = _FakeHintEngine();
     controller = GameController(
+      searchRunner: _inlineSearch,
       generator: SudokuGenerator(random: Random(7)),
       hintEngine: hintEngine,
-    )..startNewGame(Difficulty.easy);
+    )..startNewGame(Difficulty.easy, puzzle: _fixedEasyPuzzle());
   });
 
   int? firstEmptyEditableCellRow;
@@ -130,7 +181,7 @@ void main() {
   }
 
   test('selecting a fixed (given) cell still selects it, but its value stays put',
-      () {
+      () async {
     // Find a fixed cell.
     int? fixedRow, fixedCol;
     outer:
@@ -153,7 +204,7 @@ void main() {
     expect(controller.valueAt(fixedRow, fixedCol), originalValue);
   });
 
-  test('selecting the already-selected cell again deselects it', () {
+  test('selecting the already-selected cell again deselects it', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -171,9 +222,94 @@ void main() {
     expect(controller.selectedCol, col);
   });
 
+  group('quick input (digit-first) state', () {
+    tearDown(() {
+      // Static default leaks across tests otherwise — setUp's new games
+      // would start in quick mode after any test that enabled it.
+      GameController.quickInputDefault = false;
+    });
+
+    test('setQuickInputMode flips the flag, clears activeDigit, and updates '
+        'the remembered default', () {
+      controller.setQuickInputMode(true);
+      controller.selectActiveDigit(5, asNote: false);
+      expect(controller.activeDigit, 5);
+
+      controller.setQuickInputMode(false);
+      expect(controller.quickInputMode, isFalse);
+      expect(controller.activeDigit, isNull);
+      expect(GameController.quickInputDefault, isFalse);
+
+      controller.setQuickInputMode(true);
+      expect(GameController.quickInputDefault, isTrue);
+    });
+
+    test('selectActiveDigit picks the digit and re-tapping the same pad '
+        'clears it', () {
+      controller.setQuickInputMode(true);
+      controller.selectActiveDigit(3, asNote: false);
+      expect(controller.activeDigit, 3);
+      controller.selectActiveDigit(7, asNote: false);
+      expect(controller.activeDigit, 7);
+      controller.selectActiveDigit(7, asNote: false);
+      expect(controller.activeDigit, isNull);
+    });
+
+    test('value vs note pad sets activeDigitIsNote (not isNoteMode), and only '
+        'one digit is ever active across the two pads', () {
+      controller.setQuickInputMode(true);
+      final noteModeBefore = controller.isNoteMode;
+
+      controller.selectActiveDigit(6, asNote: false);
+      expect(controller.activeDigit, 6);
+      expect(controller.activeDigitIsNote, isFalse);
+
+      // Picking on the notes pad replaces the value selection and flips the
+      // pinned digit's note-ness — never two active digits at once. The
+      // notes-pad-visibility flag (isNoteMode) is left untouched throughout.
+      controller.selectActiveDigit(3, asNote: true);
+      expect(controller.activeDigit, 3);
+      expect(controller.activeDigitIsNote, isTrue);
+
+      // Same digit, but the other pad, is a distinct selection (not a
+      // clear): it re-fixes 3 as a value.
+      controller.selectActiveDigit(3, asNote: false);
+      expect(controller.activeDigit, 3);
+      expect(controller.activeDigitIsNote, isFalse);
+
+      // Re-tapping the digit on its own pad clears it.
+      controller.selectActiveDigit(3, asNote: false);
+      expect(controller.activeDigit, isNull);
+
+      expect(controller.isNoteMode, noteModeBefore);
+    });
+
+    test('selectedValue follows activeDigit in quick mode with no cell '
+        'selected, and falls back to the selected cell otherwise', () {
+      expect(controller.selectedValue, isNull);
+
+      controller.setQuickInputMode(true);
+      controller.selectActiveDigit(4, asNote: false);
+      expect(controller.selectedRow, isNull);
+      expect(controller.selectedValue, 4);
+
+      controller.setQuickInputMode(false);
+      expect(controller.selectedValue, isNull);
+    });
+
+    test('a new game starts in the remembered mode with no active digit', () {
+      controller.setQuickInputMode(true);
+      controller.selectActiveDigit(6, asNote: false);
+
+      controller.startNewGame(Difficulty.easy);
+      expect(controller.quickInputMode, isTrue);
+      expect(controller.activeDigit, isNull);
+    });
+  });
+
   test(
       'selectCellForDrag selects a cell without toggling it off when '
-      'called again with the same cell', () {
+      'called again with the same cell', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -208,7 +344,7 @@ void main() {
     expect(controller.selectedCol, otherCol);
   });
 
-  test('selectCellForDrag clears the active hint, like selectCell', () {
+  test('selectCellForDrag clears the active hint, like selectCell', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -223,7 +359,7 @@ void main() {
       col: col,
       value: correctValue,
     );
-    controller.requestHint();
+    await controller.requestHint();
     expect(controller.activeHint, isNotNull);
 
     controller.selectCellForDrag(row, col);
@@ -231,7 +367,7 @@ void main() {
     expect(controller.activeHint, isNull);
   });
 
-  test('entering the correct value leaves no mistake and no red flag', () {
+  test('entering the correct value leaves no mistake and no red flag', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -245,7 +381,7 @@ void main() {
     expect(controller.valueAt(row, col), correctValue);
   });
 
-  test('entering a wrong value increments the mistake counter', () {
+  test('entering a wrong value increments the mistake counter', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -260,7 +396,7 @@ void main() {
     expect(controller.status, GameStatus.playing);
   });
 
-  test('three mistakes trigger game over', () {
+  test('three mistakes trigger game over', () async {
     var mistakesMade = 0;
     for (var r = 0; r < 9 && mistakesMade < 3; r++) {
       for (var c = 0; c < 9 && mistakesMade < 3; c++) {
@@ -277,8 +413,29 @@ void main() {
     expect(controller.status, GameStatus.gameOver);
   });
 
+  test('undo does nothing once the game is over — only reviveAfterAd may '
+      'resume play', () async {
+    var mistakesMade = 0;
+    for (var r = 0; r < 9 && mistakesMade < 3; r++) {
+      for (var c = 0; c < 9 && mistakesMade < 3; c++) {
+        if (controller.isFixed(r, c)) continue;
+        final correctValue = controller.puzzle.solutionValue(r, c);
+        final wrongValue = correctValue == 9 ? 1 : correctValue + 1;
+        controller.selectCell(r, c);
+        controller.inputValue(wrongValue);
+        mistakesMade++;
+      }
+    }
+    expect(controller.status, GameStatus.gameOver);
+    expect(controller.canUndo, isFalse);
+
+    controller.undo();
+
+    expect(controller.status, GameStatus.gameOver);
+  });
+
   test('reviveAfterAd knocks mistakes back to 2 and resumes play after '
-      'game over', () {
+      'game over', () async {
     var mistakesMade = 0;
     for (var r = 0; r < 9 && mistakesMade < 3; r++) {
       for (var c = 0; c < 9 && mistakesMade < 3; c++) {
@@ -300,7 +457,7 @@ void main() {
     expect(controller.mistakes, 2);
   });
 
-  test('applyHint fills the target cell with a reveal-type hint\'s value', () {
+  test('applyHint fills the target cell with a reveal-type hint\'s value', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -316,7 +473,7 @@ void main() {
       value: correctValue,
     );
 
-    expect(controller.requestHint(), isNotNull);
+    expect(await controller.requestHint(), isNotNull);
     controller.applyHint();
 
     expect(controller.valueAt(row, col), correctValue);
@@ -326,11 +483,11 @@ void main() {
   });
 
   test('requestHint returns null and leaves the board untouched when no '
-      'hint is found', () {
+      'hint is found', () async {
     hintEngine.nextHint = null;
     final before = controller.boardSnapshot;
 
-    final hint = controller.requestHint();
+    final hint = await controller.requestHint();
 
     expect(hint, isNull);
     expect(controller.activeHint, isNull);
@@ -339,7 +496,7 @@ void main() {
 
   test(
       'applyHint removes only the hint\'s eliminated digits from notes, '
-      'leaving every other cell untouched', () {
+      'leaving every other cell untouched', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -360,7 +517,7 @@ void main() {
       primaryCells: {HintCell(patternRow, patternCol)},
       eliminations: const [],
     );
-    controller.requestHint();
+    await controller.requestHint();
     final eliminatedDigit = controller.notesAt(row, col).first;
     hintEngine.nextHint = Hint(
       technique: HintTechnique.nakedPair,
@@ -369,7 +526,7 @@ void main() {
       primaryCells: {HintCell(patternRow, patternCol)},
       eliminations: [HintElimination(row, col, eliminatedDigit)],
     );
-    controller.requestHint();
+    await controller.requestHint();
 
     final notesBefore = List.generate(
       9,
@@ -400,7 +557,7 @@ void main() {
 
   test(
       'applyHint is a no-op on notes for an eliminated digit that was '
-      'never a valid candidate there', () {
+      'never a valid candidate there', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -423,7 +580,7 @@ void main() {
       primaryCells: {HintCell(patternRow, patternCol)},
       eliminations: [HintElimination(row, col, impossibleDigit)],
     );
-    controller.requestHint();
+    await controller.requestHint();
     controller.applyHint();
 
     // requestHint's repair fills (row, col) with its true candidates;
@@ -432,7 +589,7 @@ void main() {
   });
 
   test('undo after an eliminate-type applyHint restores the exact prior '
-      'notes grid', () {
+      'notes grid', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -449,7 +606,7 @@ void main() {
       primaryCells: {HintCell(patternRow, patternCol)},
       eliminations: const [],
     );
-    controller.requestHint();
+    await controller.requestHint();
     final eliminatedDigit = controller.notesAt(row, col).first;
     hintEngine.nextHint = Hint(
       technique: HintTechnique.nakedPair,
@@ -458,7 +615,7 @@ void main() {
       primaryCells: {HintCell(patternRow, patternCol)},
       eliminations: [HintElimination(row, col, eliminatedDigit)],
     );
-    controller.requestHint();
+    await controller.requestHint();
 
     final notesBefore = List.generate(
       9,
@@ -482,7 +639,7 @@ void main() {
   });
 
   test('activeHint reflects the last requestHint result and clears on '
-      'dismiss, apply, and any other board action', () {
+      'dismiss, apply, and any other board action', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -498,23 +655,115 @@ void main() {
     );
     hintEngine.nextHint = hint;
 
-    controller.requestHint();
+    await controller.requestHint();
     expect(controller.activeHint, hint);
 
     controller.dismissHint();
     expect(controller.activeHint, isNull);
 
-    controller.requestHint();
+    await controller.requestHint();
     expect(controller.activeHint, hint);
     controller.selectCell(row, col);
     expect(controller.activeHint, isNull);
 
-    controller.requestHint();
+    await controller.requestHint();
     controller.applyHint();
     expect(controller.activeHint, isNull);
   });
 
-  test('undo reverts the most recent move', () {
+  /// Builds a reveal hint for the first editable cell — enough for the
+  /// stage tests, which only care about the progressive reveal, not about
+  /// which technique found the hint.
+  Hint scriptRevealHint() {
+    locateFirstEditableCell();
+    final row = firstEmptyEditableCellRow!;
+    final col = firstEmptyEditableCellCol!;
+    final hint = Hint(
+      technique: HintTechnique.nakedSingle,
+      type: HintType.reveal,
+      explanation: 'test',
+      primaryCells: {HintCell(row, col)},
+      mainInfo: 'test-main-info',
+      row: row,
+      col: col,
+      value: controller.puzzle.solutionValue(row, col),
+    );
+    hintEngine.nextHint = hint;
+    return hint;
+  }
+
+  test('a new hint starts at stage 0 and advances one step at a time up to '
+      'the final stage', () async {
+    scriptRevealHint();
+
+    await controller.requestHint();
+    expect(controller.hintStage, 0);
+
+    controller.advanceHintStage();
+    expect(controller.hintStage, 1);
+
+    controller.advanceHintStage();
+    expect(controller.hintStage, 2);
+
+    // Clamped — there is no stage past the full reveal.
+    controller.advanceHintStage();
+    expect(controller.hintStage, 2);
+  });
+
+  test('the board visualises a hint only at the final stage', () async {
+    final hint = scriptRevealHint();
+
+    await controller.requestHint();
+    expect(controller.activeHint, hint);
+    expect(controller.visualizedHint, isNull);
+
+    controller.advanceHintStage();
+    expect(controller.visualizedHint, isNull);
+
+    controller.advanceHintStage();
+    expect(controller.visualizedHint, hint);
+  });
+
+  test('stage resets when a hint is dismissed, applied, or superseded, so a '
+      'new hint never inherits the previous one\'s stage', () async {
+    scriptRevealHint();
+
+    await controller.requestHint();
+    controller.advanceHintStage();
+    controller.advanceHintStage();
+    expect(controller.hintStage, 2);
+
+    controller.dismissHint();
+    expect(controller.hintStage, 0);
+
+    // Superseded by a fresh request.
+    await controller.requestHint();
+    controller.advanceHintStage();
+    await controller.requestHint();
+    expect(controller.hintStage, 0);
+
+    // Cleared by an unrelated board action.
+    controller.advanceHintStage();
+    controller.selectCell(0, 0);
+    expect(controller.hintStage, 0);
+
+    scriptRevealHint();
+    await controller.requestHint();
+    controller.advanceHintStage();
+    controller.advanceHintStage();
+    controller.applyHint();
+    expect(controller.hintStage, 0);
+  });
+
+  test('advanceHintStage is a no-op with no active hint', () async {
+    expect(controller.activeHint, isNull);
+
+    controller.advanceHintStage();
+
+    expect(controller.hintStage, 0);
+  });
+
+  test('undo reverts the most recent move', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -529,7 +778,7 @@ void main() {
     expect(controller.canUndo, isFalse);
   });
 
-  test('undo reverts a note toggle', () {
+  test('undo reverts a note toggle', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -545,7 +794,7 @@ void main() {
   });
 
   test('undo after placing a value restores the notes it wiped out, '
-      'including peer cells', () {
+      'including peer cells', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -581,7 +830,7 @@ void main() {
     expect(controller.notesAt(row, peerCol), {value});
   });
 
-  test('filling every cell with the solution wins the game', () {
+  test('filling every cell with the solution wins the game', () async {
     for (var r = 0; r < 9; r++) {
       for (var c = 0; c < 9; c++) {
         if (controller.isFixed(r, c)) continue;
@@ -597,7 +846,7 @@ void main() {
   });
 
   test('remainingCount reflects givens already correctly placed at game start',
-      () {
+      () async {
     for (var digit = 1; digit <= 9; digit++) {
       var givenCount = 0;
       for (var r = 0; r < 9; r++) {
@@ -611,7 +860,7 @@ void main() {
     }
   });
 
-  test('remainingCount decreases only when a digit is placed correctly', () {
+  test('remainingCount decreases only when a digit is placed correctly', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -630,7 +879,7 @@ void main() {
   });
 
   test('toggleNote adds and removes a candidate digit in the selected cell',
-      () {
+      () async {
     int? row, col;
     var candidates = const <int>[];
     outer:
@@ -661,7 +910,7 @@ void main() {
     expect(controller.notesAt(row, col), {b});
   });
 
-  test('toggleNote does nothing on a cell that already holds a value', () {
+  test('toggleNote does nothing on a cell that already holds a value', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -674,7 +923,7 @@ void main() {
   });
 
   test('toggleNoteMode flips isNoteMode, defaulting to on for a new game',
-      () {
+      () async {
     expect(controller.isNoteMode, isTrue);
     controller.toggleNoteMode();
     expect(controller.isNoteMode, isFalse);
@@ -683,7 +932,7 @@ void main() {
   });
 
   test('selectedValue is null when nothing is selected or the cell is empty',
-      () {
+      () async {
     expect(controller.selectedValue, isNull);
 
     locateFirstEditableCell();
@@ -691,7 +940,7 @@ void main() {
     expect(controller.selectedValue, isNull);
   });
 
-  test('selectedValue reflects the digit in the selected cell', () {
+  test('selectedValue reflects the digit in the selected cell', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -703,7 +952,7 @@ void main() {
     expect(controller.selectedValue, correctValue);
   });
 
-  test('filling a cell with a value clears its own notes', () {
+  test('filling a cell with a value clears its own notes', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -720,7 +969,7 @@ void main() {
     expect(controller.notesAt(row, col), isEmpty);
   });
 
-  test('eraseSelected clears any notes left in the erased cell', () {
+  test('eraseSelected clears any notes left in the erased cell', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -739,7 +988,7 @@ void main() {
   });
 
   test('applyHint clears the notes of the cell a reveal-type hint fills',
-      () {
+      () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -759,14 +1008,14 @@ void main() {
       col: col,
       value: correctValue,
     );
-    controller.requestHint();
+    await controller.requestHint();
     controller.applyHint();
 
     expect(controller.notesAt(row, col), isEmpty);
   });
 
   test('undo after a reveal-type applyHint restores the board value and '
-      'notes', () {
+      'notes', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -785,7 +1034,7 @@ void main() {
       col: col,
       value: correctValue,
     );
-    controller.requestHint();
+    await controller.requestHint();
     controller.applyHint();
     expect(controller.valueAt(row, col), correctValue);
 
@@ -795,7 +1044,7 @@ void main() {
     expect(controller.notesAt(row, col), {digit});
   });
 
-  test('placing a value removes it from peer notes in the same row', () {
+  test('placing a value removes it from peer notes in the same row', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -822,7 +1071,7 @@ void main() {
     expect(controller.notesAt(row, peerCol), isEmpty);
   });
 
-  test('placing a WRONG value does not remove it from peer notes', () {
+  test('placing a WRONG value does not remove it from peer notes', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -855,7 +1104,7 @@ void main() {
     expect(controller.notesAt(row, peerCol), {wrongValue});
   });
 
-  test('placing a value does not touch notes in unrelated cells', () {
+  test('placing a value does not touch notes in unrelated cells', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -893,7 +1142,7 @@ void main() {
   });
 
   test('applyHint removes the placed digit from peer notes after a '
-      'reveal-type hint, without touching unrelated cells', () {
+      'reveal-type hint, without touching unrelated cells', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -948,7 +1197,7 @@ void main() {
       col: col,
       value: value,
     );
-    controller.requestHint();
+    await controller.requestHint();
     controller.applyHint();
 
     // The peer cell's stale note (the value newly placed at (row, col),
@@ -961,7 +1210,7 @@ void main() {
   });
 
   test('autoFillNotes overwrites every empty cell\'s notes with the true '
-      'candidates, regardless of prior note state', () {
+      'candidates, regardless of prior note state', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -1002,7 +1251,7 @@ void main() {
     }
   });
 
-  test('undo after autoFillNotes restores the exact prior notes grid', () {
+  test('undo after autoFillNotes restores the exact prior notes grid', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -1028,7 +1277,7 @@ void main() {
     }
   });
 
-  test('autoFillNotes does nothing once the game is over', () {
+  test('autoFillNotes does nothing once the game is over', () async {
     var mistakesMade = 0;
     for (var r = 0; r < 9 && mistakesMade < 3; r++) {
       for (var c = 0; c < 9 && mistakesMade < 3; c++) {
@@ -1059,7 +1308,7 @@ void main() {
   });
 
   test('toggleNote blocks a digit already present in the row/column/box '
-      'and flashes the conflicting cell(s)', () {
+      'and flashes the conflicting cell(s)', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -1114,7 +1363,7 @@ void main() {
     expect(controller.conflictFlashCells, isEmpty);
   });
 
-  test('selecting a cell clears an in-progress conflict flash', () {
+  test('selecting a cell clears an in-progress conflict flash', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -1132,7 +1381,7 @@ void main() {
 
   test(
       'requestHint after applying an eliminate-type hint does not repeat '
-      'the same elimination', () {
+      'the same elimination', () async {
     // Same "pointing" fixture as hint_engine_test.dart: box (rows 0-2,
     // cols 0-2) has digits 1,2,3,4,6,7 placed, leaving {5,8,9} as
     // candidates at (0,0),(0,1),(0,2), each confined to row 0 within the
@@ -1167,11 +1416,12 @@ void main() {
     );
 
     final realController = GameController(
+      searchRunner: _inlineSearch,
       generator: SudokuGenerator(random: Random(1)),
       hintEngine: HintEngine(),
     )..resumeFrom(snapshot);
 
-    final hint1 = realController.requestHint();
+    final hint1 = await realController.requestHint();
     expect(hint1, isNotNull);
     expect(hint1!.technique, HintTechnique.intersectionPointing);
     final hint1Key =
@@ -1180,7 +1430,7 @@ void main() {
 
     realController.applyHint();
 
-    final hint2 = realController.requestHint();
+    final hint2 = await realController.requestHint();
     expect(hint2, isNotNull);
     final hint2Key =
         hint2!.eliminations.map((e) => (e.row, e.col, e.digit)).toSet();
@@ -1193,7 +1443,7 @@ void main() {
 
   test(
       'canAutoFillNotes is true and autoFillNotes fills notes even when a '
-      'hint is already available from the board alone', () {
+      'hint is already available from the board alone', () async {
     // Naked single fixture (matches hint_engine_test.dart): (0,0) narrows
     // to candidate {1} from row/column exclusions alone, discoverable even
     // with completely empty notes. Auto-fill and hints are independent
@@ -1218,11 +1468,12 @@ void main() {
     );
 
     final realController = GameController(
+      searchRunner: _inlineSearch,
       generator: SudokuGenerator(random: Random(1)),
       hintEngine: HintEngine(),
     )..resumeFrom(snapshot);
 
-    expect(realController.requestHint(), isNotNull);
+    expect(await realController.requestHint(), isNotNull);
     expect(realController.canAutoFillNotes, isTrue);
 
     realController.autoFillNotes();
@@ -1232,7 +1483,7 @@ void main() {
 
   test(
       'canAutoFillNotes is true and autoFillNotes fills notes with the '
-      'true candidates on a fixture with empty notes', () {
+      'true candidates on a fixture with empty notes', () async {
     // Same pointing fixture as above. Note: requestHint would now find
     // this same hint even before autoFillNotes runs, since its own
     // solution-digit repair (see _findHintWithRepair) fills in whatever
@@ -1258,6 +1509,7 @@ void main() {
     );
 
     final realController = GameController(
+      searchRunner: _inlineSearch,
       generator: SudokuGenerator(random: Random(1)),
       hintEngine: HintEngine(),
     )..resumeFrom(snapshot);
@@ -1267,12 +1519,12 @@ void main() {
     realController.autoFillNotes();
 
     _expectNotesMatchTrueCandidates(realController);
-    expect(realController.requestHint(), isNotNull);
+    expect(await realController.requestHint(), isNotNull);
   });
 
   test(
       'hasAvailableHint reflects whether requestHint would return a hint, '
-      'without mutating activeHint the way requestHint itself does', () {
+      'without mutating activeHint the way requestHint itself does', () async {
     // Same naked single fixture as the canAutoFillNotes tests above: a
     // hint is discoverable from the board alone, even with empty notes.
     final board = List.generate(9, (_) => List.filled(9, 0));
@@ -1295,17 +1547,18 @@ void main() {
     );
 
     final realController = GameController(
+      searchRunner: _inlineSearch,
       generator: SudokuGenerator(random: Random(1)),
       hintEngine: HintEngine(),
     )..resumeFrom(snapshot);
 
-    expect(realController.hasAvailableHint, isTrue);
+    expect(await realController.hasAvailableHint(), isTrue);
     // Checking availability must not itself set activeHint/draw a hint —
     // that's the whole point of having a separate, non-mutating getter.
     expect(realController.activeHint, isNull);
   });
 
-  test('hasAvailableHint is false when no technique currently applies', () {
+  test('hasAvailableHint is false when no technique currently applies', () async {
     // A fully empty board: every cell has all 9 candidates uniformly, so
     // no technique (not even after requestHint's own solution-digit
     // repair fills every cell in) ever finds a pattern to exploit. Unlike
@@ -1328,11 +1581,141 @@ void main() {
     );
 
     final realController = GameController(
+      searchRunner: _inlineSearch,
       generator: SudokuGenerator(random: Random(1)),
       hintEngine: HintEngine(),
     )..resumeFrom(snapshot);
 
-    expect(realController.hasAvailableHint, isFalse);
+    expect(await realController.hasAvailableHint(), isFalse);
+  });
+
+  group('requestHintFromNotes (stage 1: notes-only, no repair)', () {
+    (GameController, _ScriptedHintEngine, int, int, int) buildMissingNoteCase() {
+      final scriptedEngine = _ScriptedHintEngine();
+      final testController = GameController(
+        searchRunner: _inlineSearch,
+        generator: SudokuGenerator(random: Random(7)),
+        hintEngine: scriptedEngine,
+      )..startNewGame(Difficulty.easy);
+
+      int? row;
+      int? col;
+      outer:
+      for (var r = 0; r < 9; r++) {
+        for (var c = 0; c < 9; c++) {
+          if (testController.isFixed(r, c)) continue;
+          if (_candidates(testController, r, c).length < 2) continue;
+          row = r;
+          col = c;
+          break outer;
+        }
+      }
+      final solutionDigit = testController.puzzle.solutionValue(row!, col!);
+      final otherDigit = _candidates(testController, row, col)
+          .firstWhere((d) => d != solutionDigit);
+      return (testController, scriptedEngine, row, col, otherDigit);
+    }
+
+    test(
+        'returns the engine hint verbatim, without repairing notes or '
+        'prepending a repair notice, even when a cell is missing its '
+        'solution digit', () async {
+      final (testController, scriptedEngine, row, col, otherDigit) =
+          buildMissingNoteCase();
+      testController.selectCell(row, col);
+      testController.toggleNote(otherDigit);
+
+      final placeholder = Hint(
+        technique: HintTechnique.intersectionPointing,
+        type: HintType.eliminate,
+        explanation: 'fake',
+        primaryCells: {HintCell(row, col)},
+      );
+      scriptedEngine.hints = [placeholder];
+
+      final hint = await testController.requestHintFromNotes();
+
+      // Unlike requestHint, stage 1 does no repair: the explanation is
+      // returned verbatim (no note-repair prefix) and the player's single
+      // note is left exactly as they set it.
+      expect(hint, isNotNull);
+      expect(hint!.explanation, placeholder.explanation);
+      expect(testController.notesAt(row, col), {otherDigit});
+      expect(testController.activeHint, hint);
+    });
+
+    test('returns null and leaves the active hint cleared when the '
+        'notes-only search finds nothing', () async {
+      final (testController, _, _, _, _) = buildMissingNoteCase();
+      // Scripted engine defaults to returning null.
+      expect(await testController.requestHintFromNotes(), isNull);
+      expect(testController.activeHint, isNull);
+    });
+
+    test('rejects a notes-only hint that would eliminate a cell\'s true '
+        'solution digit (faulty notes) and returns null', () async {
+      // Simulates the "faulty notes → wrong deduction" case: the engine
+      // returns an eliminate hint removing a cell's actual answer, exactly
+      // what an understated Naked Pair could produce. It must NOT be shown.
+      final (testController, scriptedEngine, row, col, _) =
+          buildMissingNoteCase();
+      final solutionDigit = testController.puzzle.solutionValue(row, col);
+      scriptedEngine.hints = [
+        Hint(
+          technique: HintTechnique.nakedPair,
+          type: HintType.eliminate,
+          explanation: 'faulty',
+          primaryCells: {HintCell(row, col)},
+          eliminations: [HintElimination(row, col, solutionDigit)],
+        ),
+      ];
+
+      expect(await testController.requestHintFromNotes(), isNull);
+      expect(testController.activeHint, isNull);
+    });
+
+    test('returns a notes-only hint whose eliminations agree with the '
+        'solution', () async {
+      final (testController, scriptedEngine, row, col, otherDigit) =
+          buildMissingNoteCase();
+      // otherDigit is, by construction, NOT this cell's solution digit, so
+      // eliminating it is solution-consistent and the hint is shown as-is.
+      final hint = Hint(
+        technique: HintTechnique.nakedPair,
+        type: HintType.eliminate,
+        explanation: 'ok',
+        primaryCells: {HintCell(row, col)},
+        eliminations: [HintElimination(row, col, otherDigit)],
+      );
+      scriptedEngine.hints = [hint];
+
+      expect(await testController.requestHintFromNotes(), same(hint));
+      expect(testController.activeHint, same(hint));
+    });
+  });
+
+  test(
+      'the production search path: engine, notes, and the found hint all '
+      'survive a real isolate round-trip (the app runs every search through '
+      'Isolate.run; every other test here injects the inline runner)',
+      () async {
+    // Row 0 one cell short of a Full House; empty notes everywhere force
+    // the repair pass to touch every empty cell along the way.
+    final board = List.generate(9, (_) => List.filled(9, 0));
+    board[0] = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+    final notes = List.generate(9, (_) => List.generate(9, (_) => <int>{}));
+    final solution = List.generate(9, (_) => List.filled(9, 9));
+    final l10n = lookupAppLocalizations(const Locale('ko'));
+
+    final (hint, repairedNotes, repairedAny) = await Isolate.run(
+        () => searchHintInBackground(
+            HintEngine(), board, notes, solution, true, l10n));
+
+    expect(hint, isNotNull);
+    expect(hint!.technique, HintTechnique.fullHouse);
+    expect(hint.value, 9);
+    expect(repairedAny, isTrue);
+    expect(repairedNotes[8][8], isNotEmpty);
   });
 
   group('requestHint repairs notes missing the solution digit', () {
@@ -1344,6 +1727,7 @@ void main() {
         buildNotedCellCase() {
       final scriptedEngine = _ScriptedHintEngine();
       final testController = GameController(
+        searchRunner: _inlineSearch,
         generator: SudokuGenerator(random: Random(7)),
         hintEngine: scriptedEngine,
       )..startNewGame(Difficulty.easy);
@@ -1373,7 +1757,7 @@ void main() {
 
     test(
         'repairs a cell whose only note is NOT the solution digit, before '
-        'searching for a hint', () {
+        'searching for a hint', () async {
       final (testController, scriptedEngine, row, col, _, otherDigit) =
           buildNotedCellCase();
       testController.selectCell(row, col);
@@ -1387,13 +1771,13 @@ void main() {
       );
       scriptedEngine.hints = [placeholder];
 
-      final hint = testController.requestHint();
+      final hint = await testController.requestHint();
 
       // A repair happened and the returned hint is eliminate-type, so its
       // explanation gets a prepended note about the correction.
       expect(hint, isNotNull);
       expect(hint!.explanation,
-          '후보수가 정확하게 입력되어야 합니다. ${placeholder.explanation}');
+          '일부 칸의 후보 메모가 실제와 달라 먼저 자동으로 보정했어요. ${placeholder.explanation}');
       final trueCandidates =
           SudokuGrid(testController.boardSnapshot).candidatesAt(row, col);
       expect(testController.notesAt(row, col), trueCandidates);
@@ -1402,7 +1786,7 @@ void main() {
     test(
         'does NOT repair a cell whose notes are narrower than raw '
         'candidates but still contain the solution digit — e.g. after a '
-        'validly applied advanced technique', () {
+        'validly applied advanced technique', () async {
       final (testController, scriptedEngine, row, col, solutionDigit, _) =
           buildNotedCellCase();
       testController.selectCell(row, col);
@@ -1420,7 +1804,7 @@ void main() {
       );
       scriptedEngine.hints = [placeholder];
 
-      final hint = testController.requestHint();
+      final hint = await testController.requestHint();
 
       // (row, col) itself is left completely untouched — every other
       // still-empty cell on the board may still get repaired (they were
@@ -1428,12 +1812,12 @@ void main() {
       // note), but that's orthogonal to what's under test here.
       expect(hint, isNotNull);
       expect(hint!.explanation,
-          '후보수가 정확하게 입력되어야 합니다. ${placeholder.explanation}');
+          '일부 칸의 후보 메모가 실제와 달라 먼저 자동으로 보정했어요. ${placeholder.explanation}');
       expect(testController.notesAt(row, col), beforeRequest);
     });
 
     test('undo after a note-repairing requestHint restores the prior notes',
-        () {
+        () async {
       final (testController, scriptedEngine, row, col, _, otherDigit) =
           buildNotedCellCase();
       testController.selectCell(row, col);
@@ -1448,7 +1832,7 @@ void main() {
           primaryCells: {HintCell(row, col)},
         ),
       ];
-      testController.requestHint();
+      await testController.requestHint();
       expect(testController.canUndo, isTrue);
 
       testController.undo();
@@ -1458,9 +1842,10 @@ void main() {
 
     test(
         'does not repair notes or add undo history when every cell is '
-        'already fully noted', () {
+        'already fully noted', () async {
       final scriptedEngine = _ScriptedHintEngine();
       final testController = GameController(
+        searchRunner: _inlineSearch,
         generator: SudokuGenerator(random: Random(7)),
         hintEngine: scriptedEngine,
       )..startNewGame(Difficulty.easy);
@@ -1491,7 +1876,7 @@ void main() {
       scriptedEngine.hints = [validHint];
 
       final beforeNotes = Set<int>.from(testController.notesAt(row, col));
-      final hint = testController.requestHint();
+      final hint = await testController.requestHint();
 
       expect(hint, same(validHint));
       expect(testController.notesAt(row, col), beforeNotes);
@@ -1502,7 +1887,7 @@ void main() {
     });
 
     test('hasAvailableHint does not mutate notes even when repair would '
-        'otherwise be needed', () {
+        'otherwise be needed', () async {
       final (testController, scriptedEngine, row, col, _, otherDigit) =
           buildNotedCellCase();
       testController.selectCell(row, col);
@@ -1518,18 +1903,19 @@ void main() {
         ),
       ];
 
-      expect(testController.hasAvailableHint, isTrue);
+      expect(await testController.hasAvailableHint(), isTrue);
       expect(testController.notesAt(row, col), beforeCheck);
     });
 
     test(
         'only prepends the note-repair explanation for eliminate-type '
-        'hints, even when a repair happened', () {
+        'hints, even when a repair happened', () async {
       // A fresh game has every empty cell blank, so a full-board repair
       // is guaranteed to happen on the very first requestHint call
       // regardless of which hint technique ends up firing.
       final revealScripted = _ScriptedHintEngine();
       final revealController = GameController(
+        searchRunner: _inlineSearch,
         generator: SudokuGenerator(random: Random(7)),
         hintEngine: revealScripted,
       )..startNewGame(Difficulty.easy);
@@ -1547,12 +1933,13 @@ void main() {
       );
       revealScripted.hints = [revealHint];
 
-      final gotRevealHint = revealController.requestHint();
+      final gotRevealHint = await revealController.requestHint();
 
       expect(gotRevealHint!.explanation, 'reveal fake');
 
       final eliminateScripted = _ScriptedHintEngine();
       final eliminateController = GameController(
+        searchRunner: _inlineSearch,
         generator: SudokuGenerator(random: Random(7)),
         hintEngine: eliminateScripted,
       )..startNewGame(Difficulty.easy);
@@ -1566,17 +1953,17 @@ void main() {
       );
       eliminateScripted.hints = [eliminateHint];
 
-      final gotEliminateHint = eliminateController.requestHint();
+      final gotEliminateHint = await eliminateController.requestHint();
 
       expect(gotEliminateHint!.explanation,
-          '후보수가 정확하게 입력되어야 합니다. eliminate fake');
+          '일부 칸의 후보 메모가 실제와 달라 먼저 자동으로 보정했어요. eliminate fake');
     });
   });
 
   group('hint gating on unresolved mistakes', () {
     test(
         'hasUnresolvedMistake reflects whether any wrong value is on the '
-        'board', () {
+        'board', () async {
       locateFirstEditableCell();
       final row = firstEmptyEditableCellRow!;
       final col = firstEmptyEditableCellCol!;
@@ -1595,7 +1982,7 @@ void main() {
 
     test(
         'requestHint and hasAvailableHint refuse while a wrong value is '
-        'uncorrected, even if a hint would otherwise be available', () {
+        'uncorrected, even if a hint would otherwise be available', () async {
       locateFirstEditableCell();
       final row = firstEmptyEditableCellRow!;
       final col = firstEmptyEditableCellCol!;
@@ -1632,18 +2019,18 @@ void main() {
       controller.selectCell(row, col);
       controller.inputValue(wrongValue);
 
-      expect(controller.hasAvailableHint, isFalse);
-      expect(controller.requestHint(), isNull);
+      expect(await controller.hasAvailableHint(), isFalse);
+      expect(await controller.requestHint(), isNull);
       expect(controller.activeHint, isNull);
     });
   });
 
-  test('canErase is false when no cell is selected', () {
+  test('canErase is false when no cell is selected', () async {
     expect(controller.selectedRow, isNull);
     expect(controller.canErase, isFalse);
   });
 
-  test('canErase is false for a fixed (given) cell', () {
+  test('canErase is false for a fixed (given) cell', () async {
     outer:
     for (var r = 0; r < 9; r++) {
       for (var c = 0; c < 9; c++) {
@@ -1658,7 +2045,7 @@ void main() {
 
   test(
       'canErase is false for a confirmed-correct digit, and eraseSelected '
-      'is a no-op on it', () {
+      'is a no-op on it', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -1679,7 +2066,7 @@ void main() {
     expect(controller.canUndo, isFalse);
   });
 
-  test('canErase is true for a wrong digit, and eraseSelected clears it', () {
+  test('canErase is true for a wrong digit, and eraseSelected clears it', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -1698,7 +2085,7 @@ void main() {
 
   test(
       'eraseSelected on an already-empty cell with no notes does not add '
-      'to history', () {
+      'to history', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -1715,7 +2102,7 @@ void main() {
 
   test(
       'pressing eraseSelected twice in a row on the same cell only adds '
-      'one history entry', () {
+      'one history entry', () async {
     locateFirstEditableCell();
     final row = firstEmptyEditableCellRow!;
     final col = firstEmptyEditableCellCol!;
@@ -1743,7 +2130,7 @@ void main() {
   });
 
   test('startNewGame uses a supplied puzzle directly instead of calling the '
-      'generator, e.g. one popped from PuzzleQueueManager', () {
+      'generator, e.g. one popped from PuzzleQueueManager', () async {
     final board = List.generate(9, (_) => List.filled(9, 0));
     board[0][0] = 5;
     final suppliedPuzzle = SudokuPuzzle(
@@ -1756,6 +2143,7 @@ void main() {
     // A generator that would build a completely different (empty) puzzle,
     // so any use of it — instead of the supplied puzzle — is detectable.
     final fresh = GameController(
+      searchRunner: _inlineSearch,
       generator: SudokuGenerator(random: Random(99)),
       hintEngine: HintEngine(),
     )..startNewGame(Difficulty.expert, puzzle: suppliedPuzzle);

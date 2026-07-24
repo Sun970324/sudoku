@@ -19,37 +19,65 @@ class ClueRemover {
   /// first) — the result may have more than [targetGivenCount] givens if
   /// uniqueness can't be preserved all the way down.
   ///
-  /// If [isAcceptable] is given, a removal is also only kept when it
-  /// returns true for the resulting board (in addition to the existing
-  /// uniqueness check) — e.g. a difficulty-ceiling check during graded
-  /// puzzle generation. Defaults to always-accept, matching prior behavior.
+  /// When [symmetric] is true, cells are cleared in 180°-rotational pairs
+  /// (a cell and its point-reflection through the centre), so the givens
+  /// keep a point-symmetric pattern; the pair is kept only if clearing
+  /// *both* still leaves a unique puzzle. Defaults to false
+  /// (independent single-cell removal).
   List<List<int>> removeClues(
     List<List<int>> solvedBoard,
     int targetGivenCount, {
-    bool Function(List<List<int>> puzzle)? isAcceptable,
+    bool symmetric = false,
   }) {
     final puzzle = solvedBoard.map((row) => List<int>.from(row)).toList();
-    final positions = [
-      for (var r = 0; r < 9; r++)
-        for (var c = 0; c < 9; c++) [r, c],
-    ]..shuffle(_random);
+    final units = _removalUnits(symmetric)..shuffle(_random);
 
     var givenCount = 81;
-    for (final pos in positions) {
+    for (final unit in units) {
       if (givenCount <= targetGivenCount) break;
-      final row = pos[0];
-      final col = pos[1];
-      final backup = puzzle[row][col];
-      puzzle[row][col] = 0;
-      final solutionCount = _solver.countSolutions(puzzle, limit: 2);
-      final accept =
-          solutionCount == 1 && (isAcceptable == null || isAcceptable(puzzle));
+      final backups = [for (final pos in unit) puzzle[pos[0]][pos[1]]];
+      for (final pos in unit) {
+        puzzle[pos[0]][pos[1]] = 0;
+      }
+      final accept = _solver.countSolutions(puzzle, limit: 2) == 1;
       if (accept) {
-        givenCount--;
+        givenCount -= unit.length;
       } else {
-        puzzle[row][col] = backup;
+        for (var i = 0; i < unit.length; i++) {
+          puzzle[unit[i][0]][unit[i][1]] = backups[i];
+        }
       }
     }
     return puzzle;
+  }
+
+  /// Groups all 81 cells into the units removed together. Asymmetric: 81
+  /// single-cell units (each removed independently). Symmetric: the 40
+  /// 180°-rotational pairs (linear index `i` paired with `80 - i`) plus the
+  /// self-paired centre cell — so a unit is cleared or kept as a whole,
+  /// preserving point symmetry.
+  List<List<List<int>>> _removalUnits(bool symmetric) {
+    if (!symmetric) {
+      return [
+        for (var r = 0; r < 9; r++)
+          for (var c = 0; c < 9; c++)
+            [
+              [r, c]
+            ],
+      ];
+    }
+    final units = <List<List<int>>>[];
+    for (var i = 0; i <= 40; i++) {
+      final partner = 80 - i;
+      units.add(partner == i
+          ? [
+              [i ~/ 9, i % 9]
+            ]
+          : [
+              [i ~/ 9, i % 9],
+              [partner ~/ 9, partner % 9]
+            ]);
+    }
+    return units;
   }
 }
