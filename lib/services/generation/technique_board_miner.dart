@@ -24,13 +24,27 @@ final minableOrder = List<HintTechnique>.unmodifiable([
 ]);
 
 /// The technique set a category's practice board is solved with: every
-/// technique in [category] or any easier one, in solver-priority order. This
-/// is the "ceiling" — nothing harder than [category] is available, so a board
-/// solved within it never secretly needs a technique the learner hasn't met.
-List<HintTechnique> categoryCeilingOrder(TechniqueCategory category) => [
-      for (final t in minableOrder)
-        if (techniqueCategory[t]!.index <= category.index) t,
-    ];
+/// technique in [category] or any easier one — the "ceiling". Ordered
+/// **category-major** (all of an easier category before any of a harder one),
+/// then by solver priority within a category. This matters: [minableOrder]
+/// priority is NOT category-monotonic (e.g. Naked Pair, a Subset, is tried
+/// before Locked Triple, an Intersection), so a plain minableOrder solve could
+/// reach for a [category] technique when an easier category would have
+/// finished — making [boardRequiresCategory] misjudge. Category-major order
+/// exhausts every easier idea first, so "the solve needed [category]" is real.
+List<HintTechnique> categoryCeilingOrder(TechniqueCategory category) {
+  final included = [
+    for (final t in minableOrder)
+      if (techniqueCategory[t]!.index <= category.index) t,
+  ];
+  included.sort((a, b) {
+    final byCategory =
+        techniqueCategory[a]!.index.compareTo(techniqueCategory[b]!.index);
+    if (byCategory != 0) return byCategory;
+    return minableOrder.indexOf(a).compareTo(minableOrder.indexOf(b));
+  });
+  return included;
+}
 
 /// Whether [board] is a genuine practice case for [category]: it solves using
 /// only [category]'s ceiling AND the hardest category it actually needs is

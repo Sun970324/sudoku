@@ -1579,6 +1579,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get categoryWings => '윙';
 
   @override
+  String get categoryMiscellaneous => '기타';
+
+  @override
   String get categoryFinnedFish => '핀드 피시';
 
   @override

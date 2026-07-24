@@ -347,6 +347,7 @@ enum TechniqueCategory {
   basicFish,
   coloring,
   wings,
+  miscellaneous,
   finnedFish,
   uniqueness,
   chainsAndLoops,
@@ -363,11 +364,13 @@ const techniqueCategory = <HintTechnique, TechniqueCategory>{
 
   HintTechnique.intersectionPointing: TechniqueCategory.intersections,
   HintTechnique.intersectionClaiming: TechniqueCategory.intersections,
+  // Locked Pair/Triple are naked subsets confined to a box-line intersection;
+  // HoDoKu files them with Intersections (Locked Candidates), not Subsets.
+  HintTechnique.lockedPair: TechniqueCategory.intersections,
+  HintTechnique.lockedTriple: TechniqueCategory.intersections,
 
-  HintTechnique.lockedPair: TechniqueCategory.subsets,
   HintTechnique.nakedPair: TechniqueCategory.subsets,
   HintTechnique.hiddenPair: TechniqueCategory.subsets,
-  HintTechnique.lockedTriple: TechniqueCategory.subsets,
   HintTechnique.nakedTriple: TechniqueCategory.subsets,
   HintTechnique.hiddenTriple: TechniqueCategory.subsets,
   HintTechnique.nakedQuad: TechniqueCategory.subsets,
@@ -386,9 +389,6 @@ const techniqueCategory = <HintTechnique, TechniqueCategory>{
   HintTechnique.xyWing: TechniqueCategory.wings,
   HintTechnique.xyzWing: TechniqueCategory.wings,
   HintTechnique.wWing: TechniqueCategory.wings,
-  // WXYZ-Wing is an ALS pattern at heart, but the community files it with the
-  // wings by name/shape; kept here so "Wings" holds the whole *-Wing family.
-  HintTechnique.wxyzWing: TechniqueCategory.wings,
 
   HintTechnique.finnedXWing: TechniqueCategory.finnedFish,
   HintTechnique.sashimiXWing: TechniqueCategory.finnedFish,
@@ -409,12 +409,15 @@ const techniqueCategory = <HintTechnique, TechniqueCategory>{
   HintTechnique.groupedXChain: TechniqueCategory.chainsAndLoops,
   HintTechnique.groupedAic: TechniqueCategory.chainsAndLoops,
 
+  // WXYZ-Wing is HoDoKu's ALS-XY-Wing — an ALS pattern, not a basic wing.
+  HintTechnique.wxyzWing: TechniqueCategory.almostLockedSets,
   HintTechnique.alsXZ: TechniqueCategory.almostLockedSets,
   HintTechnique.alsAic: TechniqueCategory.almostLockedSets,
-  HintTechnique.sueDeCoq: TechniqueCategory.almostLockedSets,
-  // Firework is app-only (no HoDoKu 2.2 home); an ALS-adjacent multi-digit
-  // pattern, filed with ALS as the closest fit.
-  HintTechnique.tripleFirework: TechniqueCategory.almostLockedSets,
+
+  // HoDoKu files Sue de Coq under Miscellaneous (not ALS); Firework is
+  // app-only with no HoDoKu home, so it joins the catch-all.
+  HintTechnique.sueDeCoq: TechniqueCategory.miscellaneous,
+  HintTechnique.tripleFirework: TechniqueCategory.miscellaneous,
 };
 
 /// A category's difficulty tier for display/ordering: the tier of its hardest
@@ -452,6 +455,8 @@ extension TechniqueCategoryInfo on TechniqueCategory {
         return l10n.categoryColoring;
       case TechniqueCategory.wings:
         return l10n.categoryWings;
+      case TechniqueCategory.miscellaneous:
+        return l10n.categoryMiscellaneous;
       case TechniqueCategory.finnedFish:
         return l10n.categoryFinnedFish;
       case TechniqueCategory.uniqueness:

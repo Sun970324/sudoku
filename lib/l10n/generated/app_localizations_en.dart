@@ -1619,6 +1619,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryWings => 'Wings';
 
   @override
+  String get categoryMiscellaneous => 'Miscellaneous';
+
+  @override
   String get categoryFinnedFish => 'Finned Fish';
 
   @override

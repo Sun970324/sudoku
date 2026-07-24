@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
-import '../../models/difficulty.dart';
 import '../../models/hint.dart';
 import '../../services/generation/human_solver.dart';
 import '../../services/storage_service.dart';
@@ -13,9 +12,8 @@ import '../../widgets/pop_card.dart';
 /// The technique codex (free for everyone): every solving technique the app
 /// knows, grouped by [TechniqueCategory] (type), with how often each has
 /// appeared in puzzles the player solved — fed by
-/// StorageService.recordTechniqueCounts on solo wins. Each row carries a
-/// difficulty badge (the secondary axis); undiscovered techniques stay dimmed
-/// until first encountered.
+/// StorageService.recordTechniqueCounts on solo wins. Undiscovered techniques
+/// stay dimmed until first encountered.
 class TechniqueCodexScreen extends StatefulWidget {
   const TechniqueCodexScreen({super.key});
 
@@ -97,7 +95,7 @@ class _TechniqueCodexScreenState extends State<TechniqueCodexScreen> {
               _TechniqueRow(
                 technique: technique,
                 stats: codex[technique],
-                isDark: isDark,
+                accent: accent,
               ),
           ],
         ),
@@ -110,24 +108,20 @@ class _TechniqueRow extends StatelessWidget {
   const _TechniqueRow({
     required this.technique,
     required this.stats,
-    required this.isDark,
+    required this.accent,
   });
 
   final HintTechnique technique;
 
   /// Null until the technique first appears in a solved puzzle.
   final ({int uses, int puzzles})? stats;
-  final bool isDark;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final discovered = stats != null;
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    // Category is the grouping axis now, so difficulty rides along per row: the
-    // check + tier pill are coloured by this technique's own tier.
-    final tier = techniqueDifficulty[technique]!;
-    final tierColor = AppPalette.difficultyColor(tier, isDark);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -135,7 +129,7 @@ class _TechniqueRow extends StatelessWidget {
           Icon(
             discovered ? Icons.check_circle : Icons.circle_outlined,
             size: 16,
-            color: discovered ? tierColor : muted.withValues(alpha: 0.4),
+            color: discovered ? accent : muted.withValues(alpha: 0.4),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -144,21 +138,6 @@ class _TechniqueRow extends StatelessWidget {
               style: discovered
                   ? null
                   : TextStyle(color: muted.withValues(alpha: 0.55)),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.only(right: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-            decoration: BoxDecoration(
-              color: tierColor.withValues(alpha: discovered ? 0.15 : 0.08),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              tier.label(context),
-              style: TextStyle(
-                fontSize: 11,
-                color: tierColor.withValues(alpha: discovered ? 1 : 0.55),
-              ),
             ),
           ),
           Text(

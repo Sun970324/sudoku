@@ -24,10 +24,11 @@ void main() {
   });
 
   test('categoryDifficulty returns the hardest member tier', () {
-    // Singles top out at Easy (hidden single); ALS reaches Expert.
+    // Singles top out at Easy (hidden single); Intersections reach Medium
+    // (locked triple); ALS reaches Expert.
     expect(categoryDifficulty(TechniqueCategory.singles), Difficulty.easy);
     expect(categoryDifficulty(TechniqueCategory.intersections),
-        Difficulty.easy);
+        Difficulty.medium);
     expect(categoryDifficulty(TechniqueCategory.almostLockedSets),
         Difficulty.expert);
   });

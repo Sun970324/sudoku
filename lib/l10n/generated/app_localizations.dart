@@ -2708,6 +2708,12 @@ abstract class AppLocalizations {
   /// **'Wings'**
   String get categoryWings;
 
+  /// No description provided for @categoryMiscellaneous.
+  ///
+  /// In en, this message translates to:
+  /// **'Miscellaneous'**
+  String get categoryMiscellaneous;
+
   /// No description provided for @categoryFinnedFish.
   ///
   /// In en, this message translates to:

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/generated/app_localizations.dart';
-import '../../models/difficulty.dart';
 import '../../models/hint.dart';
 import '../../models/sudoku_puzzle.dart';
 import '../../services/technique_queue_manager.dart';
@@ -164,19 +163,12 @@ class _CategoryCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            category.label(context),
-                            style: TextStyle(
-                                fontFamily: 'Mulmaru',
-                                fontSize: 17,
-                                color: accent),
-                          ),
-                          const SizedBox(width: 8),
-                          _DifficultyBadge(
-                              tier: categoryDifficulty(category), accent: accent),
-                        ],
+                      Text(
+                        category.label(context),
+                        style: TextStyle(
+                            fontFamily: 'Mulmaru',
+                            fontSize: 17,
+                            color: accent),
                       ),
                       const SizedBox(height: 6),
                       Text(members,
@@ -199,29 +191,6 @@ class _CategoryCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// The category's hardest-member tier, shown as a small pill next to its name.
-class _DifficultyBadge extends StatelessWidget {
-  const _DifficultyBadge({required this.tier, required this.accent});
-
-  final Difficulty tier;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-      decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        tier.label(context),
-        style: TextStyle(fontSize: 11, color: accent),
       ),
     );
   }
