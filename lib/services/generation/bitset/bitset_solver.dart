@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import '../../../models/difficulty.dart';
 import '../../../models/hint.dart';
 import '../human_solver.dart' show SolveResult;
+import 'bitset_aic.dart';
 import 'bitset81.dart';
 import 'candidates.dart';
 import 'conversions.dart';
@@ -259,7 +260,11 @@ class BitsetSolver {
         HintTechnique.wxyzWing => _alsXZ(wxyzOnly: true),
         HintTechnique.alsXZ => _alsXZ(wxyzOnly: false),
         HintTechnique.xyChain => _xyChain(),
-        _ => false,
+        HintTechnique.aic ||
+        HintTechnique.groupedXChain ||
+        HintTechnique.groupedAic ||
+        HintTechnique.alsAic =>
+          _aicChain(t),
       };
 
   void _place(int cell, int digit) {
@@ -731,6 +736,20 @@ class BitsetSolver {
       }
     }
     return false;
+  }
+
+  /// General AIC / grouped X-Chain / grouped AIC / ALS-AIC — the four chain
+  /// techniques whose search machinery (grouped + ALS set nodes,
+  /// iterative-deepening DFS) lives in [BitsetAic]. It returns the candidates
+  /// to strike; we apply them and log the technique.
+  bool _aicChain(HintTechnique t) {
+    final strikes = BitsetAic.findEliminations(_mask, t);
+    if (strikes.isEmpty) return false;
+    for (final node in strikes) {
+      _mask[node ~/ 9] = candRemove(_mask[node ~/ 9], node % 9 + 1);
+    }
+    _history.add(t);
+    return true;
   }
 
   /// X-Chain: a single-digit alternating chain that starts and ends with a

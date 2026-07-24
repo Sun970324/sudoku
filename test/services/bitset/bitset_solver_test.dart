@@ -338,6 +338,119 @@ void main() {
     });
   });
 
+  group('phase-4b chain ports (AIC · grouped X-Chain/AIC · ALS-AIC — engine '
+      'fixture positions + real-board soundness)', () {
+    List<List<Set<int>>> candidatesFrom(Map<List<int>, Set<int>> entries) {
+      final grid =
+          List.generate(9, (_) => List.generate(9, (_) => <int>{}));
+      entries.forEach((cell, digits) => grid[cell[0]][cell[1]] = {...digits});
+      return grid;
+    }
+
+    final emptyBoard = List.generate(9, (_) => List.filled(9, 0));
+
+    test('AIC fires on the single-digit chain fixture', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.aic,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {4},
+          [0, 3]: {4},
+          [8, 0]: {4},
+          [8, 5]: {4},
+          [1, 5]: {4, 7},
+        }),
+      );
+      expect(after, isNotNull);
+    });
+
+    test('Grouped X-Chain fires through a two-cell group node', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.groupedXChain,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1},
+          [0, 6]: {1},
+          [0, 7]: {1},
+          [8, 0]: {1},
+          [8, 7]: {1},
+          [1, 7]: {1, 7},
+        }),
+      );
+      expect(after, isNotNull);
+    });
+
+    test('Grouped X-Chain is silent when only a plain chain exists', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.groupedXChain,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {4},
+          [0, 3]: {4},
+          [8, 0]: {4},
+          [8, 5]: {4},
+          [1, 5]: {4, 7},
+        }),
+      );
+      expect(after, isNull);
+    });
+
+    test('ALS-AIC fires on the ALS-XZ-shaped fixture', () {
+      final after = BitsetSolver().debugApplyOnce(
+        HintTechnique.alsAic,
+        emptyBoard,
+        candidatesFrom({
+          [0, 0]: {1, 2},
+          [0, 4]: {1, 2},
+          [0, 5]: {1, 3},
+          [0, 8]: {1, 5},
+        }),
+      );
+      expect(after, isNotNull);
+      expect(after![0][8], isNot(contains(1)));
+    });
+
+    test('soundness: across 600 sparse boards, no chain technique ever '
+        'eliminates a solution digit', () {
+      final rng = Random(31);
+      const chains = {
+        HintTechnique.aic,
+        HintTechnique.groupedXChain,
+        HintTechnique.groupedAic,
+        HintTechnique.alsAic,
+      };
+      var fired = 0;
+      for (var i = 0; i < 600; i++) {
+        final solution = BoardGenerator(random: rng).generateSolvedBoard();
+        final dug =
+            ClueRemover(random: rng).removeClues(solution, 23 + rng.nextInt(6));
+        // Reduce by everything cheaper than the chains, then probe each chain
+        // on the stalled candidate grid.
+        final stalled = BitsetSolver().solve(dug, enabled: {
+          for (final t in BitsetSolver.order)
+            if (!chains.contains(t)) t,
+        }).board;
+        final grid = SudokuGrid(
+                stalled.map((r) => List<int>.from(r)).toList())
+            .allCandidates();
+        for (final t in chains) {
+          final after = BitsetSolver().debugApplyOnce(t, stalled, grid);
+          if (after == null) continue;
+          fired++;
+          for (var r = 0; r < 9; r++) {
+            for (var c = 0; c < 9; c++) {
+              if (stalled[r][c] != 0) continue; // placed cells carry no candidates
+              expect(after[r][c], contains(solution[r][c]),
+                  reason: '$t removed the solution digit at ($r,$c) on $i');
+            }
+          }
+        }
+      }
+      expect(fired, greaterThan(0),
+          reason: 'the soundness probe never exercised a chain technique');
+    });
+  });
+
   test('Multi-Coloring port fires on the known multi-coloring position '
       '(same fixture as multi_coloring_test.dart) and strikes 5 from (6,4)',
       () {
