@@ -516,6 +516,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get techniqueSimpleColoring => '심플 컬러링';
 
   @override
+  String get techniqueMultiColoring => '멀티 컬러링';
+
+  @override
+  String explanationMultiColoring(Object digit) {
+    return '숫자 $digit의 후보 사슬이 서로 떨어진 두 색칠 그룹으로 나뉘는데, 두 그룹의 색 사이 관계 때문에 특정 칸은 어느 색이 참이 되든 $digit번이 될 수 없어요. 그래서 그 칸에서 $digit번을 후보에서 지울 수 있습니다.';
+  }
+
+  @override
   String get techniqueXYWing => 'XY-윙';
 
   @override

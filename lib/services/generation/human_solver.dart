@@ -44,6 +44,7 @@ const humanSolverTechniqueOrder = [
   // Turbot / X-Chain) that resolve the same colourable components, so it
   // would never fire in generation at all.
   HintTechnique.simpleColoring,
+  HintTechnique.multiColoring,
   HintTechnique.xyzWing,
   HintTechnique.wWing,
   HintTechnique.swordfish,
@@ -217,6 +218,8 @@ class HumanSolver {
           _hintEngine.findRemotePair(board, candidates),
         HintTechnique.simpleColoring =>
           _hintEngine.findSimpleColoring(board, candidates),
+        HintTechnique.multiColoring =>
+          _hintEngine.findMultiColoring(board, candidates),
         HintTechnique.xyWing => _hintEngine.findXYWing(board, candidates),
         HintTechnique.xyzWing => _hintEngine.findXYZWing(board, candidates),
         HintTechnique.wWing => _hintEngine.findWWing(board, candidates),

@@ -169,6 +169,8 @@
   "techniqueTurbotFish": "터봇 피시",
   "techniqueRemotePair": "리모트 페어",
   "techniqueSimpleColoring": "심플 컬러링",
+  "techniqueMultiColoring": "멀티 컬러링",
+  "explanationMultiColoring": "숫자 {digit}의 후보 사슬이 서로 떨어진 두 색칠 그룹으로 나뉘는데, 두 그룹의 색 사이 관계 때문에 특정 칸은 어느 색이 참이 되든 {digit}번이 될 수 없어요. 그래서 그 칸에서 {digit}번을 후보에서 지울 수 있습니다.",
   "techniqueXYWing": "XY-윙",
   "techniqueXYZWing": "XYZ-윙",
   "techniqueWWing": "W-윙",

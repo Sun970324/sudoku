@@ -56,7 +56,9 @@ List<HintStep> buildHintSteps(Hint hint, AppLocalizations l10n) {
     HintTechnique.twoStringKite ||
     HintTechnique.turbotFish =>
       _singleDigitChainSteps(hint, l10n),
-    HintTechnique.simpleColoring => _simpleColoringSteps(hint, l10n),
+    HintTechnique.simpleColoring ||
+    HintTechnique.multiColoring =>
+      _simpleColoringSteps(hint, l10n),
     HintTechnique.xWing => _xWingSteps(hint, l10n),
     // The per-family guards below mirror the chain guard above: a
     // hand-built hint missing the fields a family reads (test fakes) gets

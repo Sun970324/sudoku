@@ -342,6 +342,153 @@ extension HintEngineColoring on HintEngine {
     return null;
   }
 
+  /// Multi-Coloring: two or more separate conjugate-pair color clusters exist
+  /// for one digit. Ported from HoDoKu's ColoringSolver (findMultiColorSteps):
+  ///
+  ///  - **Wrap** (HoDoKu Multi-Colors 2): if one colour of cluster A can see
+  ///    BOTH colours of cluster B, that colour can never be the digit
+  ///    (whichever colour of B is true eliminates it), so the whole colour is
+  ///    removed.
+  ///  - **Trap** (HoDoKu Multi-Colors 1): if colour a of cluster A sees colour
+  ///    c of cluster B, then a and c can't both be true — so the opposite
+  ///    colours b and d can't both be false; any cell seeing both b and d
+  ///    therefore loses the digit.
+  Hint? findMultiColoring(
+    List<List<int>> board, [
+    List<List<Set<int>>>? candidates,
+    AppLocalizations? l10n,
+  ]) {
+    final resolved = candidates ?? _freshCandidates(board);
+    return _findMultiColoring(resolved, l10n);
+  }
+
+  Hint? _findMultiColoring(
+    List<List<Set<int>>> candidates,
+    AppLocalizations? l10n,
+  ) {
+    final resolvedL10n = _resolveL10n(l10n);
+    for (var d = 1; d <= 9; d++) {
+      final components = _colorComponentsForDigit(candidates, d);
+      if (components.length < 2) continue;
+      // Ordered pairs: a->b is not b->a for the wrap rule (a colour of A vs
+      // both colours of B), so every combination is checked (as HoDoKu does).
+      for (var i = 0; i < components.length; i++) {
+        for (var j = 0; j < components.length; j++) {
+          if (i == j) continue;
+          final hint = _multiColorPair(
+              candidates, components[i], components[j], d, resolvedL10n);
+          if (hint != null) return hint;
+        }
+      }
+    }
+    return null;
+  }
+
+  Hint? _multiColorPair(
+    List<List<Set<int>>> candidates,
+    (Map<int, int>, List<(int, int)>) clusterA,
+    (Map<int, int>, List<(int, int)>) clusterB,
+    int digit,
+    AppLocalizations l10n,
+  ) {
+    List<List<int>> cellsOf(Map<int, int> coloring, int color) => [
+          for (final e in coloring.entries)
+            if (e.value == color) [e.key ~/ 9, e.key % 9],
+        ];
+    final a = cellsOf(clusterA.$1, 0);
+    final b = cellsOf(clusterA.$1, 1);
+    final c = cellsOf(clusterB.$1, 0);
+    final e = cellsOf(clusterB.$1, 1);
+
+    bool sees(List<List<int>> x, List<List<int>> y) {
+      for (final p in x) {
+        for (final q in y) {
+          if (_seeEachOther(p, q)) return true;
+        }
+      }
+      return false;
+    }
+
+    // Wrap: a colour of A sees both colours of B -> that colour is impossible.
+    for (final color in [a, b]) {
+      if (sees(color, c) && sees(color, e)) {
+        final elim = [
+          for (final p in color)
+            if (candidates[p[0]][p[1]].contains(digit))
+              HintElimination(p[0], p[1], digit),
+        ];
+        if (elim.isNotEmpty) {
+          return _multiColorHint(
+              clusterA, clusterB, digit, elim, l10n, trap: false);
+        }
+      }
+    }
+
+    // Trap: colour x of A sees colour y of B -> cells seeing both opposite
+    // colours (oppX in A, oppY in B) lose the digit.
+    final excluded = {...clusterA.$1.keys, ...clusterB.$1.keys};
+    for (final (x, y, oppX, oppY) in [
+      (a, c, b, e),
+      (a, e, b, c),
+      (b, c, a, e),
+      (b, e, a, c),
+    ]) {
+      if (!sees(x, y)) continue;
+      final elim = <HintElimination>[];
+      for (var r = 0; r < 9; r++) {
+        for (var col = 0; col < 9; col++) {
+          if (excluded.contains(r * 9 + col)) continue;
+          if (!candidates[r][col].contains(digit)) continue;
+          if (oppX.any((p) => _seeEachOther([r, col], p)) &&
+              oppY.any((p) => _seeEachOther([r, col], p))) {
+            elim.add(HintElimination(r, col, digit));
+          }
+        }
+      }
+      if (elim.isNotEmpty) {
+        return _multiColorHint(
+            clusterA, clusterB, digit, elim, l10n, trap: true);
+      }
+    }
+    return null;
+  }
+
+  Hint _multiColorHint(
+    (Map<int, int>, List<(int, int)>) clusterA,
+    (Map<int, int>, List<(int, int)>) clusterB,
+    int digit,
+    List<HintElimination> eliminations,
+    AppLocalizations l10n, {
+    required bool trap,
+  }) {
+    HintCell cellAt(int idx) => HintCell(idx ~/ 9, idx % 9);
+    final groupA = clusterA.$1.keys.map(cellAt).toSet();
+    final groupB = clusterB.$1.keys.map(cellAt).toSet();
+    return Hint(
+      technique: HintTechnique.multiColoring,
+      type: HintType.eliminate,
+      explanation: l10n.explanationMultiColoring(digit),
+      primaryCells: {...groupA, ...groupB},
+      secondaryCells: eliminations.map((e) => HintCell(e.row, e.col)).toSet(),
+      colorGroupA: groupA,
+      colorGroupB: groupB,
+      eliminations: eliminations,
+      chainLinks: [
+        ..._conjugateEdgeLinks(clusterA.$2, digit),
+        ..._conjugateEdgeLinks(clusterB.$2, digit),
+      ],
+      // Trap eliminations land on outside onlookers seeing two colours (like
+      // simple-coloring rule 2, so the step builder draws convergence
+      // connectors); wrap eliminations land on a colour's own cells (rule 1).
+      elimSources: trap
+          ? [
+              for (final idx in {...clusterA.$1.keys, ...clusterB.$1.keys})
+                HintChainNode.single(cellAt(idx), digit),
+            ]
+          : const [],
+    );
+  }
+
   Hint? _simpleColoringRule2(
     List<List<Set<int>>> candidates,
     Map<int, int> coloring,

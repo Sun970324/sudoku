@@ -225,6 +225,8 @@
   "techniqueTurbotFish": "Turbot Fish",
   "techniqueRemotePair": "Remote Pair",
   "techniqueSimpleColoring": "Simple Coloring",
+  "techniqueMultiColoring": "Multi-Coloring",
+  "explanationMultiColoring": "Digit {digit}'s candidates split into two separate color clusters; the relationship between their colors forces {digit} out of certain cells no matter which color turns out true, so {digit} can be removed from its candidates there.",
   "techniqueXYWing": "XY-Wing",
   "techniqueXYZWing": "XYZ-Wing",
   "techniqueWWing": "W-Wing",

@@ -537,6 +537,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get techniqueSimpleColoring => 'Simple Coloring';
 
   @override
+  String get techniqueMultiColoring => 'Multi-Coloring';
+
+  @override
+  String explanationMultiColoring(Object digit) {
+    return 'Digit $digit\'s candidates split into two separate color clusters; the relationship between their colors forces $digit out of certain cells no matter which color turns out true, so $digit can be removed from its candidates there.';
+  }
+
+  @override
   String get techniqueXYWing => 'XY-Wing';
 
   @override

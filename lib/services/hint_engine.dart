@@ -247,6 +247,8 @@ class HintEngine {
           findRemotePair(board, resolved, resolvedL10n),
         HintTechnique.simpleColoring =>
           findSimpleColoring(board, resolved, resolvedL10n),
+        HintTechnique.multiColoring =>
+          findMultiColoring(board, resolved, resolvedL10n),
         HintTechnique.xyWing => findXYWing(board, resolved, resolvedL10n),
         HintTechnique.xyzWing => findXYZWing(board, resolved, resolvedL10n),
         HintTechnique.wWing => findWWing(board, resolved, resolvedL10n),

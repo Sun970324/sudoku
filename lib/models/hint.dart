@@ -23,6 +23,7 @@ enum HintTechnique {
   turbotFish,
   remotePair,
   simpleColoring,
+  multiColoring,
   xyWing,
   xyzWing,
   wWing,
@@ -95,6 +96,8 @@ extension HintTechniqueInfo on HintTechnique {
         return l10n.techniqueRemotePair;
       case HintTechnique.simpleColoring:
         return l10n.techniqueSimpleColoring;
+      case HintTechnique.multiColoring:
+        return l10n.techniqueMultiColoring;
       case HintTechnique.xyWing:
         return l10n.techniqueXYWing;
       case HintTechnique.xyzWing:
@@ -172,6 +175,7 @@ const hintTechniqueOrder = [
   HintTechnique.turbotFish,
   HintTechnique.remotePair,
   HintTechnique.simpleColoring,
+  HintTechnique.multiColoring,
   HintTechnique.xyWing,
   HintTechnique.xyzWing,
   HintTechnique.wWing,
@@ -247,6 +251,7 @@ const techniqueBaseScore = <HintTechnique, int>{
   HintTechnique.swordfish: 150,
   HintTechnique.jellyfish: 160,
   HintTechnique.simpleColoring: 150,
+  HintTechnique.multiColoring: 200,
   HintTechnique.finnedXWing: 130,
   HintTechnique.sashimiXWing: 150,
   HintTechnique.nakedQuad: 120,
@@ -385,6 +390,7 @@ const techniqueCategory = <HintTechnique, TechniqueCategory>{
   HintTechnique.jellyfish: TechniqueCategory.basicFish,
 
   HintTechnique.simpleColoring: TechniqueCategory.coloring,
+  HintTechnique.multiColoring: TechniqueCategory.coloring,
 
   HintTechnique.xyWing: TechniqueCategory.wings,
   HintTechnique.xyzWing: TechniqueCategory.wings,

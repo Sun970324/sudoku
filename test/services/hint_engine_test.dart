@@ -2389,6 +2389,7 @@ void main() {
         HintTechnique.turbotFish,
         HintTechnique.remotePair,
         HintTechnique.simpleColoring,
+        HintTechnique.multiColoring,
         HintTechnique.xyWing,
         HintTechnique.xyzWing,
         HintTechnique.wWing,

@@ -1058,6 +1058,18 @@ abstract class AppLocalizations {
   /// **'Simple Coloring'**
   String get techniqueSimpleColoring;
 
+  /// No description provided for @techniqueMultiColoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Coloring'**
+  String get techniqueMultiColoring;
+
+  /// No description provided for @explanationMultiColoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Digit {digit}\'s candidates split into two separate color clusters; the relationship between their colors forces {digit} out of certain cells no matter which color turns out true, so {digit} can be removed from its candidates there.'**
+  String explanationMultiColoring(Object digit);
+
   /// No description provided for @techniqueXYWing.
   ///
   /// In en, this message translates to:
