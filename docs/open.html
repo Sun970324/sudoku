@@ -11,9 +11,11 @@
 
   It is the fallback half of the deep link. On a phone with the app installed,
   https://sun970324.github.io/sudoku/open.html?c=<code> never gets this far —
-  iOS Universal Links / Android App Links hand it to the app. This is what the
-  people without the app see: the stores, a manual "open in app" attempt, and
-  the code itself so it can be typed into the app's 코드 입력 screen.
+  iOS Universal Links / Android App Links hand it to the app. Whoever does land
+  here gets an automatic attempt (Android: intent:// with Play fallback, iOS:
+  scheme try then App Store after 1.6s — Safari shows a brief "invalid address"
+  alert when the app is absent; unavoidable, the standard tradeoff), with the
+  buttons and the raw code kept as the manual fallback.
 -->
 <style>
   body { max-width: 32rem; margin: 0 auto; padding: 3rem 1.25rem 4rem;
@@ -79,20 +81,57 @@
   // never needs to know which one it is holding.
   var code = new URLSearchParams(location.search).get('c');
   code = code === null ? '' : code.trim();
+
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=jaywithme.sudoku';
+  var APPSTORE_URL = 'https://apps.apple.com/app/id6794986328';
+
   if (code === '') {
     document.getElementById('found').style.display = 'none';
     document.getElementById('missing').style.display = 'block';
     document.getElementById('lead').textContent = '';
   } else {
+    var scheme = 'sudokuleague://open?c=' + encodeURIComponent(code);
+    // Chrome's native app-or-store branch: opens the app when installed,
+    // otherwise goes to the fallback URL. No timers, no guessing.
+    var intentUrl = 'intent://open?c=' + encodeURIComponent(code) +
+      '#Intent;scheme=sudokuleague;package=jaywithme.sudoku;' +
+      'S.browser_fallback_url=' + encodeURIComponent(PLAY_URL) + ';end';
+
+    var ua = navigator.userAgent;
+    var isAndroid = /android/i.test(ua);
+    var isIos = /iphone|ipad|ipod/i.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
     document.getElementById('code').textContent = code;
-    document.getElementById('openApp').href =
-      'sudokuleague://open?c=' + encodeURIComponent(code);
+    document.getElementById('openApp').href = isAndroid ? intentUrl : scheme;
     document.getElementById('copy').addEventListener('click', function () {
       var done = function () { document.getElementById('copy').textContent = '복사했어요'; };
       if (navigator.clipboard) {
         navigator.clipboard.writeText(code).then(done, function () {});
       }
     });
+
+    // Auto-attempt. A phone with the app installed normally never reaches
+    // this page (Universal/App Links open the app straight from the tap), so
+    // whoever lands here is most likely app-less — but in-app browsers and
+    // long-press-opened links do land here with the app present, hence: try
+    // the app first, fall to the store only when nothing claimed the jump.
+    if (isAndroid) {
+      document.getElementById('lead').textContent = '앱으로 연결 중…';
+      location.replace(intentUrl);
+    } else if (isIos) {
+      document.getElementById('lead').textContent = '앱으로 연결 중…';
+      var fallback = setTimeout(function () {
+        location.href = APPSTORE_URL;
+      }, 1600);
+      // If the app took over, this page is hidden before the timer fires.
+      var cancel = function () {
+        if (document.hidden) clearTimeout(fallback);
+      };
+      document.addEventListener('visibilitychange', cancel);
+      window.addEventListener('pagehide', function () { clearTimeout(fallback); });
+      location.href = scheme;
+    }
   }
 </script>
 </body>
