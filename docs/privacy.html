@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,17 +9,44 @@
          font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
          color: #1c1c1e; background: #fff; }
   pre { white-space: pre-wrap; word-break: break-word; font: inherit; }
-  hr { margin: 3rem 0; border: 0; border-top: 1px solid #d1d1d6; }
   a { color: #0b62d0; }
+  /* One language at a time. Only the inactive one is hidden, so every element
+     keeps whatever display type it would otherwise have. */
+  html[data-lang="ko"] .en { display: none !important; }
+  html[data-lang="en"] .ko { display: none !important; }
+  .lang-switch { text-align: right; margin: 0 0 1rem; }
+  .lang-toggle { font: inherit; font-size: .9rem; color: #77777e;
+                 background: none; border: 0; padding: 0;
+                 text-decoration: underline; cursor: pointer; }
   @media (prefers-color-scheme: dark) {
     body { color: #ececf1; background: #17171a; }
-    hr { border-top-color: #3a3a3e; }
     a { color: #74a9f5; }
+    .lang-toggle { color: #86868e; }
   }
 </style>
+<script>
+  // Language before first paint, so the wrong one never flashes. A stored
+  // choice wins; otherwise the browser's own language decides. localStorage
+  // throws in Safari private mode, so every touch of it is guarded.
+  (function () {
+    var lang = null;
+    try { lang = window.localStorage.getItem('sl_lang'); } catch (e) {}
+    if (lang !== 'ko' && lang !== 'en') {
+      var tag = (navigator.languages && navigator.languages[0]) ||
+                navigator.language || 'en';
+      lang = String(tag).toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
+    }
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.lang = lang;
+  })();
+</script>
 </head>
 <body>
-<pre>개인정보처리방침
+<!-- The label is the language you would switch *to*, so it is the one hidden
+     while that language is active. -->
+<p class="lang-switch"><button class="lang-toggle" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button></p>
+
+<pre class="ko">개인정보처리방침
 
 시행일: 2026년 8월 11일 (2026년 7월 26일 제정, 서비스 이용 기록·설치 식별자·결제 정보·오류 진단 항목 추가)
 
@@ -111,8 +138,7 @@
 - 앱 내 설정 &gt; 문의·신고 접수에서도 같은 주소로 연락할 수 있습니다.
 
 본 방침은 변경될 수 있으며, 중요한 변경은 앱 내에 공지합니다.</pre>
-<hr>
-<pre>Privacy Policy
+<pre class="en">Privacy Policy
 
 Effective date: August 11, 2026 (first issued July 26, 2026; usage records, installation identifier, purchase information and diagnostics added)
 
@@ -204,5 +230,16 @@ The app does not request location permission, and does not access your contacts,
 - The same address is reachable in-app from Settings &gt; Contact &amp; report.
 
 This policy may change; significant changes will be announced in the app.</pre>
+<script>
+  // Toggle only; these pages have no script-written strings, so the CSS switch
+  // is the whole re-render.
+  document.getElementById('langToggle').addEventListener('click', function () {
+    var next =
+      document.documentElement.getAttribute('data-lang') === 'en' ? 'ko' : 'en';
+    document.documentElement.setAttribute('data-lang', next);
+    document.documentElement.lang = next;
+    try { window.localStorage.setItem('sl_lang', next); } catch (e) {}
+  });
+</script>
 </body>
 </html>
