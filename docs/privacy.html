@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-lang="ko">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,44 +9,17 @@
          font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
          color: #1c1c1e; background: #fff; }
   pre { white-space: pre-wrap; word-break: break-word; font: inherit; }
+  hr { margin: 3rem 0; border: 0; border-top: 1px solid #d1d1d6; }
   a { color: #0b62d0; }
-  /* One language at a time. Only the inactive one is hidden, so every element
-     keeps whatever display type it would otherwise have. */
-  html[data-lang="ko"] .en { display: none !important; }
-  html[data-lang="en"] .ko { display: none !important; }
-  .lang-switch { text-align: right; margin: 0 0 1rem; }
-  .lang-toggle { font: inherit; font-size: .9rem; color: #77777e;
-                 background: none; border: 0; padding: 0;
-                 text-decoration: underline; cursor: pointer; }
   @media (prefers-color-scheme: dark) {
     body { color: #ececf1; background: #17171a; }
+    hr { border-top-color: #3a3a3e; }
     a { color: #74a9f5; }
-    .lang-toggle { color: #86868e; }
   }
 </style>
-<script>
-  // Language before first paint, so the wrong one never flashes. A stored
-  // choice wins; otherwise the browser's own language decides. localStorage
-  // throws in Safari private mode, so every touch of it is guarded.
-  (function () {
-    var lang = null;
-    try { lang = window.localStorage.getItem('sl_lang'); } catch (e) {}
-    if (lang !== 'ko' && lang !== 'en') {
-      var tag = (navigator.languages && navigator.languages[0]) ||
-                navigator.language || 'en';
-      lang = String(tag).toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
-    }
-    document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.lang = lang;
-  })();
-</script>
 </head>
 <body>
-<!-- The label is the language you would switch *to*, so it is the one hidden
-     while that language is active. -->
-<p class="lang-switch"><button class="lang-toggle" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button></p>
-
-<pre class="ko">개인정보처리방침
+<pre>개인정보처리방침
 
 시행일: 2026년 8월 11일 (2026년 7월 26일 제정, 서비스 이용 기록·설치 식별자·결제 정보·오류 진단 항목 추가)
 
@@ -69,6 +42,7 @@
 
 (3) 신고 정보
 - 다른 이용자를 신고하면 신고자와 신고 대상의 계정 식별자, 신고 사유, 이용자가 직접 입력한 상세 내용, 관련 대결 식별자가 저장됩니다. 이 정보는 신고 검토와 제재 판단에만 사용되며, 다른 이용자에게 공개되지 않습니다.
+- 신고를 처리하기 위해 운영자는 해당 대결의 수 기록(리플레이)을 열람할 수 있습니다. 이 목적 외에는 열람하지 않습니다.
 
 (4) 광고 관련 정보
 - 앱은 Google AdMob을 통해 보상형 광고를 표시합니다. AdMob은 광고 제공을 위해 광고 식별자(ADID/IDFA) 등 기기 정보를 수집할 수 있습니다. 자세한 내용은 Google 개인정보처리방침(https://policies.google.com/privacy)을 참고하세요.
@@ -76,6 +50,7 @@
 
 (5) 기기 내 저장 정보
 - 진행 중인 게임, 난이도별 통계, 복기(리플레이) 기록, 즐겨찾기, 설정(테마·언어·사운드 등)은 서버로 전송되지 않고 이용자의 기기에만 저장됩니다.
+- 다만 랭크 대전(1:1)과 데일리 스도쿠를 완주한 경우, 그 판의 수 기록(리플레이)은 서버에도 전송·보관됩니다. 혼자 하기, 기법 연습, 친선 대결과 파티 대결의 수 기록은 지금까지와 같이 기기에만 저장됩니다.
 
 (6) 서비스 이용 기록
 - 서비스 개선을 위해 로그인한 계정의 주요 기능 사용 이벤트(첫 실행 시점, 가입, 첫 퍼즐 완료, 데일리 스도쿠 완료, 대결 로비 방문, 프리미엄 화면 열람)와 발생 시각을 수집합니다.
@@ -111,6 +86,7 @@
 - 계정 정보와 게임 기록은 계정이 유지되는 동안 보관됩니다.
 - 계정을 삭제하면 로그인 수단(Google·Apple 연결, 세션)과 이메일 주소는 즉시 파기되고, 닉네임은 "탈퇴한 사용자"로 대체되어 개인을 식별할 수 없게 됩니다.
 - 다만 대결 기록 자체는 삭제되지 않고 익명 처리된 상태로 남습니다. 하나의 대결 기록은 상대방의 전적·레이팅 이력이기도 하므로, 이를 지우면 다른 이용자의 기록이 함께 훼손되기 때문입니다.
+- 랭크 대전과 데일리 스도쿠의 수 기록(리플레이)은 수집일로부터 30일이 지나면 자동으로 파기됩니다.
 - 신고 기록은 검토 및 재발 방지를 위해 처리 완료 후 최대 1년간 보관한 뒤 파기합니다.
 - 계정 삭제 후 7일간은 같은 계정으로 다시 가입할 수 없습니다. 이를 확인하기 위해 로그인 식별자(이메일 주소, 소셜 로그인 식별자)의 단방향 해시값만 7일간 보관한 뒤 자동으로 파기합니다. 해시값은 원래 값으로 되돌릴 수 없고, 새 가입이 같은 계정인지 대조하는 용도로만 쓰이며, 이용자의 기록이나 신원과 연결되지 않습니다.
 - 서비스 이용 기록은 수집일로부터 13개월이 지나면 자동으로 파기되며, 계정을 삭제하면 즉시 함께 삭제됩니다.
@@ -138,7 +114,8 @@
 - 앱 내 설정 &gt; 문의·신고 접수에서도 같은 주소로 연락할 수 있습니다.
 
 본 방침은 변경될 수 있으며, 중요한 변경은 앱 내에 공지합니다.</pre>
-<pre class="en">Privacy Policy
+<hr>
+<pre>Privacy Policy
 
 Effective date: August 11, 2026 (first issued July 26, 2026; usage records, installation identifier, purchase information and diagnostics added)
 
@@ -161,6 +138,7 @@ This app respects your privacy and complies with applicable laws. This policy ex
 
 (3) Reports
 - When you report another player we store the account identifiers of the reporter and the reported player, the reason, any details you type, and the related race identifier. This is used only to review the report and decide on enforcement, and is never shown to other players.
+- To handle a report, we may review the move-by-move record (replay) of the race it concerns. It is not read for any other purpose.
 
 (4) Advertising
 - The app shows rewarded ads through Google AdMob. AdMob may collect device information such as advertising identifiers (ADID/IDFA) to serve ads. See Google's Privacy Policy (https://policies.google.com/privacy) for details.
@@ -168,6 +146,7 @@ This app respects your privacy and complies with applicable laws. This policy ex
 
 (5) On-device data
 - Game progress, per-difficulty statistics, replays, favorites, and settings (theme, language, sound, etc.) are stored only on your device and are never sent to our servers.
+- Finishing a ranked race (1:1) or the daily sudoku is the one exception: that game's move-by-move record (its replay) is also sent to and kept on our servers. Solo games, technique practice, and friendly or party races stay on your device as before.
 
 (6) Usage records
 - To improve the service we record, for signed-in accounts, when a few key features are used (first launch, sign-up, first puzzle completed, daily sudoku completed, race lobby visited, premium page opened) and when each happened.
@@ -203,6 +182,7 @@ The app does not request location permission, and does not access your contacts,
 - Account information and game records are kept while your account exists.
 - When you delete your account, your sign-in methods (Google/Apple links and sessions) and email address are destroyed immediately, and your nickname is replaced with "Deleted user" so you can no longer be identified.
 - Race records themselves are not deleted; they remain in anonymized form. A race record is also your opponent's win/loss and rating history, so erasing it would damage another player's record.
+- Move-by-move records (replays) of ranked races and the daily sudoku are deleted automatically 30 days after collection.
 - Reports are kept for up to one year after they are resolved, then deleted.
 - For 7 days after deletion, the same account cannot sign up again. To check this, only a one-way hash of your sign-in identifiers (email address and social sign-in id) is kept for those 7 days and then destroyed automatically. A hash cannot be turned back into the original value; it is used solely to tell whether a new sign-up is the same account, and is linked to no record or identity.
 - Usage records are deleted automatically 13 months after collection, and immediately when you delete your account.
@@ -230,16 +210,5 @@ The app does not request location permission, and does not access your contacts,
 - The same address is reachable in-app from Settings &gt; Contact &amp; report.
 
 This policy may change; significant changes will be announced in the app.</pre>
-<script>
-  // Toggle only; these pages have no script-written strings, so the CSS switch
-  // is the whole re-render.
-  document.getElementById('langToggle').addEventListener('click', function () {
-    var next =
-      document.documentElement.getAttribute('data-lang') === 'en' ? 'ko' : 'en';
-    document.documentElement.setAttribute('data-lang', next);
-    document.documentElement.lang = next;
-    try { window.localStorage.setItem('sl_lang', next); } catch (e) {}
-  });
-</script>
 </body>
 </html>

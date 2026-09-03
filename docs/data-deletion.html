@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" data-lang="ko">
+<html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,44 +9,17 @@
          font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
          color: #1c1c1e; background: #fff; }
   pre { white-space: pre-wrap; word-break: break-word; font: inherit; }
+  hr { margin: 3rem 0; border: 0; border-top: 1px solid #d1d1d6; }
   a { color: #0b62d0; }
-  /* One language at a time. Only the inactive one is hidden, so every element
-     keeps whatever display type it would otherwise have. */
-  html[data-lang="ko"] .en { display: none !important; }
-  html[data-lang="en"] .ko { display: none !important; }
-  .lang-switch { text-align: right; margin: 0 0 1rem; }
-  .lang-toggle { font: inherit; font-size: .9rem; color: #77777e;
-                 background: none; border: 0; padding: 0;
-                 text-decoration: underline; cursor: pointer; }
   @media (prefers-color-scheme: dark) {
     body { color: #ececf1; background: #17171a; }
+    hr { border-top-color: #3a3a3e; }
     a { color: #74a9f5; }
-    .lang-toggle { color: #86868e; }
   }
 </style>
-<script>
-  // Language before first paint, so the wrong one never flashes. A stored
-  // choice wins; otherwise the browser's own language decides. localStorage
-  // throws in Safari private mode, so every touch of it is guarded.
-  (function () {
-    var lang = null;
-    try { lang = window.localStorage.getItem('sl_lang'); } catch (e) {}
-    if (lang !== 'ko' && lang !== 'en') {
-      var tag = (navigator.languages && navigator.languages[0]) ||
-                navigator.language || 'en';
-      lang = String(tag).toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
-    }
-    document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.lang = lang;
-  })();
-</script>
 </head>
 <body>
-<!-- The label is the language you would switch *to*, so it is the one hidden
-     while that language is active. -->
-<p class="lang-switch"><button class="lang-toggle" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button></p>
-
-<pre class="ko">계정 및 데이터 삭제 안내
+<pre>계정 및 데이터 삭제 안내
 
 앱: 스도쿠 리그 (Sudoku League)
 
@@ -107,14 +80,16 @@
 ■ 보관 기간
 
 익명 처리된 대결·데일리 기록은 개인을 식별할 수 없는 상태이므로 서비스가
-유지되는 동안 보관될 수 있습니다. 신고 기록의 보관 기간은 최대 1년이고,
-재가입 제한용 해시값의 보관 기간은 7일입니다. 그 밖의 개인정보는 위 목록대로
-요청 즉시 파기되며 별도의 유예 기간이 없습니다.
+유지되는 동안 보관될 수 있습니다. 다만 그 판의 수 기록(리플레이)은 예외로,
+계정을 유지하든 삭제하든 30일이 지나면 파기됩니다. 신고 기록의 보관 기간은
+최대 1년이고, 재가입 제한용 해시값의 보관 기간은 7일입니다. 그 밖의 개인정보는
+위 목록대로 요청 즉시 파기되며 별도의 유예 기간이 없습니다.
 
 ■ 문의
 
 ysw5202222@gmail.com</pre>
-<pre class="en">Account and Data Deletion
+<hr>
+<pre>Account and Data Deletion
 
 App: Sudoku League (스도쿠 리그)
 
@@ -177,23 +152,14 @@ player's record. Those records hold nothing that identifies you.
 ■ Retention periods
 
 Anonymized race and daily records carry nothing that identifies a person and
-may be kept for as long as the service runs. Reports are kept for at most one
+may be kept for as long as the service runs. Their move-by-move records
+(replays) are the exception: those are destroyed 30 days after collection
+whether or not the account still exists. Reports are kept for at most one
 year, and the re-registration hash for 7 days. Everything else listed above is
 destroyed immediately on request, with no grace period.
 
 ■ Contact
 
 ysw5202222@gmail.com</pre>
-<script>
-  // Toggle only; these pages have no script-written strings, so the CSS switch
-  // is the whole re-render.
-  document.getElementById('langToggle').addEventListener('click', function () {
-    var next =
-      document.documentElement.getAttribute('data-lang') === 'en' ? 'ko' : 'en';
-    document.documentElement.setAttribute('data-lang', next);
-    document.documentElement.lang = next;
-    try { window.localStorage.setItem('sl_lang', next); } catch (e) {}
-  });
-</script>
 </body>
 </html>
