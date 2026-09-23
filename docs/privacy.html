@@ -96,13 +96,14 @@
 - 앱이 비정상 종료되거나 오류가 발생하면 Google Firebase Crashlytics를 통해 오류 발생 지점, 기기 모델과 운영체제 버전, Firebase가 발급한 설치 식별자가 수집됩니다. 원인을 찾아 고치기 위한 것이며, 이용자가 입력한 내용이나 퍼즐 기록은 포함되지 않습니다.
 - 이 수집은 정식 배포된 앱에서만 이루어집니다.
 
-(10) 경험치·레벨
+(10) 경험치·레벨·칭호
 - 퍼즐을 완료하면 계정에 경험치가 쌓이고, 누적 경험치에서 레벨이 정해집니다. 경험치와 레벨은 게스트 계정을 포함한 모든 로그인 상태의 계정에 저장됩니다. 로그인하지 않았거나 오프라인일 때는 지급되지 않으며, 기법 연습·다시하기·즐겨찾기·공유 코드·복기 이어풀기와 친선 대결·파티 대결도 지급 대상이 아닙니다.
 - 지급 내역은 종류마다 가장 최근 한 건만 보관되며, 다음 지급이 이전 기록을 덮어씁니다. 판마다 쌓이는 기록은 없습니다.
   · 혼자 하기: 앱이 그 판에 부여한 게임 식별자와 지급 시각. 지급 시각은 같은 판이 반복 지급되는 것을 막기 위한 최소 간격 확인에만 쓰입니다. 난이도·실수·힌트·소요 시간은 서버에 남지 않습니다.
   · 데일리 스도쿠: 날짜, 지급된 경험치, 그 금액의 계산 내역(기본 점수, 실수 없음·힌트 없음 여부, 데일리 보너스)
   · 랭크 대결: 대결 식별자, 지급된 경험치, 그 금액의 계산 내역(난이도, 승패, 종료 사유, 기본 점수와 배수)
-- 레벨과 칭호, 닉네임 색은 다른 이용자에게 공개됩니다(순위표, 대결 결과 화면 등). 경험치 수치와 지급 내역은 어느 경우에도 다른 이용자에게 공개되지 않습니다.
+- 칭호와 닉네임 색을 위해 계정에 다음을 저장합니다: 받은 칭호와 받은 시각, 장착한 칭호와 닉네임 색, 칭호 집계를 시작한 시점의 랭크 승리 수, 그리고 기법 계열(12종)마다 그 기법을 사용해 완료한 판 수. 기법 사용 판 수는 판을 마칠 때 앱이 계열 이름만 보내 1씩 늘리는 숫자이며, 어떤 퍼즐을 어떻게 풀었는지는 서버에 남지 않습니다.
+- 레벨과 칭호, 닉네임 색은 다른 이용자에게 공개됩니다(순위표, 대결 결과 화면 등). 경험치 수치와 지급 내역, 기법 사용 판 수는 어느 경우에도 다른 이용자에게 공개되지 않습니다.
 - 경험치는 앱 안에서만 쓰이는 표시용 수치이며, 현금이나 환금성 있는 재화로 바꿀 수 없습니다.
 
 앱은 위치 권한을 요청하지 않으며, 연락처·사진·마이크·카메라에도 접근하지 않습니다. 다만 광고를 제공하는 Google AdMob은 광고 게재를 위해 IP 주소 등으로 대략적인 지역을 추정할 수 있습니다. 앱이 기기의 위치 기능을 사용해 위치를 확인하는 일은 없습니다.
@@ -111,7 +112,7 @@
 - 계정 관리 및 로그인 유지
 - 실시간 대결 매칭, 레이팅·티어 산정, 대결 기록 제공
 - 데일리 스도쿠 및 레이팅 순위표 제공
-- 경험치·레벨 산정 및 표시, 중복 지급 방지
+- 경험치·레벨·칭호 산정 및 표시, 중복 지급 방지
 - 신고 접수 및 부정행위 대응
 - 광고 표시
 - 서비스 이용 통계 분석 및 개선
@@ -128,7 +129,7 @@
 - 문의 기록(이메일 주소·문의 내용)은 접수일로부터 1년간 보관한 뒤 파기합니다.
 - 계정 삭제 후 7일간은 같은 계정으로 다시 가입할 수 없습니다. 이를 확인하기 위해 로그인 식별자(이메일 주소, 소셜 로그인 식별자)의 단방향 해시값만 7일간 보관한 뒤 자동으로 파기합니다. 해시값은 원래 값으로 되돌릴 수 없고, 새 가입이 같은 계정인지 대조하는 용도로만 쓰이며, 이용자의 기록이나 신원과 연결되지 않습니다.
 - 서비스 이용 기록은 수집일로부터 13개월이 지나면 자동으로 파기되며, 계정을 삭제하면 즉시 함께 삭제됩니다.
-- 경험치와 레벨, 그리고 종류별 마지막 지급 기록은 계정이 유지되는 동안 보관되고, 계정을 삭제하면 즉시 함께 삭제됩니다. 오래 사용되지 않은 게스트 계정이 정리될 때에도 함께 삭제됩니다.
+- 경험치와 레벨, 종류별 마지막 지급 기록, 그리고 칭호·닉네임 색·기법 사용 판 수는 계정이 유지되는 동안 보관되고, 계정을 삭제하면 즉시 함께 삭제됩니다. 오래 사용되지 않은 게스트 계정이 정리될 때에도 함께 삭제됩니다.
 - 설치 식별자와 결제 정보는 계정을 삭제하면 즉시 함께 삭제됩니다.
 - 오류·진단 정보는 Google Firebase Crashlytics의 정책에 따라 최대 90일간 보관된 뒤 파기됩니다.
 - 기기 내 저장 정보는 앱을 삭제하면 함께 삭제됩니다.
@@ -203,13 +204,14 @@ This app respects your privacy and complies with applicable laws. This policy ex
 - When the app crashes or hits an error, Google Firebase Crashlytics collects where the error occurred, your device model and OS version, and an installation identifier issued by Firebase. This is used to find and fix the cause; it does not include anything you typed or your puzzle records.
 - This is collected only in publicly released builds.
 
-(10) XP and levels
+(10) XP, levels and titles
 - Completing a puzzle adds XP to your account, and your level follows from the XP total. XP and levels are stored for every signed-in account, guest accounts included. Nothing is awarded while you are signed out or offline, and technique practice, restarts, favorites, shared codes, replay continuations, friendly races and party races do not award XP at all.
 - Only the most recent award of each kind is kept, and the next award overwrites it. There is no per-game history.
   · Solo: the game identifier the app assigned to that game, and the time of the award. The time is used only to check the minimum interval that stops one game being awarded repeatedly. The difficulty, mistakes, hints and elapsed time are not kept on our servers.
   · Daily sudoku: the date, the XP awarded, and how that amount was worked out (base points, whether you finished with no mistakes and no hints, and the daily bonus).
   · Ranked races: the race identifier, the XP awarded, and how that amount was worked out (difficulty, win or loss, how the race ended, base points and multiplier).
-- Your level, your title and your nickname color are shown to other players (on leaderboards, race result screens and so on). The XP number itself and your award history are never shown to other players.
+- For titles and nickname colors, your account stores: the titles you have earned and when, the title and nickname color you have equipped, your ranked win count at the moment title tracking began, and, for each of 12 technique families, the number of finished games in which you used it. That game count is raised by one when the app sends only the family's name at the end of a game; which puzzle you solved and how is not kept on our servers.
+- Your level, your title and your nickname color are shown to other players (on leaderboards, race result screens and so on). The XP number itself, your award history and your technique game counts are never shown to other players.
 - XP is a display value used inside the app only. It cannot be exchanged for cash or anything redeemable.
 
 The app does not request location permission, and does not access your contacts, photos, microphone, or camera. Google AdMob, which serves the ads, may infer an approximate region from information such as your IP address in order to serve them. The app never uses your device's location services to determine where you are.
@@ -218,7 +220,7 @@ The app does not request location permission, and does not access your contacts,
 - Account management and sign-in
 - Race matchmaking, rating/tier calculation, and race history
 - Daily sudoku and rating leaderboards
-- Calculating and showing XP and levels, and preventing duplicate awards
+- Calculating and showing XP, levels and titles, and preventing duplicate awards
 - Handling reports and responding to abuse
 - Serving ads
 - Analyzing usage statistics to improve the service
@@ -235,7 +237,7 @@ The app does not request location permission, and does not access your contacts,
 - Inquiries (the email address and message you send us) are kept for one year from the date we receive them, then deleted.
 - For 7 days after deletion, the same account cannot sign up again. To check this, only a one-way hash of your sign-in identifiers (email address and social sign-in id) is kept for those 7 days and then destroyed automatically. A hash cannot be turned back into the original value; it is used solely to tell whether a new sign-up is the same account, and is linked to no record or identity.
 - Usage records are deleted automatically 13 months after collection, and immediately when you delete your account.
-- XP, your level, and the most recent award record of each kind are kept while your account exists, and are deleted immediately when you delete your account. They are also deleted when an unused guest account is cleaned up.
+- XP, your level, the most recent award record of each kind, and your titles, nickname color and technique game counts are kept while your account exists, and are deleted immediately when you delete your account. They are also deleted when an unused guest account is cleaned up.
 - The installation identifier and purchase information are deleted immediately when you delete your account.
 - Diagnostics are retained for up to 90 days under Google Firebase Crashlytics' own policy, then deleted.
 - On-device data is removed when you uninstall the app.
