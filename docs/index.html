@@ -2,38 +2,211 @@
 <html lang="ko" data-lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sudoku League — Legal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sudoku League</title>
+<meta name="description" content="꾸미고, 풀고, 함께 즐기는 스도쿠. 도트 테마와 완료 연출, 원리를 설명하는 힌트와 리플레이, 글로벌 1:1 랭크 대결과 친구 8명 친선 대결.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="스도쿠 리그 · Sudoku League">
+<meta property="og:description" content="꾸미고, 풀고, 함께 즐기는 스도쿠">
+<meta property="og:image" content="https://sun970324.github.io/sudoku/img/og.png">
+<meta property="og:url" content="https://sun970324.github.io/sudoku/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
 <style>
-  body { max-width: 42rem; margin: 0 auto; padding: 2rem 1.25rem 4rem;
-         font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-         color: #1c1c1e; background: #fff; }
-  pre { white-space: pre-wrap; word-break: break-word; font: inherit; }
-  a { color: #0b62d0; }
-  /* One language at a time. Only the inactive one is hidden, so every element
-     keeps whatever display type it would otherwise have. */
-  html[data-lang="ko"] .en { display: none !important; }
-  html[data-lang="en"] .ko { display: none !important; }
-  .lang-switch { text-align: right; margin: 0 0 1rem; }
-  .lang-toggle { font: inherit; font-size: .9rem; color: #77777e;
-                 background: none; border: 0; padding: 0;
-                 text-decoration: underline; cursor: pointer; }
-  @media (prefers-color-scheme: dark) {
-    body { color: #ececf1; background: #17171a; }
-    a { color: #74a9f5; }
-    .lang-toggle { color: #86868e; }
-  }
+/* Layout: pixel-bordered phone shots alternate left/right of short copy, one feature per band, in the order the owner ranked them. */
+@font-face { font-family: "Mulmaru"; src: url("fonts/mulmaru.woff") format("woff"); font-display: swap; }
+@font-face { font-family: "PretendardSub"; src: url("fonts/pretendard-regular.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "PretendardSub"; src: url("fonts/pretendard-bold.woff") format("woff"); font-weight: 700; font-display: swap; }
+:root {
+  --bg: #ffffff;
+  --bg-2: #edf3fa;
+  --card: #ffffff;
+  --ink: #1e3a5f;
+  --ink-2: #5b7a9e;
+  --line: #dce3ec;
+  --blue: #1877f2;
+  --blue-soft: #d6e8ff;
+  --orange: #e8770c;
+  --red: #e5484d;
+  --gold: #f5b70a;
+  --on-blue: #ffffff;
+  --pixel: "Mulmaru", "Galmuri11", ui-monospace, monospace;
+  --body: "PretendardSub", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --px: 4px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0b111a; --bg-2: #16243a; --card: #1a2436; --ink: #dce9f7; --ink-2: #8fa9c8;
+  --line: #2b394f; --blue: #5aa4ff; --blue-soft: #30496a; --orange: #ff9d3d; --red: #ff6b6f;
+  --gold: #ffc93d; --on-blue: #0b111a; color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #0b111a; --bg-2: #16243a; --card: #1a2436; --ink: #dce9f7; --ink-2: #8fa9c8;
+  --line: #2b394f; --blue: #5aa4ff; --blue-soft: #30496a; --orange: #ff9d3d; --red: #ff6b6f;
+  --gold: #ffc93d; --on-blue: #0b111a; color-scheme: dark;
+}
+
+html[data-lang="ko"] .en, html[data-lang="en"] .ko { display: none !important; }
+
+body {
+  background: var(--bg); color: var(--ink);
+  font: 17px/1.7 var(--body); -webkit-font-smoothing: antialiased;
+  word-break: keep-all; overflow-wrap: anywhere;
+}
+.wrap {
+  max-width: 1080px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--blue); }
+:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+/* Stepped corners: the whole page's one ornament, borrowed from the app's pixel UI. */
+.px {
+  clip-path: polygon(0 var(--px), var(--px) var(--px), var(--px) 0, calc(100% - var(--px)) 0,
+    calc(100% - var(--px)) var(--px), 100% var(--px), 100% calc(100% - var(--px)),
+    calc(100% - var(--px)) calc(100% - var(--px)), calc(100% - var(--px)) 100%, var(--px) 100%,
+    var(--px) calc(100% - var(--px)), 0 calc(100% - var(--px)));
+}
+
+/* Header */
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--line); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.top .wrap { display: flex; align-items: center; gap: 16px; padding-block: 12px; }
+.brand { font: 22px/1 var(--pixel); color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand-mark { width: 36px; height: 36px; border-radius: 8px; display: block; }
+.top nav { margin-left: auto; display: flex; align-items: center; gap: 18px; font-size: 15px; }
+.top nav a { color: var(--ink-2); text-decoration: none; }
+.top nav a:hover { color: var(--ink); }
+.lang { font: 15px var(--body); color: var(--ink); background: var(--bg-2); border: 0; padding: 6px 12px; cursor: pointer; }
+@media (max-width: 640px) { .top nav a.hide-sm { display: none; } }
+
+/* Hero */
+.hero { background: linear-gradient(var(--bg), var(--bg-2)); overflow: hidden; }
+.hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; padding-block: 64px 0; }
+.hero-copy { min-width: 0; padding-bottom: 64px; }
+.eyebrow { font: 15px/1.4 var(--pixel); letter-spacing: .04em; color: var(--blue); margin: 0 0 14px; }
+h1 { font: clamp(40px, 6.4vw, 72px)/1.12 var(--pixel); margin: 0 0 20px; text-wrap: balance; letter-spacing: -.01em; }
+h1 .hl { color: var(--blue); }
+.lede { font-size: 19px; color: var(--ink-2); max-width: 30em; margin: 0 0 28px; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; }
+/* Official store badges, shown at the same height (Apple's minimum is 40px). */
+.badge { display: block; border-radius: 8px; }
+.badge img { display: block; height: 52px; width: auto; }
+.hero-shot { position: relative; justify-self: center; align-self: end; width: min(340px, 100%); }
+.hero-shot canvas { position: absolute; inset: -40px -60px 0; width: calc(100% + 120px); height: calc(100% + 40px); pointer-events: none; }
+
+/* Facts strip */
+.facts { border-block: 2px solid var(--line); background: var(--card); }
+.facts .wrap { display: grid; grid-template-columns: repeat(4, 1fr); padding-block: 28px; gap: 16px; }
+.fact { display: grid; gap: 4px; }
+.fact b { font: 34px/1 var(--pixel); font-weight: 400; color: var(--blue); font-variant-numeric: tabular-nums; }
+.fact span { font-size: 14px; color: var(--ink-2); }
+
+/* Phone frame */
+.phone { --px: 8px; background: var(--ink); padding: 8px; }
+.phone img { display: block; width: 100%; height: auto; clip-path: inherit; --px: 4px; }
+.phone.tilt { transform: rotate(-2deg); }
+
+/* Feature bands */
+.band { padding-block: 88px; }
+.band.alt, .chapter.alt { background: var(--bg-2); }
+
+/* Chapter heads: one per hero point, so the numbers mirror the hero list. */
+.chapter { padding-block: 96px 0; }
+.chapter .wrap { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start; }
+.chapter-no { font: 56px/1 var(--pixel); color: var(--on-blue); background: var(--blue); width: 88px; height: 88px; display: grid; place-items: center; }
+.chapter h2 { font-size: clamp(36px, 5vw, 56px); margin-bottom: 10px; }
+.chapter p { margin: 0; max-width: 36em; color: var(--ink-2); font-size: 18px; }
+.chapter + .band { padding-top: 64px; }
+
+/* Hero points */
+.points { list-style: none; padding: 0; margin: 0 0 32px; display: grid; gap: 14px; max-width: 34em; counter-reset: pt; }
+.points li { display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: start; color: var(--ink-2); }
+.points li::before { counter-increment: pt; content: counter(pt); font: 18px/36px var(--pixel); text-align: center; height: 36px;
+  background: var(--blue-soft); color: var(--blue); }
+.points b { color: var(--ink); font-weight: 700; }
+.points a { color: inherit; text-decoration: none; }
+.points a:hover b { color: var(--blue); }
+.band .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.band.flip .shots { order: -1; }
+.copy { min-width: 0; max-width: 32em; }
+h2 { font: clamp(28px, 3.8vw, 40px)/1.25 var(--pixel); margin: 0 0 18px; text-wrap: balance; }
+.copy p { margin: 0 0 14px; }
+.copy .muted { color: var(--ink-2); font-size: 15px; }
+.shots { display: flex; gap: 20px; justify-content: center; align-items: flex-start; min-width: 0; }
+.shots .phone { width: min(270px, 48%); }
+.shots .phone:nth-child(2) { margin-top: 48px; }
+.shots.one .phone { width: min(300px, 80%); }
+.tag { display: inline-block; font: 13px/1 var(--pixel); padding: 6px 9px; margin-left: 6px; vertical-align: 4px;
+  background: var(--gold); color: #3a2a00; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0; padding: 0; list-style: none; }
+.chips li { font: 14px/1 var(--pixel); padding: 9px 11px; background: var(--card); border: 2px solid var(--line); }
+.chips li.hot { border-color: var(--blue); color: var(--blue); }
+.list { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 12px; }
+.list li { display: grid; grid-template-columns: 14px 1fr; gap: 12px; align-items: baseline; }
+.list li::before { content: ""; width: 10px; height: 10px; background: var(--blue); transform: translateY(-1px); }
+.list.orange li::before { background: var(--orange); }
+.list.red li::before { background: var(--red); }
+.tiers { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.tiers span { font: 13px/1 var(--pixel); padding: 8px 10px; color: #fff; }
+.t-b { background: #a86a3d; } .t-s { background: #8b97a8; } .t-g { background: #d39a0c; }
+.t-d { background: #3aa3d6; } .t-m { background: #8b5cf6; } .t-c { background: #e5484d; }
+
+/* Theme packs row */
+.packs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 40px; }
+.packs figure { margin: 0; display: grid; gap: 8px; }
+.packs figcaption { font: 14px var(--pixel); color: var(--ink-2); text-align: center; }
+.packs .phone { --px: 6px; padding: 5px; }
+
+/* FAQ */
+.faq .wrap { display: block; max-width: 760px; }
+.faq h2 { margin-bottom: 28px; }
+details { background: var(--card); border: 2px solid var(--line); margin-bottom: 10px; }
+summary { cursor: pointer; padding: 16px 20px; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font: 20px/1 var(--pixel); color: var(--blue); }
+details[open] summary::after { content: "-"; }
+details p { margin: 0; padding: 0 20px 18px; color: var(--ink-2); }
+
+/* Closing */
+.closing { text-align: center; padding-block: 96px; background: var(--ink); color: var(--bg); }
+.closing h2 { color: var(--bg); }
+.closing .cta { justify-content: center; margin-top: 28px; }
+.pixel-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 28px; }
+.pixel-row i { width: 14px; height: 14px; background: var(--blue); }
+.pixel-row i:nth-child(3n) { background: var(--orange); }
+.pixel-row i:nth-child(4n) { background: var(--gold); }
+
+footer { padding-block: 36px; font-size: 14px; color: var(--ink-2); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+footer a { color: var(--ink-2); }
+footer .mail { user-select: all; color: var(--ink); }
+footer .copy-r { margin-left: auto; }
+
+@media (max-width: 820px) {
+  .hero .wrap, .band .wrap { grid-template-columns: 1fr; gap: 36px; }
+  .hero .wrap { padding-block: 40px 0; }
+  .hero-copy { padding-bottom: 0; }
+  .hero-shot { width: min(300px, 82%); }
+  .band { padding-block: 64px; }
+  .band.flip .shots { order: 0; }
+  .facts .wrap { grid-template-columns: repeat(2, 1fr); }
+  .packs { grid-template-columns: repeat(2, 1fr); }
+  footer .copy-r { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .hero-shot canvas { display: none; } }
 </style>
+
 <script>
-  // Language before first paint, so the wrong one never flashes. A stored
-  // choice wins; otherwise the browser's own language decides. localStorage
-  // throws in Safari private mode, so every touch of it is guarded.
+  // Language before first paint. A stored choice wins; otherwise the browser decides.
   (function () {
     var lang = null;
-    try { lang = window.localStorage.getItem('sl_lang'); } catch (e) {}
+    try { lang = localStorage.getItem('sl_lang'); } catch (e) {}
     if (lang !== 'ko' && lang !== 'en') {
-      var tag = (navigator.languages && navigator.languages[0]) ||
-                navigator.language || 'en';
+      var tag = (navigator.languages && navigator.languages[0]) || navigator.language || 'en';
       lang = String(tag).toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
     }
     document.documentElement.setAttribute('data-lang', lang);
@@ -42,36 +215,343 @@
 </script>
 </head>
 <body>
-<!-- The label is the language you would switch *to*, so it is the one hidden
-     while that language is active. -->
-<p class="lang-switch"><button class="lang-toggle" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button></p>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><img class="brand-mark" src="img/icon.png" width="36" height="36" alt=""><span class="ko">스도쿠 리그</span><span class="en">Sudoku League</span></a>
+    <nav>
+      <a class="hide-sm" href="#style"><span class="ko">꾸미기</span><span class="en">Style</span></a>
+      <a class="hide-sm" href="#learn"><span class="ko">풀기</span><span class="en">Solve</span></a>
+      <a class="hide-sm" href="#play"><span class="ko">함께 즐기기</span><span class="en">Play</span></a>
+      <a class="hide-sm" href="#faq">FAQ</a>
+      <button class="lang px" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button>
+    </nav>
+  </div>
+</header>
 
-<h1>Sudoku League</h1>
-<ul>
-  <li><a href="privacy.html"><span class="ko">개인정보처리방침</span><span class="en">Privacy Policy</span></a></li>
-  <li><a href="terms.html"><span class="ko">이용약관</span><span class="en">Terms of Service</span></a></li>
-  <li><a href="data-deletion.html"><span class="ko">계정 삭제 안내</span><span class="en">Account Deletion</span></a></li>
-  <li><span class="ko">문의</span><span class="en">Contact</span>: <a href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></li>
-</ul>
-<h2><span class="ko">사용권 계약</span><span class="en">Terms of Use (EULA)</span></h2>
-<p>
-  <span class="ko">App Store 버전은 Apple의 표준 최종 사용자 사용권 계약을 따릅니다.</span><span class="en">The App Store version is licensed under Apple's standard End User License
-  Agreement.</span>
-</p>
-<ul>
-  <li><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="ko">Apple 표준 EULA</span><span class="en">Apple's standard EULA</span></a></li>
-</ul>
+<section class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="ko">내게 딱 맞는 스도쿠</span><span class="en">The sudoku that fits you</span></p>
+      <h1><span class="ko">꾸미고, 풀고,<br><span class="hl">함께 즐기는</span> 스도쿠</span><span class="en">Style it.<br>Solve it.<br><span class="hl">Play it together.</span></span></h1>
+      <ol class="points">
+        <li><a href="#style"><span class="ko">레트로 도트로 그린 테마와 다양한 완료 연출 보상으로 <b>나만의 판을 꾸며요.</b></span><span class="en">Retro pixel themes and a growing set of completion effects let you <b>make every board your own.</b></span></a></li>
+        <li><a href="#learn"><span class="ko">막히면 힌트가 이유까지 알려주고, 다 풀면 리플레이로 한 수씩 되짚어 봐요. 풀다 보면 <b>실력이 저절로 늘어요.</b></span><span class="en">When you're stuck, a hint shows you why. When you're done, a replay walks back through every move. Keep playing and <b>you'll get better along the way.</b></span></a></li>
+        <li><a href="#play"><span class="ko">실시간 대결에서는 글로벌 유저들과, 방 하나로는 최대 8명의 친구들과 <b>같은 퍼즐을 두고 겨뤄요.</b></span><span class="en">Race players worldwide in real time, or open a room for up to 8 friends and <b>solve the same puzzle head to head.</b></span></a></li>
+      </ol>
+      <div class="cta">
+        <a class="badge" href="https://apps.apple.com/app/id6794986328"><img class="ko" src="img/badges/apple_ko.svg" width="130" height="40" alt="App Store에서 다운로드"><img class="en" src="img/badges/apple_en.svg" width="120" height="40" alt="Download on the App Store"></a>
+        <a class="badge" href="https://play.google.com/store/apps/details?id=jaywithme.sudoku"><img class="ko" src="img/badges/gp_ko.png" width="646" height="192" alt="Google Play에서 다운로드"><img class="en" src="img/badges/gp_en.png" width="564" height="168" alt="Get it on Google Play"></a>
+      </div>
+    </div>
+    <div class="hero-shot">
+      <canvas id="confetti" aria-hidden="true"></canvas>
+      <div class="phone px">
+        <img class="ko" src="img/hero_ko.webp" width="520" height="1127" alt="스도쿠 리그 홈 화면: 난이도 카드, 시작하기, 오늘의 스도쿠">
+        <img class="en" src="img/hero_en.webp" width="520" height="1127" alt="Sudoku League home screen with a difficulty card, Start and Daily Sudoku">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="facts" aria-label="At a glance">
+  <div class="wrap">
+    <div class="fact"><b>40+</b><span><span class="ko">힌트가 설명하는 풀이 기법</span><span class="en">solving techniques the hints explain</span></span></div>
+    <div class="fact"><b>6</b><span><span class="ko">브론즈부터 챌린저까지 난이도</span><span class="en">difficulty levels, Bronze to Challenger</span></span></div>
+    <div class="fact"><b>8</b><span><span class="ko">한 방에서 함께 겨루는 친구</span><span class="en">friends in one room</span></span></div>
+    <div class="fact"><b>0</b><span><span class="ko">갑자기 뜨는 팝업 광고</span><span class="en">pop-up ads between games</span></span></div>
+  </div>
+</section>
+
+<section class="chapter" id="style">
+  <div class="wrap">
+    <div class="chapter-no px" aria-hidden="true">1</div>
+    <div>
+      <p class="eyebrow"><span class="ko">꾸미고</span><span class="en">Style it</span></p>
+      <h2><span class="ko">나만의 판을 꾸며요</span><span class="en">Make every board your own</span></h2>
+      <p><span class="ko">레트로 도트로 그린 테마와, 풀수록 모이는 완료 연출·칭호·닉네임 색.</span><span class="en">Retro pixel themes, plus completion effects, titles and nickname colors that pile up as you play.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 1. Pixel look -->
+<section class="band" id="pixel">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow"><span class="ko">도트 감성</span><span class="en">Pixel style</span></p>
+      <h2><span class="ko">레트로 도트로<br>그린 스도쿠판</span><span class="en">Sudoku boards<br>in retro pixel art</span></h2>
+      <p><span class="ko">제목, 아이콘, 완료 연출까지 레트로 도트 스타일로 그렸어요. 보드 숫자도 도트 글꼴로 바꿀 수 있어요.</span><span class="en">Titles, icons and celebrations are all drawn in retro pixel art. You can switch the board's digits to a pixel font too.</span></p>
+      <p><span class="ko">총 8종류의 테마가 라이트와 다크를 모두 갖추고 있어서, 밤에 한 판 풀 때도 눈이 편해요.</span><span class="en">8 themes in all, each in Light and Dark, so late-night games are easy on the eyes.</span></p>
+    </div>
+    <div class="shots">
+      <div class="phone px"><img class="ko" src="img/hero_dark.webp" width="520" height="1127" loading="lazy" alt="클래식 다크 테마 홈 화면"><img class="en" src="img/hero_dark_en.webp" width="520" height="1127" loading="lazy" alt="Classic dark theme"></div>
+      <div class="phone px"><img class="ko" src="img/pack_neon.webp" width="520" height="1127" loading="lazy" alt="미드나잇 네온 테마"><img class="en" src="img/pack_neon_en.webp" width="520" height="1127" loading="lazy" alt="Midnight Neon theme"></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="packs" style="grid-column: 1 / -1">
+      <figure><div class="phone px"><img class="ko" src="img/hero_ko.webp" width="520" height="1127" loading="lazy" alt=""><img class="en" src="img/hero_en.webp" width="520" height="1127" loading="lazy" alt=""></div><figcaption><span class="ko">클래식 블루</span><span class="en">Classic Blue</span></figcaption></figure>
+      <figure><div class="phone px"><img class="ko" src="img/pack_forest.webp" width="520" height="1127" loading="lazy" alt=""><img class="en" src="img/pack_forest_en.webp" width="520" height="1127" loading="lazy" alt=""></div><figcaption><span class="ko">포레스트</span><span class="en">Forest</span></figcaption></figure>
+      <figure><div class="phone px"><img class="ko" src="img/pack_mono.webp" width="520" height="1127" loading="lazy" alt=""><img class="en" src="img/pack_mono_en.webp" width="520" height="1127" loading="lazy" alt=""></div><figcaption><span class="ko">모노크롬</span><span class="en">Monochrome</span></figcaption></figure>
+      <figure><div class="phone px"><img class="ko" src="img/pack_neon.webp" width="520" height="1127" loading="lazy" alt=""><img class="en" src="img/pack_neon_en.webp" width="520" height="1127" loading="lazy" alt=""></div><figcaption><span class="ko">미드나잇 네온</span><span class="en">Midnight Neon</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Rewards -->
+<section class="band flip" id="rewards" style="padding-top: 24px">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow"><span class="ko">다양한 보상</span><span class="en">Rewards</span></p>
+      <h2><span class="ko">화려한 연출을 모아<br>취향대로 골라요</span><span class="en">Collect bold effects,<br>pick your favorite</span></h2>
+      <p><span class="ko">퍼즐을 풀 때마다 경험치가 쌓이고, 레벨을 올리면 칭호와 완료 연출을 얻어요.</span><span class="en">Every solve earns XP. Level up to unlock titles and completion effects.</span></p>
+      <ul class="list orange">
+        <li><span><span class="ko">숫자 비, 후광, 도장, 풍선, 별똥별, 폭죽. 골라서 장착하세요</span><span class="en">Digit rain, halos, stamps, balloons, shooting stars, fireworks. Pick one and equip it</span></span></li>
+        <li><span><span class="ko">실수 없이 풀면 연출이 더 화려해져요</span><span class="en">A perfect clear plays the bigger version</span></span></li>
+        <li><span><span class="ko">기간 한정 이벤트에서만 얻는 연출과 닉네임 색</span><span class="en">Effects and nickname colors you can only earn during events</span></span></li>
+      </ul>
+    </div>
+    <div class="shots">
+      <div class="phone px">
+        <picture class="ko"><source media="(prefers-reduced-motion: reduce)" srcset="img/fx_balloons_ko_still.webp"><img src="img/fx_balloons_ko.webp" width="520" height="1127" loading="lazy" alt="퍼펙트 클리어 풍선 연출이 화면 가득 떠오르는 모습"></picture>
+        <picture class="en"><source media="(prefers-reduced-motion: reduce)" srcset="img/fx_balloons_en_still.webp"><img src="img/fx_balloons_en.webp" width="520" height="1127" loading="lazy" alt="Perfect clear balloon effect filling the screen"></picture>
+      </div>
+      <div class="phone px">
+        <img class="ko" src="img/case_ko.webp" width="520" height="924" loading="lazy" alt="컬렉션의 완료 연출 탭">
+        <img class="en" src="img/case_en.webp" width="520" height="924" loading="lazy" alt="Completion effects in the collection">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter alt" id="learn">
+  <div class="wrap">
+    <div class="chapter-no px" aria-hidden="true">2</div>
+    <div>
+      <p class="eyebrow"><span class="ko">풀고</span><span class="en">Solve it</span></p>
+      <h2><span class="ko">막혀도 괜찮아요</span><span class="en">Stuck? That's fine</span></h2>
+      <p><span class="ko">막히면 힌트가 원리부터 설명하고, 다 풀면 리플레이로 되짚어요. 더 알고 싶다면 기법 연습도 있어요.</span><span class="en">When you're stuck, a hint explains the logic. When you're done, a replay walks you back through it. Want more? Try technique practice.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Hints -->
+<section class="band alt" id="hints">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow"><span class="ko">이해하기 쉬운 힌트 설명</span><span class="en">Hints you can follow</span></p>
+      <h2><span class="ko">원리부터<br>이해할 수 있게 설명해요</span><span class="en">Hints that explain<br>the why</span></h2>
+      <p><span class="ko">힌트는 정답 숫자를 바로 알려주지 않아요. 지금 쓸 수 있는 기법과 그 이유를 보드 위에 선과 색으로 그려줘요.</span><span class="en">A hint never just hands you the number. It names the technique you can use right now and draws why on the board with lines and colors.</span></p>
+      <p><span class="ko">설명을 한 단계씩 넘기며 직접 따라가기 때문에, 힌트를 쓸수록 실력이 정체되지 않고 늘어요.</span><span class="en">You follow the explanation one step at a time, so the more hints you use, the better you get.</span></p>
+    </div>
+    <div class="shots">
+      <div class="phone px">
+        <img class="ko" src="img/hint_ko.webp" width="520" height="1125" loading="lazy" alt="X-윙 힌트: 보드 위의 사각형과 설명, 1행 3열의 5를 지우세요">
+        <img class="en" src="img/hint_en.webp" width="520" height="1125" loading="lazy" alt="X-Wing hint: the rectangle on the board and its explanation, erase 5 at R1C3">
+      </div>
+      <div class="phone px">
+        <img src="img/hint_aic.webp" width="520" height="520" loading="lazy" alt="AIC 사슬 힌트: 보드 위의 고리와 연결선 / An AIC hint drawn on the board">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. Replay -->
+<section class="band flip alt" id="replay" style="padding-top: 24px">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow"><span class="ko">리플레이</span><span class="en">Replay</span></p>
+      <h2><span class="ko">내가 푼 판을<br>한 수씩 다시 봐요</span><span class="en">Review your solve,<br>one move at a time</span></h2>
+      <p><span class="ko">분석 알고리즘이 내가 둔 수를 하나하나 살펴보고, 그 숫자를 어떤 기법으로 넣을 수 있었는지 알려줘요. 같은 순간에 다른 방법으로 풀 수 있었던 길도 함께 보여줘요.</span><span class="en">An analyzer goes through every move you made and names the technique behind it. It also shows the other ways you could have solved the board at that same moment.</span></p>
+      <ul class="list">
+        <li><span><span class="ko">이번 수: 그 숫자를 넣은 기법과 이유</span><span class="en">This move: the technique behind the number you placed</span></span></li>
+        <li><span><span class="ko">다른 길: 같은 순간 쓸 수 있었던 기법을 풀 하우스부터 ALS 사슬까지 모두</span><span class="en">Other ways: every technique that worked at that moment, from Full House to ALS Chain</span></span></li>
+        <li><span><span class="ko">실수, 힌트, 기법을 타임라인에서 한눈에</span><span class="en">Mistakes, hints and techniques on one timeline</span></span></li>
+        <li><span><span class="ko">막혔던 곳부터 이어서 다시 풀기</span><span class="en">Pick up again from where you got stuck</span></span></li>
+        <li><span><span class="ko">대결 리플레이도 볼 수 있어요</span><span class="en">Works for battles too</span></span></li>
+      </ul>
+    </div>
+    <div class="shots">
+      <div class="phone px">
+        <img class="ko" src="img/replay_move_ko.webp" width="520" height="1125" loading="lazy" alt="리플레이 이번 수 탭: 네이키드 싱글로 4행 9열을 3으로 확정">
+        <img class="en" src="img/replay_move_en.webp" width="520" height="1125" loading="lazy" alt="Replay, This move tab: Naked Single placed 3 in row 4, column 9">
+      </div>
+      <div class="phone px">
+        <img class="ko" src="img/replay_alt_ko.webp" width="520" height="1125" loading="lazy" alt="리플레이 다른 길 탭: 같은 순간 쓸 수 있었던 기법 19가지">
+        <img class="en" src="img/replay_alt_en.webp" width="520" height="1125" loading="lazy" alt="Replay, Other ways tab: 19 other techniques at the same moment">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Technique practice -->
+<section class="band alt" id="practice" style="padding-top: 24px">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow"><span class="ko">기법 연습</span><span class="en">Technique practice</span></p>
+      <h2><span class="ko">AIC도, 수 드 코크도<br>직접 찾아봐요</span><span class="en">AIC, Sue de Coq,<br>found by you</span></h2>
+      <p><span class="ko">고급 기법들의 원리와 찾는 요령을 보여주고, 바로 실전 보드에서 써 봐요.</span><span class="en">See how advanced techniques work and how to spot them, then try them on a real board right away.</span></p>
+      <ul class="chips">
+        <li><span class="ko">X-윙</span><span class="en">X-Wing</span></li><li><span class="ko">소드피쉬</span><span class="en">Swordfish</span></li>
+        <li><span class="ko">XY-윙</span><span class="en">XY-Wing</span></li><li><span class="ko">유일사각형</span><span class="en">Unique Rectangle</span></li>
+        <li><span class="ko">X-사슬</span><span class="en">X-Chain</span></li><li><span class="ko">XY-사슬</span><span class="en">XY-Chain</span></li>
+        <li class="hot"><span class="ko">AIC 사슬</span><span class="en">AIC</span></li><li class="hot"><span class="ko">수 드 코크</span><span class="en">Sue de Coq</span></li>
+        <li class="hot">ALS-XZ</li><li class="hot"><span class="ko">트리플 파이어워크</span><span class="en">Triple Firework</span></li>
+      </ul>
+    </div>
+    <div class="shots">
+      <div class="phone px">
+        <img class="ko" src="img/chain_ko.webp" width="520" height="1125" loading="lazy" alt="XY-사슬 수업: 사슬 따라가기">
+        <img class="en" src="img/chain_en.webp" width="520" height="1125" loading="lazy" alt="XY-Chain lesson, following the chain">
+      </div>
+      <div class="phone px">
+        <img class="ko" src="img/als_ko.webp" width="520" height="1125" loading="lazy" alt="ALS-XZ 수업: 칸보다 숫자가 하나 많은 묶음">
+        <img class="en" src="img/als_en.webp" width="520" height="1125" loading="lazy" alt="ALS-XZ lesson">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="play">
+  <div class="wrap">
+    <div class="chapter-no px" aria-hidden="true">3</div>
+    <div>
+      <p class="eyebrow"><span class="ko">함께 즐기고</span><span class="en">Play it together</span></p>
+      <h2><span class="ko">글로벌 유저와 1:1 랭크 대결,<br>최대 8명의 친구들과 친선 대결</span><span class="en">1:1 ranked matches worldwide,<br>friendly games with up to 8 friends</span></h2>
+      <p><span class="ko">같은 퍼즐을 동시에 풀고 누가 먼저 끝내는지 겨루거나, 점령전으로 한 보드를 나눠 가져요. 매일 같은 퍼즐로 전 세계와 기록도 비교해요.</span><span class="en">Solve the same puzzle at the same time and see who finishes first, or split one board in Claim. And every day, compare your time on the same puzzle with the world.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 6. Party -->
+<section class="band flip" id="party">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow"><span class="ko">친구 대결</span><span class="en">Play with friends</span></p>
+      <h2><span class="ko">최대 8명이<br>한 판에 모여요</span><span class="en">Up to 8 friends,<br>one puzzle</span></h2>
+      <p><span class="ko">초대 코드 하나로 방을 열고, 2명부터 8명까지 바로 시작해요.</span><span class="en">Open a room, share the invite code, and start with 2 to 8 players.</span></p>
+      <ul class="list orange">
+        <li><span><span class="ko">레이스: 같은 퍼즐을 누가 먼저 푸나</span><span class="en">Race: who solves the same puzzle first</span></span></li>
+        <li><span><span class="ko">점령전: 먼저 맞힌 사람이 그 칸을 차지해요</span><span class="en">Claim: place the right number first and the cell is yours</span></span></li>
+      </ul>
+    </div>
+    <div class="shots one">
+      <div class="phone px">
+        <img class="ko" src="img/party_ko.webp" width="520" height="1125" loading="lazy" alt="8명이 모인 대기실">
+        <img class="en" src="img/party_en.webp" width="520" height="1125" loading="lazy" alt="A full room of 8 players">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Ranked race -->
+<section class="band" id="race" style="padding-top: 24px">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow"><span class="ko">실시간 대결</span><span class="en">Real-time ranked</span></p>
+      <h2><span class="ko">전 세계 유저와,<br>같은 퍼즐을 동시에</span><span class="en">Players worldwide,<br>the same puzzle, live</span></h2>
+      <p><span class="ko">비슷한 실력의 글로벌 유저와 매칭되어 같은 퍼즐을 풀어요. 상대가 얼마나 채웠는지 실시간으로 보여요. 세 번 틀리면 져요.</span><span class="en">Get matched with someone at your level and watch their progress as you both solve. Three mistakes and you lose.</span></p>
+      <p><span class="ko">AI 봇은 없어요. 시즌은 한 달 단위로 열리고, 끝나면 성적이 기록으로 남아요.</span><span class="en">No AI bots. Seasons run monthly, and your record stays when each one ends.</span></p>
+      <div class="tiers" aria-label="Tiers">
+        <span class="t-b px"><span class="ko">브론즈</span><span class="en">Bronze</span></span><span class="t-s px"><span class="ko">실버</span><span class="en">Silver</span></span><span class="t-g px"><span class="ko">골드</span><span class="en">Gold</span></span><span class="t-d px"><span class="ko">다이아몬드</span><span class="en">Diamond</span></span><span class="t-m px"><span class="ko">마스터</span><span class="en">Master</span></span><span class="t-c px"><span class="ko">챌린저</span><span class="en">Challenger</span></span>
+      </div>
+    </div>
+    <div class="shots one">
+      <div class="phone px tilt">
+        <img class="ko" src="img/race_ko.webp" width="520" height="1125" loading="lazy" alt="실시간 대결 화면: 나와 상대방 진행 막대">
+        <img class="en" src="img/race_en.webp" width="520" height="1125" loading="lazy" alt="Live race screen with both players' progress bars">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Daily -->
+<section class="band flip" id="daily" style="padding-top: 24px">
+  <div class="wrap">
+    <div class="copy">
+      <p class="eyebrow"><span class="ko">오늘의 스도쿠</span><span class="en">Daily Sudoku</span></p>
+      <h2><span class="ko">매일 한 판,<br>전 세계와 기록 비교</span><span class="en">One puzzle a day,<br>against the world</span></h2>
+      <p><span class="ko">매일 전 세계 유저가 같은 퍼즐에 도전해요. 하루도 빠지지 않고 풀면 연속 기록이 쌓여요.</span><span class="en">Every day, players around the world get the same puzzle. Solve it daily to keep your streak going.</span></p>
+      <ul class="list">
+        <li><span><span class="ko">결과 화면에서 내 기록이 상위 몇 %인지 그래프로</span><span class="en">See which top percent your time lands in, on a chart</span></span></li>
+        <li><span><span class="ko">혼자 푼 퍼즐도 같은 난이도를 푼 유저들과 비교</span><span class="en">Solo games are compared with everyone who solved that difficulty</span></span></li>
+      </ul>
+    </div>
+    <div class="shots one">
+      <div class="phone px">
+        <img class="ko" src="img/daily_ko.webp" width="520" height="1125" loading="lazy" alt="결과 화면: 전 세계 기록과 비교, 내 기록 상위 12%">
+        <img class="en" src="img/daily_en.webp" width="520" height="1125" loading="lazy" alt="Result screen comparing your time with players worldwide">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band faq alt" id="faq">
+  <div class="wrap">
+    <p class="eyebrow"><span class="ko">시작하기 전에</span><span class="en">Before you start</span></p>
+    <h2><span class="ko">궁금한 점을 모았어요</span><span class="en">Questions</span></h2>
+    <details><summary><span class="ko">광고가 있나요?</span><span class="en">Are there ads?</span></summary>
+      <p><span class="ko">갑자기 뜨는 광고와 플레이를 방해하는 배너는 없어요. 무료로 힌트, 자동 메모, 실수 후 이어하기를 쓸 때 직접 보기를 고른 경우에만 광고가 나와요.</span><span class="en">No pop-ups and no banners while you play. An ad plays only when you choose to watch one for a free hint, auto notes or a revive.</span></p></details>
+    <details><summary><span class="ko">오프라인에서도 되나요?</span><span class="en">Does it work offline?</span></summary>
+      <p><span class="ko">실시간 대결과 오늘의 스도쿠를 빼면 인터넷 없이 플레이할 수 있어요.</span><span class="en">Yes, everything except live battles and Daily Sudoku.</span></p></details>
+    <details><summary><span class="ko">로그인이 필요한가요?</span><span class="en">Do I need an account?</span></summary>
+      <p><span class="ko">실시간 대결과 오늘의 스도쿠에만 필요해요. 혼자 푸는 스도쿠는 로그인 없이 마음껏 즐길 수 있어요.</span><span class="en">Only for ranked battles and Daily Sudoku. Solo games need no account.</span></p></details>
+    <details><summary><span class="ko">힌트가 답을 알려주나요?</span><span class="en">Do hints just give the answer?</span></summary>
+      <p><span class="ko">아니요. 어떤 기법을 어디에 쓸 수 있는지와 그 이유를 보드 위에 그려서 보여줘요.</span><span class="en">No. They show which technique applies where, and draw why on the board.</span></p></details>
+    <details><summary><span class="ko">프리미엄에는 뭐가 있나요?</span><span class="en">What does Premium add?</span></summary>
+      <p><span class="ko">광고 없는 무제한 힌트·자동 메모·부활, 리플레이, 기법 연습 전체, 프리미엄 테마 팩 6종, 퍼즐 즐겨찾기예요. 월간, 연간, 평생 이용권이 있어요.</span><span class="en">Unlimited hints, auto notes and revives with no ads, Replay, every technique lesson, 6 premium theme packs and puzzle favorites. Monthly, annual and lifetime plans.</span></p></details>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="wrap">
+    <div class="pixel-row" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h2><span class="ko">오늘의 한 판, 같이 풀까요?</span><span class="en">Ready for today's puzzle?</span></h2>
+    <div class="cta">
+      <a class="badge" href="https://apps.apple.com/app/id6794986328"><img class="ko" src="img/badges/apple_ko.svg" width="130" height="40" alt="App Store에서 다운로드"><img class="en" src="img/badges/apple_en.svg" width="120" height="40" alt="Download on the App Store"></a>
+      <a class="badge" href="https://play.google.com/store/apps/details?id=jaywithme.sudoku"><img class="ko" src="img/badges/gp_ko.png" width="646" height="192" alt="Google Play에서 다운로드"><img class="en" src="img/badges/gp_en.png" width="564" height="168" alt="Get it on Google Play"></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a href="privacy.html"><span class="ko">개인정보처리방침</span><span class="en">Privacy Policy</span></a>
+    <a href="terms.html"><span class="ko">이용약관</span><span class="en">Terms of Service</span></a>
+    <a href="data-deletion.html"><span class="ko">계정 삭제 안내</span><span class="en">Account Deletion</span></a>
+    <span><span class="ko">문의</span><span class="en">Contact</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="ko">Apple 표준 EULA</span><span class="en">Apple's standard EULA</span></a>
+    <span class="copy-r">© 2026 Sudoku League</span>
+  </div>
+</footer>
 
 <script>
-  // Toggle only; these pages have no script-written strings, so the CSS switch
-  // is the whole re-render.
   document.getElementById('langToggle').addEventListener('click', function () {
-    var next =
-      document.documentElement.getAttribute('data-lang') === 'en' ? 'ko' : 'en';
+    var next = document.documentElement.getAttribute('data-lang') === 'ko' ? 'en' : 'ko';
     document.documentElement.setAttribute('data-lang', next);
     document.documentElement.lang = next;
-    try { window.localStorage.setItem('sl_lang', next); } catch (e) {}
+    try { localStorage.setItem('sl_lang', next); } catch (e) {}
   });
+
+  // One burst of the app's default effect, falling pixel confetti, then it stops.
+  (function () {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var c = document.getElementById('confetti'), x = c.getContext('2d');
+    var css = getComputedStyle(document.documentElement);
+    var colors = ['--blue', '--orange', '--gold', '--red'].map(function (v) { return css.getPropertyValue(v).trim(); });
+    var dpr = Math.min(devicePixelRatio || 1, 2), W, H, bits = [], t0 = performance.now();
+    function size() { W = c.clientWidth; H = c.clientHeight; c.width = W * dpr; c.height = H * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    size(); addEventListener('resize', size);
+    for (var i = 0; i < 70; i++) bits.push({ x: Math.random() * W, y: -Math.random() * H * .8, s: 6 + (Math.random() * 3 | 0) * 2,
+      v: 1.2 + Math.random() * 1.8, d: (Math.random() - .5) * .6, c: colors[i % 4] });
+    function tick(now) {
+      var age = now - t0; x.clearRect(0, 0, W, H);
+      var fade = age > 3600 ? Math.max(0, 1 - (age - 3600) / 800) : 1;
+      x.globalAlpha = fade;
+      bits.forEach(function (b) { b.y += b.v; b.x += b.d; x.fillStyle = b.c; x.fillRect(Math.round(b.x / 2) * 2, Math.round(b.y / 2) * 2, b.s, b.s); });
+      if (fade > 0) requestAnimationFrame(tick); else x.clearRect(0, 0, W, H);
+    }
+    requestAnimationFrame(tick);
+  })();
 </script>
 </body>
 </html>
