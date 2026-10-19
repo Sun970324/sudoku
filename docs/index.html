@@ -98,12 +98,6 @@ h1 .hl { color: var(--blue); }
 .hero-shot { position: relative; justify-self: center; align-self: end; width: min(340px, 100%); }
 .hero-shot canvas { position: absolute; inset: -40px -60px 0; width: calc(100% + 120px); height: calc(100% + 40px); pointer-events: none; }
 
-/* Facts strip */
-.facts { border-block: 2px solid var(--line); background: var(--card); }
-.facts .wrap { display: grid; grid-template-columns: repeat(4, 1fr); padding-block: 28px; gap: 16px; }
-.fact { display: grid; gap: 4px; }
-.fact b { font: 34px/1 var(--pixel); font-weight: 400; color: var(--blue); font-variant-numeric: tabular-nums; }
-.fact span { font-size: 14px; color: var(--ink-2); }
 
 /* Phone frame */
 .phone { --px: 8px; background: var(--ink); padding: 8px; }
@@ -193,7 +187,6 @@ footer .copy-r { margin-left: auto; }
   .hero-shot { width: min(300px, 82%); }
   .band { padding-block: 64px; }
   .band.flip .shots { order: 0; }
-  .facts .wrap { grid-template-columns: repeat(2, 1fr); }
   .packs { grid-template-columns: repeat(2, 1fr); }
   footer .copy-r { margin-left: 0; }
 }
@@ -250,15 +243,6 @@ footer .copy-r { margin-left: auto; }
         <img class="en" src="img/hero_en.webp" width="520" height="1127" alt="Sudoku League home screen with a difficulty card, Start and Daily Sudoku">
       </div>
     </div>
-  </div>
-</section>
-
-<section class="facts" aria-label="At a glance">
-  <div class="wrap">
-    <div class="fact"><b>40+</b><span><span class="ko">힌트가 설명하는 풀이 기법</span><span class="en">solving techniques the hints explain</span></span></div>
-    <div class="fact"><b>6</b><span><span class="ko">브론즈부터 챌린저까지 난이도</span><span class="en">difficulty levels, Bronze to Challenger</span></span></div>
-    <div class="fact"><b>8</b><span><span class="ko">한 방에서 함께 겨루는 친구</span><span class="en">friends in one room</span></span></div>
-    <div class="fact"><b>0</b><span><span class="ko">갑자기 뜨는 팝업 광고</span><span class="en">pop-up ads between games</span></span></div>
   </div>
 </section>
 
