@@ -8,9 +8,7 @@
 <meta name="theme-color" content="#0a1736">
 <link rel="icon" type="image/png" href="img/icon.png">
 <style>
-  @font-face { font-family: "Mulmaru"; src: url("fonts/mulmaru.woff") format("woff"); font-display: swap; }
   :root { --bg: #0a1736; --panel: #12244d; --line: #2a4277; --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d;
-          --pixel: "Mulmaru", system-ui, sans-serif;
           --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right)); }
   /* One language at a time. Only the inactive one is hidden, so every element
      keeps whatever display type it would otherwise have. */
@@ -26,12 +24,12 @@
   .px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
   header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
   header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
-  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font-size: 20px; font-weight: 700; }
   .brand:hover { color: var(--ink); }
   .brand img { width: 40px; height: 40px; border-radius: 9px; }
-  .lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 var(--pixel); cursor: pointer; }
+  .lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
   main { padding: 64px 0 96px; }
-  .eyebrow { margin: 0 0 20px; font: 18px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.12em; }
+  .eyebrow { margin: 0 0 20px; font-size: 15px; font-weight: 700; color: var(--gold); letter-spacing: 0.12em; }
   .doc { background: var(--panel); padding: 36px 40px; }
   pre { margin: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
   pre::first-line { color: var(--ink); font-size: 22px; font-weight: 700; }
