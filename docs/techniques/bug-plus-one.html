@@ -248,8 +248,8 @@ footer .mail { color: var(--ink); }
         <h2 id="app">막히면 힌트가 <span class="nowrap">BUG+1를</span> 보여줘요</h2>
         <p>풀다가 막혀 힌트를 누르면, 후보가 세 개인 칸과 채울 숫자를 보드 위에 표시해 줘요. 기법 연습에서는 실제 문제 위에서 BUG+1 수업을 들을 수 있어요. 첫 판에서 모양과 이유를 같이 보고, 다음 판에서는 직접 찾아봐요.</p>
         <div class="badges">
-          <a href="https://apps.apple.com/app/id6794986328"><img src="../img/badges/apple_ko.svg" width="132" height="44" alt="App Store에서 다운로드"></a>
-          <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku"><img src="../img/badges/gp_ko.png" width="148" height="44" alt="Google Play에서 다운로드"></a>
+          <a href="https://apps.apple.com/app/id6794986328" data-goatcounter-click="store-ios/tech/bug-plus-one"><img src="../img/badges/apple_ko.svg" width="132" height="44" alt="App Store에서 다운로드"></a>
+          <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-bug-plus-one" data-goatcounter-click="store-android/tech/bug-plus-one"><img src="../img/badges/gp_ko.png" width="148" height="44" alt="Google Play에서 다운로드"></a>
         </div>
       </div>
       <div class="phone px"><img src="../img/tech/bug-plus-one.webp" loading="lazy" alt="스도쿠 리그의 BUG+1 힌트가 표시된 실제 보드"></div>
@@ -265,5 +265,15 @@ footer .mail { color: var(--ink); }
     <span>문의: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
   </div>
 </footer>
+<script>
+  // Count only the canonical host: not a local preview, not github.io.
+  if (location.hostname === 'sudoku.jaywithme.com') {
+    var gc = document.createElement('script');
+    gc.async = true;
+    gc.src = 'https://gc.zgo.at/count.js';
+    gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
+    document.head.appendChild(gc);
+  }
+</script>
 </body>
 </html>

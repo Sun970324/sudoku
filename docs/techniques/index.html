@@ -143,5 +143,15 @@ footer a { color: var(--ink-2); }
     <a href="../data-deletion.html">계정 삭제 안내</a>
   </div>
 </footer>
+<script>
+  // Count only the canonical host: not a local preview, not github.io.
+  if (location.hostname === 'sudoku.jaywithme.com') {
+    var gc = document.createElement('script');
+    gc.async = true;
+    gc.src = 'https://gc.zgo.at/count.js';
+    gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
+    document.head.appendChild(gc);
+  }
+</script>
 </body>
 </html>
