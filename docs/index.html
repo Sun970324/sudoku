@@ -87,6 +87,10 @@ nav a:hover { color: var(--ink); }
 .event-bar { display: block; background: var(--gold); color: var(--bg); text-align: center; padding: 10px var(--gutter); font-size: 15px; font-weight: 700; text-decoration: none; }
 .event-bar:hover { color: var(--bg); background: #ffd463; }
 .event-bar .pixel { letter-spacing: 0.12em; margin-right: 10px; }
+/* One line on every width: a phone gets the short sentence, and a phone
+   narrower still clips it rather than wrapping. */
+.event-bar { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.event-bar .bar-short { display: none; }
 nav a.nav-coupon { color: var(--gold); font-weight: 700; }
 .coupon { padding: 120px 0; background: #102a5c; border-top: 2px solid var(--line); }
 .coupon .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: start; }
@@ -206,6 +210,11 @@ footer .copy-r { margin-left: auto; }
   .cards { grid-template-columns: minmax(0, 1fr); }
   .faq { padding: 96px 0 80px; }
   footer .copy-r { margin-left: 0; }
+  .brand, nav a, .lang { white-space: nowrap; }
+  nav { gap: 16px; }
+  .event-bar { font-size: 14px; }
+  .event-bar .bar-long { display: none; }
+  .event-bar .bar-short { display: inline; }
   .coupon { padding: 80px 0; }
   .coupon .wrap { grid-template-columns: minmax(0, 1fr); gap: 48px; }
   .ticket { grid-template-columns: minmax(0, 1fr) 96px; }
@@ -215,6 +224,11 @@ footer .copy-r { margin-left: auto; }
   html[data-lang="en"] .ticket-stub b { font-size: 15px; }
   /* Side by side while both fit, one per row on a narrow phone. */
   .claim button { flex: 1 1 140px; padding: 0 12px; font-size: 15px; }
+}
+/* A small phone cannot fit the name, the coupon link and the language button
+   on one row; the icon alone still says whose site this is. */
+@media (max-width: 460px) {
+  .brand > span { display: none !important; }
 }
 </style>
 <script>
@@ -238,7 +252,7 @@ footer .copy-r { margin-left: auto; }
 </head>
 <body>
 
-<a class="event-bar" href="#coupon"><span class="pixel">EVENT</span><span class="ko">프리미엄 1개월 무료 쿠폰을 드려요. 쿠폰 받으러 가기 ▸</span><span class="en">Free 1-month Premium coupons. Get yours ▸</span></a>
+<a class="event-bar" href="#coupon"><span class="pixel">EVENT</span><span class="bar-long"><span class="ko">프리미엄 1개월 무료 쿠폰을 드려요. 쿠폰 받으러 가기 ▸</span><span class="en">Free 1-month Premium coupons. Get yours ▸</span></span><span class="bar-short"><span class="ko">프리미엄 1개월 무료 쿠폰 받기 ▸</span><span class="en">Free month of Premium ▸</span></span></a>
 
 <header class="top">
   <div class="wrap">
