@@ -163,7 +163,9 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 .packs figure:nth-child(even) { margin-top: 40px; }
 .packs figcaption { margin-top: 8px; font-size: 14px; color: var(--ink-2); text-align: center; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-.chips span { background: var(--panel); padding: 6px 12px; font-size: 14px; }
+/* `>` matters: the .ko/.en spans inside a chip must not get a chip's own panel
+   background, which painted navy over the gold .hot chips' navy text. */
+.chips > span { background: var(--panel); padding: 6px 12px; font-size: 14px; }
 .chips .hot { background: var(--gold); color: var(--bg); font-weight: 700; }
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
 .card { background: var(--panel); padding: 32px; display: flex; flex-direction: column; gap: 14px; }
