@@ -227,10 +227,10 @@ footer .copy-r { margin-left: auto; }
   /* Side by side while both fit, one per row on a narrow phone. */
   .claim button { flex: 1 1 140px; padding: 0 12px; font-size: 15px; }
 }
-/* A small phone cannot fit the name, the coupon link and the language button
-   on one row; the icon alone still says whose site this is. */
-@media (max-width: 460px) {
-  .brand > span { display: none !important; }
+/* Phones show only the name and the language button (owner's call); the event
+   bar above still leads to the coupon section. */
+@media (max-width: 400px) {
+  .brand { font-size: 19px; gap: 10px; }
 }
 </style>
 <script>
@@ -264,7 +264,7 @@ footer .copy-r { margin-left: auto; }
       <a class="hide-sm" href="#solve"><span class="ko">풀기</span><span class="en">Solve</span></a>
       <a class="hide-sm" href="#play"><span class="ko">함께 즐기기</span><span class="en">Play</span></a>
       <a class="hide-sm" href="#faq">FAQ</a>
-      <a class="nav-coupon" href="#coupon"><span class="ko">쿠폰 발급받기</span><span class="en">Get a coupon</span></a>
+      <a class="nav-coupon hide-sm" href="#coupon"><span class="ko">쿠폰 발급받기</span><span class="en">Get a coupon</span></a>
       <button class="lang px" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button>
     </nav>
   </div>
