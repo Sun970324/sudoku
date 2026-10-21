@@ -113,8 +113,11 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 .code-box { display: none; margin-top: 18px; background: var(--bg); padding: 16px 20px; box-shadow: inset 0 0 0 2px var(--gold); }
 .code-box.on { display: block; }
 .code-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
-.code-row small { font-size: 13px; color: var(--ink-2); }
-.code-row code { flex: 1 1 auto; min-width: 0; font: 700 20px/1.3 "PretendardSub", system-ui, sans-serif; letter-spacing: 0.06em; color: var(--ink); overflow-wrap: anywhere; }
+/* Label and copy button share the top row; the code takes the whole second
+   row, so neither a longer label ("My Android code") nor a 23-letter Play
+   code can push the button onto a row of its own on a phone. */
+.code-row small { flex: 1 1 auto; font-size: 13px; color: var(--ink-2); }
+.code-row code { order: 2; flex: 1 1 100%; min-width: 0; font: 700 20px/1.3 "PretendardSub", system-ui, sans-serif; letter-spacing: 0.06em; color: var(--ink); overflow-wrap: anywhere; }
 .copy-code { min-height: 40px; padding: 0 16px; background: var(--gold); color: var(--bg); border: 0; font-weight: 700; font-size: 15px; cursor: pointer; }
 .code-note { margin-top: 8px; font-size: 13px; color: var(--ink-2); }
 .coupon-error { display: none; margin-top: 14px; color: var(--coral); font-size: 15px; }
@@ -234,6 +237,9 @@ footer .copy-r { margin-left: auto; }
   .ticket-stub b, html[data-lang="en"] .ticket-stub b { font-size: 16px; }
   .ticket-stub br { display: none; }
   /* Side by side while both fit, one per row on a narrow phone. */
+  .code-box { padding: 14px 16px; }
+  .code-row code { font-size: 16px; letter-spacing: 0.02em; }
+  .copy-code { min-height: 36px; padding: 0 12px; font-size: 14px; }
   .claim { margin-top: 16px; gap: 8px; }
   .claim button { flex: 1 1 120px; min-height: 44px; padding: 0 10px; font-size: 14px; }
 }
@@ -242,6 +248,7 @@ footer .copy-r { margin-left: auto; }
 @media (max-width: 400px) {
   .brand { font-size: 19px; gap: 10px; }
   .badges img { height: 40px; }
+  .code-row code { font-size: 15px; letter-spacing: 0; }
 }
 </style>
 <script>
