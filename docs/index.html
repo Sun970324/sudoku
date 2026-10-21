@@ -89,6 +89,9 @@ body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 "Pre
 img { display: block; max-width: 100%; height: auto; }
 a { color: var(--gold); }
 a:hover { color: #ffe08a; }
+/* Mulmaru is drawn on a 12px grid: every size it is set at on this page is a
+   multiple of 12 (12 / 24 / 36 / 48 / 60 / 72). In between, its pixels scale
+   unevenly and dense syllables come out with strokes of different widths. */
 h1, h2, h3, .pixel { font-family: var(--pixel); font-weight: 400; }
 p { margin: 0; }
 .wrap { max-width: 1180px; margin: 0 auto; padding-inline: var(--gutter); }
@@ -103,18 +106,18 @@ p { margin: 0; }
 /* Header */
 header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
 header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font: 24px/1 var(--pixel); }
 .brand img { width: 40px; height: 40px; border-radius: 9px; }
 nav { display: flex; align-items: center; gap: 28px; font-size: 15px; }
 nav a { color: var(--ink-2); text-decoration: none; }
 nav a:hover { color: var(--ink); }
-.lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 var(--pixel); cursor: pointer; }
+.lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: 12px/1 var(--pixel); cursor: pointer; }
 
 /* Hero */
 .hero { padding: 88px 0 0; text-align: center; background: linear-gradient(var(--bg), #102a5c); overflow: hidden; }
 .hero-icon { width: 128px; height: 128px; border-radius: 28px; margin: 0 auto 28px; }
-.eyebrow { font: 18px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.08em; margin-bottom: 14px; }
-.hero h1 { margin: 0 0 40px; font-size: clamp(42px, 7vw, 88px); line-height: 1.12; }
+.eyebrow { font: 24px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.08em; margin-bottom: 14px; }
+.hero h1 { margin: 0 0 40px; font-size: 72px; line-height: 1.12; }
 .hl { color: var(--gold); }
 .menu { list-style: none; padding: 0; margin: 0 auto 40px; max-width: 660px; display: flex; flex-direction: column; gap: 12px; text-align: left; }
 .menu a { display: flex; gap: 16px; align-items: flex-start; background: var(--panel); padding: 18px 22px; color: var(--ink-2); text-decoration: none; }
@@ -123,7 +126,7 @@ nav a:hover { color: var(--ink); }
 .menu svg { flex: none; margin-top: 5px; shape-rendering: crispEdges; }
 .badges { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .badges img { height: 52px; width: auto; }
-.press { margin: 18px 0 64px; font: 16px/1 var(--pixel); color: var(--gold); letter-spacing: 0.2em; }
+.press { margin: 18px 0 64px; font: 24px/1 var(--pixel); color: var(--gold); letter-spacing: 0.2em; }
 .fan { display: flex; justify-content: center; align-items: flex-end; gap: 28px; }
 .fan .phone { max-width: 240px; }
 .fan .phone:nth-child(1) { transform: translateY(40px) rotate(-4deg); }
@@ -134,7 +137,7 @@ nav a:hover { color: var(--ink); }
    moved here when that page was removed (2026-10-21). */
 .event-bar { display: block; background: var(--gold); color: var(--bg); text-align: center; padding: 10px var(--gutter); font-size: 15px; font-weight: 700; text-decoration: none; }
 .event-bar:hover { color: var(--bg); background: #ffd463; }
-.event-bar .pixel { letter-spacing: 0.12em; margin-right: 10px; }
+.event-bar .pixel { font-size: 12px; letter-spacing: 0.12em; margin-right: 10px; }
 /* One line on every width: a phone gets the short sentence, and a phone
    narrower still clips it rather than wrapping. */
 .event-bar { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -142,19 +145,19 @@ nav a:hover { color: var(--ink); }
 nav a.nav-coupon { color: var(--gold); font-weight: 700; }
 .coupon { padding: 120px 0; background: #102a5c; border-top: 2px solid var(--line); }
 .coupon .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: start; }
-.coupon h2 { margin: 0 0 28px; font-size: clamp(32px, 4.4vw, 48px); line-height: 1.25; }
+.coupon h2 { margin: 0 0 28px; font-size: 48px; line-height: 1.25; }
 .ticket { display: grid; grid-template-columns: minmax(0, 1fr) 132px; filter: drop-shadow(0 8px 0 #071029); }
 .ticket-main { background: var(--gold); color: var(--bg); padding: 28px 30px; }
-.ticket-brand { font: 14px/1.4 var(--pixel); letter-spacing: 0.15em; }
-.ticket-big { font: clamp(40px, 5vw, 56px)/1.1 var(--pixel); margin: 10px 0 6px; }
+.ticket-brand { font: 12px/1.5 var(--pixel); letter-spacing: 0.15em; }
+.ticket-big { font: 48px/1.1 var(--pixel); margin: 10px 0 6px; }
 .ticket-perks { font-size: 15px; font-weight: 700; }
 /* English runs wider in the pixel face: keep "1 MONTH FREE" and both buttons on one line each. */
-html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
+html[data-lang="en"] .ticket-big { font-size: 36px; }
 .ticket-stub { background: #ffd86b; color: var(--bg); border-left: 4px dashed var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; text-align: center; }
-.ticket-stub span { font: 13px/1 var(--pixel); letter-spacing: 0.15em; }
-.ticket-stub b { font: 26px/1.15 var(--pixel); }
+.ticket-stub span { font: 12px/1 var(--pixel); letter-spacing: 0.15em; }
+.ticket-stub b { font: 24px/1.15 var(--pixel); }
 .claim { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
-.claim button { min-height: 48px; padding: 0 20px; background: var(--bg); color: var(--gold); border: 0; font: 16px/1 var(--pixel); cursor: pointer; }
+.claim button { min-height: 48px; padding: 0 20px; background: var(--bg); color: var(--gold); border: 0; font: 12px/1 var(--pixel); cursor: pointer; }
 .claim button:hover:not(:disabled) { background: #18306a; }
 .claim button:disabled { cursor: default; opacity: 0.55; }
 .claim button.done { opacity: 1; background: transparent; color: var(--bg); box-shadow: inset 0 0 0 2px var(--bg); }
@@ -169,10 +172,10 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 .code-note { margin-top: 8px; font-size: 13px; color: var(--ink-2); }
 .coupon-error { display: none; margin-top: 14px; color: var(--coral); font-size: 15px; }
 .coupon-error.on { display: block; }
-.howto { font: 16px/1.4 var(--pixel); color: var(--ink-2); letter-spacing: 0.2em; margin: 8px 0 18px; }
+.howto { font: 12px/1.5 var(--pixel); color: var(--ink-2); letter-spacing: 0.2em; margin: 8px 0 18px; }
 .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
 .steps li { background: var(--panel); padding: 20px 22px; display: flex; gap: 16px; }
-.steps .num { flex: none; font: 28px/1 var(--pixel); color: var(--gold); }
+.steps .num { flex: none; font: 24px/1 var(--pixel); color: var(--gold); }
 .steps b { display: block; font-size: 18px; }
 .steps p { margin-top: 4px; color: var(--ink-2); font-size: 15px; }
 .steps .badges { justify-content: flex-start; gap: 8px; margin-top: 12px; }
@@ -183,22 +186,22 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 .stage { padding: 160px 0 40px; border-top: 2px solid var(--line); }
 .stage.alt { background: var(--bg-2); }
 .stage-tag { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
-.stage-tag span { font: 16px/1 var(--pixel); color: var(--bg); padding: 10px 14px; }
+.stage-tag span { font: 12px/1 var(--pixel); color: var(--bg); padding: 10px 14px; }
 .hud { display: flex; gap: 4px; }
 .hud i { width: 28px; height: 12px; background: var(--line); }
 .s1 .stage-tag span, .s1 .hud i.on { background: var(--gold); }
 .s2 .stage-tag span, .s2 .hud i.on { background: var(--blue); }
 .s3 .stage-tag span, .s3 .hud i.on { background: var(--coral); }
-.stage h2 { margin: 0 0 12px; font-size: clamp(34px, 5vw, 60px); line-height: 1.18; }
-.s3 h2 { font-size: clamp(30px, 4.4vw, 54px); }
+.stage h2 { margin: 0 0 12px; font-size: 60px; line-height: 1.18; }
+.s3 h2 { font-size: 48px; }
 .stage-lead { color: var(--ink-2); font-size: 18px; max-width: 40em; margin-bottom: 72px; }
 .row { display: flex; gap: 64px; align-items: center; margin-bottom: 120px; }
 .row.flip { flex-direction: row-reverse; }
 .row:last-child { margin-bottom: 0; }
 .copy, .shots { flex: 1 1 0; min-width: 0; }
-.kicker { font: 16px/1.4 var(--pixel); margin-bottom: 10px; }
+.kicker { font: 24px/1.4 var(--pixel); margin-bottom: 10px; }
 .s1 .kicker { color: var(--gold); } .s2 .kicker { color: var(--blue); } .s3 .kicker { color: var(--coral); }
-.copy h3 { margin: 0 0 18px; font-size: clamp(28px, 3.2vw, 38px); line-height: 1.25; }
+.copy h3 { margin: 0 0 18px; font-size: 36px; line-height: 1.25; }
 .copy p { color: var(--ink-2); margin-bottom: 12px; }
 .list { margin: 20px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .list li { display: flex; gap: 12px; align-items: flex-start; }
@@ -222,7 +225,7 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 .chips .hot { background: var(--gold); color: var(--bg); font-weight: 700; }
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
 .card { background: var(--panel); padding: 32px; display: flex; flex-direction: column; gap: 14px; }
-.card h3 { margin: 0; font-size: 28px; line-height: 1.3; }
+.card h3 { margin: 0; font-size: 24px; line-height: 1.3; }
 .card p { color: var(--ink-2); }
 .card .list { margin-top: 0; font-size: 15px; }
 .card .phone { margin: auto auto 0; max-width: 220px; }
@@ -234,17 +237,17 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 /* FAQ */
 .faq { padding: 160px 0 120px; }
 .faq .wrap { max-width: 860px; }
-.faq h2 { margin: 0 0 32px; font-size: clamp(32px, 4vw, 44px); text-align: center; }
+.faq h2 { margin: 0 0 32px; font-size: 48px; text-align: center; }
 .faq .eyebrow { text-align: center; }
 .qa { display: flex; flex-direction: column; gap: 14px; }
 .qa details { background: var(--ink); color: var(--bg); padding: 20px 24px; }
-.qa summary { font: 18px/1.4 var(--pixel); cursor: pointer; }
+.qa summary { font: 24px/1.4 var(--pixel); cursor: pointer; }
 .qa p { margin-top: 12px; }
 
 /* Closing + footer */
 .closing { padding: 120px 0; text-align: center; background: #102a5c; border-top: 2px solid var(--line); }
-.closing .press { margin: 0 0 12px; font-size: 18px; }
-.closing h2 { margin: 0 0 32px; font-size: clamp(30px, 4.5vw, 52px); }
+.closing .press { margin: 0 0 12px; }
+.closing h2 { margin: 0 0 32px; font-size: 48px; }
 footer { padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); font-size: 14px; color: var(--ink-2); }
 footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
 footer a { color: var(--ink-2); }
@@ -281,10 +284,10 @@ footer .copy-r { margin-left: auto; }
      body gets the full width and both claim buttons fit on one row. */
   .ticket { grid-template-columns: minmax(0, 1fr); }
   .ticket-main { padding: 20px; }
-  .ticket-big, html[data-lang="en"] .ticket-big { font-size: 34px; }
+  .ticket-big, html[data-lang="en"] .ticket-big { font-size: 36px; }
   .ticket-perks { font-size: 14px; }
   .ticket-stub { flex-direction: row; gap: 10px; padding: 10px; border-left: 0; border-top: 4px dashed var(--bg); }
-  .ticket-stub b, html[data-lang="en"] .ticket-stub b { font-size: 16px; }
+  .ticket-stub b, html[data-lang="en"] .ticket-stub b { font-size: 24px; }
   .ticket-stub br { display: none; }
   /* Side by side while both fit, one per row on a narrow phone. */
   .code-box { padding: 14px 16px; }
@@ -292,12 +295,21 @@ footer .copy-r { margin-left: auto; }
   .code-row code { font-size: 15px; letter-spacing: 0; }
   .copy-code { min-height: 34px; padding: 0 10px; font-size: 13px; }
   .claim { margin-top: 16px; gap: 8px; }
-  .claim button { flex: 1 1 120px; min-height: 44px; padding: 0 10px; font-size: 14px; }
+  .claim button { flex: 1 1 120px; min-height: 44px; padding: 0 10px; }
+  /* Pixel sizes one step down, still on the 12px grid. */
+  .hero h1 { font-size: 48px; }
+  .stage h2, .s3 h2, .coupon h2, .faq h2, .closing h2 { font-size: 36px; }
+  .copy h3 { font-size: 24px; }
 }
 /* Phones show only the name and the language button (owner's call); the event
    bar above still leads to the coupon section. */
 @media (max-width: 400px) {
-  .brand { font-size: 19px; gap: 10px; }
+  /* "Sudoku League" at 24px leaves a 320px phone little room for the button. */
+  .brand { gap: 8px; }
+  .brand img { width: 34px; height: 34px; }
+  .lang { padding: 0 10px; }
+  header.top .wrap { gap: 8px; }
+  .hero h1 { font-size: 36px; }
   .badges img { height: 40px; }
   .code-row code { font-size: 12px; }
 }
