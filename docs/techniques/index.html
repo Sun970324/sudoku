@@ -6,6 +6,9 @@
 <title>스도쿠 기법 · 고급 풀이 기법 설명 | 스도쿠 리그</title>
 <meta name="description" content="네이키드 페어, X-윙, 소드피쉬, XY-윙, 유일사각형, X-사슬 같은 스도쿠 풀이 기법을 예시 보드와 함께 찾는 법, 지울 수 있는 이유까지 하나씩 설명해요.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/techniques/">
+<link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/">
+<link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/">
+<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/techniques/">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0a1736">
 <meta property="og:type" content="website">
@@ -43,7 +46,8 @@ a { color: var(--gold); }
 .wrap { max-width: 760px; margin: 0 auto; padding-inline: var(--gutter); }
 .px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
 header.top { border-bottom: 2px solid var(--line); }
-header.top .wrap { display: flex; align-items: center; height: 68px; }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+.lang { font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
 /* Pixel sizes are multiples of 12, Mulmaru's grid (see the technique pages). */
 .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 24px/1 var(--pixel); }
 .brand img { width: 36px; height: 36px; border-radius: 8px; }
@@ -67,6 +71,7 @@ footer a { color: var(--ink-2); }
 <header class="top">
   <div class="wrap">
     <a class="brand" href="../"><img src="../img/icon.png" width="36" height="36" alt=""><span>스도쿠 리그</span></a>
+    <a class="lang" href="../en/techniques/" hreflang="en" lang="en">English</a>
   </div>
 </header>
 <main>
