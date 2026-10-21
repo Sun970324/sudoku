@@ -112,11 +112,9 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 .claim button.done { opacity: 1; background: transparent; color: var(--bg); box-shadow: inset 0 0 0 2px var(--bg); }
 .code-box { display: none; margin-top: 18px; background: var(--bg); padding: 16px 20px; box-shadow: inset 0 0 0 2px var(--gold); }
 .code-box.on { display: block; }
-/* Platform, code and copy button on one line (owner's call). The code is the
-   only part allowed to shrink, and it only breaks when a phone is too narrow
-   for 23 letters at all. */
+/* Code and copy button on one line (owner's call; no platform label — the
+   note under it says which store). The code is the only part that shrinks. */
 .code-row { display: flex; align-items: center; gap: 12px; }
-.code-row small { flex: none; font-size: 13px; color: var(--ink-2); }
 .code-row code { flex: 1 1 auto; min-width: 0; font: 700 20px/1.3 "PretendardSub", system-ui, sans-serif; letter-spacing: 0.06em; color: var(--ink); overflow-wrap: anywhere; }
 .copy-code { flex: none; }
 .copy-code { min-height: 40px; padding: 0 16px; background: var(--gold); color: var(--bg); border: 0; font-weight: 700; font-size: 15px; cursor: pointer; }
@@ -240,8 +238,7 @@ footer .copy-r { margin-left: auto; }
   /* Side by side while both fit, one per row on a narrow phone. */
   .code-box { padding: 14px 16px; }
   .code-row { gap: 8px; }
-  .code-row small { font-size: 12px; }
-  .code-row code { font-size: 14px; letter-spacing: 0; }
+  .code-row code { font-size: 15px; letter-spacing: 0; }
   .copy-code { min-height: 34px; padding: 0 10px; font-size: 13px; }
   .claim { margin-top: 16px; gap: 8px; }
   .claim button { flex: 1 1 120px; min-height: 44px; padding: 0 10px; font-size: 14px; }
@@ -507,11 +504,11 @@ footer .copy-r { margin-left: auto; }
         <div class="ticket-stub px"><span>LIMITED</span><b class="ko">한정<br> 수량</b><b class="en">Limited<br> supply</b></div>
       </div>
       <div class="code-box px" id="boxIos">
-        <div class="code-row"><small>iPhone</small><code id="codeIos"></code><button class="copy-code px" id="copyIos" type="button"></button></div>
+        <div class="code-row"><code id="codeIos"></code><button class="copy-code px" id="copyIos" type="button"></button></div>
         <p class="code-note"><span class="ko">App Store 코드라서 iPhone·iPad에서만 쓸 수 있어요.</span><span class="en">This is an App Store code. It works only on iPhone and iPad.</span></p>
       </div>
       <div class="code-box px" id="boxAndroid">
-        <div class="code-row"><small>Android</small><code id="codeAndroid"></code><button class="copy-code px" id="copyAndroid" type="button"></button></div>
+        <div class="code-row"><code id="codeAndroid"></code><button class="copy-code px" id="copyAndroid" type="button"></button></div>
         <p class="code-note"><span class="ko">Google Play 코드라서 Android 기기에서만 쓸 수 있어요.</span><span class="en">This is a Google Play code. It works only on Android devices.</span></p>
       </div>
       <p class="coupon-error" id="couponError" role="alert"><span class="ko">쿠폰을 받지 못했어요. 잠시 후 다시 시도해 주세요.</span><span class="en">Couldn't get a coupon. Please try again in a moment.</span></p>
