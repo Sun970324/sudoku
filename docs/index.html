@@ -82,6 +82,47 @@ nav a:hover { color: var(--ink); }
 .fan .phone:nth-child(2) { max-width: 290px; }
 .fan .phone:nth-child(3) { transform: translateY(40px) rotate(4deg); }
 
+/* Coupon event. The claim logic is the old sudoku.jaywithme.com/coupon.html's,
+   moved here when that page was removed (2026-10-21). */
+.event-bar { display: block; background: var(--gold); color: var(--bg); text-align: center; padding: 10px var(--gutter); font-size: 15px; font-weight: 700; text-decoration: none; }
+.event-bar:hover { color: var(--bg); background: #ffd463; }
+.event-bar .pixel { letter-spacing: 0.12em; margin-right: 10px; }
+nav a.nav-coupon { color: var(--gold); font-weight: 700; }
+.coupon { padding: 120px 0; background: #102a5c; border-top: 2px solid var(--line); }
+.coupon .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+.coupon h2 { margin: 0 0 28px; font-size: clamp(32px, 4.4vw, 48px); line-height: 1.25; }
+.ticket { display: grid; grid-template-columns: minmax(0, 1fr) 132px; filter: drop-shadow(0 8px 0 #071029); }
+.ticket-main { background: var(--gold); color: var(--bg); padding: 28px 30px; }
+.ticket-brand { font: 14px/1.4 var(--pixel); letter-spacing: 0.15em; }
+.ticket-big { font: clamp(40px, 5vw, 56px)/1.1 var(--pixel); margin: 10px 0 6px; }
+.ticket-perks { font-size: 15px; font-weight: 700; }
+.ticket-stub { background: #ffd86b; color: var(--bg); border-left: 4px dashed var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; text-align: center; }
+.ticket-stub span { font: 13px/1 var(--pixel); letter-spacing: 0.15em; }
+.ticket-stub b { font: 26px/1.15 var(--pixel); }
+.claim { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.claim button { min-height: 48px; padding: 0 20px; background: var(--bg); color: var(--gold); border: 0; font: 16px/1 var(--pixel); cursor: pointer; }
+.claim button:hover:not(:disabled) { background: #18306a; }
+.claim button:disabled { cursor: default; opacity: 0.55; }
+.claim button.done { opacity: 1; background: transparent; color: var(--bg); box-shadow: inset 0 0 0 2px var(--bg); }
+.code-box { display: none; margin-top: 18px; background: var(--bg); padding: 16px 20px; box-shadow: inset 0 0 0 2px var(--gold); }
+.code-box.on { display: block; }
+.code-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.code-row small { font-size: 13px; color: var(--ink-2); }
+.code-row code { flex: 1 1 auto; min-width: 0; font: 700 20px/1.3 "PretendardSub", system-ui, sans-serif; letter-spacing: 0.06em; color: var(--ink); overflow-wrap: anywhere; }
+.copy-code { min-height: 40px; padding: 0 16px; background: var(--gold); color: var(--bg); border: 0; font-weight: 700; font-size: 15px; cursor: pointer; }
+.code-note { margin-top: 8px; font-size: 13px; color: var(--ink-2); }
+.coupon-error { display: none; margin-top: 14px; color: var(--coral); font-size: 15px; }
+.coupon-error.on { display: block; }
+.howto { font: 16px/1.4 var(--pixel); color: var(--ink-2); letter-spacing: 0.2em; margin: 8px 0 18px; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.steps li { background: var(--panel); padding: 20px 22px; display: flex; gap: 16px; }
+.steps .num { flex: none; font: 28px/1 var(--pixel); color: var(--gold); }
+.steps b { display: block; font-size: 18px; }
+.steps p { margin-top: 4px; color: var(--ink-2); font-size: 15px; }
+.steps .badges { justify-content: flex-start; gap: 8px; margin-top: 12px; }
+.steps .badges img { height: 40px; }
+.fine { margin: 28px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 14px; line-height: 1.9; }
+
 /* Stages */
 .stage { padding: 160px 0 40px; border-top: 2px solid var(--line); }
 .stage.alt { background: var(--bg-2); }
@@ -163,6 +204,12 @@ footer .copy-r { margin-left: auto; }
   .cards { grid-template-columns: minmax(0, 1fr); }
   .faq { padding: 96px 0 80px; }
   footer .copy-r { margin-left: 0; }
+  .coupon { padding: 80px 0; }
+  .coupon .wrap { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+  .ticket { grid-template-columns: minmax(0, 1fr) 96px; }
+  .ticket-main { padding: 22px; }
+  .ticket-stub b { font-size: 20px; }
+  .claim button { flex: 1 1 0; padding: 0 12px; }
 }
 </style>
 <script>
@@ -181,10 +228,13 @@ footer .copy-r { margin-left: auto; }
 </head>
 <body>
 
+<a class="event-bar" href="#coupon"><span class="pixel">EVENT</span><span class="ko">프리미엄 1개월 무료 쿠폰을 드려요. 쿠폰 받으러 가기 ▸</span><span class="en">Free 1-month Premium coupons. Get yours ▸</span></a>
+
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#top"><img src="img/icon.png" width="40" height="40" alt=""><span class="ko">스도쿠 리그</span><span class="en">Sudoku League</span></a>
     <nav>
+      <a class="nav-coupon" href="#coupon"><span class="ko">쿠폰</span><span class="en">Coupon</span></a>
       <a class="hide-sm" href="#style"><span class="ko">꾸미기</span><span class="en">Style</span></a>
       <a class="hide-sm" href="#solve"><span class="ko">풀기</span><span class="en">Solve</span></a>
       <a class="hide-sm" href="#play"><span class="ko">함께 즐기기</span><span class="en">Play</span></a>
@@ -213,6 +263,58 @@ footer .copy-r { margin-left: auto; }
       <div class="phone px"><img class="ko" src="img/hero_dark.webp" width="520" height="1125" alt="클래식 다크 테마 홈 화면"><img class="en" src="img/hero_dark_en.webp" width="520" height="1125" alt="Classic dark theme"></div>
       <div class="phone gold px"><img class="ko" src="img/hero_ko.webp" width="520" height="1125" alt="스도쿠 리그 홈 화면: 난이도 카드, 시작하기, 오늘의 스도쿠"><img class="en" src="img/hero_en.webp" width="520" height="1125" alt="Sudoku League home screen with a difficulty card, Start and Daily Sudoku"></div>
       <div class="phone px"><img class="ko" src="img/pack_neon.webp" width="520" height="1125" alt="미드나잇 네온 테마"><img class="en" src="img/pack_neon_en.webp" width="520" height="1125" alt="Midnight Neon theme"></div>
+    </div>
+  </div>
+</section>
+
+<section class="coupon" id="coupon">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">FREE TICKET</p>
+      <h2><span class="ko">프리미엄 1개월 쿠폰</span><span class="en">1 month of Premium, free</span></h2>
+      <div class="ticket">
+        <div class="ticket-main px">
+          <p class="ticket-brand">SUDOKU LEAGUE · PREMIUM</p>
+          <p class="ticket-big"><span class="ko">1개월 무료</span><span class="en">1 MONTH FREE</span></p>
+          <p class="ticket-perks"><span class="ko">무제한 힌트 · 리플레이 · 테마 팩 6종 · 기법 연습</span><span class="en">Unlimited hints · Replay · 6 theme packs · Technique lessons</span></p>
+          <div class="claim">
+            <button class="px" id="claimIos" type="button"><span class="ko">iPhone 쿠폰 받기</span><span class="en">Get iPhone coupon</span></button>
+            <button class="px" id="claimAndroid" type="button"><span class="ko">Android 쿠폰 받기</span><span class="en">Get Android coupon</span></button>
+          </div>
+        </div>
+        <div class="ticket-stub px"><span>LIMITED</span><b class="ko">한정<br>수량</b><b class="en">Limited<br>supply</b></div>
+      </div>
+      <div class="code-box px" id="boxIos">
+        <div class="code-row"><small><span class="ko">내 iPhone 코드</span><span class="en">My iPhone code</span></small><code id="codeIos"></code><button class="copy-code px" id="copyIos" type="button"></button></div>
+        <p class="code-note"><span class="ko">App Store 코드라서 iPhone·iPad에서만 쓸 수 있어요.</span><span class="en">This is an App Store code. It works only on iPhone and iPad.</span><span class="reused" id="reusedIos" hidden><span class="ko"> 이 기기에서 이미 받은 코드예요.</span><span class="en"> You already got this code on this device.</span></span></p>
+      </div>
+      <div class="code-box px" id="boxAndroid">
+        <div class="code-row"><small><span class="ko">내 Android 코드</span><span class="en">My Android code</span></small><code id="codeAndroid"></code><button class="copy-code px" id="copyAndroid" type="button"></button></div>
+        <p class="code-note"><span class="ko">Google Play 코드라서 Android 기기에서만 쓸 수 있어요.</span><span class="en">This is a Google Play code. It works only on Android devices.</span><span class="reused" id="reusedAndroid" hidden><span class="ko"> 이 기기에서 이미 받은 코드예요.</span><span class="en"> You already got this code on this device.</span></span></p>
+      </div>
+      <p class="coupon-error" id="couponError" role="alert"><span class="ko">쿠폰을 받지 못했어요. 잠시 후 다시 시도해 주세요.</span><span class="en">Couldn't get a coupon. Please try again in a moment.</span></p>
+    </div>
+
+    <div>
+      <p class="howto">HOW TO USE</p>
+      <ol class="steps">
+        <li class="px"><span class="num">1</span><div><b><span class="ko">앱을 설치하고 로그인해요</span><span class="en">Install the app and sign in</span></b>
+          <p><span class="ko">게스트로 시작했다면 마이페이지에서 계정을 먼저 연동해 주세요.</span><span class="en">If you started as a guest, link an account on My Page first.</span></p>
+          <div class="badges">
+            <a href="https://apps.apple.com/app/id6794986328"><img class="ko" src="img/badges/apple_ko.svg" width="120" height="40" alt="App Store에서 다운로드"><img class="en" src="img/badges/apple_en.svg" width="120" height="40" alt="Download on the App Store"></a>
+            <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku"><img class="ko" src="img/badges/gp_ko.png" width="135" height="40" alt="Google Play에서 다운로드"><img class="en" src="img/badges/gp_en.png" width="135" height="40" alt="Get it on Google Play"></a>
+          </div></div></li>
+        <li class="px"><span class="num">2</span><div><b><span class="ko">마이페이지 ▸ 프리미엄으로 가요</span><span class="en">Go to My Page ▸ Premium</span></b>
+          <p><span class="ko">프리미엄 화면 맨 아래, 구매 복원 밑에 버튼이 있어요.</span><span class="en">The button is at the bottom of the Premium screen, under Restore purchases.</span></p></div></li>
+        <li class="px"><span class="num">3</span><div><b><span class="ko">프로모션 코드 사용을 눌러 입력해요</span><span class="en">Tap Use a promo code and enter it</span></b>
+          <p><span class="ko">iPhone은 Apple 코드 입력 창이 열려요. Android는 코드를 넣으면 Google Play로 넘어가 적용돼요.</span><span class="en">On iPhone, Apple's code sheet opens. On Android, enter the code and Google Play applies it.</span></p></div></li>
+      </ol>
+      <ul class="fine">
+        <li><span class="ko">쿠폰은 한정 수량이라 모두 나가면 이벤트가 끝나요.</span><span class="en">Coupons are limited. The event ends when they run out.</span></li>
+        <li><span class="ko">한 기기에서 iPhone 쿠폰과 Android 쿠폰을 하나씩 받을 수 있어요. 서로 바꿔 쓸 수는 없어요.</span><span class="en">Each device can get one iPhone coupon and one Android coupon. They can't be swapped.</span></li>
+        <li><span class="ko">PC에서 받았다면 코드를 복사해 두었다가 휴대폰 앱에서 입력하세요.</span><span class="en">Got it on a computer? Copy the code and enter it in the app on your phone.</span></li>
+        <li><span class="ko">1개월이 지나면 월 구독으로 자동 갱신돼요. 원하지 않으면 그 전에 App Store나 Google Play에서 해지해 주세요.</span><span class="en">After the free month it renews as a monthly subscription. To stop it, cancel in the App Store or Google Play before then.</span></li>
+      </ul>
     </div>
   </div>
 </section>
@@ -421,6 +523,99 @@ footer .copy-r { margin-left: auto; }
     document.documentElement.lang = next;
     try { localStorage.setItem('sl_lang', next); } catch (e) {}
   });
+
+  // Coupon claim: one code per device per store, from the claim-coupon edge
+  // function. The browser keeps the claim token it was given; sending it back
+  // returns the same code instead of spending another. Counts are never shown
+  // (owner's call), so the stock check only flips a button to "gone" at zero.
+  // There is deliberately no link to the stores' redeem pages: redeeming before
+  // signing in attaches the free month to a guest, so the code goes into the
+  // app's own "프로모션 코드 사용" button, which sits behind sign-in.
+  (function () {
+    var FUNCTION_URL = 'https://nxzbgkyemozqalhdtbuy.supabase.co/functions/v1/claim-coupon';
+    var PLATFORMS = {
+      ios: { suffix: 'Ios', tokenKey: 'sl_coupon_token_ios', name: 'iPhone' },
+      android: { suffix: 'Android', tokenKey: 'sl_coupon_token_android', name: 'Android' }
+    };
+    // Both languages go in at once and the html[data-lang] rule picks one, so a
+    // language switch never leaves a stale label behind.
+    function both(ko, en) { return '<span class="ko">' + ko + '</span><span class="en">' + en + '</span>'; }
+    var LABELS = {
+      claiming: function () { return both('받는 중…', 'Getting…'); },
+      soldout: function (n) { return both(n + ' 쿠폰 소진', n + ' sold out'); },
+      claimed: function (n) { return both(n + ' 쿠폰 받음', 'Got ' + n + ' coupon'); },
+      copy: both('복사', 'Copy'),
+      copied: both('복사했어요', 'Copied')
+    };
+    var el = function (id) { return document.getElementById(id); };
+    var idle = {};
+
+    function readToken(p) { try { return localStorage.getItem(PLATFORMS[p].tokenKey); } catch (e) { return null; } }
+    function writeToken(p, t) { try { localStorage.setItem(PLATFORMS[p].tokenKey, t); } catch (e) {} }
+
+    function setButton(p, state) {
+      var b = el('claim' + PLATFORMS[p].suffix);
+      b.disabled = state !== 'idle';
+      b.className = state === 'claimed' ? 'px done' : 'px';
+      b.innerHTML = state === 'idle' ? idle[p] : LABELS[state](PLATFORMS[p].name);
+    }
+
+    function showCode(p, code, reused) {
+      var s = PLATFORMS[p].suffix;
+      el('code' + s).textContent = code;
+      el('reused' + s).hidden = !reused;
+      el('copy' + s).innerHTML = LABELS.copy;
+      el('box' + s).className = 'code-box px on';
+      el('couponError').className = 'coupon-error';
+      setButton(p, 'claimed');
+    }
+
+    function claim(p) {
+      var token = readToken(p);
+      setButton(p, 'claiming');
+      fetch(FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token, platform: p })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (data.error) throw new Error(data.error);
+          if (data.soldOut || !data.code) { setButton(p, 'soldout'); return; }
+          if (data.token) writeToken(p, data.token);
+          // A token went out and a code came back: this device already had one.
+          showCode(p, data.code, Boolean(token));
+        })
+        .catch(function () {
+          setButton(p, 'idle');
+          el('couponError').className = 'coupon-error on';
+        });
+    }
+
+    Object.keys(PLATFORMS).forEach(function (p) {
+      var s = PLATFORMS[p].suffix;
+      idle[p] = el('claim' + s).innerHTML;
+      el('claim' + s).addEventListener('click', function () { claim(p); });
+      el('copy' + s).addEventListener('click', function () {
+        if (!navigator.clipboard) return;
+        navigator.clipboard.writeText(el('code' + s).textContent).then(function () {
+          el('copy' + s).innerHTML = LABELS.copied;
+        }, function () {});
+      });
+    });
+
+    // A failed stock check is not fatal: the buttons still work, and a claim
+    // on an empty stock answers sold out by itself.
+    fetch(FUNCTION_URL, { method: 'GET' })
+      .then(function (r) { return r.json(); })
+      .then(function (stock) {
+        Object.keys(PLATFORMS).forEach(function (p) {
+          // Only a real count of zero: an error body has no counts at all.
+          if (typeof stock[p] === 'number' && stock[p] <= 0 &&!el('box' + PLATFORMS[p].suffix).className.match(/on/)) setButton(p, 'soldout');
+        });
+      })
+      .catch(function () {});
+  })();
 </script>
 </body>
 </html>
