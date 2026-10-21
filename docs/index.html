@@ -218,6 +218,11 @@ footer .copy-r { margin-left: auto; }
 }
 </style>
 <script>
+  // A shared puzzle link (?c=CODE) lands on the root of sudoku.jaywithme.com,
+  // which serves this page too; its handler is open.html on that host.
+  if (new URLSearchParams(location.search).get('c')) {
+    location.replace('https://sudoku.jaywithme.com/open.html' + location.search);
+  }
   // Language before first paint. A stored choice wins; otherwise the browser decides.
   (function () {
     var lang = null;
