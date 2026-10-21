@@ -505,11 +505,11 @@ footer .copy-r { margin-left: auto; }
       </div>
       <div class="code-box px" id="boxIos">
         <div class="code-row"><small><span class="ko">내 iPhone 코드</span><span class="en">My iPhone code</span></small><code id="codeIos"></code><button class="copy-code px" id="copyIos" type="button"></button></div>
-        <p class="code-note"><span class="ko">App Store 코드라서 iPhone·iPad에서만 쓸 수 있어요.</span><span class="en">This is an App Store code. It works only on iPhone and iPad.</span><span class="reused" id="reusedIos" hidden><span class="ko"> 이 기기에서 이미 받은 코드예요.</span><span class="en"> You already got this code on this device.</span></span></p>
+        <p class="code-note"><span class="ko">App Store 코드라서 iPhone·iPad에서만 쓸 수 있어요.</span><span class="en">This is an App Store code. It works only on iPhone and iPad.</span></p>
       </div>
       <div class="code-box px" id="boxAndroid">
         <div class="code-row"><small><span class="ko">내 Android 코드</span><span class="en">My Android code</span></small><code id="codeAndroid"></code><button class="copy-code px" id="copyAndroid" type="button"></button></div>
-        <p class="code-note"><span class="ko">Google Play 코드라서 Android 기기에서만 쓸 수 있어요.</span><span class="en">This is a Google Play code. It works only on Android devices.</span><span class="reused" id="reusedAndroid" hidden><span class="ko"> 이 기기에서 이미 받은 코드예요.</span><span class="en"> You already got this code on this device.</span></span></p>
+        <p class="code-note"><span class="ko">Google Play 코드라서 Android 기기에서만 쓸 수 있어요.</span><span class="en">This is a Google Play code. It works only on Android devices.</span></p>
       </div>
       <p class="coupon-error" id="couponError" role="alert"><span class="ko">쿠폰을 받지 못했어요. 잠시 후 다시 시도해 주세요.</span><span class="en">Couldn't get a coupon. Please try again in a moment.</span></p>
     </div>
@@ -603,10 +603,9 @@ footer .copy-r { margin-left: auto; }
       b.innerHTML = state === 'idle' ? idle[p] : LABELS[state](PLATFORMS[p].name);
     }
 
-    function showCode(p, code, reused) {
+    function showCode(p, code) {
       var s = PLATFORMS[p].suffix;
       el('code' + s).textContent = code;
-      el('reused' + s).hidden = !reused;
       el('copy' + s).innerHTML = LABELS.copy;
       el('box' + s).className = 'code-box px on';
       el('couponError').className = 'coupon-error';
@@ -626,8 +625,7 @@ footer .copy-r { margin-left: auto; }
           if (data.error) throw new Error(data.error);
           if (data.soldOut || !data.code) { setButton(p, 'soldout'); return; }
           if (data.token) writeToken(p, data.token);
-          // A token went out and a code came back: this device already had one.
-          showCode(p, data.code, Boolean(token));
+          showCode(p, data.code);
         })
         .catch(function () {
           setButton(p, 'idle');
