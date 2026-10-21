@@ -216,8 +216,8 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 /* `>` matters: the .ko/.en spans inside a chip must not get a chip's own panel
    background, which painted navy over the gold .hot chips' navy text. */
 .chips > span, .chips > a { background: var(--panel); padding: 6px 12px; font-size: 14px; }
-/* A chip with its own technique page is a link: underlined so it reads as one. */
-.chips > a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--gold); }
+/* A chip with its own technique page is a link, styled like the other chips. */
+.chips > a { color: var(--ink); text-decoration: none; }
 .chips > a:hover { background: #18306a; color: var(--ink); }
 .chips .hot { background: var(--gold); color: var(--bg); font-weight: 700; }
 .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
