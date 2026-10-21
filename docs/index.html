@@ -593,6 +593,23 @@ footer .copy-r { margin-left: auto; }
     var el = function (id) { return document.getElementById(id); };
     var idle = {};
 
+    // The pre-Clipboard-API copy: a hidden textarea, selected, execCommand.
+    // readonly keeps iOS from raising the keyboard; the font size keeps it
+    // from zooming in.
+    function copyBySelection(text) {
+      var area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px;';
+      document.body.appendChild(area);
+      area.select();
+      area.setSelectionRange(0, text.length);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(area);
+      return ok;
+    }
+
     function readToken(p) { try { return localStorage.getItem(PLATFORMS[p].tokenKey); } catch (e) { return null; } }
     function writeToken(p, t) { try { localStorage.setItem(PLATFORMS[p].tokenKey, t); } catch (e) {} }
 
@@ -638,10 +655,28 @@ footer .copy-r { margin-left: auto; }
       idle[p] = el('claim' + s).innerHTML;
       el('claim' + s).addEventListener('click', function () { claim(p); });
       el('copy' + s).addEventListener('click', function () {
-        if (!navigator.clipboard) return;
-        navigator.clipboard.writeText(el('code' + s).textContent).then(function () {
-          el('copy' + s).innerHTML = LABELS.copied;
-        }, function () {});
+        var code = el('code' + s);
+        var done = function () { el('copy' + s).innerHTML = LABELS.copied; };
+        // In-app browsers (KakaoTalk, Instagram, …) often have no Clipboard
+        // API or refuse it, and that failure used to be silent: the button
+        // never turned into "Copied". The old execCommand path goes first
+        // because it must run inside the tap itself (iOS refuses it once a
+        // promise has resolved); the API is the second try, and failing both,
+        // the code is left selected for a long-press copy.
+        var selectCode = function () {
+          var range = document.createRange();
+          range.selectNodeContents(code);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        };
+        if (copyBySelection(code.textContent)) {
+          done();
+        } else if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(code.textContent).then(done, selectCode);
+        } else {
+          selectCode();
+        }
       });
     });
 
