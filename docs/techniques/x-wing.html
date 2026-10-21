@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>X-윙(엑스윙, X-Wing) 스도쿠 기법 · 찾는 법과 원리 | 스도쿠 리그</title>
+<meta name="description" content="X-윙(엑스윙, X-Wing)은 어떤 숫자의 후보가 두 행에서 똑같은 두 열에만 있을 때, 그 두 열의 나머지 칸에서 그 숫자를 지우는 스도쿠 기법이에요. 예시 보드로 찾는 법과 원리를 설명해요.">
+<link rel="canonical" href="https://sudoku.jaywithme.com/techniques/x-wing.html">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a1736">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="스도쿠 리그">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="X-윙(엑스윙, X-Wing) 스도쿠 기법 · 찾는 법과 원리">
+<meta property="og:description" content="어떤 숫자의 후보가 두 행에서 똑같은 두 열에만 있을 때, 두 열의 나머지 칸에서 그 숫자를 지우는 기법.">
+<meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
+<meta property="og:url" content="https://sudoku.jaywithme.com/techniques/x-wing.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="../img/icon.png">
+<link rel="apple-touch-icon" href="../img/icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "스도쿠 리그",
+      "alternateName": "Sudoku League",
+      "url": "https://sudoku.jaywithme.com/"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "스도쿠 리그", "item": "https://sudoku.jaywithme.com/" },
+        { "@type": "ListItem", "position": 2, "name": "기법", "item": "https://sudoku.jaywithme.com/techniques/" },
+        { "@type": "ListItem", "position": 3, "name": "X-윙", "item": "https://sudoku.jaywithme.com/techniques/x-wing.html" }
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "X-윙(엑스윙, X-Wing) 스도쿠 기법 · 찾는 법과 원리",
+      "alternativeHeadline": "X-Wing sudoku technique",
+      "description": "X-윙(엑스윙, X-Wing)은 어떤 숫자의 후보가 두 행에서 똑같은 두 열에만 있을 때, 그 두 열의 나머지 칸에서 그 숫자를 지우는 스도쿠 기법이에요.",
+      "inLanguage": "ko",
+      "image": "https://sudoku.jaywithme.com/img/hint_ko.webp",
+      "mainEntityOfPage": "https://sudoku.jaywithme.com/techniques/x-wing.html",
+      "author": { "@type": "Organization", "name": "스도쿠 리그", "url": "https://sudoku.jaywithme.com/" },
+      "publisher": { "@type": "Organization", "name": "스도쿠 리그", "logo": { "@type": "ImageObject", "url": "https://sudoku.jaywithme.com/img/icon.png" } },
+      "datePublished": "2026-10-21",
+      "about": { "@type": "Thing", "name": "X-Wing (sudoku)" }
+    }
+  ]
+}
+</script>
+<style>
+/* Technique page: the landing page's navy theme in one reading column, a 9x9
+   diagram as the centrepiece. Shared fonts live in ../fonts (the subset is cut
+   from docs/index.html and docs/techniques/*.html together). */
+@font-face { font-family: "Mulmaru"; src: url("../fonts/mulmaru.woff") format("woff"); font-display: swap; }
+@font-face { font-family: "PretendardSub"; src: url("../fonts/pretendard-regular.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "PretendardSub"; src: url("../fonts/pretendard-bold.woff") format("woff"); font-weight: 700; font-display: swap; }
+:root {
+  --bg: #0a1736; --panel: #12244d; --line: #2a4277;
+  --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d; --blue: #3d8bff; --red: #ff6b6b; --green: #5fd38d; --muted: #7f93c2;
+  --pixel: "Mulmaru", "PretendardSub", sans-serif;
+  --body: "PretendardSub", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.75 var(--body); word-break: keep-all; overflow-wrap: anywhere; -webkit-text-size-adjust: 100%; }
+a { color: var(--gold); }
+a:hover { color: #ffe08a; }
+img { display: block; max-width: 100%; height: auto; }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: var(--gutter); }
+.px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
+h1, h2, .pixel { font-family: var(--pixel); font-weight: 400; text-wrap: balance; }
+.nowrap { white-space: nowrap; }
+
+header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 20px/1 var(--pixel); white-space: nowrap; }
+.brand:hover { color: var(--ink); }
+.brand img { width: 36px; height: 36px; border-radius: 8px; }
+.crumbs { font-size: 14px; color: var(--ink-2); white-space: nowrap; }
+.crumbs a { color: var(--ink-2); }
+
+main .wrap { padding-block: 48px 72px; display: flex; flex-direction: column; gap: 56px; }
+.eyebrow { margin: 0 0 12px; font: 15px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.1em; }
+h1 { margin: 0; font-size: clamp(44px, 9vw, 72px); line-height: 1.05; }
+.aka { margin: 10px 0 20px; font: 18px/1.4 var(--pixel); color: var(--ink-2); letter-spacing: 0.04em; }
+.lead { margin: 0; font-size: 19px; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 28px 0 0; }
+.facts div { background: var(--panel); padding: 14px 16px; }
+.facts dt { font-size: 13px; color: var(--ink-2); }
+.facts dd { margin: 2px 0 0; font-weight: 700; }
+
+h2 { margin: 0 0 16px; font-size: clamp(26px, 4.6vw, 34px); line-height: 1.25; }
+section p { margin: 0 0 12px; color: var(--ink-2); }
+section p:last-child { margin-bottom: 0; }
+section p b { color: var(--ink); }
+.board { background: var(--panel); padding: 18px; }
+.board svg { display: block; width: 100%; max-width: 440px; height: auto; margin: 0 auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; margin-top: 14px; font-size: 14px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+.legend .k-x { background: var(--green); }
+.legend .k-del { border: 2px solid var(--red); }
+.legend .k-other { background: var(--muted); }
+.why { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.why div { background: var(--panel); padding: 16px 18px; }
+.why b { display: block; font-family: var(--pixel); font-weight: 400; color: var(--gold); margin-bottom: 4px; }
+.why span { color: var(--ink-2); font-size: 15px; }
+ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 10px; }
+ol.steps li { counter-increment: s; display: flex; gap: 14px; background: var(--panel); padding: 14px 18px; color: var(--ink-2); }
+ol.steps li::before { content: counter(s); font: 24px/1.2 var(--pixel); color: var(--gold); flex: none; width: 20px; }
+ol.steps b { color: var(--ink); }
+.note { margin-top: 14px; font-size: 15px; }
+.qa { display: flex; flex-direction: column; gap: 10px; }
+.qa details { background: var(--ink); color: var(--bg); padding: 16px 20px; }
+.qa summary { font-weight: 700; cursor: pointer; }
+.qa details p { color: #24304f; margin: 8px 0 0; }
+.related { display: flex; flex-wrap: wrap; gap: 8px; }
+.related > span { background: var(--panel); padding: 6px 12px; font-size: 15px; }
+.app { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 28px; align-items: center; background: #102a5c; padding: 28px; }
+.app .phone { background: var(--gold); padding: 7px; }
+.badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.badges img { height: 44px; width: auto; }
+footer { border-top: 2px solid var(--line); font-size: 14px; color: var(--ink-2); }
+footer .wrap { padding-block: 28px calc(28px + env(safe-area-inset-bottom)); display: flex; flex-wrap: wrap; gap: 10px 20px; }
+footer a { color: var(--ink-2); }
+footer .mail { color: var(--ink); }
+@media (max-width: 640px) {
+  .crumbs { display: none; }
+  .facts, .why { grid-template-columns: minmax(0, 1fr); }
+  .app { grid-template-columns: minmax(0, 1fr); padding: 22px; }
+  .app .phone { max-width: 220px; }
+  .board { padding: 10px; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../"><img src="../img/icon.png" width="36" height="36" alt=""><span>스도쿠 리그</span></a>
+    <nav class="crumbs" aria-label="현재 위치"><a href="../">홈</a> › <a href="./">기법</a> › X-윙</nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">SUDOKU TECHNIQUE · 피쉬 계열</p>
+      <h1>X-윙</h1>
+      <p class="aka">엑스윙 · X-Wing</p>
+      <p class="lead">X-윙(엑스윙, X-Wing)은 어떤 숫자의 후보가 두 행에서 똑같은 두 열에만 있을 때, 그 두 열의 나머지 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</p>
+      <dl class="facts">
+        <div class="px"><dt>보는 숫자</dt><dd>하나</dd></div>
+        <div class="px"><dt>필요한 줄</dt><dd>행 2개 + 열 2개</dd></div>
+        <div class="px"><dt>지우는 곳</dt><dd>두 열의 나머지 칸</dd></div>
+      </dl>
+    </div>
+
+    <section aria-labelledby="shape">
+      <h2 id="shape">X-윙 모양</h2>
+      <p>숫자 5만 골라서 본 그림이에요. <b>3행</b>에서 5가 갈 수 있는 칸은 3열과 5열 두 곳뿐이고, <b>5행</b>도 똑같이 3열과 5열 두 곳뿐이에요. 이 네 칸이 사각형을 이루는 게 X-윙이에요.</p>
+      <div class="board px">
+        <svg viewBox="0 0 400 400" role="img" aria-label="9×9 스도쿠 판에서 숫자 5의 후보만 표시한 그림. 3행과 5행의 3열·5열 네 칸이 X-윙을 이루고, 1행 3열, 8행 3열, 7행 5열의 5가 지워진다.">
+          <rect x="30" y="30" width="360" height="360" fill="#0e1d42"/>
+          <rect x="30" y="110" width="360" height="40" fill="#1d3a7a"/>
+          <rect x="30" y="190" width="360" height="40" fill="#1d3a7a"/>
+          <rect x="110" y="30" width="40" height="360" fill="#3a3a1e" opacity="0.85"/>
+          <rect x="190" y="30" width="40" height="360" fill="#3a3a1e" opacity="0.85"/>
+          <rect x="110" y="110" width="40" height="40" fill="#24476f"/>
+          <rect x="190" y="110" width="40" height="40" fill="#24476f"/>
+          <rect x="110" y="190" width="40" height="40" fill="#24476f"/>
+          <rect x="190" y="190" width="40" height="40" fill="#24476f"/>
+          <g stroke="#2a4277" stroke-width="1" fill="none">
+            <path d="M70 30V390M110 30V390M190 30V390M230 30V390M310 30V390M350 30V390"/>
+            <path d="M30 70H390M30 110H390M30 190H390M30 230H390M30 310H390M30 350H390"/>
+          </g>
+          <g stroke="#8aa2d6" stroke-width="2.5" fill="none">
+            <rect x="30" y="30" width="360" height="360"/>
+            <path d="M150 30V390M270 30V390M30 150H390M30 270H390"/>
+          </g>
+          <g fill="#b5c4e6" font-family="Arial, sans-serif" font-size="13" text-anchor="middle">
+            <text x="50" y="22">1</text><text x="90" y="22">2</text><text x="130" y="22" fill="#ffc83d" font-weight="700">3</text><text x="170" y="22">4</text><text x="210" y="22" fill="#ffc83d" font-weight="700">5</text><text x="250" y="22">6</text><text x="290" y="22">7</text><text x="330" y="22">8</text><text x="370" y="22">9</text>
+            <text x="16" y="55">1</text><text x="16" y="95">2</text><text x="16" y="135" fill="#3d8bff" font-weight="700">3</text><text x="16" y="175">4</text><text x="16" y="215" fill="#3d8bff" font-weight="700">5</text><text x="16" y="255">6</text><text x="16" y="295">7</text><text x="16" y="335">8</text><text x="16" y="375">9</text>
+          </g>
+          <path d="M130 130H210V210H130Z" stroke="#ffc83d" stroke-width="2.5" fill="none"/>
+          <path d="M130 130L210 210M210 130L130 210" stroke="#ffc83d" stroke-width="1.5" stroke-dasharray="5 5" fill="none" opacity="0.8"/>
+          <g font-family="Arial, sans-serif" font-weight="700" text-anchor="middle">
+            <circle cx="130" cy="130" r="14" fill="#5fd38d"/><text x="130" y="135" font-size="15" fill="#0a1736">5</text>
+            <circle cx="210" cy="130" r="14" fill="#5fd38d"/><text x="210" y="135" font-size="15" fill="#0a1736">5</text>
+            <circle cx="130" cy="210" r="14" fill="#5fd38d"/><text x="130" y="215" font-size="15" fill="#0a1736">5</text>
+            <circle cx="210" cy="210" r="14" fill="#5fd38d"/><text x="210" y="215" font-size="15" fill="#0a1736">5</text>
+          </g>
+          <g font-family="Arial, sans-serif" font-weight="700" text-anchor="middle" font-size="15">
+            <circle cx="130" cy="50" r="13" fill="none" stroke="#ff6b6b" stroke-width="2"/><text x="130" y="55" fill="#ff6b6b">5</text><path d="M120 60L140 40" stroke="#ff6b6b" stroke-width="2"/>
+            <circle cx="130" cy="330" r="13" fill="none" stroke="#ff6b6b" stroke-width="2"/><text x="130" y="335" fill="#ff6b6b">5</text><path d="M120 340L140 320" stroke="#ff6b6b" stroke-width="2"/>
+            <circle cx="210" cy="290" r="13" fill="none" stroke="#ff6b6b" stroke-width="2"/><text x="210" y="295" fill="#ff6b6b">5</text><path d="M200 300L220 280" stroke="#ff6b6b" stroke-width="2"/>
+          </g>
+          <g font-family="Arial, sans-serif" text-anchor="middle" font-size="14" fill="#7f93c2">
+            <text x="290" y="55">5</text><text x="330" y="95">5</text><text x="370" y="335">5</text><text x="50" y="375">5</text><text x="250" y="255">5</text><text x="90" y="295">5</text>
+          </g>
+        </svg>
+        <div class="legend">
+          <span><i class="k-x"></i>X-윙을 이루는 네 칸</span>
+          <span><i class="k-del"></i>5를 지울 수 있는 칸</span>
+          <span><i class="k-other"></i>영향 없는 5 후보</span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="why">
+      <h2 id="why">왜 지울 수 있나요?</h2>
+      <p>3행에는 5가 반드시 하나 들어가야 하고, 갈 곳은 3열이나 5열뿐이에요. 5행도 마찬가지예요. 그러면 경우는 두 가지밖에 없어요.</p>
+      <div class="why">
+        <div class="px"><b>경우 1</b><span>3행의 5가 3열이면, 5행의 5는 5열이에요.</span></div>
+        <div class="px"><b>경우 2</b><span>3행의 5가 5열이면, 5행의 5는 3열이에요.</span></div>
+      </div>
+      <p>어느 쪽이든 <b>3열과 5열은 이 두 행에서 5를 하나씩 가져가요.</b> 한 열에 5는 하나뿐이니, 3열과 5열의 나머지 칸(1행 3열, 8행 3열, 7행 5열)에는 5가 들어갈 수 없어요. 그래서 그 칸들의 5 후보를 지워요.</p>
+    </section>
+
+    <section aria-labelledby="find">
+      <h2 id="find">X-윙 찾는 순서</h2>
+      <ol class="steps">
+        <li class="px"><span><b>숫자 하나</b>를 정해요. 판에 많이 나와 있는 숫자일수록 후보가 적어서 찾기 쉬워요.</span></li>
+        <li class="px"><span>그 숫자의 후보가 <b>딱 두 칸에만 있는 행</b>을 찾아요.</span></li>
+        <li class="px"><span>다른 행에서도 후보가 <b>같은 두 열에만</b> 있는지 봐요. 있으면 X-윙이에요.</span></li>
+        <li class="px"><span>그 <b>두 열의 나머지 칸</b>에서 그 숫자를 지워요.</span></li>
+      </ol>
+      <p class="note">행과 열을 바꿔도 똑같아요. 두 열에서 후보가 같은 두 행에만 있으면, 그 두 행의 나머지 칸에서 지우면 돼요.</p>
+    </section>
+
+    <section aria-labelledby="faq">
+      <h2 id="faq">자주 헷갈리는 점</h2>
+      <div class="qa">
+        <details class="px" open><summary>네 칸이 같은 박스 안에 있어야 하나요?</summary><p>아니요. 박스는 상관없어요. 행 두 개와 열 두 개만 맞으면 돼요.</p></details>
+        <details class="px"><summary>한 행에 후보가 세 칸이면요?</summary><p>그 행으로는 X-윙을 만들 수 없어요. 세 행이 같은 세 열을 쓰는 모양이면 소드피쉬예요.</p></details>
+        <details class="px"><summary>모양은 찾았는데 지울 게 없어요.</summary><p>두 열의 나머지 칸에 그 숫자 후보가 하나도 없으면 X-윙이 있어도 지울 게 없어요. 다른 숫자나 다른 기법을 찾아보세요.</p></details>
+      </div>
+    </section>
+
+    <section aria-labelledby="related">
+      <h2 id="related">비슷한 기법</h2>
+      <div class="related">
+        <span class="px">소드피쉬 (줄 3개)</span>
+        <span class="px">젤리피쉬 (줄 4개)</span>
+        <span class="px">핀드 X-윙</span>
+        <span class="px">사시미 X-윙</span>
+        <span class="px">스카이스크래퍼</span>
+      </div>
+    </section>
+
+    <section class="app px" aria-labelledby="app">
+      <div>
+        <p class="eyebrow">스도쿠 리그 앱에서</p>
+        <h2 id="app">막히면 힌트가 <span class="nowrap">X-윙을</span> 그려줘요</h2>
+        <p>풀다가 막혀 힌트를 누르면, 지금 판에 있는 X-윙 네 칸과 지울 칸을 보드 위에 그려서 보여줘요. 기법 연습에서는 X-윙이 꼭 나오는 판으로 직접 찾아볼 수 있어요.</p>
+        <div class="badges">
+          <a href="https://apps.apple.com/app/id6794986328"><img src="../img/badges/apple_ko.svg" width="132" height="44" alt="App Store에서 다운로드"></a>
+          <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku"><img src="../img/badges/gp_ko.png" width="148" height="44" alt="Google Play에서 다운로드"></a>
+        </div>
+      </div>
+      <div class="phone px"><img src="../img/hint_ko.webp" width="520" height="1125" loading="lazy" alt="스도쿠 리그의 X-윙 힌트: 3열·5열의 5 네 칸을 잇는 사각형과 지울 칸"></div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="../privacy.html">개인정보처리방침</a>
+    <a href="../terms.html">이용약관</a>
+    <a href="../data-deletion.html">계정 삭제 안내</a>
+    <span>문의: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
+  </div>
+</footer>
+</body>
+</html>

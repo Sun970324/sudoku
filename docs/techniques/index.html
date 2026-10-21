@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>스도쿠 기법 · 고급 풀이 기법 설명 | 스도쿠 리그</title>
+<meta name="description" content="X-윙 같은 스도쿠 풀이 기법을 예시 보드와 함께 찾는 법, 지울 수 있는 이유까지 하나씩 설명해요.">
+<link rel="canonical" href="https://sudoku.jaywithme.com/techniques/">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a1736">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="스도쿠 리그">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="스도쿠 기법 · 고급 풀이 기법 설명">
+<meta property="og:description" content="스도쿠 풀이 기법을 예시 보드와 함께 하나씩 설명해요.">
+<meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
+<meta property="og:url" content="https://sudoku.jaywithme.com/techniques/">
+<link rel="icon" type="image/png" href="../img/icon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "스도쿠 리그", "item": "https://sudoku.jaywithme.com/" },
+    { "@type": "ListItem", "position": 2, "name": "기법", "item": "https://sudoku.jaywithme.com/techniques/" }
+  ]
+}
+</script>
+<style>
+/* The technique list: same theme and header as each technique page. */
+@font-face { font-family: "Mulmaru"; src: url("../fonts/mulmaru.woff") format("woff"); font-display: swap; }
+@font-face { font-family: "PretendardSub"; src: url("../fonts/pretendard-regular.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "PretendardSub"; src: url("../fonts/pretendard-bold.woff") format("woff"); font-weight: 700; font-display: swap; }
+:root {
+  --bg: #0a1736; --panel: #12244d; --line: #2a4277; --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d;
+  --pixel: "Mulmaru", "PretendardSub", sans-serif;
+  --body: "PretendardSub", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.75 var(--body); word-break: keep-all; overflow-wrap: anywhere; -webkit-text-size-adjust: 100%; }
+a { color: var(--gold); }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: var(--gutter); }
+.px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
+header.top { border-bottom: 2px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; height: 68px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 20px/1 var(--pixel); }
+.brand img { width: 36px; height: 36px; border-radius: 8px; }
+main .wrap { padding-block: 48px 80px; }
+.eyebrow { margin: 0 0 12px; font: 15px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.1em; }
+h1 { margin: 0 0 14px; font: clamp(36px, 7vw, 56px)/1.15 var(--pixel); }
+.lead { margin: 0 0 36px; color: var(--ink-2); }
+.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.list a { display: block; background: var(--panel); padding: 20px 22px; text-decoration: none; color: var(--ink-2); }
+.list a:hover { background: #18306a; }
+.list b { display: block; font: 24px/1.3 var(--pixel); color: var(--ink); }
+.list small { display: block; margin: 2px 0 8px; color: var(--gold); font-size: 14px; }
+.soon { margin: 24px 0 0; color: var(--ink-2); font-size: 15px; }
+footer { border-top: 2px solid var(--line); font-size: 14px; color: var(--ink-2); }
+footer .wrap { padding-block: 28px calc(28px + env(safe-area-inset-bottom)); display: flex; flex-wrap: wrap; gap: 10px 20px; }
+footer a { color: var(--ink-2); }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="../"><img src="../img/icon.png" width="36" height="36" alt=""><span>스도쿠 리그</span></a>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <p class="eyebrow">SUDOKU TECHNIQUES</p>
+    <h1>스도쿠 기법</h1>
+    <p class="lead">스도쿠 리그의 힌트와 기법 연습에 나오는 풀이 기법을, 예시 보드와 함께 찾는 법과 지울 수 있는 이유까지 하나씩 설명해요.</p>
+    <ul class="list">
+      <li><a class="px" href="x-wing.html"><b>X-윙</b><small>엑스윙 · X-Wing · 피쉬 계열</small>어떤 숫자의 후보가 두 행에서 똑같은 두 열에만 있을 때, 그 두 열의 나머지 칸에서 그 숫자를 지워요.</a></li>
+    </ul>
+    <p class="soon">다른 기법 설명도 차례로 올라와요.</p>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <a href="../privacy.html">개인정보처리방침</a>
+    <a href="../terms.html">이용약관</a>
+    <a href="../data-deletion.html">계정 삭제 안내</a>
+  </div>
+</footer>
+</body>
+</html>
