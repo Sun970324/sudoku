@@ -213,6 +213,9 @@ footer .copy-r { margin-left: auto; }
   .faq { padding: 96px 0 80px; }
   footer .copy-r { margin-left: 0; }
   .brand, nav a, .lang { white-space: nowrap; }
+  /* The two store badges stay side by side on a phone. */
+  .badges { flex-wrap: nowrap; gap: 8px; }
+  .badges img { height: 46px; }
   nav { gap: 16px; }
   .event-bar { font-size: 14px; }
   .event-bar .bar-long { display: none; }
@@ -231,6 +234,7 @@ footer .copy-r { margin-left: auto; }
    bar above still leads to the coupon section. */
 @media (max-width: 400px) {
   .brand { font-size: 19px; gap: 10px; }
+  .badges img { height: 40px; }
 }
 </style>
 <script>
