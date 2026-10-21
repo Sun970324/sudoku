@@ -224,13 +224,18 @@ footer .copy-r { margin-left: auto; }
   .event-bar .bar-short { display: inline; }
   .coupon { padding: 80px 0; }
   .coupon .wrap { grid-template-columns: minmax(0, 1fr); gap: 48px; }
-  .ticket { grid-template-columns: minmax(0, 1fr) 96px; }
-  .ticket-main { padding: 22px; }
-  .ticket-stub { padding: 8px; }
-  .ticket-stub b { font-size: 20px; overflow-wrap: normal; }
-  html[data-lang="en"] .ticket-stub b { font-size: 15px; }
+  /* The stub moves from a side column to a strip under the ticket, so the
+     body gets the full width and both claim buttons fit on one row. */
+  .ticket { grid-template-columns: minmax(0, 1fr); }
+  .ticket-main { padding: 20px; }
+  .ticket-big, html[data-lang="en"] .ticket-big { font-size: 34px; }
+  .ticket-perks { font-size: 14px; }
+  .ticket-stub { flex-direction: row; gap: 10px; padding: 10px; border-left: 0; border-top: 4px dashed var(--bg); }
+  .ticket-stub b, html[data-lang="en"] .ticket-stub b { font-size: 16px; }
+  .ticket-stub br { display: none; }
   /* Side by side while both fit, one per row on a narrow phone. */
-  .claim button { flex: 1 1 140px; padding: 0 12px; font-size: 15px; }
+  .claim { margin-top: 16px; gap: 8px; }
+  .claim button { flex: 1 1 120px; min-height: 44px; padding: 0 10px; font-size: 14px; }
 }
 /* Phones show only the name and the language button (owner's call); the event
    bar above still leads to the coupon section. */
@@ -489,7 +494,7 @@ footer .copy-r { margin-left: auto; }
             <button class="px" id="claimAndroid" type="button"><span class="ko">Android 쿠폰 받기</span><span class="en">Get Android code</span></button>
           </div>
         </div>
-        <div class="ticket-stub px"><span>LIMITED</span><b class="ko">한정<br>수량</b><b class="en">Limited<br>supply</b></div>
+        <div class="ticket-stub px"><span>LIMITED</span><b class="ko">한정<br> 수량</b><b class="en">Limited<br> supply</b></div>
       </div>
       <div class="code-box px" id="boxIos">
         <div class="code-row"><small><span class="ko">내 iPhone 코드</span><span class="en">My iPhone code</span></small><code id="codeIos"></code><button class="copy-code px" id="copyIos" type="button"></button></div>
