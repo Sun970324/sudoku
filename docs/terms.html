@@ -2,26 +2,51 @@
 <html lang="ko" data-lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sudoku League — Terms of Service</title>
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a1736">
+<link rel="icon" type="image/png" href="img/icon.png">
 <style>
-  body { max-width: 42rem; margin: 0 auto; padding: 2rem 1.25rem 4rem;
-         font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-         color: #1c1c1e; background: #fff; }
-  pre { white-space: pre-wrap; word-break: break-word; font: inherit; }
-  a { color: #0b62d0; }
+  @font-face { font-family: "Mulmaru"; src: url("fonts/mulmaru.woff") format("woff"); font-display: swap; }
+  :root { --bg: #0a1736; --panel: #12244d; --line: #2a4277; --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d;
+          --pixel: "Mulmaru", system-ui, sans-serif;
+          --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right)); }
   /* One language at a time. Only the inactive one is hidden, so every element
      keeps whatever display type it would otherwise have. */
   html[data-lang="ko"] .en { display: none !important; }
   html[data-lang="en"] .ko { display: none !important; }
-  .lang-switch { text-align: right; margin: 0 0 1rem; }
-  .lang-toggle { font: inherit; font-size: .9rem; color: #77777e;
-                 background: none; border: 0; padding: 0;
-                 text-decoration: underline; cursor: pointer; }
-  @media (prefers-color-scheme: dark) {
-    body { color: #ececf1; background: #17171a; }
-    a { color: #74a9f5; }
-    .lang-toggle { color: #86868e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+         word-break: keep-all; overflow-wrap: anywhere; -webkit-text-size-adjust: 100%; }
+  a { color: var(--gold); }
+  a:hover { color: #ffe08a; }
+  .wrap { max-width: 860px; margin: 0 auto; padding-inline: var(--gutter); }
+  .px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
+  header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
+  .brand:hover { color: var(--ink); }
+  .brand img { width: 40px; height: 40px; border-radius: 9px; }
+  .lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 var(--pixel); cursor: pointer; }
+  main { padding: 64px 0 96px; }
+  .eyebrow { margin: 0 0 20px; font: 18px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.12em; }
+  .doc { background: var(--panel); padding: 36px 40px; }
+  pre { margin: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
+  pre::first-line { color: var(--ink); font-size: 22px; font-weight: 700; }
+  .doc h1, .doc h2 { color: var(--ink); margin: 0 0 12px; }
+  .doc h2 { margin-top: 32px; font-size: 20px; }
+  .doc ul { margin: 0; padding-left: 20px; color: var(--ink-2); }
+  .doc p { color: var(--ink-2); }
+  footer { border-top: 2px solid var(--line); padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); font-size: 14px; color: var(--ink-2); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+  footer a { color: var(--ink-2); }
+  footer .mail { color: var(--ink); }
+  @media (max-width: 640px) {
+    main { padding: 40px 0 64px; }
+    .doc { padding: 24px 20px; }
+    pre::first-line { font-size: 19px; }
   }
 </style>
 <script>
@@ -42,10 +67,18 @@
 </script>
 </head>
 <body>
-<!-- The label is the language you would switch *to*, so it is the one hidden
-     while that language is active. -->
-<p class="lang-switch"><button class="lang-toggle" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button></p>
-
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="ko">스도쿠 리그</span><span class="en">Sudoku League</span></a>
+    <!-- The label is the language you would switch *to*, so it is the one
+         hidden while that language is active. -->
+    <button class="lang px" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <p class="eyebrow">TERMS OF SERVICE</p>
+    <div class="doc px">
 <pre class="ko">이용약관
 
 시행일: 2026년 9월 23일
@@ -230,6 +263,18 @@ The operator may amend these terms; amendments take effect when announced in the
 Article 13 (Contact)
 Service inquiries: contact@jaywithme.com
 The in-app form at Settings &gt; Contact &amp; report sends your message to the same address, and we reply by email.</pre>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <a href="privacy.html"><span class="ko">개인정보처리방침</span><span class="en">Privacy Policy</span></a>
+    <a href="terms.html"><span class="ko">이용약관</span><span class="en">Terms of Service</span></a>
+    <a href="data-deletion.html"><span class="ko">계정 삭제 안내</span><span class="en">Account Deletion</span></a>
+    <span><span class="ko">문의</span><span class="en">Contact</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="ko">Apple 표준 EULA</span><span class="en">Apple's standard EULA</span></a>
+  </div>
+</footer>
 <script>
   // Toggle only; these pages have no script-written strings, so the CSS switch
   // is the whole re-render.
