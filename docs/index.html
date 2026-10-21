@@ -96,6 +96,8 @@ nav a.nav-coupon { color: var(--gold); font-weight: 700; }
 .ticket-brand { font: 14px/1.4 var(--pixel); letter-spacing: 0.15em; }
 .ticket-big { font: clamp(40px, 5vw, 56px)/1.1 var(--pixel); margin: 10px 0 6px; }
 .ticket-perks { font-size: 15px; font-weight: 700; }
+/* English runs wider in the pixel face: keep "1 MONTH FREE" and both buttons on one line each. */
+html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 .ticket-stub { background: #ffd86b; color: var(--bg); border-left: 4px dashed var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; text-align: center; }
 .ticket-stub span { font: 13px/1 var(--pixel); letter-spacing: 0.15em; }
 .ticket-stub b { font: 26px/1.15 var(--pixel); }
@@ -208,8 +210,11 @@ footer .copy-r { margin-left: auto; }
   .coupon .wrap { grid-template-columns: minmax(0, 1fr); gap: 48px; }
   .ticket { grid-template-columns: minmax(0, 1fr) 96px; }
   .ticket-main { padding: 22px; }
-  .ticket-stub b { font-size: 20px; }
-  .claim button { flex: 1 1 0; padding: 0 12px; }
+  .ticket-stub { padding: 8px; }
+  .ticket-stub b { font-size: 20px; overflow-wrap: normal; }
+  html[data-lang="en"] .ticket-stub b { font-size: 15px; }
+  /* Side by side while both fit, one per row on a narrow phone. */
+  .claim button { flex: 1 1 140px; padding: 0 12px; font-size: 15px; }
 }
 </style>
 <script>
@@ -234,7 +239,7 @@ footer .copy-r { margin-left: auto; }
   <div class="wrap">
     <a class="brand" href="#top"><img src="img/icon.png" width="40" height="40" alt=""><span class="ko">스도쿠 리그</span><span class="en">Sudoku League</span></a>
     <nav>
-      <a class="nav-coupon" href="#coupon"><span class="ko">쿠폰</span><span class="en">Coupon</span></a>
+      <a class="nav-coupon" href="#coupon"><span class="ko">쿠폰 발급받기</span><span class="en">Get a coupon</span></a>
       <a class="hide-sm" href="#style"><span class="ko">꾸미기</span><span class="en">Style</span></a>
       <a class="hide-sm" href="#solve"><span class="ko">풀기</span><span class="en">Solve</span></a>
       <a class="hide-sm" href="#play"><span class="ko">함께 즐기기</span><span class="en">Play</span></a>
@@ -263,58 +268,6 @@ footer .copy-r { margin-left: auto; }
       <div class="phone px"><img class="ko" src="img/hero_dark.webp" width="520" height="1125" alt="클래식 다크 테마 홈 화면"><img class="en" src="img/hero_dark_en.webp" width="520" height="1125" alt="Classic dark theme"></div>
       <div class="phone gold px"><img class="ko" src="img/hero_ko.webp" width="520" height="1125" alt="스도쿠 리그 홈 화면: 난이도 카드, 시작하기, 오늘의 스도쿠"><img class="en" src="img/hero_en.webp" width="520" height="1125" alt="Sudoku League home screen with a difficulty card, Start and Daily Sudoku"></div>
       <div class="phone px"><img class="ko" src="img/pack_neon.webp" width="520" height="1125" alt="미드나잇 네온 테마"><img class="en" src="img/pack_neon_en.webp" width="520" height="1125" alt="Midnight Neon theme"></div>
-    </div>
-  </div>
-</section>
-
-<section class="coupon" id="coupon">
-  <div class="wrap">
-    <div>
-      <p class="eyebrow">FREE TICKET</p>
-      <h2><span class="ko">프리미엄 1개월 쿠폰</span><span class="en">1 month of Premium, free</span></h2>
-      <div class="ticket">
-        <div class="ticket-main px">
-          <p class="ticket-brand">SUDOKU LEAGUE · PREMIUM</p>
-          <p class="ticket-big"><span class="ko">1개월 무료</span><span class="en">1 MONTH FREE</span></p>
-          <p class="ticket-perks"><span class="ko">무제한 힌트 · 리플레이 · 테마 팩 6종 · 기법 연습</span><span class="en">Unlimited hints · Replay · 6 theme packs · Technique lessons</span></p>
-          <div class="claim">
-            <button class="px" id="claimIos" type="button"><span class="ko">iPhone 쿠폰 받기</span><span class="en">Get iPhone coupon</span></button>
-            <button class="px" id="claimAndroid" type="button"><span class="ko">Android 쿠폰 받기</span><span class="en">Get Android coupon</span></button>
-          </div>
-        </div>
-        <div class="ticket-stub px"><span>LIMITED</span><b class="ko">한정<br>수량</b><b class="en">Limited<br>supply</b></div>
-      </div>
-      <div class="code-box px" id="boxIos">
-        <div class="code-row"><small><span class="ko">내 iPhone 코드</span><span class="en">My iPhone code</span></small><code id="codeIos"></code><button class="copy-code px" id="copyIos" type="button"></button></div>
-        <p class="code-note"><span class="ko">App Store 코드라서 iPhone·iPad에서만 쓸 수 있어요.</span><span class="en">This is an App Store code. It works only on iPhone and iPad.</span><span class="reused" id="reusedIos" hidden><span class="ko"> 이 기기에서 이미 받은 코드예요.</span><span class="en"> You already got this code on this device.</span></span></p>
-      </div>
-      <div class="code-box px" id="boxAndroid">
-        <div class="code-row"><small><span class="ko">내 Android 코드</span><span class="en">My Android code</span></small><code id="codeAndroid"></code><button class="copy-code px" id="copyAndroid" type="button"></button></div>
-        <p class="code-note"><span class="ko">Google Play 코드라서 Android 기기에서만 쓸 수 있어요.</span><span class="en">This is a Google Play code. It works only on Android devices.</span><span class="reused" id="reusedAndroid" hidden><span class="ko"> 이 기기에서 이미 받은 코드예요.</span><span class="en"> You already got this code on this device.</span></span></p>
-      </div>
-      <p class="coupon-error" id="couponError" role="alert"><span class="ko">쿠폰을 받지 못했어요. 잠시 후 다시 시도해 주세요.</span><span class="en">Couldn't get a coupon. Please try again in a moment.</span></p>
-    </div>
-
-    <div>
-      <p class="howto">HOW TO USE</p>
-      <ol class="steps">
-        <li class="px"><span class="num">1</span><div><b><span class="ko">앱을 설치하고 로그인해요</span><span class="en">Install the app and sign in</span></b>
-          <p><span class="ko">게스트로 시작했다면 마이페이지에서 계정을 먼저 연동해 주세요.</span><span class="en">If you started as a guest, link an account on My Page first.</span></p>
-          <div class="badges">
-            <a href="https://apps.apple.com/app/id6794986328"><img class="ko" src="img/badges/apple_ko.svg" width="120" height="40" alt="App Store에서 다운로드"><img class="en" src="img/badges/apple_en.svg" width="120" height="40" alt="Download on the App Store"></a>
-            <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku"><img class="ko" src="img/badges/gp_ko.png" width="135" height="40" alt="Google Play에서 다운로드"><img class="en" src="img/badges/gp_en.png" width="135" height="40" alt="Get it on Google Play"></a>
-          </div></div></li>
-        <li class="px"><span class="num">2</span><div><b><span class="ko">마이페이지 ▸ 프리미엄으로 가요</span><span class="en">Go to My Page ▸ Premium</span></b>
-          <p><span class="ko">프리미엄 화면 맨 아래, 구매 복원 밑에 버튼이 있어요.</span><span class="en">The button is at the bottom of the Premium screen, under Restore purchases.</span></p></div></li>
-        <li class="px"><span class="num">3</span><div><b><span class="ko">프로모션 코드 사용을 눌러 입력해요</span><span class="en">Tap Use a promo code and enter it</span></b>
-          <p><span class="ko">iPhone은 Apple 코드 입력 창이 열려요. Android는 코드를 넣으면 Google Play로 넘어가 적용돼요.</span><span class="en">On iPhone, Apple's code sheet opens. On Android, enter the code and Google Play applies it.</span></p></div></li>
-      </ol>
-      <ul class="fine">
-        <li><span class="ko">쿠폰은 한정 수량이라 모두 나가면 이벤트가 끝나요.</span><span class="en">Coupons are limited. The event ends when they run out.</span></li>
-        <li><span class="ko">한 기기에서 iPhone 쿠폰과 Android 쿠폰을 하나씩 받을 수 있어요. 서로 바꿔 쓸 수는 없어요.</span><span class="en">Each device can get one iPhone coupon and one Android coupon. They can't be swapped.</span></li>
-        <li><span class="ko">PC에서 받았다면 코드를 복사해 두었다가 휴대폰 앱에서 입력하세요.</span><span class="en">Got it on a computer? Copy the code and enter it in the app on your phone.</span></li>
-        <li><span class="ko">1개월이 지나면 월 구독으로 자동 갱신돼요. 원하지 않으면 그 전에 App Store나 Google Play에서 해지해 주세요.</span><span class="en">After the free month it renews as a monthly subscription. To stop it, cancel in the App Store or Google Play before then.</span></li>
-      </ul>
     </div>
   </div>
 </section>
@@ -475,6 +428,57 @@ footer .copy-r { margin-left: auto; }
   </div>
 </section>
 
+<section class="coupon" id="coupon">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">FREE TICKET</p>
+      <h2><span class="ko">프리미엄 1개월 쿠폰</span><span class="en">1 month of Premium, free</span></h2>
+      <div class="ticket">
+        <div class="ticket-main px">
+          <p class="ticket-brand">SUDOKU LEAGUE · PREMIUM</p>
+          <p class="ticket-big"><span class="ko">1개월 무료</span><span class="en">1 MONTH FREE</span></p>
+          <p class="ticket-perks"><span class="ko">무제한 힌트 · 리플레이 · 테마 팩 6종 · 기법 연습</span><span class="en">Unlimited hints · Replay · 6 themes · Lessons</span></p>
+          <div class="claim">
+            <button class="px" id="claimIos" type="button"><span class="ko">iPhone 쿠폰 받기</span><span class="en">Get iPhone code</span></button>
+            <button class="px" id="claimAndroid" type="button"><span class="ko">Android 쿠폰 받기</span><span class="en">Get Android code</span></button>
+          </div>
+        </div>
+        <div class="ticket-stub px"><span>LIMITED</span><b class="ko">한정<br>수량</b><b class="en">Limited<br>supply</b></div>
+      </div>
+      <div class="code-box px" id="boxIos">
+        <div class="code-row"><small><span class="ko">내 iPhone 코드</span><span class="en">My iPhone code</span></small><code id="codeIos"></code><button class="copy-code px" id="copyIos" type="button"></button></div>
+        <p class="code-note"><span class="ko">App Store 코드라서 iPhone·iPad에서만 쓸 수 있어요.</span><span class="en">This is an App Store code. It works only on iPhone and iPad.</span><span class="reused" id="reusedIos" hidden><span class="ko"> 이 기기에서 이미 받은 코드예요.</span><span class="en"> You already got this code on this device.</span></span></p>
+      </div>
+      <div class="code-box px" id="boxAndroid">
+        <div class="code-row"><small><span class="ko">내 Android 코드</span><span class="en">My Android code</span></small><code id="codeAndroid"></code><button class="copy-code px" id="copyAndroid" type="button"></button></div>
+        <p class="code-note"><span class="ko">Google Play 코드라서 Android 기기에서만 쓸 수 있어요.</span><span class="en">This is a Google Play code. It works only on Android devices.</span><span class="reused" id="reusedAndroid" hidden><span class="ko"> 이 기기에서 이미 받은 코드예요.</span><span class="en"> You already got this code on this device.</span></span></p>
+      </div>
+      <p class="coupon-error" id="couponError" role="alert"><span class="ko">쿠폰을 받지 못했어요. 잠시 후 다시 시도해 주세요.</span><span class="en">Couldn't get a coupon. Please try again in a moment.</span></p>
+    </div>
+
+    <div>
+      <p class="howto">HOW TO USE</p>
+      <ol class="steps">
+        <li class="px"><span class="num">1</span><div><b><span class="ko">앱을 설치하고 로그인해요</span><span class="en">Install the app and sign in</span></b>
+          <div class="badges">
+            <a href="https://apps.apple.com/app/id6794986328"><img class="ko" src="img/badges/apple_ko.svg" width="120" height="40" alt="App Store에서 다운로드"><img class="en" src="img/badges/apple_en.svg" width="120" height="40" alt="Download on the App Store"></a>
+            <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku"><img class="ko" src="img/badges/gp_ko.png" width="135" height="40" alt="Google Play에서 다운로드"><img class="en" src="img/badges/gp_en.png" width="135" height="40" alt="Get it on Google Play"></a>
+          </div></div></li>
+        <li class="px"><span class="num">2</span><div><b><span class="ko">마이페이지 ▸ 프리미엄으로 가요</span><span class="en">Go to My Page ▸ Premium</span></b>
+          <p><span class="ko">프리미엄 화면 맨 아래, 구매 복원 밑에 버튼이 있어요.</span><span class="en">The button is at the bottom of the Premium screen, under Restore purchases.</span></p></div></li>
+        <li class="px"><span class="num">3</span><div><b><span class="ko">프로모션 코드 사용을 눌러 입력해요</span><span class="en">Tap Use a promo code and enter it</span></b>
+          <p><span class="ko">iPhone은 Apple 코드 입력 창이 열려요. Android는 코드를 넣으면 Google Play로 넘어가 적용돼요.</span><span class="en">On iPhone, Apple's code sheet opens. On Android, enter the code and Google Play applies it.</span></p></div></li>
+      </ol>
+      <ul class="fine">
+        <li><span class="ko">쿠폰은 한정 수량이라 모두 나가면 이벤트가 끝나요.</span><span class="en">Coupons are limited. The event ends when they run out.</span></li>
+        <li><span class="ko">한 기기에서 iPhone 쿠폰과 Android 쿠폰을 하나씩 받을 수 있어요. 서로 바꿔 쓸 수는 없어요.</span><span class="en">Each device can get one iPhone coupon and one Android coupon. They can't be swapped.</span></li>
+        <li><span class="ko">PC에서 받았다면 코드를 복사해 두었다가 휴대폰 앱에서 입력하세요.</span><span class="en">Got it on a computer? Copy the code and enter it in the app on your phone.</span></li>
+        <li><span class="ko">1개월이 지나면 월 구독으로 자동 갱신돼요. 원하지 않으면 그 전에 App Store나 Google Play에서 해지해 주세요.</span><span class="en">After the free month it renews as a monthly subscription. To stop it, cancel in the App Store or Google Play before then.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <section class="faq" id="faq">
   <div class="wrap">
     <p class="eyebrow"><span class="ko">시작하기 전에</span><span class="en">Before you start</span></p>
@@ -543,7 +547,7 @@ footer .copy-r { margin-left: auto; }
     var LABELS = {
       claiming: function () { return both('받는 중…', 'Getting…'); },
       soldout: function (n) { return both(n + ' 쿠폰 소진', n + ' sold out'); },
-      claimed: function (n) { return both(n + ' 쿠폰 받음', 'Got ' + n + ' coupon'); },
+      claimed: function (n) { return both(n + ' 쿠폰 받음', 'Got ' + n + ' code'); },
       copy: both('복사', 'Copy'),
       copied: both('복사했어요', 'Copied')
     };
