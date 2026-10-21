@@ -174,7 +174,9 @@ html[data-lang="en"] .ticket-big { font-size: clamp(30px, 3.4vw, 42px); }
 .card .list { margin-top: 0; font-size: 15px; }
 .card .phone { margin: auto auto 0; max-width: 220px; }
 .tiers { display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; }
-.tiers span { border: 2px solid; padding: 1px 8px; color: var(--ink); }
+/* `>` for the same reason as .chips: the inner .ko/.en spans drew a second,
+   white (currentColor) border inside each tier-colored one. */
+.tiers > span { border: 2px solid; padding: 1px 8px; color: var(--ink); }
 
 /* FAQ */
 .faq { padding: 160px 0 120px; }
