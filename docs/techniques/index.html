@@ -74,10 +74,17 @@ footer a { color: var(--ink-2); }
     <p class="eyebrow">SUDOKU TECHNIQUES</p>
     <h1>스도쿠 기법</h1>
     <p class="lead">스도쿠 리그의 힌트와 기법 연습에 나오는 풀이 기법을, 예시 보드와 함께 찾는 법과 지울 수 있는 이유까지 하나씩 설명해요.</p>
+    <h2>싱글</h2>
+    <ul class="list">
+      <li><a class="px" href="naked-single.html"><b>네이키드 싱글</b><small>Naked Single · 단일 후보</small>네이키드 싱글(Naked Single)은 한 칸에 들어갈 수 있는 숫자가 하나뿐일 때, 그 숫자로 칸을 채우는 스도쿠의 가장 기본 기법이에요.</a></li>
+      <li><a class="px" href="hidden-single.html"><b>히든 싱글</b><small>Hidden Single · 숨은 싱글</small>히든 싱글(Hidden Single)은 한 행, 열, 박스 안에서 어떤 숫자가 들어갈 수 있는 칸이 하나뿐일 때, 그 칸을 그 숫자로 채우는 스도쿠 기법이에요.</a></li>
+    </ul>
     <h2>기초 기법</h2>
     <ul class="list">
       <li><a class="px" href="naked-pair.html"><b>네이키드 페어</b><small>Naked Pair</small>네이키드 페어(Naked Pair)는 한 줄이나 박스 안에서 후보가 똑같은 두 숫자뿐인 칸이 두 개 있을 때, 그 줄이나 박스의 다른 칸에서 그 두 숫자를 지우는 스도쿠 기법이에요.</a></li>
       <li><a class="px" href="hidden-pair.html"><b>히든 페어</b><small>Hidden Pair</small>히든 페어(Hidden Pair)는 한 줄이나 박스 안에서 두 숫자가 똑같은 두 칸에만 들어갈 수 있을 때, 그 두 칸의 나머지 후보를 지우는 스도쿠 기법이에요.</a></li>
+      <li><a class="px" href="naked-triple.html"><b>네이키드 트리플</b><small>Naked Triple</small>네이키드 트리플(Naked Triple)은 한 줄이나 박스 안의 세 칸이 가진 후보를 합쳐 세 숫자뿐일 때, 그 줄이나 박스의 다른 칸에서 그 세 숫자를 지우는 스도쿠 기법이에요.</a></li>
+      <li><a class="px" href="hidden-triple.html"><b>히든 트리플</b><small>Hidden Triple</small>히든 트리플(Hidden Triple)은 한 줄이나 박스 안에서 세 숫자가 똑같은 세 칸 안에만 들어갈 수 있을 때, 그 세 칸의 나머지 후보를 지우는 스도쿠 기법이에요.</a></li>
       <li><a class="px" href="pointing.html"><b>포인팅</b><small>교차로 · Pointing</small>포인팅(교차로, Pointing)은 한 박스 안에서 어떤 숫자의 후보가 한 줄에만 있을 때, 박스 밖 그 줄의 다른 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
       <li><a class="px" href="claiming.html"><b>클레이밍</b><small>교차로 · Claiming · 박스/줄 감소</small>클레이밍(교차로, Claiming)은 한 줄에서 어떤 숫자의 후보가 한 박스 안에만 있을 때, 그 박스의 다른 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
     </ul>
@@ -85,15 +92,25 @@ footer a { color: var(--ink-2); }
     <ul class="list">
       <li><a class="px" href="x-wing.html"><b>X-윙</b><small>엑스윙 · X-Wing</small>X-윙(엑스윙, X-Wing)은 어떤 숫자의 후보가 두 행에서 똑같은 두 열에만 있을 때, 그 두 열의 나머지 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
       <li><a class="px" href="swordfish.html"><b>소드피쉬</b><small>Swordfish</small>소드피쉬(Swordfish)는 어떤 숫자의 후보가 세 행에서 똑같은 세 열 안에만 있을 때, 그 세 열의 나머지 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
+      <li><a class="px" href="jellyfish.html"><b>젤리피쉬</b><small>Jellyfish</small>젤리피쉬(Jellyfish)는 어떤 숫자의 후보가 네 행에서 똑같은 네 열 안에만 있을 때, 그 네 열의 나머지 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
     </ul>
-    <h2>단일 숫자 패턴과 사슬</h2>
+    <h2>단일 숫자 패턴</h2>
     <ul class="list">
       <li><a class="px" href="skyscraper.html"><b>스카이스크래퍼</b><small>Skyscraper</small>스카이스크래퍼(Skyscraper)는 어떤 숫자의 후보가 두 칸뿐인 열 두 개가 한쪽 끝을 같은 행에 둘 때, 반대쪽 두 끝을 모두 보는 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
-      <li><a class="px" href="x-chain.html"><b>X-사슬</b><small>X-체인 · X-Chain</small>X-사슬(X-체인, X-Chain)은 한 숫자의 후보를 강한 연결과 약한 연결로 번갈아 이은 사슬에서, 사슬 양 끝을 모두 보는 칸의 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
+      <li><a class="px" href="two-string-kite.html"><b>2-스트링 카이트</b><small>Two-String Kite · 투 스트링 카이트</small>2-스트링 카이트(Two-String Kite)는 어떤 숫자의 후보가 두 칸뿐인 행 하나와 열 하나가 한 박스에서 만날 때, 두 줄의 반대쪽 끝을 모두 보는 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
     </ul>
-    <h2>윙과 유일성</h2>
+    <h2>사슬 계열</h2>
+    <ul class="list">
+      <li><a class="px" href="x-chain.html"><b>X-사슬</b><small>X-체인 · X-Chain</small>X-사슬(X-체인, X-Chain)은 한 숫자의 후보를 강한 연결과 약한 연결로 번갈아 이은 사슬에서, 사슬 양 끝을 모두 보는 칸의 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
+      <li><a class="px" href="xy-chain.html"><b>XY-사슬</b><small>XY-체인 · XY-Chain</small>XY-사슬(XY-체인, XY-Chain)은 후보가 두 개씩인 칸들을 숫자 하나씩 주고받으며 이은 사슬의 양 끝이 같은 숫자를 가질 때, 두 끝을 모두 보는 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
+    </ul>
+    <h2>윙 계열</h2>
     <ul class="list">
       <li><a class="px" href="xy-wing.html"><b>XY-윙</b><small>XY-Wing · Y-윙</small>XY-윙(XY-Wing, Y-윙)은 후보가 두 개씩인 세 칸이 가운데 칸을 축으로 이어질 때, 양쪽 칸을 모두 보는 칸에서 공통 숫자를 지우는 스도쿠 기법이에요.</a></li>
+      <li><a class="px" href="xyz-wing.html"><b>XYZ-윙</b><small>XYZ-Wing</small>XYZ-윙(XYZ-Wing)은 후보가 세 개인 가운데 칸과 그 칸을 보는 후보 두 개짜리 두 칸이 한 숫자를 함께 가질 때, 세 칸을 모두 보는 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</a></li>
+    </ul>
+    <h2>유일성 기법</h2>
+    <ul class="list">
       <li><a class="px" href="unique-rectangle.html"><b>유일사각형</b><small>유일 사각형 · Unique Rectangle · Type 1</small>유일사각형(Unique Rectangle)은 두 행, 두 열, 두 박스에 걸친 네 칸이 같은 두 숫자로만 채워지면 답이 둘이 된다는 점을 이용해, 네 번째 칸에서 그 두 숫자를 지우는 스도쿠 기법이에요.</a></li>
     </ul>
   </div>
