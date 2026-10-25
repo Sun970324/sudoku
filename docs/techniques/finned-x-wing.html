@@ -143,9 +143,19 @@ footer .mail { color: var(--ink); }
 @media (max-width: 420px) {
   h1 { font-size: 36px; }
 }
+.event-bar { display: block; background: var(--gold); color: var(--bg); text-align: center; padding: 10px var(--gutter); font-size: 15px; font-weight: 700; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.event-bar:hover { color: var(--bg); background: #ffd463; }
+.event-bar .pixel { font-size: 12px; letter-spacing: 0.12em; margin-right: 10px; }
+.event-bar .bar-short { display: none; }
+@media (max-width: 860px) {
+  .event-bar { font-size: 14px; }
+  .event-bar .bar-long { display: none; }
+  .event-bar .bar-short { display: inline; }
+}
 </style>
 </head>
 <body>
+<a class="event-bar" href="../#coupon" data-goatcounter-click="coupon-bar/tech/finned-x-wing"><span class="pixel">EVENT</span><span class="bar-long">프리미엄 1개월 무료 쿠폰을 드려요. 쿠폰 받으러 가기 ▸</span><span class="bar-short">프리미엄 1개월 무료 쿠폰 받기 ▸</span></a>
 
 <header class="top">
   <div class="wrap">
