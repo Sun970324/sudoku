@@ -12,7 +12,7 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0a1736">
 <meta property="og:type" content="article">
-<meta property="og:site_name" content="스도쿠 리그">
+<meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:title" content="AIC 사슬(AIC, Alternating Inference Chain) 스도쿠 기법 · 찾는 법과 원리">
 <meta property="og:description" content="AIC 사슬(Alternating Inference Chain)은 여러 숫자의 후보를 강한 연결과 약한 연결로 번갈아 이은 사슬에서, 두 끝 중 하나는 반드시 참이라는 점으로 두 끝을 모두 보는 칸의 후보를 지우는 스도쿠 기법이에요.">
@@ -26,7 +26,7 @@
 {
   "@context": "https://schema.org",
   "@graph": [
-    { "@type": "WebSite", "name": "스도쿠 리그", "alternateName": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
+    { "@type": "WebSite", "name": "Sudoku League", "alternateName": "스도쿠 리그", "url": "https://sudoku.jaywithme.com/" },
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -144,21 +144,24 @@ footer .mail { color: var(--ink); }
   h1 { font-size: 36px; }
 }
 .get { display: flex; flex-direction: column; gap: 16px; }
-.event-bar { display: flex; align-items: center; gap: 12px; background: var(--gold); color: var(--bg); padding: 14px 20px; text-decoration: none; font-weight: 700; font-size: 16px; line-height: 1.4; }
-.event-bar:hover { color: var(--bg); background: #ffd463; }
-.event-bar .pixel { flex: none; font: 12px/1 var(--pixel); letter-spacing: 0.12em; }
-.event-bar .bar-text { flex: 1; min-width: 0; }
-.event-bar .bar-go { flex: none; }
-.event-bar .bar-short { display: none; }
+.event-ticket { display: grid; grid-template-columns: minmax(0, 1fr) 120px; filter: drop-shadow(0 6px 0 #071029); color: var(--bg); text-decoration: none; }
+.event-ticket:hover { color: var(--bg); }
+.event-ticket:hover .ticket-main { background: #ffd463; }
+.ticket-main { background: var(--gold); padding: 22px 24px; min-width: 0; }
+.ticket-brand { margin: 0; font: 12px/1.5 var(--pixel); letter-spacing: 0.15em; }
+.ticket-big { margin: 6px 0 4px; font: 36px/1.15 var(--pixel); }
+.ticket-perks { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.5; }
+.ticket-go { display: inline-block; margin-top: 14px; background: var(--bg); color: var(--gold); padding: 8px 14px; font-size: 15px; font-weight: 700; line-height: 1.4; }
+.ticket-stub { background: #ffd86b; border-left: 4px dashed var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; text-align: center; }
+.ticket-stub span { font: 12px/1 var(--pixel); letter-spacing: 0.15em; }
+.ticket-stub b { font: 24px/1.15 var(--pixel); font-weight: 400; }
+/* The stub moves under the ticket, as on the landing page. */
 @media (max-width: 640px) {
-  .event-bar { font-size: 15px; padding: 12px 16px; }
-  .event-bar .bar-long { display: none; }
-  .event-bar .bar-short { display: inline; }
-}
-/* One line down to a 320px phone. */
-@media (max-width: 380px) {
-  .event-bar { font-size: 14px; gap: 8px; padding: 12px 14px; }
-  .event-bar .bar-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .event-ticket { grid-template-columns: minmax(0, 1fr); }
+  .ticket-main { padding: 18px 20px; }
+  .ticket-perks { font-size: 14px; }
+  .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
+  .ticket-stub br { display: none; }
 }
 </style>
 </head>
@@ -282,7 +285,15 @@ footer .mail { color: var(--ink); }
       </div>
       <div class="phone px"><img src="../img/tech/aic.webp" loading="lazy" alt="스도쿠 리그의 AIC 사슬 힌트: 사슬과 지울 칸이 그려진 실제 보드"></div>
     </section>
-    <a class="event-bar px" href="../#coupon" data-goatcounter-click="coupon-bar/tech/aic"><span class="pixel">EVENT</span><span class="bar-text"><span class="bar-long">프리미엄 1개월 무료 쿠폰을 한정 수량으로 드려요.</span><span class="bar-short">프리미엄 1개월 무료</span></span><span class="bar-go">쿠폰 받기 ▸</span></a>
+    <a class="event-ticket" href="../#coupon" data-goatcounter-click="coupon-bar/tech/aic">
+      <div class="ticket-main px">
+        <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
+        <p class="ticket-big">1개월 무료</p>
+        <p class="ticket-perks">무제한 힌트 · 리플레이 · 테마 팩 6종 · 기법 연습</p>
+        <span class="ticket-go px">쿠폰 받으러 가기 ▸</span>
+      </div>
+      <div class="ticket-stub px"><span>LIMITED</span><b>한정<br> 수량</b></div>
+    </a>
     </div>
   </div>
 </main>

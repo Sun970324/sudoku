@@ -15,7 +15,10 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0a1736">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="스도쿠 리그 · Sudoku League">
+<!-- One site name everywhere, for Google's site name in results (owner's
+     call, 2026-10-25): "Sudoku League" in WebSite markup and og:site_name on
+     every page, 스도쿠 리그 as the alternate. -->
+<meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:locale:alternate" content="en_US">
 <meta property="og:title" content="스도쿠 리그 · 꾸미고, 풀고, 함께 즐기는 스도쿠">
@@ -30,6 +33,12 @@
 {
   "@context": "https://schema.org",
   "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Sudoku League",
+      "alternateName": "스도쿠 리그",
+      "url": "https://sudoku.jaywithme.com/"
+    },
     {
       "@type": "MobileApplication",
       "name": "스도쿠 리그",
