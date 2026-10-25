@@ -89,7 +89,7 @@ footer a { color: var(--ink-2); }
 </style>
 </head>
 <body>
-<header class="top">
+<header class="top" data-nosnippet>
   <div class="wrap">
     <a class="brand" href="../../"><img src="../../img/icon.png" width="36" height="36" alt=""><span>Sudoku League</span></a>
     <a class="lang" href="../../techniques/" hreflang="ko" lang="ko">한국어</a>
@@ -102,15 +102,15 @@ footer a { color: var(--ink-2); }
     <p class="lead">The solving techniques behind Sudoku League's hints and Technique Practice, each with an example board, how to find it and why the eliminations are safe.</p>
     <h2>Singles</h2>
     <ul class="list">
-      <li><a class="px" href="naked-single.html"><b>Naked Single</b><small>Sole Candidate</small>A Naked Single is a cell with only one digit left that can go in it. It is the most basic sudoku technique: fill the cell with that digit.</a></li>
+      <li><a class="px" href="naked-single.html"><b>Naked Single</b><small>Sole Candidate</small>A Naked Single, also called a Sole Candidate, is a cell with only one digit left that can go in it. It is the most basic sudoku technique: fill the cell with that digit.</a></li>
       <li><a class="px" href="hidden-single.html"><b>Hidden Single</b>A Hidden Single is a digit that has only one possible cell in a row, column or box. Fill that cell with the digit.</a></li>
     </ul>
     <h2>Basics</h2>
     <ul class="list">
       <li><a class="px" href="naked-pair.html"><b>Naked Pair</b>A Naked Pair is two cells in the same row, column or box whose only candidates are the same two digits. Those two digits can then be removed from every other cell in that row, column or box.</a></li>
       <li><a class="px" href="hidden-pair.html"><b>Hidden Pair</b>A Hidden Pair is two digits that can only go in the same two cells of a row, column or box. Every other candidate in those two cells can then be removed.</a></li>
-      <li><a class="px" href="pointing.html"><b>Pointing</b><small>Intersection · Pointing Pair · Locked Candidates</small>Pointing is when every candidate for a digit inside one box lies in a single row or column. That digit can then be removed from the rest of that row or column outside the box.</a></li>
-      <li><a class="px" href="claiming.html"><b>Claiming</b><small>Intersection · Box/Line Reduction</small>Claiming is when every candidate for a digit in one row or column lies inside a single box. That digit can then be removed from the other cells of that box.</a></li>
+      <li><a class="px" href="pointing.html"><b>Pointing</b><small>Intersection · Pointing Pair · Locked Candidates</small>Pointing, also called a Pointing Pair or Locked Candidates, is when every candidate for a digit inside one box lies in a single row or column. That digit can then be removed from the rest of that row or column outside the box.</a></li>
+      <li><a class="px" href="claiming.html"><b>Claiming</b><small>Intersection · Box/Line Reduction</small>Claiming, also called Box/Line Reduction, is when every candidate for a digit in one row or column lies inside a single box. That digit can then be removed from the other cells of that box.</a></li>
     </ul>
     <h2>Fish</h2>
     <ul class="list">
@@ -123,11 +123,11 @@ footer a { color: var(--ink-2); }
     <h2>Single-digit patterns</h2>
     <ul class="list">
       <li><a class="px" href="skyscraper.html"><b>Skyscraper</b>A Skyscraper is two columns where a digit has exactly two candidates and one end of each sits in the same row. The digit can then be removed from any cell that sees both of the other ends.</a></li>
-      <li><a class="px" href="two-string-kite.html"><b>2-String Kite</b><small>Two-String Kite</small>A 2-String Kite is a row and a column, each with exactly two candidates for a digit, that meet in one box. The digit can be removed from any cell that sees both far ends.</a></li>
+      <li><a class="px" href="two-string-kite.html"><b>2-String Kite</b><small>Two-String Kite</small>A 2-String Kite (Two-String Kite) is a row and a column, each with exactly two candidates for a digit, that meet in one box. The digit can be removed from any cell that sees both far ends.</a></li>
     </ul>
     <h2>Coloring</h2>
     <ul class="list">
-      <li><a class="px" href="simple-coloring.html"><b>Simple Coloring</b><small>Single Chains</small>Simple Coloring links the lines and boxes where a digit has exactly two candidates and colors the cells in two alternating colors. Any cell that sees both colors cannot hold that digit.</a></li>
+      <li><a class="px" href="simple-coloring.html"><b>Simple Coloring</b><small>Single Chains</small>Simple Coloring, also called Single Chains, links the lines and boxes where a digit has exactly two candidates and colors the cells in two alternating colors. Any cell that sees both colors cannot hold that digit.</a></li>
       <li><a class="px" href="multi-coloring.html"><b>Multi-Coloring</b>Multi-Coloring colors two separate clusters of one digit. When a color of one cluster sees a color of the other, any cell that sees both opposite colors cannot hold that digit.</a></li>
     </ul>
     <h2>Chains</h2>
@@ -140,23 +140,23 @@ footer a { color: var(--ink-2); }
     </ul>
     <h2>Wings</h2>
     <ul class="list">
-      <li><a class="px" href="xy-wing.html"><b>XY-Wing</b><small>Y-Wing</small>An XY-Wing is three cells with two candidates each, joined through a middle cell. The digit the two outer cells share can be removed from any cell that sees both of them.</a></li>
+      <li><a class="px" href="xy-wing.html"><b>XY-Wing</b><small>Y-Wing</small>An XY-Wing, also called a Y-Wing, is three cells with two candidates each, joined through a middle cell. The digit the two outer cells share can be removed from any cell that sees both of them.</a></li>
       <li><a class="px" href="xyz-wing.html"><b>XYZ-Wing</b>An XYZ-Wing is a middle cell with three candidates and two cells it sees with two candidates each, all three sharing one digit. That digit can be removed from any cell that sees all three.</a></li>
       <li><a class="px" href="w-wing.html"><b>W-Wing</b>A W-Wing is two cells with the same two candidates, joined by a strong link on one of those digits. The other digit can be removed from any cell that sees both cells.</a></li>
       <li><a class="px" href="wxyz-wing.html"><b>WXYZ-Wing</b>A WXYZ-Wing is four cells whose candidates add up to only four digits, where just one of those digits sits in cells that do not all see each other. That digit can be removed from any cell that sees every cell holding it.</a></li>
     </ul>
     <h2>Uniqueness</h2>
     <ul class="list">
-      <li><a class="px" href="hidden-rectangle.html"><b>Hidden Unique Rectangle</b><small>Hidden Rectangle</small>A Hidden Unique Rectangle is four cells forming a rectangle on two digits, where one digit has only two candidates in the opposite corner's row and column. Because the puzzle has one answer, the other digit can be removed from that corner.</a></li>
-      <li><a class="px" href="bug-plus-one.html"><b>BUG+1</b><small>Bivalue Universal Grave</small>BUG+1 applies when every empty cell has two candidates except one cell with three. That cell is the digit that appears three times in its row, column or box.</a></li>
+      <li><a class="px" href="hidden-rectangle.html"><b>Hidden Unique Rectangle</b><small>Hidden Rectangle</small>A Hidden Unique Rectangle (Hidden Rectangle) is four cells forming a rectangle on two digits, where one digit has only two candidates in the opposite corner's row and column. Because the puzzle has one answer, the other digit can be removed from that corner.</a></li>
+      <li><a class="px" href="bug-plus-one.html"><b>BUG+1</b><small>Bivalue Universal Grave</small>BUG+1 (Bivalue Universal Grave) applies when every empty cell has two candidates except one cell with three. That cell is the digit that appears three times in its row, column or box.</a></li>
     </ul>
     <h2>Advanced patterns</h2>
     <ul class="list">
       <li><a class="px" href="sue-de-coq.html"><b>Sue de Coq</b>Sue de Coq is when the candidates of cells where a box and a line overlap are split between a cell on the line and a cell in the box. Each side's digits can then be removed from the rest of the line and the rest of the box.</a></li>
-      <li><a class="px" href="triple-firework.html"><b>Triple Firework</b><small>Firework</small>A Triple Firework is a cell in a box plus one cell in the same row and one in the same column outside the box, which must share three digits. Every other candidate can be removed from those three cells.</a></li>
+      <li><a class="px" href="triple-firework.html"><b>Triple Firework</b><small>Firework</small>A Triple Firework, or Firework, is a cell in a box plus one cell in the same row and one in the same column outside the box, which must share three digits. Every other candidate can be removed from those three cells.</a></li>
     </ul>
     <div class="get">
-    <a class="event-ticket" href="../../#coupon" data-goatcounter-click="coupon-bar/tech-en">
+    <a class="event-ticket" data-nosnippet href="../../#coupon" data-goatcounter-click="coupon-bar/tech-en">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MONTH FREE</p>
@@ -168,7 +168,7 @@ footer a { color: var(--ink-2); }
     </div>
   </div>
 </main>
-<footer>
+<footer data-nosnippet>
   <div class="wrap">
     <a href="../../privacy.html">Privacy Policy</a>
     <a href="../../terms.html">Terms of Service</a>
