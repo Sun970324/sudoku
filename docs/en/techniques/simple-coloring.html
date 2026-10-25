@@ -143,19 +143,26 @@ footer .mail { color: var(--ink); }
 @media (max-width: 420px) {
   h1 { font-size: 36px; }
 }
-.event-bar { display: block; background: var(--gold); color: var(--bg); text-align: center; padding: 10px var(--gutter); font-size: 15px; font-weight: 700; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.get { display: flex; flex-direction: column; gap: 16px; }
+.event-bar { display: flex; align-items: center; gap: 12px; background: var(--gold); color: var(--bg); padding: 14px 20px; text-decoration: none; font-weight: 700; font-size: 16px; line-height: 1.4; }
 .event-bar:hover { color: var(--bg); background: #ffd463; }
-.event-bar .pixel { font-size: 12px; letter-spacing: 0.12em; margin-right: 10px; }
+.event-bar .pixel { flex: none; font: 12px/1 var(--pixel); letter-spacing: 0.12em; }
+.event-bar .bar-text { flex: 1; min-width: 0; }
+.event-bar .bar-go { flex: none; }
 .event-bar .bar-short { display: none; }
-@media (max-width: 860px) {
-  .event-bar { font-size: 14px; }
+@media (max-width: 640px) {
+  .event-bar { font-size: 15px; padding: 12px 16px; }
   .event-bar .bar-long { display: none; }
   .event-bar .bar-short { display: inline; }
+}
+/* One line down to a 320px phone. */
+@media (max-width: 380px) {
+  .event-bar { font-size: 14px; gap: 8px; padding: 12px 14px; }
+  .event-bar .bar-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 </style>
 </head>
 <body>
-<a class="event-bar" href="../../#coupon" data-goatcounter-click="coupon-bar/tech-en/simple-coloring"><span class="pixel">EVENT</span><span class="bar-long">Free 1-month Premium coupons. Get yours ▸</span><span class="bar-short">Free month of Premium ▸</span></a>
 
 <header class="top">
   <div class="wrap">
@@ -256,6 +263,8 @@ footer .mail { color: var(--ink); }
       </div>
     </section>
 
+    <div class="get">
+    <a class="event-bar px" href="../../#coupon" data-goatcounter-click="coupon-bar/tech-en/simple-coloring"><span class="pixel">EVENT</span><span class="bar-text"><span class="bar-long">Free 1-month Premium coupons, while they last.</span><span class="bar-short">Free month of Premium</span></span><span class="bar-go">Get it ▸</span></a>
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN THE SUDOKU LEAGUE APP</p>
@@ -268,6 +277,7 @@ footer .mail { color: var(--ink); }
       </div>
       <div class="phone px"><img src="../../img/tech/simple-coloring.webp" loading="lazy" alt="A real Sudoku League board showing a Simple Coloring hint"></div>
     </section>
+    </div>
   </div>
 </main>
 
