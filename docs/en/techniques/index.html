@@ -38,26 +38,43 @@
   --bg: #0a1736; --panel: #12244d; --line: #2a4277; --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d;
   --pixel: "Mulmaru", "PretendardSub", sans-serif;
   --body: "PretendardSub", -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-  --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right));
+  --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-right));
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.75 var(--body); word-break: keep-all; overflow-wrap: anywhere; -webkit-text-size-adjust: 100%; }
 a { color: var(--gold); }
-.wrap { max-width: 760px; margin: 0 auto; padding-inline: var(--gutter); }
+/* As wide as the web home, so the two read as one site. */
+.wrap { max-width: 1040px; margin: 0 auto; padding-inline: var(--gutter); }
 .px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
-header.top { border-bottom: 2px solid var(--line); }
-header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
-.lang { font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
 /* Pixel sizes are multiples of 12, Mulmaru's grid (see the technique pages). */
-.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 24px/1 var(--pixel); }
-.brand img { width: 36px; height: 36px; border-radius: 8px; }
+header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-right)); border-bottom: 2px solid var(--line); }
+.bar { max-width: 1040px; height: 64px; margin: 0 auto; padding-inline: var(--gutter); display: flex; align-items: stretch; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 24px/1 var(--pixel); white-space: nowrap; }
+.brand img { width: auto; height: 40px; }
+@media (max-width: 420px) {
+  html[lang="en"] .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+.nav { display: flex; align-items: stretch; font: 12px/1 var(--pixel); letter-spacing: 0.04em; }
+.nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
+.nav a:hover { color: var(--ink); }
+.nav a[aria-current="page"] { color: var(--gold); box-shadow: inset 0 -4px 0 var(--gold); }
+.lang { align-self: center; margin-left: auto; font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
+.lang:hover { color: var(--ink); border-color: var(--ink-2); }
+@media (max-width: 899px) {
+  .bar { height: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand lang" "nav nav"; gap: 0; }
+  .brand { grid-area: brand; height: 52px; }
+  .lang { grid-area: lang; }
+  .nav { grid-area: nav; margin-inline: calc(-1 * var(--gutter)); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 main .wrap { padding-block: 48px 80px; }
 .eyebrow { margin: 0 0 12px; font: 12px/1.5 var(--pixel); color: var(--gold); letter-spacing: 0.1em; }
 h1 { margin: 0 0 14px; font: 48px/1.15 var(--pixel); }
 h2 { margin: 40px 0 14px; font: 24px/1.3 var(--pixel); color: var(--ink-2); }
 @media (max-width: 420px) { h1 { font-size: 36px; } }
-.lead { margin: 0; color: var(--ink-2); }
-.list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.lead { max-width: 760px; margin: 0; color: var(--ink-2); }
+.list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.list a { height: 100%; }
+@media (max-width: 899px) { .list { grid-template-columns: minmax(0, 1fr); } }
 .list a { display: block; background: var(--panel); padding: 20px 22px; text-decoration: none; color: var(--ink-2); }
 .list a:hover { background: #18306a; }
 .list b { display: block; font: 24px/1.3 var(--pixel); font-weight: 400; color: var(--ink); }
@@ -90,8 +107,12 @@ footer a { color: var(--ink-2); }
 </head>
 <body>
 <header class="top" data-nosnippet>
-  <div class="wrap">
-    <a class="brand" href="../../"><img src="../../img/icon.png" width="36" height="36" alt=""><span>Sudoku League</span></a>
+  <div class="bar">
+    <a class="brand" href="../"><img src="../../img/logo.png" width="103" height="80" alt=""><span class="name">Sudoku League</span></a>
+    <nav class="nav">
+      <a href="../">Play</a>
+      <a href="./" aria-current="page">Learn techniques</a>
+    </nav>
     <a class="lang" href="../../techniques/" hreflang="ko" lang="ko">한국어</a>
   </div>
 </header>
@@ -156,7 +177,7 @@ footer a { color: var(--ink-2); }
       <li><a class="px" href="triple-firework.html"><b>Triple Firework</b><small>Firework</small>A Triple Firework, or Firework, is a cell in a box plus one cell in the same row and one in the same column outside the box, which must share three digits. Every other candidate can be removed from those three cells.</a></li>
     </ul>
     <div class="get">
-    <a class="event-ticket" data-nosnippet href="../../#coupon" data-goatcounter-click="coupon-bar/tech-en">
+    <a class="event-ticket" data-nosnippet href="../../en/#coupon" data-goatcounter-click="coupon-bar/tech-en">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MONTH FREE</p>

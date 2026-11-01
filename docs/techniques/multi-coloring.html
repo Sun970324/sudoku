@@ -72,16 +72,7 @@ img { display: block; max-width: 100%; height: auto; }
    (팅, 밍) come out with strokes of different widths, which reads as broken. */
 h1, h2, .pixel { font-family: var(--pixel); font-weight: 400; text-wrap: balance; }
 .nowrap { white-space: nowrap; }
-header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
-header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 24px/1 var(--pixel); white-space: nowrap; }
-.brand:hover { color: var(--ink); }
-.brand img { width: 36px; height: 36px; border-radius: 8px; }
-.crumbs { font-size: 14px; color: var(--ink-2); white-space: nowrap; }
-.crumbs a { color: var(--ink-2); }
-.hd-r { display: flex; align-items: center; gap: 16px; }
-.lang { font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
-.lang:hover { color: var(--ink); border-color: var(--ink-2); }
+/* The header is `_navCss`, the web home's bar. */
 main .wrap { padding-block: 48px 72px; display: flex; flex-direction: column; gap: 56px; }
 .eyebrow { margin: 0 0 12px; font: 12px/1.5 var(--pixel); color: var(--gold); letter-spacing: 0.1em; }
 h1 { margin: 0; font-size: 72px; line-height: 1.05; }
@@ -122,6 +113,18 @@ ol.steps b { color: var(--ink); }
 .related { display: flex; flex-wrap: wrap; gap: 8px; }
 .related > span, .related > a { background: var(--panel); padding: 6px 12px; font-size: 15px; color: var(--ink); text-decoration: none; }
 .related > a:hover { background: #18306a; color: var(--ink); }
+/* Previous · list · next, each in its own column so a missing end keeps the
+   others in place. */
+.pager { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; }
+.pager a { min-height: 64px; display: flex; flex-direction: column; justify-content: center; padding: 12px 16px; background: var(--panel); color: var(--ink); text-decoration: none; }
+.pager a:hover { background: #18306a; color: var(--ink); }
+.pager small { font-size: 13px; line-height: 1.4; color: var(--ink-2); }
+.pager b { font-size: 17px; line-height: 1.4; }
+/* ◂ is not in the font subset's face; a mirrored ▸ matches the next arrow. */
+.pager .back { display: inline-block; transform: scaleX(-1); }
+.pager .prev { grid-column: 1; }
+.pager .all { grid-column: 2; align-items: center; padding-inline: 20px; color: var(--gold); font: 12px/1.4 var(--pixel); white-space: nowrap; }
+.pager .next { grid-column: 3; align-items: flex-end; text-align: right; }
 .app { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 28px; align-items: center; background: #102a5c; padding: 28px; }
 .app .phone { background: var(--gold); padding: 7px; }
 .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
@@ -131,17 +134,38 @@ footer .wrap { padding-block: 28px calc(28px + env(safe-area-inset-bottom)); dis
 footer a { color: var(--ink-2); }
 footer .mail { color: var(--ink); }
 @media (max-width: 640px) {
-  .crumbs { display: none; }
   h1 { font-size: 48px; }
   h2 { font-size: 24px; }
   .facts, .why { grid-template-columns: minmax(0, 1fr); }
   .app { grid-template-columns: minmax(0, 1fr); padding: 22px; }
   .app .phone { max-width: 220px; }
   .board { padding: 10px; }
+  .pager { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .pager .next { grid-column: 2; }
+  .pager .all { grid-row: 2; grid-column: 1 / -1; min-height: 48px; }
 }
 /* 스카이스크래퍼 at 48px is wider than a 375px phone's column. */
 @media (max-width: 420px) {
   h1 { font-size: 36px; }
+}
+header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-right)); border-bottom: 2px solid var(--line); }
+.bar { max-width: 1040px; height: 64px; margin: 0 auto; padding-inline: var(--gutter); display: flex; align-items: stretch; gap: 24px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 24px/1 var(--pixel); white-space: nowrap; }
+.brand img { width: auto; height: 40px; }
+@media (max-width: 420px) {
+  html[lang="en"] .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+.nav { display: flex; align-items: stretch; font: 12px/1 var(--pixel); letter-spacing: 0.04em; }
+.nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
+.nav a:hover { color: var(--ink); }
+.nav a[aria-current="page"] { color: var(--gold); box-shadow: inset 0 -4px 0 var(--gold); }
+.lang { align-self: center; margin-left: auto; font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
+.lang:hover { color: var(--ink); border-color: var(--ink-2); }
+@media (max-width: 899px) {
+  .bar { height: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand lang" "nav nav"; gap: 0; }
+  .brand { grid-area: brand; height: 52px; }
+  .lang { grid-area: lang; }
+  .nav { grid-area: nav; margin-inline: calc(-1 * var(--gutter)); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .get { display: flex; flex-direction: column; gap: 16px; }
 .event-ticket { display: grid; grid-template-columns: minmax(0, 1fr) 120px; filter: drop-shadow(0 6px 0 #071029); color: var(--bg); text-decoration: none; }
@@ -168,12 +192,13 @@ footer .mail { color: var(--ink); }
 <body>
 
 <header class="top" data-nosnippet>
-  <div class="wrap">
-    <a class="brand" href="../"><img src="../img/icon.png" width="36" height="36" alt=""><span>스도쿠 리그</span></a>
-    <div class="hd-r">
-      <nav class="crumbs" aria-label="현재 위치"><a href="../">홈</a> › <a href="./">기법</a> › 멀티 컬러링</nav>
-      <a class="lang" href="../en/techniques/multi-coloring.html" hreflang="en" lang="en">English</a>
-    </div>
+  <div class="bar">
+    <a class="brand" href="../"><img src="../img/logo.png" width="103" height="80" alt=""><span class="name">스도쿠 리그</span></a>
+    <nav class="nav">
+      <a href="../">게임하기</a>
+      <a href="./" aria-current="page">기법 배우기</a>
+    </nav>
+    <a class="lang" href="../en/techniques/multi-coloring.html" hreflang="en" lang="en">English</a>
   </div>
 </header>
 
@@ -290,6 +315,11 @@ footer .mail { color: var(--ink); }
       <div class="ticket-stub px"><span>LIMITED</span><b>한정<br> 수량</b></div>
     </a>
     </div>
+    <nav class="pager" aria-label="기법 순서" data-nosnippet>
+      <a class="prev px" href="simple-coloring.html"><small>이전 기법</small><b><span class="back">▸</span> 심플 컬러링</b></a>
+      <a class="all px" href="./">목록으로</a>
+      <a class="next px" href="remote-pair.html"><small>다음 기법</small><b>리모트 페어 ▸</b></a>
+    </nav>
   </div>
 </main>
 
