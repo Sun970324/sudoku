@@ -16,17 +16,25 @@
         easy: '쉬움', medium: '보통', hard: '어려움', expert: '전문가',
         loading: '퍼즐을 불러오는 중…', loadFail: '퍼즐을 불러오지 못했어요. 새로고침해 주세요.',
         clear: '클리어!', over: '실수 3번', overText: '이번 판은 여기까지예요.',
-        retry: '다시 하기', next: '새 게임', harder: '한 단계 위 도전',
+        retry: '다시 하기', next: '새 게임', again: '한 판 더', harder: (l) => `${l} 도전`,
+        rankOf: (l) => `${l} 클리어 기록 중`, rank: (p) => `상위 ${p}%`, fast: '빠름', slow: '느림', me: '나',
+        rankSource: '스도쿠 리그 앱 기록 기준',
         level: '난이도', time: '시간', mistakes: '실수', used: '이 판에 나온 기법', hinted: '힌트 씀',
         paused: '일시정지', resume: '계속하기', cell: (r, c) => `${r}행 ${c}열`,
+        leaveTitle: '풀던 판이 지워져요', keep: '계속 풀기', leave: '새 판 시작',
+        leaveText: (l) => `${{ easy: '쉬움으로', medium: '보통으로', hard: '어려움으로', expert: '전문가로' }[l]} 새 판을 시작할까요?`,
       }
     : {
         easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert',
         loading: 'Loading a puzzle…', loadFail: 'Could not load a puzzle. Please refresh.',
         clear: 'Solved!', over: '3 mistakes', overText: 'That is the end of this game.',
-        retry: 'Try again', next: 'New game', harder: 'Try the next level',
+        retry: 'Try again', next: 'New game', again: 'Play again', harder: (l) => `Try ${l}`,
+        rankOf: (l) => `Among ${l} clears`, rank: (p) => `Top ${p}%`, fast: 'Faster', slow: 'Slower', me: 'You',
+        rankSource: 'Based on Sudoku League app clears',
         level: 'Level', time: 'Time', mistakes: 'Mistakes', used: 'Techniques in this puzzle', hinted: 'hint used',
         paused: 'Paused', resume: 'Resume', cell: (r, c) => `row ${r}, column ${c}`,
+        leaveTitle: 'This game will be lost', keep: 'Keep playing', leave: 'New game',
+        leaveText: (l) => `Start a new ${{ easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert' }[l]} game?`,
       };
 
   const $ = (sel) => document.querySelector(sel);
@@ -111,6 +119,7 @@
     opts = opts || {};
     stopClock();
     closeModal();
+    closeConfirm(false);
     if (window.SudokuHintUI) window.SudokuHintUI.close();
     boardEl.setAttribute('aria-busy', 'true');
     markLevel(level);
@@ -132,6 +141,9 @@
     boardEl.removeAttribute('aria-busy');
     sel = -1;
     paused = false;
+    boardEl.classList.remove('paused');
+    const pb = $('[data-act="pause"]');
+    if (pb) pb.setAttribute('aria-pressed', 'false');
     save();
     render();
     startClock();
@@ -355,9 +367,64 @@
     row.appendChild(h('button', { onclick: () => start(game.level) }, T.next));
   }
 
+  // The app's solo clear times per level, one-minute buckets 0..60
+  // (tool/web_play/clear_times.sql). Fetched on the first clear only.
+  let clearTimes = null;
+  async function times() {
+    if (!clearTimes) clearTimes = await (await fetch(BASE + 'times.json')).json();
+    return clearTimes;
+  }
+
+  // "Top N%" against the app's clears, and a histogram up to the 95th
+  // percentile with this clear's bar in gold. Filled once times.json loads;
+  // stays hidden if it never does.
+  function rankCard(level, seconds) {
+    const card = h('div', { class: 'sb-rank' });
+    card.hidden = true;
+    times().then((all) => {
+      const counts = all[level];
+      const n = counts ? counts.reduce((a, b) => a + b, 0) : 0;
+      if (!n) return;
+      const m = Math.min(Math.floor(seconds / 60), 60);
+      let faster = 0;
+      for (let i = 0; i < m; i++) faster += counts[i];
+      if (m < 60) faster += counts[m] * (seconds % 60) / 60;
+      const pct = Math.min(99, Math.max(1, Math.ceil((100 * faster) / n)));
+      let w = 0;
+      for (let seen = 0; w < 60 && (seen += counts[w]) < n * 0.95; w++);
+      const size = Math.ceil((w + 1) / 20);
+      const bins = [];
+      for (let i = 0; i <= w; i++) bins[Math.floor(i / size)] = (bins[Math.floor(i / size)] || 0) + counts[i];
+      const mine = Math.min(Math.floor(m / size), bins.length - 1);
+      const top = Math.max(...bins);
+      const head = h('div', { class: 'sb-rank-head' });
+      head.appendChild(h('span', {}, T.rankOf(T[level])));
+      head.appendChild(h('b', {}, T.rank(pct)));
+      const bars = h('div', { class: 'sb-rank-bars', 'aria-hidden': 'true' });
+      bins.forEach((c, i) => {
+        const bar = h('i', { class: i === mine ? 'me' : i < mine ? 'fast' : '' });
+        bar.style.height = `${Math.max(3, (100 * c) / top)}%`;
+        bars.appendChild(bar);
+      });
+      const axis = h('div', { class: 'sb-rank-axis', 'aria-hidden': 'true' });
+      axis.appendChild(h('span', {}, T.fast));
+      const me = h('b', {}, `▲ ${T.me}`);
+      me.style.left = `${Math.min(86, Math.max(14, ((mine + 0.5) * 100) / bins.length))}%`;
+      axis.appendChild(me);
+      axis.appendChild(h('span', {}, T.slow));
+      [head, bars, axis, h('p', { class: 'sb-rank-src' }, T.rankSource)].forEach((el) => card.appendChild(el));
+      card.hidden = false;
+    }).catch(() => {});
+    return card;
+  }
+
   function showClear() {
     const used = [];
-    for (const st of puzzle.steps) if (!used.includes(st.t)) used.push(st.t);
+    const uses = {};
+    for (const st of puzzle.steps) {
+      if (!used.includes(st.t)) used.push(st.t);
+      uses[st.t] = (uses[st.t] || 0) + 1;
+    }
     const stats = h('div', { class: 'sb-modal-stats' });
     [[T.level, T[game.level]], [T.time, fmt(game.elapsed)], [T.mistakes, String(game.mistakes)]].forEach(([k, v]) => {
       const box = h('div');
@@ -372,22 +439,30 @@
       if (!info) return;
       const li = h('li');
       const label = info.href ? h('a', { href: info.href }, info.name) : h('span', {}, info.name);
+      label.appendChild(h('small', {}, ` × ${uses[t]}`));
       li.appendChild(label);
       if (game.hinted.includes(t)) li.appendChild(h('em', {}, T.hinted));
       list.appendChild(li);
     });
     const next = LEVELS[LEVELS.indexOf(game.level) + 1];
     const actions = h('div', { class: 'sb-modal-actions' });
-    actions.appendChild(h('button', { class: 'primary', onclick: () => start(game.level) }, T.next));
-    if (next) actions.appendChild(h('button', { onclick: () => go(next) }, T.harder));
+    actions.appendChild(h('button', { class: 'primary', onclick: () => start(game.level) }, T.again));
+    if (next) actions.appendChild(h('button', { onclick: () => go(next) }, T.harder(T[next])));
+    // Two columns on a wide screen (record | techniques and buttons), one
+    // on a phone; the CSS decides.
+    const record = h('div', { class: 'sb-clear-col' });
+    record.appendChild(stats);
+    record.appendChild(rankCard(game.level, game.elapsed));
+    const more = h('div', { class: 'sb-clear-col' });
+    [h('p', { class: 'sb-modal-label' }, T.used), list, actions].forEach((el) => more.appendChild(el));
+    const cols = h('div', { class: 'sb-clear-cols' });
+    cols.appendChild(record);
+    cols.appendChild(more);
     const app = $('#sb-app-card');
     const nodes = [
       h('p', { class: 'sb-modal-eyebrow' }, 'STAGE CLEAR'),
       h('h2', {}, T.clear),
-      stats,
-      h('p', { class: 'sb-modal-label' }, T.used),
-      list,
-      actions,
+      cols,
     ];
     if (app) {
       // A copy, not a second #sb-app-card; counted apart from the panel's.
@@ -397,6 +472,9 @@
       nodes.push(copy);
     }
     openModal(nodes);
+    if (modal) modal.firstChild.classList.add('sb-clear');
+    // Focus "play again", not the first technique link.
+    actions.firstChild.focus();
   }
 
   // ---- level from the address ----
@@ -409,6 +487,39 @@
     start(level);
   }
 
+  // A level tab throws the current game away, so a game the player has
+  // touched asks first, over the board the way the pause covers it.
+  const confirmEl = h('div', { class: 'sb-confirm', role: 'alertdialog', 'aria-modal': 'false' });
+  confirmEl.hidden = true;
+  boardEl.parentNode.appendChild(confirmEl);
+  let confirmWasPaused = false;
+  function touched() {
+    return game && !game.done && !game.over && (game.history.length > 0 || game.mistakes > 0 || (game.hintsUsed || 0) > 0);
+  }
+  function closeConfirm(resume) {
+    if (confirmEl.hidden) return;
+    confirmEl.hidden = true;
+    confirmEl.textContent = '';
+    if (resume && !confirmWasPaused) setPaused(false);
+  }
+  function askLevel(level) {
+    if (!touched()) { go(level); return; }
+    if (window.SudokuHintUI) window.SudokuHintUI.close();
+    if (confirmEl.hidden) confirmWasPaused = paused;
+    setPaused(true);
+    confirmEl.textContent = '';
+    const keep = h('button', { type: 'button', class: 'primary', onclick: () => { closeConfirm(true); backToBoard(); } }, T.keep);
+    const row = h('div', { class: 'sb-confirm-actions' });
+    row.appendChild(keep);
+    row.appendChild(h('button', { type: 'button', onclick: () => { closeConfirm(false); go(level); } }, T.leave));
+    confirmEl.appendChild(h('p', { class: 'sb-confirm-title' }, T.leaveTitle));
+    confirmEl.appendChild(h('p', {}, T.leaveText(level)));
+    confirmEl.appendChild(row);
+    confirmEl.hidden = false;
+    keep.focus();
+  }
+  confirmEl.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeConfirm(true); backToBoard(); } });
+
   // ---- wiring ----
   // A click on a game button leaves focus on it, so the keyboard would stop
   // reaching the board and the player would have to click the cell again.
@@ -419,7 +530,7 @@
   const act = {
     undo, erase,
     notes: () => { noteMode = !noteMode; render(); },
-    pause: () => setPaused(!paused),
+    pause: () => { if (confirmEl.hidden) setPaused(!paused); },
     new: () => start(game ? game.level : 'medium'),
     hint: () => {
       if (!game || game.done || game.over || paused || !window.SudokuHintUI) return;
@@ -433,7 +544,7 @@
       backToBoard();
     }));
   document.querySelectorAll('[data-level]').forEach((a) =>
-    a.addEventListener('click', (e) => { e.preventDefault(); go(a.dataset.level); }));
+    a.addEventListener('click', (e) => { e.preventDefault(); askLevel(a.dataset.level); }));
   if (modal) modal.addEventListener('click', (e) => { if (e.target === modal && game && game.done) closeModal(); });
 
   // N toggles notes from the board, a game button (a click leaves focus on
