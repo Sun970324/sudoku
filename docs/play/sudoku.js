@@ -239,6 +239,8 @@
     const m = $('#sb-mistakes');
     if (m) m.textContent = `${game.mistakes}/${MAX_MISTAKES}`;
     showTime();
+    const pad = $('.pad');
+    if (pad) pad.classList.toggle('notes', noteMode);
     document.querySelectorAll('[data-n]').forEach((b) => {
       const d = Number(b.dataset.n);
       let placed = 0;
@@ -308,6 +310,27 @@
     snapshot();
     game.vals[sel] = 0;
     game.notes[sel] = 0;
+    save();
+    render();
+  }
+
+  // Every empty cell gets the digits its row, column and box still allow,
+  // replacing what was there. Notes a hint said to remove stay removed.
+  // One undo step.
+  function autoNotes() {
+    if (!game || game.done || game.over || paused) return;
+    const known = game.known || [];
+    const next = game.notes.map((m, i) => {
+      if (game.vals[i]) return m;
+      let mask = 0b1111111110;
+      for (const p of peersOf[i]) if (game.vals[p]) mask &= ~(1 << game.vals[p]);
+      for (const [k, d] of known) if (k === i) mask &= ~(1 << d);
+      return mask;
+    });
+    if (next.every((m, i) => m === game.notes[i])) return;
+    snapshot();
+    game.notes = next;
+    if (window.SudokuHintUI) window.SudokuHintUI.close();
     save();
     render();
   }
@@ -529,6 +552,7 @@
     b.addEventListener('click', () => { input(Number(b.dataset.n)); backToBoard(); }));
   const act = {
     undo, erase,
+    autonotes: autoNotes,
     notes: () => { noteMode = !noteMode; render(); },
     pause: () => { if (confirmEl.hidden) setPaused(!paused); },
     new: () => start(game ? game.level : 'medium'),

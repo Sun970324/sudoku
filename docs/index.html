@@ -258,7 +258,7 @@ header.top { border-bottom: 2px solid var(--line); }
 .status #sb-time { color: var(--gold); }
 .pause { margin-left: auto; width: 44px; height: 44px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--bg); color: var(--ink); }
 .pause[aria-pressed="true"] { background: var(--gold); color: var(--bg); }
-.tools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.tools { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .tools button { min-height: 60px; padding: 0 4px; background: var(--panel); color: var(--ink); font: 12px/1.4 var(--pixel); }
 .tools button:hover { background: #18306a; }
 .tools [data-act="notes"][aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--gold); }
@@ -277,6 +277,15 @@ header.top { border-bottom: 2px solid var(--line); }
 .pad button { min-height: 68px; padding: 0; background: var(--ink); color: var(--bg); font: 700 30px/1 var(--body); }
 .pad button:hover:not(:disabled) { background: #d6e2ff; }
 .pad button:disabled { opacity: 0.3; }
+/* Notes on: each digit sits small where its note sits in a cell, inside
+   a gold edge, so the pad itself says it writes notes. */
+.pad.notes button { display: flex; padding: 6px 8px; box-shadow: inset 0 0 0 2px var(--gold); font-size: 18px; font-weight: 400; color: #33466f; }
+.pad.notes [data-n="1"], .pad.notes [data-n="4"], .pad.notes [data-n="7"] { justify-content: flex-start; }
+.pad.notes [data-n="2"], .pad.notes [data-n="5"], .pad.notes [data-n="8"] { justify-content: center; }
+.pad.notes [data-n="3"], .pad.notes [data-n="6"], .pad.notes [data-n="9"] { justify-content: flex-end; }
+.pad.notes [data-n="1"], .pad.notes [data-n="2"], .pad.notes [data-n="3"] { align-items: flex-start; }
+.pad.notes [data-n="4"], .pad.notes [data-n="5"], .pad.notes [data-n="6"] { align-items: center; }
+.pad.notes [data-n="7"], .pad.notes [data-n="8"], .pad.notes [data-n="9"] { align-items: flex-end; }
 
 .sb-hint { padding: 14px 16px 16px; background: var(--panel); box-shadow: inset 0 0 0 2px var(--gold); }
 .sb-hint-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -441,6 +450,7 @@ footer .copy-r { margin-left: auto; }
   .tools button { min-height: 48px; }
   .pad { margin-top: 8px; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
   .pad button { min-height: 52px; font-size: 24px; }
+  .pad.notes button { padding: 4px; font-size: 14px; }
   .new-game { margin-top: 10px; min-height: 44px; }
   .sb-app-card { margin-top: 12px; padding: 10px 12px; }
   .sb-app-card img { width: 32px; height: 32px; }
@@ -529,6 +539,7 @@ footer .copy-r { margin-left: auto; }
         <button type="button" data-act="undo">되돌리기</button>
         <button type="button" data-act="erase">지우기</button>
         <button type="button" data-act="notes" aria-pressed="false">메모 <span class="on">ON</span><span class="key">N</span></button>
+        <button type="button" data-act="autonotes">자동 메모</button>
         <button type="button" data-act="hint">힌트<span class="left" id="sb-hints-left">3</span></button>
       </div>
       <div class="pad" role="group" aria-label="숫자 입력">
