@@ -571,15 +571,16 @@
     a.addEventListener('click', (e) => { e.preventDefault(); askLevel(a.dataset.level); }));
   if (modal) modal.addEventListener('click', (e) => { if (e.target === modal && game && game.done) closeModal(); });
 
-  // N toggles notes from the board, a game button (a click leaves focus on
-  // it) or the page itself; not while typing or with a modifier held. The
-  // N key, whatever it types: under the Korean layout it reports 'ㅜ'.
+  // Space toggles notes from the board or the page itself (the thumb is
+  // already on it while the other fingers type digits). Not from a focused
+  // button or link, where Space presses that instead, and not with a
+  // modifier held; it stops the page scrolling while a game is on.
   document.addEventListener('keydown', (e) => {
-    const isN = e.code === 'KeyN' || ['n', 'N', 'ㅜ'].includes(e.key);
-    if (!isN || e.altKey || e.ctrlKey || e.metaKey) return;
-    const t = e.target;
-    if (t !== document.body && t !== boardEl && !(t.closest && t.closest('[data-act], [data-n]'))) return;
-    act.notes();
+    if (e.code !== 'Space' || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    if (e.target !== document.body && e.target !== boardEl) return;
+    if (!game || game.done || game.over || !confirmEl.hidden || (modal && !modal.hidden)) return;
+    e.preventDefault();
+    if (!e.repeat) act.notes();
   });
 
   boardEl.addEventListener('keydown', (e) => {
