@@ -390,7 +390,7 @@
     row.appendChild(h('button', { onclick: () => start(game.level) }, T.next));
   }
 
-  // The app's solo clear times per level, one-minute buckets 0..60
+  // The app's solo clear times per level, in buckets of `bucket` seconds
   // (tool/web_play/clear_times.sql). Fetched on the first clear only.
   let clearTimes = null;
   async function times() {
@@ -408,14 +408,18 @@
       const counts = all[level];
       const n = counts ? counts.reduce((a, b) => a + b, 0) : 0;
       if (!n) return;
-      const m = Math.min(Math.floor(seconds / 60), 60);
+      // The last bucket holds everything slower than the rest.
+      const step = all.bucket || 60;
+      const last = counts.length - 1;
+      const m = Math.min(Math.floor(seconds / step), last);
       let faster = 0;
       for (let i = 0; i < m; i++) faster += counts[i];
-      if (m < 60) faster += counts[m] * (seconds % 60) / 60;
+      if (m < last) faster += counts[m] * (seconds % step) / step;
       const pct = Math.min(99, Math.max(1, Math.ceil((100 * faster) / n)));
       let w = 0;
-      for (let seen = 0; w < 60 && (seen += counts[w]) < n * 0.95; w++);
-      const size = Math.ceil((w + 1) / 20);
+      for (let seen = 0; w < last && (seen += counts[w]) < n * 0.95; w++);
+      // About 40 bars, so the shape reads as a curve.
+      const size = Math.ceil((w + 1) / 40);
       const bins = [];
       for (let i = 0; i <= w; i++) bins[Math.floor(i / size)] = (bins[Math.floor(i / size)] || 0) + counts[i];
       const mine = Math.min(Math.floor(m / size), bins.length - 1);
@@ -430,11 +434,18 @@
         bars.appendChild(bar);
       });
       const axis = h('div', { class: 'sb-rank-axis', 'aria-hidden': 'true' });
-      axis.appendChild(h('span', {}, T.fast));
+      // The marker sits under its bar; an end label it would run into
+      // gives way to it.
+      const at = Math.min(92, Math.max(8, ((mine + 0.5) * 100) / bins.length));
+      const fast = h('span', {}, T.fast);
+      const slow = h('span', {}, T.slow);
+      if (at < 25) fast.style.visibility = 'hidden';
+      if (at > 75) slow.style.visibility = 'hidden';
       const me = h('b', {}, `▲ ${T.me}`);
-      me.style.left = `${Math.min(86, Math.max(14, ((mine + 0.5) * 100) / bins.length))}%`;
+      me.style.left = `${at}%`;
+      axis.appendChild(fast);
       axis.appendChild(me);
-      axis.appendChild(h('span', {}, T.slow));
+      axis.appendChild(slow);
       [head, bars, axis, h('p', { class: 'sb-rank-src' }, T.rankSource)].forEach((el) => card.appendChild(el));
       card.hidden = false;
     }).catch(() => {});
