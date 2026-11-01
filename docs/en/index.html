@@ -193,11 +193,6 @@ header.top { border-bottom: 2px solid var(--line); }
 .brand:hover { color: var(--ink); }
 /* docs/img/logo.png: ref/card_1.png with its magenta key dropped, 80px tall. */
 .brand img { width: auto; height: 40px; }
-/* On a narrow phone "Sudoku League" runs into the language button; the logo
-   already says it, so the words step aside (still read out). */
-@media (max-width: 420px) {
-  html[lang="en"] .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-}
 .nav { display: flex; align-items: stretch; font: 12px/1 var(--pixel); letter-spacing: 0.04em; }
 .nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
@@ -427,29 +422,36 @@ footer .copy-r { margin-left: auto; }
 /* Phones and narrow tablets: one column, board first. */
 @media (max-width: 899px) {
   /* Brand and language on one row, the two places under them. */
-  .bar { height: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand lang" "nav nav"; gap: 0; }
-  .brand { grid-area: brand; height: 52px; }
-  .lang { grid-area: lang; }
-  .nav { grid-area: nav; margin-inline: calc(-1 * var(--gutter)); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* One row (owner, 11-01): logo, the two places, language. The logo
+     already says "Sudoku League", so the words step aside (still read out). */
+  .bar { height: 56px; gap: 4px; }
+  .brand { flex: none; margin-right: 4px; }
+  .brand img { height: 34px; }
+  .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .nav { min-width: 0; }
+  .nav a { min-height: 0; padding: 0 8px; }
+  .lang { flex: none; padding: 6px 8px; font-size: 13px; }
 
   .game { max-width: calc(540px + 2 * var(--gutter)); padding-top: 12px; display: flex; flex-direction: column; align-items: stretch; gap: 0; }
   .panel { display: contents; }
-  .lv-tabs { order: -3; margin-bottom: 8px; }
-  .status { order: -2; gap: 14px; padding: 0; background: transparent; font-size: 12px; }
+  /* Header to digit pad in one screen (owner, 11-01): every row is kept
+     short and the board takes what height is left, which is the 260px
+     below. Change a row's height here and that number moves with it. */
+  .lv-tabs { order: -3; margin-bottom: 6px; }
+  .lv-tabs a { min-height: 40px; }
+  .status { order: -2; height: 36px; gap: 14px; padding: 0; background: transparent; font-size: 12px; }
   .status b { margin-left: 4px; font-size: 12px; }
   .status .t-label { display: none; }
-  .pause { background: transparent; }
-  /* As wide as the column, but short enough that tools and digits still fit
-     under it on a phone held upright. */
-  .board-col { order: -1; width: 100%; max-width: max(280px, calc(100svh - 300px)); align-self: center; }
+  .pause { height: 36px; background: transparent; }
+  .board-col { order: -1; width: 100%; max-width: max(240px, calc(100svh - 260px)); align-self: center; }
   .frame { padding: 6px; }
   .sb-confirm { inset: 6px; }
   .sb-cell:nth-child(3n):not(:last-child) { border-right-width: 2px; }
   .sb-row:nth-child(3n):not(:last-child) .sb-cell { border-bottom-width: 2px; }
-  .tools { margin-top: 12px; gap: 6px; }
-  .tools button { min-height: 48px; }
-  .pad { margin-top: 8px; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
-  .pad button { min-height: 52px; font-size: 24px; }
+  .tools { margin-top: 8px; gap: 6px; }
+  .tools button { min-height: 44px; }
+  .pad { margin-top: 6px; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 4px; }
+  .pad button { min-height: 46px; font-size: 24px; }
   .pad.notes button { padding: 4px; font-size: 14px; }
   .new-game { margin-top: 10px; min-height: 44px; }
   .sb-app-card { margin-top: 12px; padding: 10px 12px; }

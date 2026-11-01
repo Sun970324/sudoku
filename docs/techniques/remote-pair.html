@@ -152,9 +152,6 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 .bar { max-width: 1040px; height: 64px; margin: 0 auto; padding-inline: var(--gutter); display: flex; align-items: stretch; gap: 24px; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 24px/1 var(--pixel); white-space: nowrap; }
 .brand img { width: auto; height: 40px; }
-@media (max-width: 420px) {
-  html[lang="en"] .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-}
 .nav { display: flex; align-items: stretch; font: 12px/1 var(--pixel); letter-spacing: 0.04em; }
 .nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
@@ -162,10 +159,13 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 .lang { align-self: center; margin-left: auto; font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
 .lang:hover { color: var(--ink); border-color: var(--ink-2); }
 @media (max-width: 899px) {
-  .bar { height: auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand lang" "nav nav"; gap: 0; }
-  .brand { grid-area: brand; height: 52px; }
-  .lang { grid-area: lang; }
-  .nav { grid-area: nav; margin-inline: calc(-1 * var(--gutter)); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bar { height: 56px; gap: 4px; }
+  .brand { flex: none; margin-right: 4px; }
+  .brand img { height: 34px; }
+  .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .nav { min-width: 0; }
+  .nav a { min-height: 0; padding: 0 8px; }
+  .lang { flex: none; padding: 6px 8px; font-size: 13px; }
 }
 .get { display: flex; flex-direction: column; gap: 16px; }
 .event-ticket { display: grid; grid-template-columns: minmax(0, 1fr) 120px; filter: drop-shadow(0 6px 0 #071029); color: var(--bg); text-decoration: none; }
