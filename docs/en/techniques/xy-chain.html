@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · Chains</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · Stage 7 · Chains and Loops</p>
       <h1>XY-Chain</h1>
       <p class="aka"></p>
       <p class="lead">An XY-Chain is a chain of two-candidate cells, each passing one digit to the next, whose two ends share the same digit. That digit can be removed from any cell that sees both ends.</p>
@@ -275,6 +278,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       </ol>
       <p class="note">The shortest XY-Chain, with three cells, is the XY-Wing.</p>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">Take the <span class="nowrap">XY-Chain</span> lesson</h2>
+      <p>Try a technique lesson from Sudoku League.</p>      <p class="sl-concept"><a href="chains.html">Take the Chains concept lesson first ▸</a></p>
+      <div class="sl-host" data-src="../../play/lessons/Stage7XYChain.json" data-strings="../../play/lessons/en/Stage7XYChain.json" data-next="x-chain.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-en-xy-chain&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-en-xy-chain" data-where="tech-en/xy-chain"><p class="sl-wait">Loading</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">Common questions</h2>
@@ -319,9 +327,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </a>
     </div>
     <nav class="pager" aria-label="Technique order" data-nosnippet>
-      <a class="prev px" href="x-chain.html"><small>Previous</small><b><span class="back">▸</span> X-Chain</b></a>
+      <a class="prev px" href="remote-pair.html"><small>Previous</small><b><span class="back">▸</span> Remote Pair</b></a>
       <a class="all px" href="./">All techniques</a>
-      <a class="next px" href="aic.html"><small>Next</small><b>AIC ▸</b></a>
+      <a class="next px" href="x-chain.html"><small>Next</small><b>X-Chain ▸</b></a>
     </nav>
   </div>
 </main>
@@ -343,6 +351,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = 'The lesson did not load. Please refresh the page.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

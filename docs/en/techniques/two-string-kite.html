@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · Single-digit patterns</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · Stage 5 · Single Digit Patterns</p>
       <h1>2-String Kite</h1>
       <p class="aka">Two-String Kite</p>
       <p class="lead">A 2-String Kite (Two-String Kite) is a row and a column, each with exactly two candidates for a digit, that meet in one box. The digit can be removed from any cell that sees both far ends.</p>
@@ -274,6 +277,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <li class="px"><span>Remove the digit from the cell that <b>sees both far ends</b>. It is usually where the two lines cross.</span></li>
       </ol>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">Take the <span class="nowrap">2-String Kite</span> lesson</h2>
+      <p>Try a technique lesson from Sudoku League.</p>      <p class="sl-concept"><a href="weak-links.html">Take the Weak links concept lesson first ▸</a></p>
+      <div class="sl-host" data-src="../../play/lessons/Stage5Kite.json" data-strings="../../play/lessons/en/Stage5Kite.json" data-next="xy-wing.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-en-two-string-kite&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-en-two-string-kite" data-where="tech-en/two-string-kite"><p class="sl-wait">Loading</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">Common questions</h2>
@@ -318,7 +326,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <nav class="pager" aria-label="Technique order" data-nosnippet>
       <a class="prev px" href="skyscraper.html"><small>Previous</small><b><span class="back">▸</span> Skyscraper</b></a>
       <a class="all px" href="./">All techniques</a>
-      <a class="next px" href="simple-coloring.html"><small>Next</small><b>Simple Coloring ▸</b></a>
+      <a class="next px" href="xy-wing.html"><small>Next</small><b>XY-Wing ▸</b></a>
     </nav>
   </div>
 </main>
@@ -340,6 +348,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = 'The lesson did not load. Please refresh the page.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

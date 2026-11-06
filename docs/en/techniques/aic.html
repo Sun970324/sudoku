@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · Chains</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · Stage 7 · Chains and Loops</p>
       <h1>AIC</h1>
       <p class="aka">Alternating Inference Chain</p>
       <p class="lead">An AIC (Alternating Inference Chain) links candidates of several digits with strong and weak links in turn. One end of the chain must be true, so any candidate that sees both ends can be removed.</p>
@@ -277,6 +280,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       </ol>
       <p class="note">X-Chains, XY-Chains, W-Wings and Skyscrapers are all special shapes of an AIC.</p>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">Take the AIC lesson</h2>
+      <p>Try a technique lesson from Sudoku League.</p>      <p class="sl-concept"><a href="chains.html">Take the Chains concept lesson first ▸</a></p>
+      <div class="sl-host" data-src="../../play/lessons/Stage7AIC.json" data-strings="../../play/lessons/en/Stage7AIC.json" data-next="hidden-rectangle.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-en-aic&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-en-aic" data-where="tech-en/aic"><p class="sl-wait">Loading</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">Common questions</h2>
@@ -321,9 +329,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </a>
     </div>
     <nav class="pager" aria-label="Technique order" data-nosnippet>
-      <a class="prev px" href="xy-chain.html"><small>Previous</small><b><span class="back">▸</span> XY-Chain</b></a>
+      <a class="prev px" href="multi-coloring.html"><small>Previous</small><b><span class="back">▸</span> Multi-Coloring</b></a>
       <a class="all px" href="./">All techniques</a>
-      <a class="next px" href="als-chain.html"><small>Next</small><b>ALS Chain ▸</b></a>
+      <a class="next px" href="hidden-rectangle.html"><small>Next</small><b>Hidden Unique Rectangle ▸</b></a>
     </nav>
   </div>
 </main>
@@ -345,6 +353,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = 'The lesson did not load. Please refresh the page.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

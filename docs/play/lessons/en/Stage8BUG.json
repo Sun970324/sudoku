@@ -1,0 +1,20 @@
+{
+  "8단계": "Stage 8",
+  "빈칸이 18개 남았습니다.\n그중 17칸은 메모가 두 숫자뿐입니다.": "18 empty cells are left.\n17 of them have only two notes.",
+  "빨간 칸만 메모가 2, 3, 4 세 숫자입니다.": "Only the red cell has three notes: 2, 3 and 4.",
+  "빨간 칸이 있는 5번째 가로줄,\n1번째 세로줄, 4번 박스를 봅니다.": "Look at the red cell's row 5,\ncolumn 1 and box 4.",
+  "메모 3은 세 곳 모두에서\n두 번씩 나옵니다.": "Note 3 appears twice\nin each of the three.",
+  "메모 4도 세 곳 모두에서\n두 번씩 나옵니다.": "Note 4 also appears twice\nin each of the three.",
+  "메모 2는 세 곳 모두에서\n세 번씩 나옵니다.": "Note 2 appears three times\nin each of the three.",
+  "만약 빨간 칸이 2가 아니라면\n빈칸이 모두 메모가 두 숫자뿐이고\n모든 가로줄, 세로줄, 박스에서\n메모 숫자가 두 번씩 나옵니다.": "If the red cell were not 2,\nevery empty cell would have only two notes,\nand in every row, column and box\neach note would appear twice.",
+  "그러면 답이 두 개가 됩니다.\n스도쿠의 답은 하나뿐이라\n이렇게 될 수 없습니다.": "Then there would be two answers.\nA sudoku has only one answer,\nso this can't happen.",
+  "그래서 빨간 칸은 2입니다.": "So the red cell is 2.",
+  "빈칸마다 메모 숫자가 몇 개인지 보세요.\n답을 바로 정할 수 있는 칸을 눌러 보세요.": "Count the notes in each empty cell.\nTap the cell you can settle right away.",
+  "메모가 두 숫자뿐인 칸이에요.\n메모가 세 숫자인 칸을 찾아 보세요.": "That cell has only two notes.\nLook for a cell with three notes.",
+  "숫자가 이미 있는 칸이에요.\n메모가 있는 빈칸을 보세요.": "That cell already has a digit.\nLook at the empty cells with notes.",
+  "맞아요. 이 칸의 가로줄, 세로줄, 박스에서\n메모 6이 세 번씩 나와요. 이 칸은 6이에요.": "Right. Note 6 appears three times in this cell's\nrow, column and box. This cell is 6.",
+  "1. 메모가 세 숫자인 칸을 찾고\n나머지 빈칸이 모두 두 숫자뿐인지 확인합니다.": "1. Find the cell with three notes and check\nthat every other empty cell has only two.",
+  "2. 그 칸의 가로줄, 세로줄, 박스에서\n세 번씩 나오는 숫자를 넣습니다.": "2. Put in the digit that appears three times\nin that cell's row, column and box.",
+  "빈칸이 모두 메모가 두 숫자뿐인 판을\nBUG라고 합니다.\n한 칸만 숫자가 하나 더 있어서\nBUG+1이라고 합니다.": "A board where every empty cell has only two notes is called a BUG.\nHere just one cell has one extra note, so it is called BUG+1.",
+  "8단계 마치기": "Finish stage 8"
+}

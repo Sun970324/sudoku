@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · Advanced patterns</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · Stage 9 · Almost Locked Sets</p>
       <h1>Sue de Coq</h1>
       <p class="aka"></p>
       <p class="lead">Sue de Coq is when the candidates of cells where a box and a line overlap are split between a cell on the line and a cell in the box. Each side's digits can then be removed from the rest of the line and the rest of the box.</p>
@@ -272,6 +275,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <li class="px"><span>Remove the line side's digits from <b>the rest of the line</b> and the box side's digits from <b>the rest of the box</b>.</span></li>
       </ol>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">Take the Sue de Coq lesson</h2>
+      <p>Try a technique lesson from Sudoku League.</p>      <p class="sl-concept"><a href="almost-locked-sets.html">Take the Almost locked sets concept lesson first ▸</a></p>
+      <div class="sl-host" data-src="../../play/lessons/Stage9SueDeCoq.json" data-strings="../../play/lessons/en/Stage9SueDeCoq.json" data-next="triple-firework.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-en-sue-de-coq&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-en-sue-de-coq" data-where="tech-en/sue-de-coq"><p class="sl-wait">Loading</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">Common questions</h2>
@@ -315,7 +323,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </a>
     </div>
     <nav class="pager" aria-label="Technique order" data-nosnippet>
-      <a class="prev px" href="bug-plus-one.html"><small>Previous</small><b><span class="back">▸</span> BUG+1</b></a>
+      <a class="prev px" href="als-chain.html"><small>Previous</small><b><span class="back">▸</span> ALS Chain</b></a>
       <a class="all px" href="./">All techniques</a>
       <a class="next px" href="triple-firework.html"><small>Next</small><b>Triple Firework ▸</b></a>
     </nav>
@@ -339,6 +347,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = 'The lesson did not load. Please refresh the page.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · 윙 계열</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · 6단계 윙</p>
       <h1>XYZ-윙</h1>
       <p class="aka">XYZ-Wing</p>
       <p class="lead">XYZ-윙(XYZ-Wing)은 후보가 세 개인 가운데 칸과 그 칸을 보는 후보 두 개짜리 두 칸이 한 숫자를 함께 가질 때, 세 칸을 모두 보는 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</p>
@@ -272,6 +275,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <li class="px"><span><b>세 칸을 모두 보는 칸</b>에서 Z를 지워요.</span></li>
       </ol>
       <p class="note">세 칸을 모두 봐야 해서, 지울 수 있는 칸은 보통 가운데 칸과 한쪽 칸이 같이 있는 박스 안이에요.</p>
+    </section>
+    <section aria-labelledby="try">
+      <h2 id="try"><span class="nowrap">XYZ-윙</span> 레슨 받기</h2>
+      <p>스도쿠 리그의 기법 레슨을 체험해보세요.</p>      <p class="sl-concept"><a href="bivalue-cells.html">바탕 개념 두 숫자뿐인 칸 레슨 먼저 받기 ▸</a></p>
+      <div class="sl-host" data-src="../play/lessons/Stage6XYZWing.json" data-next="w-wing.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-xyz-wing&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-xyz-wing" data-where="tech/xyz-wing"><p class="sl-wait">불러오는 중이에요</p></div>
     </section>
 
     <section aria-labelledby="faq">
@@ -340,6 +348,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = '레슨을 불러오지 못했어요. 페이지를 새로 고쳐 주세요.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

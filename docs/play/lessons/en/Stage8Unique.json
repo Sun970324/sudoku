@@ -1,0 +1,23 @@
+{
+  "답은 하나": "One answer only",
+  "8단계": "Stage 8",
+  "스도쿠 퍼즐의 답은 하나뿐입니다.\n이번 단계의 기법은 모두 이 규칙에서 나옵니다.": "A sudoku puzzle has only one answer.\nEvery technique in this stage comes from this rule.",
+  "네 칸이 두 가로줄과 두 세로줄에 걸쳐\n사각형을 이룹니다.\n네 칸 모두 메모가 3과 7뿐입니다.": "Four cells across two rows and two columns\nform a rectangle.\nAll four have only notes 3 and 7.",
+  "대각선으로 3과 7을 채워 봅니다.\n가로줄, 세로줄, 박스 모두 규칙에 맞습니다.": "Let's fill in 3 and 7 along the diagonals.\nEvery row, column and box follows the rules.",
+  "3과 7을 서로 바꿔 넣어도 규칙에 맞습니다.\n나머지 칸은 그대로입니다.": "Swapping the 3s and 7s follows the rules too.\nThe other cells stay the same.",
+  "네 칸은 박스 두 개에 들어 있습니다.\n그래서 바꿔 넣어도 박스마다\n3과 7이 하나씩 그대로 있습니다.": "The four cells sit in two boxes.\nSo even after the swap, each box\nstill has one 3 and one 7.",
+  "그러면 답이 두 개가 됩니다.\n스도쿠의 답은 하나뿐이라\n이렇게 될 수 없습니다.": "Then there would be two answers.\nA sudoku has only one answer,\nso this can't happen.",
+  "네 칸 중 어딘가에는\n3과 7 말고 다른 숫자가 들어가야 합니다.": "Somewhere in the four cells,\na digit other than 3 or 7 must go in.",
+  "이 모양을 유일사각형이라고 합니다.": "This pattern is called a unique rectangle.",
+  "메모가 3과 7인 칸부터 보세요.\n유일사각형을 이루는 네 칸을 찾아 눌러 보세요.": "Start with the cells with notes 3 and 7.\nFind and tap the four cells that form a unique rectangle.",
+  "메모가 있는 칸을 눌러 보세요.": "Tap a cell with notes.",
+  "표시한 사각형은 박스 네 개에 나뉘어 있어요. 박스 두 개 안에 들어가는 사각형을 찾아 보세요.": "The rectangle you marked spreads over four boxes. Find one that fits inside two boxes.",
+  "메모 3과 7이 모두 있는 칸을 찾아요.": "Look for cells with both notes 3 and 7.",
+  "맞아요. 이 사각형의 칸이에요.": "Right. That cell is part of this rectangle.",
+  "맞아요. 박스 두 개에 걸친 사각형이에요.\n네 칸 중 한 칸에는 다른 메모 9가 있어요.": "Right. This rectangle spans two boxes.\nOne of the four cells also has note 9.",
+  "1. 박스 두 개에 걸쳐 사각형을 이루는\n네 칸을 찾습니다.": "1. Find four cells that form\na rectangle over two boxes.",
+  "2. 네 칸의 메모가 모두\n같은 두 숫자뿐인지 확인합니다.": "2. Check that all four cells\nhave only the same two notes.",
+  "3. 그렇다면 답이 두 개가 되니\n네 칸 중 어딘가에는 다른 숫자가 들어갑니다.": "3. If so, there would be two answers, so another digit goes somewhere in the four cells.",
+  "다음 수업부터 답이 두 개가 되지 않도록\n메모를 지웁니다.": "From the next lesson, we remove notes\nso there can't be two answers.",
+  "다음 수업: 유일사각형 Type 1": "Next lesson: Unique Rectangle Type 1"
+}

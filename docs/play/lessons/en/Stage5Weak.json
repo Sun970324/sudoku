@@ -1,0 +1,22 @@
+{
+  "약한 연결": "Weak links",
+  "5단계": "Stage 5",
+  "4번째 가로줄의 메모 5를 봅니다.\n5가 들어갈 수 있는 곳이 세 곳입니다.": "Look at note 5 in row 4.\n5 has three spots it can go in.",
+  "왼쪽 칸이 5면 겹치는 칸에는\n5가 들어갈 수 없습니다.": "If the left cell is 5,\n5 can't go in any cell that sees it.",
+  "하지만 왼쪽 칸이 5가 아니어도\n가운데 칸이 5라고 정해지지는 않습니다.\n오른쪽 칸에 들어갈 수도 있습니다.": "But if the left cell is not 5,\nthat doesn't make the middle cell 5.\nThe 5 could go in the right cell.",
+  "한 칸에 5가 들어가면 다른 칸의 메모 5가 지워지는\n두 칸을 약한 연결이라고 합니다.\n(약한 링크라고도 부릅니다.)": "Two cells where a 5 in one removes\nnote 5 from the other are called a weak link.",
+  "강한 연결은 실선, 약한 연결은 점선으로\n그립니다.": "Strong links are drawn as solid lines,\nweak links as dotted lines.",
+  "강한 연결은 한쪽이 5가 아니면\n다른 쪽이 5입니다.": "In a strong link, if one side is not 5,\nthe other side is 5.",
+  "약한 연결은 한쪽에 5가 들어가면\n다른 쪽의 메모 5가 지워집니다.": "In a weak link, if 5 goes in one side,\nnote 5 is removed from the other side.",
+  "강한 연결의 두 칸도 한쪽에 5가 들어가면\n다른 쪽의 메모 5가 지워집니다.\n그래서 강한 연결은 약한 연결이기도 합니다.": "In a strong link too, if 5 goes in one side,\nnote 5 is removed from the other side.\nSo a strong link is also a weak link.",
+  "표시된 칸이 5로 확정되면\n메모 5가 지워지는 칸을 모두 눌러 보세요.": "If the marked cell is settled as 5,\ntap every cell whose note 5 is removed.",
+  "메모 5가 있는 칸을 눌러 보세요.": "Tap a cell with note 5.",
+  "이 칸은 표시된 칸과 겹치지 않아서 지워지지 않아요.": "This cell doesn't see the marked cell, so its note 5 stays.",
+  "맞아요. 이 칸의 메모 5가 지워져요.": "Right. This cell's note 5 is removed.",
+  "표시된 칸 말고 다른 칸을 눌러 보세요.": "Tap a cell other than the marked cell.",
+  "맞아요. 표시된 칸과 찾은 칸은 약한 연결이에요.": "Right. The marked cell and each cell you found are a weak link.",
+  "1. 메모 5가 있는 두 칸을 찾습니다.": "1. Find two cells with note 5.",
+  "2. 두 칸이 겹치는지 확인합니다.\n겹치면 두 칸은 약한 연결입니다.": "2. Check whether the two cells see each other.\nIf they do, they are a weak link.",
+  "3. 한쪽에 5가 들어가면 다른 쪽의 메모 5를 지웁니다.": "3. If 5 goes in one, remove note 5 from the other.",
+  "다음 수업: 스카이스크래퍼": "Next lesson: Skyscraper"
+}

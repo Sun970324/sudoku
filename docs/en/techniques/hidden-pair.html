@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · Basics</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · Stage 3 · Subsets</p>
       <h1>Hidden Pair</h1>
       <p class="aka"></p>
       <p class="lead">A Hidden Pair is two digits that can only go in the same two cells of a row, column or box. Every other candidate in those two cells can then be removed.</p>
@@ -275,6 +278,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <li class="px"><span>If it does, remove <b>every other candidate</b> from those two cells.</span></li>
       </ol>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">Take the Hidden Pair lesson</h2>
+      <p>Try a technique lesson from Sudoku League.</p>      <p class="sl-concept"><a href="groups.html">Take the Groups concept lesson first ▸</a></p>
+      <div class="sl-host" data-src="../../play/lessons/Stage3HiddenPair.json" data-strings="../../play/lessons/en/Stage3HiddenPair.json" data-next="x-wing.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-en-hidden-pair&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-en-hidden-pair" data-where="tech-en/hidden-pair"><p class="sl-wait">Loading</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">Common questions</h2>
@@ -320,7 +328,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <nav class="pager" aria-label="Technique order" data-nosnippet>
       <a class="prev px" href="naked-pair.html"><small>Previous</small><b><span class="back">▸</span> Naked Pair</b></a>
       <a class="all px" href="./">All techniques</a>
-      <a class="next px" href="pointing.html"><small>Next</small><b>Pointing ▸</b></a>
+      <a class="next px" href="x-wing.html"><small>Next</small><b>X-Wing ▸</b></a>
     </nav>
   </div>
 </main>
@@ -342,6 +350,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = 'The lesson did not load. Please refresh the page.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

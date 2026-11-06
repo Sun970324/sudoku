@@ -104,6 +104,14 @@
         },
         {
           "@type": "Question",
+          "name": "휴대폰에서도 되나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "네. 휴대폰 브라우저에서는 판, 숫자 패드, 버튼이 한 화면에 들어오게 맞춰져 있어요."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "푸는 중에 창을 닫으면요?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -116,6 +124,22 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "처음이라면 쉬움부터요. 쉬움은 싱글만으로 풀리고, 보통부터 포인팅과 페어가 나와요."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "메모 없이 풀어도 되나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "쉬움은 메모 없이도 풀리는 판이 많아요. 보통부터는 메모를 적어야 페어나 패턴이 보여요. 자동 메모를 쓰면 적는 수고 없이 바로 시작할 수 있어요."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "찍어야 풀리는 판도 있나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "없어요. 모든 판은 답이 하나뿐이고, 기법을 차례로 쓰면 끝까지 풀려요."
           }
         },
         {
@@ -191,7 +215,7 @@ header.top { border-bottom: 2px solid var(--line); }
 .bar { max-width: 1040px; height: 64px; margin: 0 auto; padding-inline: var(--gutter); display: flex; align-items: stretch; gap: 24px; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 24px/1 var(--pixel); white-space: nowrap; }
 .brand:hover { color: var(--ink); }
-/* docs/img/logo.png: ref/card_1.png with its magenta key dropped, 80px tall. */
+/* docs/img/logo.png: ref/브랜드/card_1.png with its magenta key dropped, 80px tall. */
 .brand img { width: auto; height: 40px; }
 .nav { display: flex; align-items: stretch; font: 12px/1 var(--pixel); letter-spacing: 0.04em; }
 .nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
@@ -403,6 +427,25 @@ html[lang="en"] .ticket-big { font-size: 36px; }
 .chips a { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 14px; background: var(--panel); color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 700; }
 .chips a:hover { background: #18306a; color: var(--ink); }
 .chips a.all { background: transparent; color: var(--gold); }
+.about p + p { margin-top: 12px; }
+.about p.after { margin-top: 14px; }
+.guide { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.guide li { display: flex; gap: 16px; padding: 14px 18px; background: var(--panel); }
+.guide .num { flex: none; width: 24px; font: 24px/1 var(--pixel); color: var(--gold); }
+.guide b { display: block; font-size: 15px; }
+.guide p { margin-top: 2px; font-size: 15px; }
+.guide a { color: var(--ink); }
+.guide a:hover { color: var(--gold); }
+.keymap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px; margin: 14px 0 0; font-size: 15px; }
+.keymap dt, .keymap dd { margin: 0; padding: 10px 14px; background: var(--panel); }
+.keymap dt { color: var(--gold); font-weight: 700; }
+.keymap dd { color: var(--ink-2); }
+@media (max-width: 560px) {
+  .keymap { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .keymap dt { margin-top: 4px; padding-bottom: 0; }
+  .keymap dt:first-child { margin-top: 0; }
+  .keymap dd { padding-top: 2px; }
+}
 .faq { display: flex; flex-direction: column; gap: 16px; font-size: 15px; }
 .faq h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); }
 .faq p { margin-top: 4px; }
@@ -530,7 +573,7 @@ footer .copy-r { margin-left: auto; }
         <button class="pause" type="button" data-act="pause" aria-pressed="false" aria-label="일시정지"><svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true" shape-rendering="crispEdges"><path d="M2 0v14M10 0v14" stroke="currentColor" stroke-width="4"></path></svg></button>
       </div>
       <div class="tools">
-        <button type="button" data-act="undo">되돌리기</button>
+        <button type="button" data-act="undo">되돌리기<span class="key" data-mac="⌘Z">Ctrl+Z</span></button>
         <button type="button" data-act="erase">지우기</button>
         <button type="button" data-act="notes" aria-pressed="false">메모 <span class="on">ON</span><span class="key">Space</span></button>
         <button type="button" data-act="autonotes">자동 메모</button>
@@ -563,6 +606,31 @@ footer .copy-r { margin-left: auto; }
       <h1>무료 클래식 스도쿠 · 설치 없이 바로 풀고, 막히면 기법까지 배우기</h1>
       <h2>스도쿠 하는 법</h2>
       <p>클래식 스도쿠는 9×9 판의 빈칸에 1부터 9까지 숫자를 채우는 퍼즐이에요. 가로줄, 세로줄, 굵은 선으로 나뉜 3×3 박스마다 같은 숫자가 한 번씩만 들어가야 해요. 처음부터 적혀 있는 숫자는 바꿀 수 없고, 답은 하나뿐이에요.</p>
+      <p>빈칸 하나에 들어갈 수 있는 숫자는, 그 칸이 속한 가로줄과 세로줄과 박스에 아직 없는 숫자예요. 스도쿠는 결국 이렇게 남는 숫자를 하나로 좁혀 가는 퍼즐이에요. 셈은 필요 없고, 숫자 대신 그림이나 글자를 넣어도 똑같이 풀려요.</p>
+
+      <h2>처음이라면 이 순서로 풀어 보세요</h2>
+      <ol class="guide">
+      <li><span class="num">1</span><div><b>거의 다 찬 곳부터 봐요</b><p>가로줄, 세로줄, 박스 가운데 빈칸이 하나만 남은 곳이 있으면 빠진 숫자를 바로 채울 수 있어요.</p></div></li>
+      <li><span class="num">2</span><div><b>숫자 하나를 정해 판을 훑어요</b><p>예를 들어 5를 정했다면, 5가 이미 있는 가로줄과 세로줄을 따라가며 한 박스 안에서 5가 갈 수 없는 칸을 지워 봐요. 5가 갈 수 있는 칸이 하나만 남으면 거기가 5예요. 이게 <a href="techniques/hidden-single.html">히든 싱글</a>이에요.</p></div></li>
+      <li><span class="num">3</span><div><b>칸 하나를 정해 숫자를 지워요</b><p>그 칸이 속한 가로줄, 세로줄, 박스에 있는 숫자를 모두 빼 봐요. 하나만 남으면 그게 답이에요. 이게 <a href="techniques/naked-single.html">네이키드 싱글</a>이에요.</p></div></li>
+      <li><span class="num">4</span><div><b>더 보이지 않으면 메모를 적어요</b><p>빈칸마다 들어갈 수 있는 숫자를 적어 두면, 눈으로는 안 보이던 다음 기법이 메모 사이에서 보여요.</p></div></li>
+      <li><span class="num">5</span><div><b>메모로도 막히면 힌트를 눌러요</b><p>답을 바로 주지 않고, 쓸 기법부터 알려 줘요.</p></div></li>
+      </ol>
+
+      <h2>메모 쓰는 법</h2>
+      <p>메모를 켜고 숫자를 누르면 칸에 작게 적혀요. 같은 숫자를 한 번 더 누르면 지워져요. 메모가 켜져 있는 동안에는 숫자 패드가 노란색이라, 지금 답을 넣는지 메모를 적는지 헷갈리지 않아요.</p>
+      <p>하나씩 적기 번거로우면 자동 메모를 눌러요. 빈칸마다 들어갈 수 있는 숫자를 모두 채워 줘요. 힌트를 보고 지운 메모는 다시 채우지 않고, 마음에 안 들면 되돌리기 한 번으로 취소돼요.</p>
+      <p>칸에 맞는 숫자를 넣으면 같은 가로줄, 세로줄, 박스의 메모에서 그 숫자가 저절로 지워져요. 숫자가 든 칸을 고르면 판에서 같은 숫자가 함께 밝아져서, 그 숫자가 어디 있는지 한눈에 보여요.</p>
+
+      <h2>키보드로 풀기</h2>
+      <p>PC에서는 마우스 없이 키보드만으로 풀 수 있어요.</p>
+      <dl class="keymap">
+      <dt>방향키</dt><dd>칸 옮기기</dd>
+      <dt>1 ~ 9</dt><dd>숫자 넣기 (메모가 켜져 있으면 메모 적기)</dd>
+      <dt>Space</dt><dd>메모 켜고 끄기</dd>
+      <dt>Backspace · Delete · 0</dt><dd>칸 지우기</dd>
+      <dt>Ctrl + Z (Mac은 ⌘ + Z)</dt><dd>되돌리기</dd>
+      </dl>
 
       <h2>난이도별로 쓰는 기법</h2>
       <div class="lvls">
@@ -571,6 +639,15 @@ footer .copy-r { margin-left: auto; }
       <div><b class="lv-hard">어려움</b><span><a href="techniques/x-wing.html">X-윙</a>, <a href="techniques/finned-x-wing.html">핀드 X-윙</a>, <a href="techniques/skyscraper.html">스카이스크래퍼</a> 같은 패턴이 필요해요.</span></div>
       <div><b class="lv-expert">전문가</b><span><a href="techniques/xy-wing.html">XY-윙</a>, <a href="techniques/swordfish.html">소드피쉬</a>, <a href="techniques/simple-coloring.html">컬러링</a>까지 써야 풀려요.</span></div>
       </div>
+      <p class="after">난이도마다 100판이 있어요. 새 게임을 누르면 아직 안 푼 판 가운데 하나가 나오고, 100판을 다 풀어야 처음부터 다시 나와요. 모든 판은 찍지 않고 기법만으로 풀리게 골랐어요.</p>
+
+      <h2>막혔을 때 힌트는 세 번에 나눠 나와요</h2>
+      <ol class="guide">
+      <li><span class="num">1</span><div><b>기법 이름</b><p>지금 쓸 수 있는 기법이 무엇인지만 알려 줘요. 이름만 듣고 직접 찾아봐도 돼요.</p></div></li>
+      <li><span class="num">2</span><div><b>위치</b><p>그 기법이 보이는 칸을 판에 표시해요.</p></div></li>
+      <li><span class="num">3</span><div><b>답</b><p>어느 칸에 무엇을 넣는지, 또는 어떤 메모를 지우는지 알려 줘요.</p></div></li>
+      </ol>
+      <p class="after">힌트는 한 판에 3번까지 쓸 수 있어요. 이름만 보고 스스로 찾으면 그 기법이 다음 판에서도 눈에 들어와요.</p>
 
       <h2>막히면 기법을 배워 보세요</h2>
       <p>힌트가 알려 준 기법이 어떤 모양인지, 어떻게 찾는지, 왜 그 칸을 지울 수 있는지 예시 보드로 하나씩 설명해요.</p>
@@ -587,12 +664,19 @@ footer .copy-r { margin-left: auto; }
       <a class="all" href="techniques/">기법 28개 전체 ▸</a>
       </div>
 
+      <h2>다 풀면 내 기록을 보여 줘요</h2>
+      <p>판을 다 풀면 걸린 시간과 실수 수, 이 판에 나온 기법을 보여 줘요. 힌트로 도움받은 기법은 따로 표시돼서 다음에 배워 볼 기법을 고르기 쉬워요.</p>
+      <p>같은 난이도를 스도쿠 리그 앱에서 푼 기록과 비교해서, 내 시간이 상위 몇 %인지도 그래프로 알려 줘요.</p>
+
       <h2>자주 묻는 질문</h2>
       <div class="faq">
       <div><h3>무료인가요?</h3><p>네. 설치나 로그인 없이 브라우저에서 바로 풀 수 있어요.</p></div>
       <div><h3>클래식 스도쿠인가요?</h3><p>네. 9×9 판에 1부터 9까지 채우는 기본 스도쿠예요. 대각선이나 킬러 같은 변형 규칙은 없어요.</p></div>
+      <div><h3>휴대폰에서도 되나요?</h3><p>네. 휴대폰 브라우저에서는 판, 숫자 패드, 버튼이 한 화면에 들어오게 맞춰져 있어요.</p></div>
       <div><h3>푸는 중에 창을 닫으면요?</h3><p>이 브라우저에 저장돼서 다시 들어오면 이어서 풀 수 있어요.</p></div>
       <div><h3>어떤 난이도부터 시작할까요?</h3><p>처음이라면 쉬움부터요. 쉬움은 싱글만으로 풀리고, 보통부터 포인팅과 페어가 나와요.</p></div>
+      <div><h3>메모 없이 풀어도 되나요?</h3><p>쉬움은 메모 없이도 풀리는 판이 많아요. 보통부터는 메모를 적어야 페어나 패턴이 보여요. 자동 메모를 쓰면 적는 수고 없이 바로 시작할 수 있어요.</p></div>
+      <div><h3>찍어야 풀리는 판도 있나요?</h3><p>없어요. 모든 판은 답이 하나뿐이고, 기법을 차례로 쓰면 끝까지 풀려요.</p></div>
       <div><h3>힌트가 답을 바로 알려 주나요?</h3><p>아니요. 기법 이름, 위치, 답 순서로 세 번에 나눠 알려 줘요. 힌트는 한 판에 3번까지 쓸 수 있어요.</p></div>
       <div><h3>실수는 몇 번까지 되나요?</h3><p>3번이에요. 세 번 틀리면 그 판은 끝나고, 같은 판을 다시 하거나 새 게임을 시작할 수 있어요.</p></div>
       <div><h3>앱에는 뭐가 더 있나요?</h3><p>실시간 랭크 대결, 최대 8명 친구 대결, 오늘의 스도쿠, 리플레이, 기법 연습 전체가 있어요.</p></div>

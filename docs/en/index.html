@@ -104,6 +104,14 @@
         },
         {
           "@type": "Question",
+          "name": "Does it work on a phone?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. In a phone browser the grid, the number pad and the buttons all fit on one screen."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "What if I close the window mid-game?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -116,6 +124,22 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "If you are new, start with Easy. Easy needs only singles, and Pointing and pairs come in from Medium."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I solve without notes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Many Easy puzzles, yes. From Medium on you need notes to see pairs and patterns. Auto notes gets you started without writing them all."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will I ever have to guess?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Every puzzle has exactly one solution, and applying techniques one after another solves it to the end."
           }
         },
         {
@@ -191,7 +215,7 @@ header.top { border-bottom: 2px solid var(--line); }
 .bar { max-width: 1040px; height: 64px; margin: 0 auto; padding-inline: var(--gutter); display: flex; align-items: stretch; gap: 24px; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font: 24px/1 var(--pixel); white-space: nowrap; }
 .brand:hover { color: var(--ink); }
-/* docs/img/logo.png: ref/card_1.png with its magenta key dropped, 80px tall. */
+/* docs/img/logo.png: ref/브랜드/card_1.png with its magenta key dropped, 80px tall. */
 .brand img { width: auto; height: 40px; }
 .nav { display: flex; align-items: stretch; font: 12px/1 var(--pixel); letter-spacing: 0.04em; }
 .nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
@@ -403,6 +427,25 @@ html[lang="en"] .ticket-big { font-size: 36px; }
 .chips a { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 14px; background: var(--panel); color: var(--ink); text-decoration: none; font-size: 14px; font-weight: 700; }
 .chips a:hover { background: #18306a; color: var(--ink); }
 .chips a.all { background: transparent; color: var(--gold); }
+.about p + p { margin-top: 12px; }
+.about p.after { margin-top: 14px; }
+.guide { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.guide li { display: flex; gap: 16px; padding: 14px 18px; background: var(--panel); }
+.guide .num { flex: none; width: 24px; font: 24px/1 var(--pixel); color: var(--gold); }
+.guide b { display: block; font-size: 15px; }
+.guide p { margin-top: 2px; font-size: 15px; }
+.guide a { color: var(--ink); }
+.guide a:hover { color: var(--gold); }
+.keymap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px; margin: 14px 0 0; font-size: 15px; }
+.keymap dt, .keymap dd { margin: 0; padding: 10px 14px; background: var(--panel); }
+.keymap dt { color: var(--gold); font-weight: 700; }
+.keymap dd { color: var(--ink-2); }
+@media (max-width: 560px) {
+  .keymap { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .keymap dt { margin-top: 4px; padding-bottom: 0; }
+  .keymap dt:first-child { margin-top: 0; }
+  .keymap dd { padding-top: 2px; }
+}
 .faq { display: flex; flex-direction: column; gap: 16px; font-size: 15px; }
 .faq h3 { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); }
 .faq p { margin-top: 4px; }
@@ -521,7 +564,7 @@ footer .copy-r { margin-left: auto; }
         <button class="pause" type="button" data-act="pause" aria-pressed="false" aria-label="Pause"><svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true" shape-rendering="crispEdges"><path d="M2 0v14M10 0v14" stroke="currentColor" stroke-width="4"></path></svg></button>
       </div>
       <div class="tools">
-        <button type="button" data-act="undo">Undo</button>
+        <button type="button" data-act="undo">Undo<span class="key" data-mac="⌘Z">Ctrl+Z</span></button>
         <button type="button" data-act="erase">Erase</button>
         <button type="button" data-act="notes" aria-pressed="false">Notes <span class="on">ON</span><span class="key">Space</span></button>
         <button type="button" data-act="autonotes">Auto notes</button>
@@ -554,6 +597,31 @@ footer .copy-r { margin-left: auto; }
       <h1>Free Classic Sudoku · Play in your browser and learn techniques when you get stuck</h1>
       <h2>How to play sudoku</h2>
       <p>In classic sudoku you fill the empty cells of the 9×9 grid with the digits 1 to 9. Every row, every column and every 3×3 box marked off by the thick lines must hold each digit exactly once. The digits given at the start cannot be changed, and every puzzle has exactly one solution.</p>
+      <p>The digits that can go in an empty cell are the ones its row, its column and its box do not have yet. Solving a sudoku means narrowing those down until one is left. There is no arithmetic: the puzzle would work the same with letters or pictures.</p>
+
+      <h2>New to sudoku? Solve in this order</h2>
+      <ol class="guide">
+      <li><span class="num">1</span><div><b>Start where it is nearly full</b><p>If a row, a column or a box has only one empty cell left, the missing digit goes straight in.</p></div></li>
+      <li><span class="num">2</span><div><b>Pick one digit and scan the grid</b><p>Say you pick 5. Follow the rows and columns that already have a 5 and rule out the cells they cross in one box. If only one cell in the box can still take a 5, that is where it goes. This is a <a href="techniques/hidden-single.html">Hidden Single</a>.</p></div></li>
+      <li><span class="num">3</span><div><b>Pick one cell and rule out digits</b><p>Take away every digit already in its row, its column and its box. If only one is left, that is the answer. This is a <a href="techniques/naked-single.html">Naked Single</a>.</p></div></li>
+      <li><span class="num">4</span><div><b>When nothing shows, write notes</b><p>Note the digits each empty cell can still take, and the next technique shows up among the notes where your eyes alone would miss it.</p></div></li>
+      <li><span class="num">5</span><div><b>Still stuck? Tap Hint</b><p>It does not hand you the answer. It starts by naming the technique to use.</p></div></li>
+      </ol>
+
+      <h2>How notes work</h2>
+      <p>Turn on Notes and tap a digit to write it small in the cell. Tap the same digit again to remove it. While Notes is on, the number pad turns yellow, so you always know whether you are placing an answer or writing a note.</p>
+      <p>If writing them one by one is a chore, tap Auto notes. It fills every empty cell with the digits it can still take. Notes you removed after a hint stay removed, and one Undo takes the whole fill back.</p>
+      <p>Place a correct digit and it disappears from the notes in its row, its column and its box. Select a cell with a digit and every copy of that digit on the grid lights up, so you can see at a glance where it already is.</p>
+
+      <h2>Play with the keyboard</h2>
+      <p>On a computer you can solve with the keyboard alone.</p>
+      <dl class="keymap">
+      <dt>Arrow keys</dt><dd>Move between cells</dd>
+      <dt>1 to 9</dt><dd>Place a digit (or write a note while Notes is on)</dd>
+      <dt>Space</dt><dd>Turn Notes on and off</dd>
+      <dt>Backspace · Delete · 0</dt><dd>Clear the cell</dd>
+      <dt>Ctrl + Z (⌘ + Z on a Mac)</dt><dd>Undo</dd>
+      </dl>
 
       <h2>Techniques by level</h2>
       <div class="lvls">
@@ -562,6 +630,15 @@ footer .copy-r { margin-left: auto; }
       <div><b class="lv-hard">Hard</b><span>Needs patterns like <a href="techniques/x-wing.html">X-Wing</a>, <a href="techniques/finned-x-wing.html">Finned X-Wing</a> and <a href="techniques/skyscraper.html">Skyscraper</a>.</span></div>
       <div><b class="lv-expert">Expert</b><span>Takes <a href="techniques/xy-wing.html">XY-Wing</a>, <a href="techniques/swordfish.html">Swordfish</a> and even <a href="techniques/simple-coloring.html">coloring</a>.</span></div>
       </div>
+      <p class="after">Each level has 100 puzzles. New game picks one you have not played yet, and the set starts over only after you have played all 100. Every puzzle was chosen to be solvable with techniques alone, with no guessing.</p>
+
+      <h2>Hints come in three steps</h2>
+      <ol class="guide">
+      <li><span class="num">1</span><div><b>The technique</b><p>First you only learn which technique works right now. You can stop there and find it yourself.</p></div></li>
+      <li><span class="num">2</span><div><b>Where</b><p>Then the cells where the technique shows are marked on the grid.</p></div></li>
+      <li><span class="num">3</span><div><b>The answer</b><p>Last, it tells you which digit goes in which cell, or which notes to remove.</p></div></li>
+      </ol>
+      <p class="after">You get 3 hints per puzzle. Finding the pattern yourself from just the name is what makes you spot it in the next puzzle.</p>
 
       <h2>Stuck? Learn the technique</h2>
       <p>Each page shows the technique a hint named on an example board: what it looks like, how to find it, and why its eliminations are safe.</p>
@@ -578,12 +655,19 @@ footer .copy-r { margin-left: auto; }
       <a class="all" href="techniques/">All 28 techniques ▸</a>
       </div>
 
+      <h2>Your result when you finish</h2>
+      <p>When you solve a puzzle you see your time, your mistakes and the techniques this puzzle used. The ones a hint helped with are marked, which makes it easy to pick what to learn next.</p>
+      <p>Your time is also compared with clears of the same level in the Sudoku League app, with a chart that shows how far up you placed.</p>
+
       <h2>Questions</h2>
       <div class="faq">
       <div><h3>Is it free?</h3><p>Yes. You can play right in your browser, with no install and no sign-in.</p></div>
       <div><h3>Is this classic sudoku?</h3><p>Yes. It is the standard 9×9 puzzle with the digits 1 to 9, with no variant rules like diagonals or killer cages.</p></div>
+      <div><h3>Does it work on a phone?</h3><p>Yes. In a phone browser the grid, the number pad and the buttons all fit on one screen.</p></div>
       <div><h3>What if I close the window mid-game?</h3><p>Your game is saved in this browser, so you can pick up where you left off when you come back.</p></div>
       <div><h3>Which level should I start with?</h3><p>If you are new, start with Easy. Easy needs only singles, and Pointing and pairs come in from Medium.</p></div>
+      <div><h3>Can I solve without notes?</h3><p>Many Easy puzzles, yes. From Medium on you need notes to see pairs and patterns. Auto notes gets you started without writing them all.</p></div>
+      <div><h3>Will I ever have to guess?</h3><p>No. Every puzzle has exactly one solution, and applying techniques one after another solves it to the end.</p></div>
       <div><h3>Does a hint just give me the answer?</h3><p>No. It tells you in three steps: the technique's name, where it applies, then the answer. You get 3 hints per puzzle.</p></div>
       <div><h3>How many mistakes can I make?</h3><p>Three. The third mistake ends the game, and you can replay the same puzzle or start a new one.</p></div>
       <div><h3>What else is in the app?</h3><p>Live ranked races, races with up to 8 friends, Daily Sudoku, Replay, and every technique lesson.</p></div>

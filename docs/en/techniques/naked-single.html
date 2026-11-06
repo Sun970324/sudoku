@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · Singles</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · Stage 1 · Singles</p>
       <h1>Naked Single</h1>
       <p class="aka">Sole Candidate</p>
       <p class="lead">A Naked Single, also called a Sole Candidate, is a cell with only one digit left that can go in it. It is the most basic sudoku technique: fill the cell with that digit.</p>
@@ -266,6 +269,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       </ol>
       <p class="note">With pencil marks in every cell, cells down to one candidate are easy to spot.</p>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">Take the Naked Single lesson</h2>
+      <p>Try a technique lesson from Sudoku League.</p>      <p class="sl-concept"><a href="peers.html">Take the Cells that see each other concept lesson first ▸</a></p>
+      <div class="sl-host" data-src="../../play/lessons/Stage1Naked.json" data-strings="../../play/lessons/en/Stage1Naked.json" data-next="pointing.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-en-naked-single&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-en-naked-single" data-where="tech-en/naked-single"><p class="sl-wait">Loading</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">Common questions</h2>
@@ -309,9 +317,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </a>
     </div>
     <nav class="pager" aria-label="Technique order" data-nosnippet>
-      
+      <a class="prev px" href="hidden-single.html"><small>Previous</small><b><span class="back">▸</span> Hidden Single</b></a>
       <a class="all px" href="./">All techniques</a>
-      <a class="next px" href="hidden-single.html"><small>Next</small><b>Hidden Single ▸</b></a>
+      <a class="next px" href="pointing.html"><small>Next</small><b>Pointing ▸</b></a>
     </nav>
   </div>
 </main>
@@ -333,6 +341,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = 'The lesson did not load. Please refresh the page.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · 기초 기법 · 교차로</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · 2단계 교집합(인터섹션)</p>
       <h1>클레이밍</h1>
       <p class="aka">박스/줄 감소 · 교차로 · Claiming</p>
       <p class="lead">클레이밍(박스/줄 감소, Claiming)은 한 줄에서 어떤 숫자의 후보가 한 박스 안에만 있을 때, 그 박스의 다른 칸에서 그 숫자를 지우는 스도쿠 기법이에요.</p>
@@ -266,6 +269,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <li class="px"><span>그렇다면 <b>그 박스의 줄 밖 칸</b>에서 그 숫자를 지워요.</span></li>
       </ol>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">클레이밍 레슨 받기</h2>
+      <p>스도쿠 리그의 기법 레슨을 체험해보세요.</p>
+      <div class="sl-host" data-src="../play/lessons/Stage2Claiming.json" data-next="naked-pair.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-claiming&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-claiming" data-where="tech/claiming"><p class="sl-wait">불러오는 중이에요</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">자주 헷갈리는 점</h2>
@@ -311,7 +319,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <nav class="pager" aria-label="기법 순서" data-nosnippet>
       <a class="prev px" href="pointing.html"><small>이전 기법</small><b><span class="back">▸</span> 포인팅</b></a>
       <a class="all px" href="./">목록으로</a>
-      <a class="next px" href="x-wing.html"><small>다음 기법</small><b>X-윙 ▸</b></a>
+      <a class="next px" href="naked-pair.html"><small>다음 기법</small><b>네이키드 페어 ▸</b></a>
     </nav>
   </div>
 </main>
@@ -333,6 +341,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = '레슨을 불러오지 못했어요. 페이지를 새로 고쳐 주세요.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

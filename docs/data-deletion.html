@@ -149,7 +149,9 @@
 익명 처리된 대결·데일리 기록은 개인을 식별할 수 없는 상태이므로 서비스가
 유지되는 동안 보관될 수 있습니다. 다만 그 판의 수 기록(리플레이)은 예외로,
 계정을 유지하든 삭제하든 30일이 지나면 파기됩니다. 신고 기록의 보관 기간은
-최대 1년이고, 재가입 제한용 해시값의 보관 기간은 7일입니다. 그 밖의 개인정보는
+최대 1년이고, 재가입 제한용 해시값의 보관 기간은 7일입니다. 공유하기로 올린
+공유 이미지는 계정과 연결되어 있지 않아, 계정을 삭제해도 올린 날로부터 30일이
+될 때까지 남았다가 자동으로 삭제됩니다. 그 밖의 개인정보는
 위 목록대로 요청 즉시 파기되며 별도의 유예 기간이 없습니다.
 
 ■ 문의
@@ -228,7 +230,10 @@ Anonymized race and daily records carry nothing that identifies a person and
 may be kept for as long as the service runs. Their move-by-move records
 (replays) are the exception: those are destroyed 30 days after collection
 whether or not the account still exists. Reports are kept for at most one
-year, and the re-registration hash for 7 days. Everything else listed above is
+year, and the re-registration hash for 7 days. Images uploaded by sharing are
+not stored against your account, so they stay until 30 days after upload, even
+after the account is deleted, and are then deleted automatically. Everything
+else listed above is
 destroyed immediately on request, with no grace period.
 
 ■ Contact

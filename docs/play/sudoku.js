@@ -594,10 +594,22 @@
     if (!e.repeat) act.notes();
   });
 
+  // Ctrl+Z (⌘Z on a Mac) undoes from the board or the page itself, as Space
+  // does; the undo button shows the key.
+  const mac = /Mac|iPhone|iPad/.test(navigator.platform);
+  document.querySelectorAll('[data-mac]').forEach((k) => { if (mac) k.textContent = k.dataset.mac; });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'z' && e.key !== 'Z') return;
+    if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey) return;
+    if (e.target !== document.body && e.target !== boardEl) return;
+    if (!game || !confirmEl.hidden || (modal && !modal.hidden)) return;
+    e.preventDefault();
+    undo();
+  });
+
   boardEl.addEventListener('keydown', (e) => {
     if (e.key >= '1' && e.key <= '9') { input(Number(e.key)); e.preventDefault(); return; }
     if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') { erase(); e.preventDefault(); return; }
-    if ((e.key === 'z' || e.key === 'Z') && (e.ctrlKey || e.metaKey)) { undo(); e.preventDefault(); return; }
     const move = { ArrowUp: -9, ArrowDown: 9, ArrowLeft: -1, ArrowRight: 1 }[e.key];
     if (move) {
       e.preventDefault();

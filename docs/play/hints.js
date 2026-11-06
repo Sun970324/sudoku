@@ -13,8 +13,9 @@
 // nothing fits (it should not happen) the hint fills the emptiest cell.
 //
 // The candidates the search sees are the board's own (digits placed so far),
-// minus the notes earlier hints told the player to remove (game.known), not
-// the player's notes: those are theirs and may be wrong.
+// minus the notes earlier hints told the player to remove (game.known), and
+// minus what the player has taken off a cell's notes, except the answer: a
+// wrong removal is theirs, and the hint still treats the answer as possible.
 //
 // tool/web_play/hints_test.js drives this file under node.
 (function (root) {
@@ -41,12 +42,16 @@
     PEERS.push([...s]);
   }
 
-  function candidates(vals, known) {
+  // A note the player took off an empty cell that still has notes counts as
+  // removed too, unless it was the cell's answer: a wrong removal is theirs,
+  // a right one should not come back as a hint to remove it again.
+  function candidates(vals, known, notes, sol) {
     const C = new Array(81).fill(0);
     for (let i = 0; i < 81; i++) {
       if (vals[i]) continue;
       let m = ALL;
       for (const p of PEERS[i]) if (vals[p]) m &= ~(1 << vals[p]);
+      if (notes && notes[i]) m &= notes[i] | (1 << sol[i]);
       C[i] = m;
     }
     for (const [i, d] of known || []) C[i] &= ~(1 << d);
@@ -173,7 +178,7 @@
     const wrong = [];
     for (let i = 0; i < 81; i++) if (vals[i] && vals[i] !== Number(puzzle.s[i])) wrong.push(i);
     if (wrong.length) return { t: 'wrong', kind: 'wrong', cells: wrong };
-    const C = candidates(vals, state.known);
+    const C = candidates(vals, state.known, state.notes, [...puzzle.s].map(Number));
     const b = basic(C, vals);
     if (b) return b;
     for (const st of puzzle.steps) {
@@ -388,7 +393,7 @@
       if (hint) { if (stage < 3) advance(); return; }
       if (!a.hintsLeft) return;
       const g = a.game;
-      hint = H.findHint({ puzzle: a.puzzle, vals: g.vals, known: g.known || [] });
+      hint = H.findHint({ puzzle: a.puzzle, vals: g.vals, known: g.known || [], notes: g.notes });
       if (!hint) return;
       a.spendHint();
       stage = 0;

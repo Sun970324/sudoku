@@ -103,6 +103,7 @@ footer a { color: var(--ink-2); }
   .ticket-stub br { display: none; }
 }
 .list + .get { margin-top: 40px; }
+.list .go { display: block; margin-top: 10px; color: var(--gold); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -121,58 +122,66 @@ footer a { color: var(--ink-2); }
     <p class="eyebrow">SUDOKU TECHNIQUES</p>
     <h1>Sudoku Techniques</h1>
     <p class="lead">The solving techniques behind Sudoku League's hints and Technique Practice, each with an example board, how to find it and why the eliminations are safe.</p>
-    <h2>Singles</h2>
+    <h2>Stage 1 · Singles</h2>
     <ul class="list">
-      <li><a class="px" href="naked-single.html"><b>Naked Single</b><small>Sole Candidate</small>A Naked Single, also called a Sole Candidate, is a cell with only one digit left that can go in it. It is the most basic sudoku technique: fill the cell with that digit.</a></li>
+      <li><a class="px" href="peers.html"><small>Concept</small><b>Cells that see each other</b>Learn to spot the cells that share a row, column or box with a cell.<span class="go">Take the lesson ▸</span></a></li>
       <li><a class="px" href="hidden-single.html"><b>Hidden Single</b>A Hidden Single is a digit that has only one possible cell in a row, column or box. Fill that cell with the digit.</a></li>
+      <li><a class="px" href="naked-single.html"><b>Naked Single</b><small>Sole Candidate</small>A Naked Single, also called a Sole Candidate, is a cell with only one digit left that can go in it. It is the most basic sudoku technique: fill the cell with that digit.</a></li>
     </ul>
-    <h2>Basics</h2>
+    <h2>Stage 2 · Intersections</h2>
     <ul class="list">
-      <li><a class="px" href="naked-pair.html"><b>Naked Pair</b>A Naked Pair is two cells in the same row, column or box whose only candidates are the same two digits. Those two digits can then be removed from every other cell in that row, column or box.</a></li>
-      <li><a class="px" href="hidden-pair.html"><b>Hidden Pair</b>A Hidden Pair is two digits that can only go in the same two cells of a row, column or box. Every other candidate in those two cells can then be removed.</a></li>
       <li><a class="px" href="pointing.html"><b>Pointing</b><small>Intersection · Pointing Pair · Locked Candidates</small>Pointing, also called a Pointing Pair or Locked Candidates, is when every candidate for a digit inside one box lies in a single row or column. That digit can then be removed from the rest of that row or column outside the box.</a></li>
       <li><a class="px" href="claiming.html"><b>Claiming</b><small>Intersection · Box/Line Reduction</small>Claiming, also called Box/Line Reduction, is when every candidate for a digit in one row or column lies inside a single box. That digit can then be removed from the other cells of that box.</a></li>
     </ul>
-    <h2>Fish</h2>
+    <h2>Stage 3 · Subsets</h2>
     <ul class="list">
+      <li><a class="px" href="groups.html"><small>Concept</small><b>Groups</b>Learn how a few cells can share the same number of digits between them.<span class="go">Take the lesson ▸</span></a></li>
+      <li><a class="px" href="naked-pair.html"><b>Naked Pair</b>A Naked Pair is two cells in the same row, column or box whose only candidates are the same two digits. Those two digits can then be removed from every other cell in that row, column or box.</a></li>
+      <li><a class="px" href="hidden-pair.html"><b>Hidden Pair</b>A Hidden Pair is two digits that can only go in the same two cells of a row, column or box. Every other candidate in those two cells can then be removed.</a></li>
+    </ul>
+    <h2>Stage 4 · Fish</h2>
+    <ul class="list">
+      <li><a class="px" href="strong-links.html"><small>Concept</small><b>Two places · strong links</b>Learn to join the two cells with a strong link when a digit has only two places.<span class="go">Take the lesson ▸</span></a></li>
       <li><a class="px" href="x-wing.html"><b>X-Wing</b>An X-Wing is when a digit's candidates in two rows sit in exactly the same two columns. That digit can then be removed from every other cell in those two columns.</a></li>
-      <li><a class="px" href="finned-x-wing.html"><b>Finned X-Wing</b>A Finned X-Wing is an X-Wing with one or two extra candidates, the fin, on one of its rows. The digit can be removed from cells in an X-Wing column that share a box with the fin.</a></li>
-      <li><a class="px" href="sashimi-x-wing.html"><b>Sashimi X-Wing</b>A Sashimi X-Wing is an X-Wing with one corner missing and candidates (the fin) next to it in the same box. The digit can be removed from cells in the missing corner's column that share a box with the fin.</a></li>
       <li><a class="px" href="swordfish.html"><b>Swordfish</b>A Swordfish is when a digit's candidates in three rows all lie within the same three columns. That digit can then be removed from every other cell in those three columns.</a></li>
       <li><a class="px" href="jellyfish.html"><b>Jellyfish</b>A Jellyfish is when a digit's candidates in four rows all lie within the same four columns. That digit can then be removed from every other cell in those four columns.</a></li>
+      <li><a class="px" href="finned-x-wing.html"><b>Finned X-Wing</b>A Finned X-Wing is an X-Wing with one or two extra candidates, the fin, on one of its rows. The digit can be removed from cells in an X-Wing column that share a box with the fin.</a></li>
+      <li><a class="px" href="sashimi-x-wing.html"><b>Sashimi X-Wing</b>A Sashimi X-Wing is an X-Wing with one corner missing and candidates (the fin) next to it in the same box. The digit can be removed from cells in the missing corner's column that share a box with the fin.</a></li>
     </ul>
-    <h2>Single-digit patterns</h2>
+    <h2>Stage 5 · Single Digit Patterns</h2>
     <ul class="list">
+      <li><a class="px" href="weak-links.html"><small>Concept</small><b>Weak links</b>Learn the weak link: a digit placed in one cell removes that note from the other.<span class="go">Take the lesson ▸</span></a></li>
       <li><a class="px" href="skyscraper.html"><b>Skyscraper</b>A Skyscraper is two columns where a digit has exactly two candidates and one end of each sits in the same row. The digit can then be removed from any cell that sees both of the other ends.</a></li>
       <li><a class="px" href="two-string-kite.html"><b>2-String Kite</b><small>Two-String Kite</small>A 2-String Kite (Two-String Kite) is a row and a column, each with exactly two candidates for a digit, that meet in one box. The digit can be removed from any cell that sees both far ends.</a></li>
     </ul>
-    <h2>Coloring</h2>
+    <h2>Stage 6 · Wings</h2>
     <ul class="list">
-      <li><a class="px" href="simple-coloring.html"><b>Simple Coloring</b><small>Single Chains</small>Simple Coloring, also called Single Chains, links the lines and boxes where a digit has exactly two candidates and colors the cells in two alternating colors. Any cell that sees both colors cannot hold that digit.</a></li>
-      <li><a class="px" href="multi-coloring.html"><b>Multi-Coloring</b>Multi-Coloring colors two separate clusters of one digit. When a color of one cluster sees a color of the other, any cell that sees both opposite colors cannot hold that digit.</a></li>
-    </ul>
-    <h2>Chains</h2>
-    <ul class="list">
-      <li><a class="px" href="remote-pair.html"><b>Remote Pair</b>A Remote Pair is a chain of cells that all hold the same two candidates and see each other in turn. Any cell that sees two cells of opposite value along the chain loses both digits.</a></li>
-      <li><a class="px" href="x-chain.html"><b>X-Chain</b>An X-Chain links one digit's candidates with strong and weak links in turn. Any cell that sees both ends of the chain cannot hold that digit.</a></li>
-      <li><a class="px" href="xy-chain.html"><b>XY-Chain</b>An XY-Chain is a chain of two-candidate cells, each passing one digit to the next, whose two ends share the same digit. That digit can be removed from any cell that sees both ends.</a></li>
-      <li><a class="px" href="aic.html"><b>AIC</b><small>Alternating Inference Chain</small>An AIC (Alternating Inference Chain) links candidates of several digits with strong and weak links in turn. One end of the chain must be true, so any candidate that sees both ends can be removed.</a></li>
-      <li><a class="px" href="als-chain.html"><b>ALS Chain</b><small>ALS-AIC</small>An ALS Chain (ALS-AIC) is an AIC that uses an almost locked set (ALS), a group of cells with one more candidate than cells, as one of its links. One end must be true, so any candidate that sees both ends can be removed.</a></li>
-    </ul>
-    <h2>Wings</h2>
-    <ul class="list">
+      <li><a class="px" href="bivalue-cells.html"><small>Concept</small><b>Two-note cells</b>Learn that a cell with only two notes must hold one of them.<span class="go">Take the lesson ▸</span></a></li>
       <li><a class="px" href="xy-wing.html"><b>XY-Wing</b><small>Y-Wing</small>An XY-Wing, also called a Y-Wing, is three cells with two candidates each, joined through a middle cell. The digit the two outer cells share can be removed from any cell that sees both of them.</a></li>
       <li><a class="px" href="xyz-wing.html"><b>XYZ-Wing</b>An XYZ-Wing is a middle cell with three candidates and two cells it sees with two candidates each, all three sharing one digit. That digit can be removed from any cell that sees all three.</a></li>
       <li><a class="px" href="w-wing.html"><b>W-Wing</b>A W-Wing is two cells with the same two candidates, joined by a strong link on one of those digits. The other digit can be removed from any cell that sees both cells.</a></li>
-      <li><a class="px" href="wxyz-wing.html"><b>WXYZ-Wing</b>A WXYZ-Wing is four cells whose candidates add up to only four digits, where just one of those digits sits in cells that do not all see each other. That digit can be removed from any cell that sees every cell holding it.</a></li>
     </ul>
-    <h2>Uniqueness</h2>
+    <h2>Stage 7 · Chains and Loops</h2>
     <ul class="list">
+      <li><a class="px" href="chains.html"><small>Concept</small><b>Chains</b>Learn to build a chain by alternating strong and weak links.<span class="go">Take the lesson ▸</span></a></li>
+      <li><a class="px" href="remote-pair.html"><b>Remote Pair</b>A Remote Pair is a chain of cells that all hold the same two candidates and see each other in turn. Any cell that sees two cells of opposite value along the chain loses both digits.</a></li>
+      <li><a class="px" href="xy-chain.html"><b>XY-Chain</b>An XY-Chain is a chain of two-candidate cells, each passing one digit to the next, whose two ends share the same digit. That digit can be removed from any cell that sees both ends.</a></li>
+      <li><a class="px" href="x-chain.html"><b>X-Chain</b>An X-Chain links one digit's candidates with strong and weak links in turn. Any cell that sees both ends of the chain cannot hold that digit.</a></li>
+      <li><a class="px" href="simple-coloring.html"><b>Simple Coloring</b><small>Single Chains</small>Simple Coloring, also called Single Chains, links the lines and boxes where a digit has exactly two candidates and colors the cells in two alternating colors. Any cell that sees both colors cannot hold that digit.</a></li>
+      <li><a class="px" href="multi-coloring.html"><b>Multi-Coloring</b>Multi-Coloring colors two separate clusters of one digit. When a color of one cluster sees a color of the other, any cell that sees both opposite colors cannot hold that digit.</a></li>
+      <li><a class="px" href="aic.html"><b>AIC</b><small>Alternating Inference Chain</small>An AIC (Alternating Inference Chain) links candidates of several digits with strong and weak links in turn. One end of the chain must be true, so any candidate that sees both ends can be removed.</a></li>
+    </ul>
+    <h2>Stage 8 · Uniqueness</h2>
+    <ul class="list">
+      <li><a class="px" href="uniqueness.html"><small>Concept</small><b>One answer only</b>Learn to spot a unique rectangle from the rule that a puzzle has one answer.<span class="go">Take the lesson ▸</span></a></li>
       <li><a class="px" href="hidden-rectangle.html"><b>Hidden Unique Rectangle</b><small>Hidden Rectangle</small>A Hidden Unique Rectangle (Hidden Rectangle) is four cells forming a rectangle on two digits, where one digit has only two candidates in the opposite corner's row and column. Because the puzzle has one answer, the other digit can be removed from that corner.</a></li>
       <li><a class="px" href="bug-plus-one.html"><b>BUG+1</b><small>Bivalue Universal Grave</small>BUG+1 (Bivalue Universal Grave) applies when every empty cell has two candidates except one cell with three. That cell is the digit that appears three times in its row, column or box.</a></li>
     </ul>
-    <h2>Advanced patterns</h2>
+    <h2>Stage 9 · Almost Locked Sets</h2>
     <ul class="list">
+      <li><a class="px" href="almost-locked-sets.html"><small>Concept</small><b>Almost locked sets</b>Learn the almost locked set: one more digit than cells.<span class="go">Take the lesson ▸</span></a></li>
+      <li><a class="px" href="wxyz-wing.html"><b>WXYZ-Wing</b>A WXYZ-Wing is four cells whose candidates add up to only four digits, where just one of those digits sits in cells that do not all see each other. That digit can be removed from any cell that sees every cell holding it.</a></li>
+      <li><a class="px" href="als-chain.html"><b>ALS Chain</b><small>ALS-AIC</small>An ALS Chain (ALS-AIC) is an AIC that uses an almost locked set (ALS), a group of cells with one more candidate than cells, as one of its links. One end must be true, so any candidate that sees both ends can be removed.</a></li>
       <li><a class="px" href="sue-de-coq.html"><b>Sue de Coq</b>Sue de Coq is when the candidates of cells where a box and a line overlap are split between a cell on the line and a cell in the box. Each side's digits can then be removed from the rest of the line and the rest of the box.</a></li>
       <li><a class="px" href="triple-firework.html"><b>Triple Firework</b><small>Firework</small>A Triple Firework, or Firework, is a cell in a box plus one cell in the same row and one in the same column outside the box, which must share three digits. Every other candidate can be removed from those three cells.</a></li>
     </ul>

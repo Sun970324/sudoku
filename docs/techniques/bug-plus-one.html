@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · 유일성 기법</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · 8단계 유일성</p>
       <h1>BUG+1</h1>
       <p class="aka">버그 플러스 원 · Bivalue Universal Grave</p>
       <p class="lead">BUG+1은 빈 칸이 모두 후보 두 개인데 한 칸만 후보가 세 개일 때, 그 칸을 행·열·박스에서 세 번 나오는 숫자로 채우는 스도쿠 기법이에요.</p>
@@ -268,6 +271,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <li class="px"><span>그 칸을 그 숫자로 채워요.</span></li>
       </ol>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">BUG+1 레슨 받기</h2>
+      <p>스도쿠 리그의 기법 레슨을 체험해보세요.</p>      <p class="sl-concept"><a href="uniqueness.html">바탕 개념 답은 하나 레슨 먼저 받기 ▸</a></p>
+      <div class="sl-host" data-src="../play/lessons/Stage8BUG.json" data-next="wxyz-wing.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-bug-plus-one&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-bug-plus-one" data-where="tech/bug-plus-one"><p class="sl-wait">불러오는 중이에요</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">자주 헷갈리는 점</h2>
@@ -313,7 +321,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <nav class="pager" aria-label="기법 순서" data-nosnippet>
       <a class="prev px" href="hidden-rectangle.html"><small>이전 기법</small><b><span class="back">▸</span> 숨은 유일사각형</b></a>
       <a class="all px" href="./">목록으로</a>
-      <a class="next px" href="sue-de-coq.html"><small>다음 기법</small><b>수 드 코크 ▸</b></a>
+      <a class="next px" href="wxyz-wing.html"><small>다음 기법</small><b>WXYZ-윙 ▸</b></a>
     </nav>
   </div>
 </main>
@@ -335,6 +343,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = '레슨을 불러오지 못했어요. 페이지를 새로 고쳐 주세요.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

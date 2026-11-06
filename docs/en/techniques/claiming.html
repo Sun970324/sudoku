@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · Basics · Intersections</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · Stage 2 · Intersections</p>
       <h1>Claiming</h1>
       <p class="aka">Intersection · Box/Line Reduction</p>
       <p class="lead">Claiming, also called Box/Line Reduction, is when every candidate for a digit in one row or column lies inside a single box. That digit can then be removed from the other cells of that box.</p>
@@ -266,6 +269,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <li class="px"><span>If so, remove that digit from <b>the cells of that box off the line</b>.</span></li>
       </ol>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">Take the Claiming lesson</h2>
+      <p>Try a technique lesson from Sudoku League.</p>
+      <div class="sl-host" data-src="../../play/lessons/Stage2Claiming.json" data-strings="../../play/lessons/en/Stage2Claiming.json" data-next="naked-pair.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-en-claiming&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-en-claiming" data-where="tech-en/claiming"><p class="sl-wait">Loading</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">Common questions</h2>
@@ -311,7 +319,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <nav class="pager" aria-label="Technique order" data-nosnippet>
       <a class="prev px" href="pointing.html"><small>Previous</small><b><span class="back">▸</span> Pointing</b></a>
       <a class="all px" href="./">All techniques</a>
-      <a class="next px" href="x-wing.html"><small>Next</small><b>X-Wing ▸</b></a>
+      <a class="next px" href="naked-pair.html"><small>Next</small><b>Naked Pair ▸</b></a>
     </nav>
   </div>
 </main>
@@ -333,6 +341,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = 'The lesson did not load. Please refresh the page.';
+      });
+    });
+  });
 </script>
 </body>
 </html>

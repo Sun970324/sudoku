@@ -187,6 +187,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
 }
+.sl-host { background: var(--panel); }
+.sl-wait { margin: 0; padding: 22px; color: var(--ink-2); }
+.sl-concept { font-weight: 700; }
 </style>
 </head>
 <body>
@@ -205,7 +208,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 <main>
   <div class="wrap">
     <div>
-      <p class="eyebrow">SUDOKU TECHNIQUE · Basics · Intersections</p>
+      <p class="eyebrow">SUDOKU TECHNIQUE · Stage 2 · Intersections</p>
       <h1>Pointing</h1>
       <p class="aka">Intersection · Pointing Pair · Locked Candidates</p>
       <p class="lead">Pointing, also called a Pointing Pair or Locked Candidates, is when every candidate for a digit inside one box lies in a single row or column. That digit can then be removed from the rest of that row or column outside the box.</p>
@@ -268,6 +271,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       </ol>
       <p class="note">It works the same with three candidates in the box, as long as all of them are on one line.</p>
     </section>
+    <section aria-labelledby="try">
+      <h2 id="try">Take the Pointing lesson</h2>
+      <p>Try a technique lesson from Sudoku League.</p>
+      <div class="sl-host" data-src="../../play/lessons/Stage2Pointing.json" data-strings="../../play/lessons/en/Stage2Pointing.json" data-next="claiming.html" data-ios="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-en-pointing&amp;mt=8" data-android="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-en-pointing" data-where="tech-en/pointing"><p class="sl-wait">Loading</p></div>
+    </section>
 
     <section aria-labelledby="faq">
       <h2 id="faq">Common questions</h2>
@@ -311,7 +319,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </a>
     </div>
     <nav class="pager" aria-label="Technique order" data-nosnippet>
-      <a class="prev px" href="hidden-pair.html"><small>Previous</small><b><span class="back">▸</span> Hidden Pair</b></a>
+      <a class="prev px" href="naked-single.html"><small>Previous</small><b><span class="back">▸</span> Naked Single</b></a>
       <a class="all px" href="./">All techniques</a>
       <a class="next px" href="claiming.html"><small>Next</small><b>Claiming ▸</b></a>
     </nav>
@@ -335,6 +343,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
+</script><script src="../../play/lesson.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.sl-host').forEach(function (host) {
+      SudokuLesson.start(host).catch(function () {
+        host.querySelector('.sl-wait').textContent = 'The lesson did not load. Please refresh the page.';
+      });
+    });
+  });
 </script>
 </body>
 </html>
