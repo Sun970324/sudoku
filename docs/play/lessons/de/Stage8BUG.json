@@ -1,0 +1,20 @@
+{
+  "8단계": "Stufe 8",
+  "빈칸이 18개 남았습니다.\n그중 17칸은 메모가 두 숫자뿐입니다.": "Es sind noch 18 leere Felder übrig.\nIn 17 davon stehen nur zwei Notizen.",
+  "빨간 칸만 메모가 2, 3, 4 세 숫자입니다.": "Nur im roten Feld stehen drei Notizen: 2, 3 und 4.",
+  "빨간 칸이 있는 5번째 가로줄,\n1번째 세로줄, 4번 박스를 봅니다.": "Sieh dir Zeile 5, Spalte 1 und Block 4\ndes roten Felds an.",
+  "메모 3은 세 곳 모두에서\n두 번씩 나옵니다.": "Die Notiz 3 kommt in allen dreien\njeweils zweimal vor.",
+  "메모 4도 세 곳 모두에서\n두 번씩 나옵니다.": "Auch die Notiz 4 kommt in allen dreien\njeweils zweimal vor.",
+  "메모 2는 세 곳 모두에서\n세 번씩 나옵니다.": "Die Notiz 2 kommt in allen dreien\njeweils dreimal vor.",
+  "만약 빨간 칸이 2가 아니라면\n빈칸이 모두 메모가 두 숫자뿐이고\n모든 가로줄, 세로줄, 박스에서\n메모 숫자가 두 번씩 나옵니다.": "Wäre das rote Feld keine 2,\nhätte jedes leere Feld nur zwei Notizen\nund in jeder Zeile, Spalte und jedem Block\nkäme jede Notiz zweimal vor.",
+  "그러면 답이 두 개가 됩니다.\n스도쿠의 답은 하나뿐이라\n이렇게 될 수 없습니다.": "Dann gäbe es zwei Lösungen.\nEin Sudoku hat nur eine Lösung,\nalso kann das nicht sein.",
+  "그래서 빨간 칸은 2입니다.": "Also ist das rote Feld eine 2.",
+  "빈칸마다 메모 숫자가 몇 개인지 보세요.\n답을 바로 정할 수 있는 칸을 눌러 보세요.": "Zähl die Notizen in jedem leeren Feld.\nTippe auf das Feld, das du sofort lösen kannst.",
+  "메모가 두 숫자뿐인 칸이에요.\n메모가 세 숫자인 칸을 찾아 보세요.": "Dieses Feld hat nur zwei Notizen.\nSuch ein Feld mit drei Notizen.",
+  "숫자가 이미 있는 칸이에요.\n메모가 있는 빈칸을 보세요.": "In diesem Feld steht schon eine Ziffer.\nSieh dir die leeren Felder mit Notizen an.",
+  "맞아요. 이 칸의 가로줄, 세로줄, 박스에서\n메모 6이 세 번씩 나와요. 이 칸은 6이에요.": "Richtig. Die Notiz 6 kommt in Zeile, Spalte und Block\ndieses Felds je dreimal vor. Das Feld ist eine 6.",
+  "1. 메모가 세 숫자인 칸을 찾고\n나머지 빈칸이 모두 두 숫자뿐인지 확인합니다.": "1. Finde das Feld mit drei Notizen und prüfe,\nob alle anderen leeren Felder nur zwei haben.",
+  "2. 그 칸의 가로줄, 세로줄, 박스에서\n세 번씩 나오는 숫자를 넣습니다.": "2. Trag die Ziffer ein, die in Zeile, Spalte\nund Block dieses Felds dreimal vorkommt.",
+  "8단계 마치기": "Stufe 8 abschließen",
+  "빈칸이 모두 메모가 두 숫자뿐인 판을\nBUG라고 합니다.\n한 칸만 숫자가 하나 더 있어서\nBUG+1이라고 합니다.": "Ein Spielfeld, in dem jedes leere Feld nur zwei Notizen hat,\nheißt BUG.\nHier hat ein Feld eine Notiz mehr,\ndarum heißt es BUG+1."
+}

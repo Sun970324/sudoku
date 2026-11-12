@@ -1,0 +1,22 @@
+{
+  "약한 연결": "Conexões fracas",
+  "5단계": "Etapa 5",
+  "4번째 가로줄의 메모 5를 봅니다.\n5가 들어갈 수 있는 곳이 세 곳입니다.": "Olhe as notas 5 da linha 4.\nO 5 pode entrar em três lugares.",
+  "왼쪽 칸이 5면 겹치는 칸에는\n5가 들어갈 수 없습니다.": "Se a célula da esquerda for 5,\no 5 não pode entrar nas células que se cruzam com ela.",
+  "하지만 왼쪽 칸이 5가 아니어도\n가운데 칸이 5라고 정해지지는 않습니다.\n오른쪽 칸에 들어갈 수도 있습니다.": "Mas, se a célula da esquerda não for 5,\nisso não quer dizer que a do meio seja 5.\nO 5 também pode ir na célula da direita.",
+  "강한 연결은 실선, 약한 연결은 점선으로\n그립니다.": "Conexões fortes são desenhadas com linha contínua,\ne as fracas, com linha pontilhada.",
+  "강한 연결은 한쪽이 5가 아니면\n다른 쪽이 5입니다.": "Na conexão forte, se um lado não for 5,\no outro lado é 5.",
+  "약한 연결은 한쪽에 5가 들어가면\n다른 쪽의 메모 5가 지워집니다.": "Na conexão fraca, se o 5 entrar em um lado,\na nota 5 do outro lado é apagada.",
+  "강한 연결의 두 칸도 한쪽에 5가 들어가면\n다른 쪽의 메모 5가 지워집니다.\n그래서 강한 연결은 약한 연결이기도 합니다.": "Na conexão forte também, se o 5 entrar em um lado,\na nota 5 do outro lado é apagada.\nPor isso, a conexão forte também é uma conexão fraca.",
+  "표시된 칸이 5로 확정되면\n메모 5가 지워지는 칸을 모두 눌러 보세요.": "Se a célula marcada for 5,\ntoque em todas as células que perdem a nota 5.",
+  "메모 5가 있는 칸을 눌러 보세요.": "Toque em uma célula com a nota 5.",
+  "이 칸은 표시된 칸과 겹치지 않아서 지워지지 않아요.": "Esta célula não se cruza com a célula marcada, então a nota não é apagada.",
+  "맞아요. 이 칸의 메모 5가 지워져요.": "Isso! A nota 5 desta célula é apagada.",
+  "표시된 칸 말고 다른 칸을 눌러 보세요.": "Toque em outra célula, não na marcada.",
+  "맞아요. 표시된 칸과 찾은 칸은 약한 연결이에요.": "Isso! A célula marcada e as que você achou formam conexões fracas.",
+  "1. 메모 5가 있는 두 칸을 찾습니다.": "1. Encontre duas células com a nota 5.",
+  "2. 두 칸이 겹치는지 확인합니다.\n겹치면 두 칸은 약한 연결입니다.": "2. Veja se as duas células se cruzam.\nSe sim, elas formam uma conexão fraca.",
+  "3. 한쪽에 5가 들어가면 다른 쪽의 메모 5를 지웁니다.": "3. Se o 5 entrar em uma, apague a nota 5 da outra.",
+  "다음 수업: 스카이스크래퍼": "Próxima aula: Skyscraper",
+  "한 칸에 5가 들어가면 다른 칸의 메모 5가 지워지는\n두 칸을 약한 연결이라고 합니다.\n(약한 링크라고도 부릅니다.)": "Quando um 5 em uma célula apaga a nota 5 da outra,\nessas duas células formam uma conexão fraca.\n(Também chamada de ligação fraca.)"
+}

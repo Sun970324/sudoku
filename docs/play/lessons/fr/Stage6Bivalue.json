@@ -1,0 +1,20 @@
+{
+  "두 숫자뿐인 칸": "Cases à deux notes",
+  "바탕 개념": "Concept de base",
+  "가운데 칸의 메모는 3과 7, 두 개뿐입니다.": "La case du milieu n'a que deux notes : 3 et 7.",
+  "가운데 칸에는 3과 7 중\n하나가 반드시 들어갑니다.": "La case du milieu contient forcément\nle 3 ou le 7.",
+  "이렇게 메모가 두 개뿐인 칸을\n두 숫자뿐인 칸이라고 합니다.": "Une case comme celle-ci, avec seulement deux notes,\ns'appelle une case à deux notes.",
+  "메모가 두 개뿐인 칸을 모두 눌러 보세요.": "Touche toutes les cases qui n'ont que deux notes.",
+  "메모가 있는 칸을 눌러 보세요.": "Touche une case qui a des notes.",
+  "이 칸은 메모가 세 개라서 두 숫자뿐인 칸이 아니에요.": "Cette case a trois notes, ce n'est donc pas une case à deux notes.",
+  "맞아요. 메모가 2와 7, 두 개뿐이에요.": "Exact. Elle n'a que deux notes : 2 et 7.",
+  "맞아요. 메모가 4와 9, 두 개뿐이에요.": "Exact. Elle n'a que deux notes : 4 et 9.",
+  "이 칸은 메모가 네 개라서 두 숫자뿐인 칸이 아니에요.": "Cette case a quatre notes, ce n'est donc pas une case à deux notes.",
+  "맞아요. 메모가 3과 8, 두 개뿐이에요.": "Exact. Elle n'a que deux notes : 3 et 8.",
+  "맞아요. 메모가 1과 5, 두 개뿐이에요.": "Exact. Elle n'a que deux notes : 1 et 5.",
+  "모두 찾았어요. 이 칸들에는 두 숫자 중 하나가 꼭 들어가요.": "Tu les as toutes trouvées. Chacune de ces cases contient forcément l'un de ses deux chiffres.",
+  "1. 메모가 두 개뿐인 칸을 찾습니다.": "1. Trouve une case qui n'a que deux notes.",
+  "2. 한 숫자가 아니면 다른 숫자가 들어갑니다.": "2. Si ce n'est pas l'un des chiffres, c'est l'autre.",
+  "다음 수업부터 두 숫자뿐인 칸을 이어서\n메모를 지웁니다.": "À partir de la prochaine leçon, on relie des cases à deux notes\npour effacer des notes.",
+  "다음 수업: XY-윙": "Prochaine leçon : XY-Wing"
+}

@@ -15,17 +15,10 @@
   const dialog = document.getElementById('coupon');
   if (!dialog) return;
   const FUNCTION_URL = 'https://nxzbgkyemozqalhdtbuy.supabase.co/functions/v1/claim-coupon';
-  const ko = document.documentElement.lang === 'ko';
+  const T = window.SLText;
   const PLATFORMS = {
     ios: { suffix: 'Ios', tokenKey: 'sl_coupon_token_ios', name: 'iPhone' },
     android: { suffix: 'Android', tokenKey: 'sl_coupon_token_android', name: 'Android' },
-  };
-  const LABELS = {
-    claiming: () => (ko ? '받는 중…' : 'Getting…'),
-    soldout: (n) => (ko ? `${n} 쿠폰 소진` : `${n} sold out`),
-    claimed: (n) => (ko ? `${n} 쿠폰 받음` : `Got ${n} code`),
-    copy: ko ? '복사' : 'Copy',
-    copied: ko ? '복사했어요' : 'Copied',
   };
   const el = (id) => document.getElementById(id);
   const idle = {};
@@ -57,13 +50,13 @@
     const b = el('claim' + PLATFORMS[p].suffix);
     b.disabled = state !== 'idle';
     b.classList.toggle('done', state === 'claimed');
-    b.textContent = state === 'idle' ? idle[p] : LABELS[state](PLATFORMS[p].name);
+    b.textContent = state === 'idle' ? idle[p] : T(`coupon.${state}`, { platform: PLATFORMS[p].name });
   }
 
   function showCode(p, code) {
     const s = PLATFORMS[p].suffix;
     el('code' + s).textContent = code;
-    el('copy' + s).textContent = LABELS.copy;
+    el('copy' + s).textContent = T('coupon.copy');
     el('box' + s).hidden = false;
     el('couponError').hidden = true;
     setButton(p, 'claimed');
@@ -97,7 +90,7 @@
     el('claim' + s).addEventListener('click', () => claim(p));
     el('copy' + s).addEventListener('click', () => {
       const code = el('code' + s);
-      const done = () => { el('copy' + s).textContent = LABELS.copied; };
+      const done = () => { el('copy' + s).textContent = T('coupon.copied'); };
       // In-app browsers (KakaoTalk, Instagram, …) often have no Clipboard
       // API or refuse it. The old execCommand path goes first because it must
       // run inside the tap itself (iOS refuses it once a promise has

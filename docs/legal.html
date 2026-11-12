@@ -14,28 +14,35 @@
   :root { --bg: #0a1736; --panel: #12244d; --line: #2a4277; --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d;
           --pixel: "Mulmaru", system-ui, sans-serif;
           --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right)); }
-  /* One language at a time. Only the inactive one is hidden, so every element
-     keeps whatever display type it would otherwise have. */
-  html[data-lang="ko"] .en { display: none !important; }
-  html[data-lang="en"] .ko { display: none !important; }
+  /* One language at a time. Only the inactive ones are hidden, so every
+     element keeps whatever display type it would otherwise have. */
+  html:not([data-lang="ko"]) .l-ko { display: none !important; }
+  html:not([data-lang="en"]) .l-en { display: none !important; }
+  html:not([data-lang="ja"]) .l-ja { display: none !important; }
+  html:not([data-lang="zh"]) .l-zh { display: none !important; }
+  html:not([data-lang="de"]) .l-de { display: none !important; }
+  html:not([data-lang="es"]) .l-es { display: none !important; }
+  html:not([data-lang="fr"]) .l-fr { display: none !important; }
+  html:not([data-lang="pt"]) .l-pt { display: none !important; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Hiragino Sans", "PingFang TC", "Noto Sans JP", "Noto Sans TC", "Segoe UI", sans-serif;
          word-break: keep-all; overflow-wrap: anywhere; -webkit-text-size-adjust: 100%; }
+  html[data-lang="ja"] body, html[data-lang="zh"] body { word-break: normal; line-break: strict; }
   a { color: var(--gold); }
   a:hover { color: #ffe08a; }
   .wrap { max-width: 860px; margin: 0 auto; padding-inline: var(--gutter); }
   .px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
   header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
   header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
-  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
   .brand:hover { color: var(--ink); }
   .brand img { width: 40px; height: 40px; border-radius: 9px; }
-  .lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 var(--pixel); cursor: pointer; }
+  .lang { flex: none; min-height: 44px; padding: 0 14px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 system-ui, sans-serif; font-weight: 700; cursor: pointer; }
   main { padding: 64px 0 96px; }
   .eyebrow { margin: 0 0 20px; font: 18px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.12em; }
   .doc { background: var(--panel); padding: 36px 40px; }
-  pre { margin: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
+  pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
   pre::first-line { color: var(--ink); font-size: 22px; font-weight: 700; }
   .doc h1, .doc h2 { color: var(--ink); margin: 0 0 12px; }
   .doc h2 { margin-top: 32px; font-size: 20px; }
@@ -49,32 +56,32 @@
     main { padding: 40px 0 64px; }
     .doc { padding: 24px 20px; }
     pre::first-line { font-size: 19px; }
+    .brand { font-size: 18px; }
   }
 </style>
 <script>
   // Language before first paint, so the wrong one never flashes. A stored
-  // choice wins; otherwise the browser's own language decides. localStorage
-  // throws in Safari private mode, so every touch of it is guarded.
+  // choice wins; otherwise the browser's own language decides, and English
+  // stands in for a language the documents are not in. localStorage throws
+  // in Safari private mode, so every touch of it is guarded.
   (function () {
+    var codes = ['ko', 'en', 'ja', 'zh', 'de', 'es', 'fr', 'pt'];
     var lang = null;
     try { lang = window.localStorage.getItem('sl_lang'); } catch (e) {}
-    if (lang !== 'ko' && lang !== 'en') {
-      var tag = (navigator.languages && navigator.languages[0]) ||
-                navigator.language || 'en';
-      lang = String(tag).toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
+    if (codes.indexOf(lang) < 0) {
+      var tag = String((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase();
+      lang = codes.indexOf(tag.slice(0, 2)) >= 0 ? tag.slice(0, 2) : 'en';
     }
     document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : lang;
   })();
 </script>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="ko">스도쿠 리그</span><span class="en">Sudoku League</span></a>
-    <!-- The label is the language you would switch *to*, so it is the one
-         hidden while that language is active. -->
-    <button class="lang px" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button>
+    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="l-ko">스도쿠 리그</span><span class="l-en">Sudoku League</span><span class="l-ja">Sudoku League</span><span class="l-zh">Sudoku League</span><span class="l-de">Sudoku League</span><span class="l-es">Sudoku League</span><span class="l-fr">Sudoku League</span><span class="l-pt">Sudoku League</span></a>
+    <select class="lang px" id="langPick" aria-label="Language"><option value="ko" lang="ko">한국어</option><option value="en" lang="en">English</option><option value="ja" lang="ja">日本語</option><option value="zh" lang="zh-Hant">繁體中文</option><option value="de" lang="de">Deutsch</option><option value="es" lang="es">Español</option><option value="fr" lang="fr">Français</option><option value="pt" lang="pt">Português</option></select>
   </div>
 </header>
 <main>
@@ -83,18 +90,15 @@
     <div class="doc px">
 <h1>Sudoku League</h1>
 <ul>
-  <li><a href="privacy.html"><span class="ko">개인정보처리방침</span><span class="en">Privacy Policy</span></a></li>
-  <li><a href="terms.html"><span class="ko">이용약관</span><span class="en">Terms of Service</span></a></li>
-  <li><a href="data-deletion.html"><span class="ko">계정 삭제 안내</span><span class="en">Account Deletion</span></a></li>
-  <li><span class="ko">문의</span><span class="en">Contact</span>: <a href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></li>
+  <li><a href="privacy.html"><span class="l-ko">개인정보처리방침</span><span class="l-en">Privacy Policy</span><span class="l-ja">プライバシーポリシー</span><span class="l-zh">隱私權政策</span><span class="l-de">Datenschutzerklärung</span><span class="l-es">Política de privacidad</span><span class="l-fr">Politique de confidentialité</span><span class="l-pt">Política de Privacidade</span></a></li>
+  <li><a href="terms.html"><span class="l-ko">이용약관</span><span class="l-en">Terms of Service</span><span class="l-ja">利用規約</span><span class="l-zh">服務條款</span><span class="l-de">Nutzungsbedingungen</span><span class="l-es">Términos de servicio</span><span class="l-fr">Conditions d'utilisation</span><span class="l-pt">Termos de Uso</span></a></li>
+  <li><a href="data-deletion.html"><span class="l-ko">계정 삭제 안내</span><span class="l-en">Account Deletion</span><span class="l-ja">アカウント削除のご案内</span><span class="l-zh">帳號刪除說明</span><span class="l-de">Hinweise zur Kontolöschung</span><span class="l-es">Eliminación de la cuenta</span><span class="l-fr">Suppression du compte</span><span class="l-pt">Exclusão de conta</span></a></li>
+  <li><span class="l-ko">문의</span><span class="l-en">Contact</span><span class="l-ja">お問い合わせ</span><span class="l-zh">聯絡我們</span><span class="l-de">Kontakt</span><span class="l-es">Contacto</span><span class="l-fr">Contact</span><span class="l-pt">Contato</span>: <a href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></li>
 </ul>
-<h2><span class="ko">사용권 계약</span><span class="en">Terms of Use (EULA)</span></h2>
-<p>
-  <span class="ko">App Store 버전은 Apple의 표준 최종 사용자 사용권 계약을 따릅니다.</span><span class="en">The App Store version is licensed under Apple's standard End User License
-  Agreement.</span>
-</p>
+<h2><span class="l-ko">사용권 계약</span><span class="l-en">Terms of Use (EULA)</span><span class="l-ja">使用許諾契約</span><span class="l-zh">使用授權合約</span><span class="l-de">Lizenzvertrag</span><span class="l-es">Contrato de licencia (EULA)</span><span class="l-fr">Contrat de licence (CLUF)</span><span class="l-pt">Contrato de Licença (EULA)</span></h2>
+<p><span class="l-ko">App Store 버전은 Apple의 표준 최종 사용자 사용권 계약을 따릅니다.</span><span class="l-en">The App Store version is licensed under Apple's standard End User License Agreement.</span><span class="l-ja">App Store版には、Appleの標準エンドユーザー使用許諾契約が適用されます。</span><span class="l-zh">App Store 版本依循 Apple 的標準終端使用者授權合約。</span><span class="l-de">Für die Version im App Store gilt der Standard-Endbenutzer-Lizenzvertrag von Apple.</span><span class="l-es">La versión de App Store se rige por el Contrato de Licencia de Usuario Final estándar de Apple.</span><span class="l-fr">La version App Store est soumise au contrat de licence utilisateur final standard d'Apple.</span><span class="l-pt">A versão da App Store está sujeita ao Contrato de Licença de Usuário Final padrão da Apple.</span></p>
 <ul>
-  <li><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="ko">Apple 표준 EULA</span><span class="en">Apple's standard EULA</span></a></li>
+  <li><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="l-ko">Apple 표준 EULA</span><span class="l-en">Apple's standard EULA</span><span class="l-ja">Apple標準EULA</span><span class="l-zh">Apple 標準 EULA</span><span class="l-de">Standard-EULA von Apple</span><span class="l-es">EULA estándar de Apple</span><span class="l-fr">CLUF standard d'Apple</span><span class="l-pt">EULA padrão da Apple</span></a></li>
 </ul>
 
     </div>
@@ -102,22 +106,22 @@
 </main>
 <footer>
   <div class="wrap">
-    <a href="privacy.html"><span class="ko">개인정보처리방침</span><span class="en">Privacy Policy</span></a>
-    <a href="terms.html"><span class="ko">이용약관</span><span class="en">Terms of Service</span></a>
-    <a href="data-deletion.html"><span class="ko">계정 삭제 안내</span><span class="en">Account Deletion</span></a>
-    <span><span class="ko">문의</span><span class="en">Contact</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
-    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="ko">Apple 표준 EULA</span><span class="en">Apple's standard EULA</span></a>
+    <a href="privacy.html"><span class="l-ko">개인정보처리방침</span><span class="l-en">Privacy Policy</span><span class="l-ja">プライバシーポリシー</span><span class="l-zh">隱私權政策</span><span class="l-de">Datenschutzerklärung</span><span class="l-es">Política de privacidad</span><span class="l-fr">Politique de confidentialité</span><span class="l-pt">Política de Privacidade</span></a>
+    <a href="terms.html"><span class="l-ko">이용약관</span><span class="l-en">Terms of Service</span><span class="l-ja">利用規約</span><span class="l-zh">服務條款</span><span class="l-de">Nutzungsbedingungen</span><span class="l-es">Términos de servicio</span><span class="l-fr">Conditions d'utilisation</span><span class="l-pt">Termos de Uso</span></a>
+    <a href="data-deletion.html"><span class="l-ko">계정 삭제 안내</span><span class="l-en">Account Deletion</span><span class="l-ja">アカウント削除のご案内</span><span class="l-zh">帳號刪除說明</span><span class="l-de">Hinweise zur Kontolöschung</span><span class="l-es">Eliminación de la cuenta</span><span class="l-fr">Suppression du compte</span><span class="l-pt">Exclusão de conta</span></a>
+    <span><span class="l-ko">문의</span><span class="l-en">Contact</span><span class="l-ja">お問い合わせ</span><span class="l-zh">聯絡我們</span><span class="l-de">Kontakt</span><span class="l-es">Contacto</span><span class="l-fr">Contact</span><span class="l-pt">Contato</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="l-ko">Apple 표준 EULA</span><span class="l-en">Apple's standard EULA</span><span class="l-ja">Apple標準EULA</span><span class="l-zh">Apple 標準 EULA</span><span class="l-de">Standard-EULA von Apple</span><span class="l-es">EULA estándar de Apple</span><span class="l-fr">CLUF standard d'Apple</span><span class="l-pt">EULA padrão da Apple</span></a>
   </div>
 </footer>
 <script>
-  // Toggle only; these pages have no script-written strings, so the CSS switch
+  // These pages have no script-written strings, so switching the attribute
   // is the whole re-render.
-  document.getElementById('langToggle').addEventListener('click', function () {
-    var next =
-      document.documentElement.getAttribute('data-lang') === 'en' ? 'ko' : 'en';
-    document.documentElement.setAttribute('data-lang', next);
-    document.documentElement.lang = next;
-    try { window.localStorage.setItem('sl_lang', next); } catch (e) {}
+  var pick = document.getElementById('langPick');
+  pick.value = document.documentElement.getAttribute('data-lang');
+  pick.addEventListener('change', function () {
+    document.documentElement.setAttribute('data-lang', pick.value);
+    document.documentElement.lang = pick.value === 'zh' ? 'zh-Hant' : pick.value;
+    try { window.localStorage.setItem('sl_lang', pick.value); } catch (e) {}
   });
 </script>
 </body>

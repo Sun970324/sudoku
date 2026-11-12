@@ -20,11 +20,12 @@
 
   // ------------------------------------------------------------ lesson file
 
-  // Puts every string the lesson shows through its English table
-  // (assets/data/lessons/en/<id>.json), as lib/lesson_script/lesson.dart's
-  // _translate does. A string the table lacks stays Korean.
-  function translate(j, en) {
-    const tr = (s) => (typeof s === 'string' && HANGUL.test(s) && en[s] ? en[s] : s);
+  // Puts every string the lesson shows through its table in the page's
+  // language (assets/data/lessons/<lang>/<id>.json), as
+  // lib/lesson_script/lesson.dart's _translate does. A string the table lacks
+  // stays Korean.
+  function translate(j, table) {
+    const tr = (s) => (typeof s === 'string' && HANGUL.test(s) && table[s] ? table[s] : s);
     const view = (v) => {
       for (const k of ['body', 'msg']) if (k in v) v[k] = tr(v[k]);
       for (const s of v.steps || []) s.text = tr(s.text);
@@ -68,8 +69,8 @@
     return { kind: 'task', a: machine(b.automaton), b: b.then ? machine(b.then) : null };
   }
 
-  function parseLesson(j, en) {
-    if (en) translate(j, en);
+  function parseLesson(j, table) {
+    if (table) translate(j, table);
     const lesson = {
       id: j.id,
       appTitle: j.appTitle,
@@ -600,12 +601,11 @@
 
   // ------------------------------------------------------------ the card
 
-  const ko = document.documentElement.lang !== 'en';
-  const T = ko
-    ? { prev: '이전', next: '다음', find: '찾아서 눌러 보세요', restart: '처음부터 다시', nextTech: '다음 기법', app: '앱에서 실전 판 풀기' }
-    : { prev: 'Back', next: 'Next', find: 'Find it and tap', restart: 'Start over', nextTech: 'Next technique', app: 'Real puzzles in the app' };
-
   const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  // The card's buttons in the page's language, from the page's JSON table
+  // (docs/play/text.js, which the page loads first).
+  const say = (key) => esc(window.SLText('lesson.' + key));
 
   // opts: next ({href, name} of the page's next technique, or null), app
   // (the app button's href), onApp (called on its click), plus the board's
@@ -668,13 +668,13 @@
       if (msg) html += '<p class="sl-msg ' + (view.ok ? 'ok' : 'no') + '">' + esc(msg) + '</p>';
       html += '</div>';
       if (ending) {
-        html += '<div class="sl-row"><button type="button" class="sl-btn line" data-act="restart">' + T.restart + '</button>' +
-          (opts.next ? '<a class="sl-btn line" href="' + esc(opts.next.href) + '">' + T.nextTech + '</a>' : '') + '</div>';
+        html += '<div class="sl-row"><button type="button" class="sl-btn line" data-act="restart">' + say('restart') + '</button>' +
+          (opts.next ? '<a class="sl-btn line" href="' + esc(opts.next.href) + '">' + say('nextTech') + '</a>' : '') + '</div>';
       }
-      html += '<div class="sl-row"><button type="button" class="sl-btn line" data-act="prev"' + (s.page === 0 && s.beat === 0 ? ' disabled' : '') + '>' + T.prev + '</button>';
-      if (ending) html += '<a class="sl-btn main" data-act="app" href="' + esc(opts.app || '#app') + '">' + T.app + '</a>';
-      else if (isBlocked) html += '<button type="button" class="sl-btn main" disabled>' + T.find + '</button>';
-      else html += '<button type="button" class="sl-btn main" data-act="next">' + T.next + '</button>';
+      html += '<div class="sl-row"><button type="button" class="sl-btn line" data-act="prev"' + (s.page === 0 && s.beat === 0 ? ' disabled' : '') + '>' + say('prev') + '</button>';
+      if (ending) html += '<a class="sl-btn main" data-act="app" href="' + esc(opts.app || '#app') + '">' + say('app') + '</a>';
+      else if (isBlocked) html += '<button type="button" class="sl-btn main" disabled>' + say('find') + '</button>';
+      else html += '<button type="button" class="sl-btn main" data-act="next">' + say('next') + '</button>';
       card.innerHTML = html + '</div>';
       card.querySelectorAll('.sl-step').forEach((el, i) => {
         if (opts.settled) return;
@@ -811,7 +811,8 @@
         if (!r.ok) throw new Error(src + ': ' + r.status);
         return r.json();
       });
-    // data-strings: the lesson's English table, on English pages.
+    // data-strings: the lesson's table in the page's language, on every page
+    // but the Korean.
     return Promise.all([get(d.src), d.strings ? get(d.strings) : null])
       .then(([json, strings]) =>
         (host.lesson = mount(host, json, {

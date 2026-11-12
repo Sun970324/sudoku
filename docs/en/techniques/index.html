@@ -8,7 +8,13 @@
 <link rel="canonical" href="https://sudoku.jaywithme.com/en/techniques/">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/">
-<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/techniques/">
+<link rel="alternate" hreflang="ja" href="https://sudoku.jaywithme.com/ja/techniques/">
+<link rel="alternate" hreflang="zh-Hant" href="https://sudoku.jaywithme.com/zh-hant/techniques/">
+<link rel="alternate" hreflang="de" href="https://sudoku.jaywithme.com/de/techniques/">
+<link rel="alternate" hreflang="es" href="https://sudoku.jaywithme.com/es/techniques/">
+<link rel="alternate" hreflang="fr" href="https://sudoku.jaywithme.com/fr/techniques/">
+<link rel="alternate" hreflang="pt" href="https://sudoku.jaywithme.com/pt/techniques/">
+<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/en/techniques/">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0a1736">
 <meta property="og:type" content="website">
@@ -55,8 +61,14 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 .nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
 .nav a[aria-current="page"] { color: var(--gold); box-shadow: inset 0 -4px 0 var(--gold); }
-.lang { align-self: center; margin-left: auto; font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
-.lang:hover { color: var(--ink); border-color: var(--ink-2); }
+.lang { position: relative; align-self: center; margin-left: auto; }
+.lang summary { display: block; list-style: none; cursor: pointer; font-size: 14px; line-height: 1; color: var(--ink-2); border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.lang summary::-webkit-details-marker { display: none; }
+.lang summary:hover, .lang[open] summary { color: var(--ink); border-color: var(--ink-2); }
+.lang ul { position: absolute; top: calc(100% + 6px); right: 0; z-index: 50; min-width: 168px; margin: 0; padding: 4px 0; list-style: none; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line), 0 8px 24px rgba(0, 0, 0, 0.45); }
+.lang a { display: flex; align-items: center; min-height: 44px; padding: 0 16px; color: var(--ink); text-decoration: none; font-size: 15px; white-space: nowrap; }
+.lang a:hover { background: #18306a; color: var(--ink); }
+.lang a[aria-current="page"] { color: var(--gold); }
 @media (max-width: 899px) {
   .bar { height: 56px; gap: 4px; }
   .brand { flex: none; margin-right: 4px; }
@@ -64,7 +76,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .nav { min-width: 0; }
   .nav a { min-height: 0; padding: 0 8px; }
-  .lang { flex: none; padding: 6px 8px; font-size: 13px; }
+  .lang { flex: none; }
+  .lang summary { padding: 6px 8px; font-size: 13px; }
 }
 main .wrap { padding-block: 48px 80px; }
 .eyebrow { margin: 0 0 12px; font: 12px/1.5 var(--pixel); color: var(--gold); letter-spacing: 0.1em; }
@@ -114,7 +127,19 @@ footer a { color: var(--ink-2); }
       <a href="../">Play</a>
       <a href="./" aria-current="page">Learn techniques</a>
     </nav>
-    <a class="lang" href="../../techniques/" hreflang="ko" lang="ko">한국어</a>
+    <details class="lang" id="langMenu">
+      <summary lang="en">English ▾</summary>
+      <ul>
+        <li><a href="../../techniques/" hreflang="ko" lang="ko" data-set-lang="ko">한국어</a></li>
+        <li><a href="./" lang="en" aria-current="page">English</a></li>
+        <li><a href="../../ja/techniques/" hreflang="ja" lang="ja" data-set-lang="ja">日本語</a></li>
+        <li><a href="../../zh-hant/techniques/" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh">繁體中文</a></li>
+        <li><a href="../../de/techniques/" hreflang="de" lang="de" data-set-lang="de">Deutsch</a></li>
+        <li><a href="../../es/techniques/" hreflang="es" lang="es" data-set-lang="es">Español</a></li>
+        <li><a href="../../fr/techniques/" hreflang="fr" lang="fr" data-set-lang="fr">Français</a></li>
+        <li><a href="../../pt/techniques/" hreflang="pt" lang="pt" data-set-lang="pt">Português</a></li>
+      </ul>
+    </details>
   </div>
 </header>
 <main>
@@ -206,6 +231,19 @@ footer a { color: var(--ink-2); }
   </div>
 </footer>
 <script>
+  document.querySelectorAll('[data-set-lang]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      try { localStorage.setItem('sl_lang', a.getAttribute('data-set-lang')); } catch (e) {}
+    });
+  });
+  (function () {
+    var menu = document.getElementById('langMenu');
+    document.addEventListener('click', function (e) { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); }
+    });
+  })();
+</script><script>
   // Count only the canonical host: not a local preview, not github.io.
   if (location.hostname === 'sudoku.jaywithme.com') {
     var gc = document.createElement('script');

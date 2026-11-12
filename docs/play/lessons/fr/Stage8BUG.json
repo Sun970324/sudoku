@@ -1,0 +1,20 @@
+{
+  "8단계": "Étape 8",
+  "빈칸이 18개 남았습니다.\n그중 17칸은 메모가 두 숫자뿐입니다.": "Il reste 18 cases vides.\n17 d'entre elles n'ont que deux notes.",
+  "빨간 칸만 메모가 2, 3, 4 세 숫자입니다.": "Seule la case rouge a trois notes : 2, 3 et 4.",
+  "빨간 칸이 있는 5번째 가로줄,\n1번째 세로줄, 4번 박스를 봅니다.": "Regarde la ligne 5 de la case rouge,\nsa colonne 1 et son bloc 4.",
+  "메모 3은 세 곳 모두에서\n두 번씩 나옵니다.": "La note 3 apparaît deux fois\ndans chacun des trois.",
+  "메모 4도 세 곳 모두에서\n두 번씩 나옵니다.": "La note 4 apparaît aussi deux fois\ndans chacun des trois.",
+  "메모 2는 세 곳 모두에서\n세 번씩 나옵니다.": "La note 2 apparaît trois fois\ndans chacun des trois.",
+  "만약 빨간 칸이 2가 아니라면\n빈칸이 모두 메모가 두 숫자뿐이고\n모든 가로줄, 세로줄, 박스에서\n메모 숫자가 두 번씩 나옵니다.": "Si la case rouge n'était pas un 2,\ntoutes les cases vides n'auraient que deux notes,\net dans chaque ligne, colonne et bloc,\nchaque note apparaîtrait deux fois.",
+  "그러면 답이 두 개가 됩니다.\n스도쿠의 답은 하나뿐이라\n이렇게 될 수 없습니다.": "Il y aurait alors deux solutions.\nUn sudoku n'a qu'une seule solution,\ndonc c'est impossible.",
+  "그래서 빨간 칸은 2입니다.": "La case rouge est donc un 2.",
+  "빈칸마다 메모 숫자가 몇 개인지 보세요.\n답을 바로 정할 수 있는 칸을 눌러 보세요.": "Compte les notes de chaque case vide.\nTouche la case que tu peux résoudre tout de suite.",
+  "메모가 두 숫자뿐인 칸이에요.\n메모가 세 숫자인 칸을 찾아 보세요.": "Cette case n'a que deux notes.\nCherche une case avec trois notes.",
+  "숫자가 이미 있는 칸이에요.\n메모가 있는 빈칸을 보세요.": "Cette case a déjà un chiffre.\nRegarde les cases vides avec des notes.",
+  "맞아요. 이 칸의 가로줄, 세로줄, 박스에서\n메모 6이 세 번씩 나와요. 이 칸은 6이에요.": "Exact ! La note 6 apparaît trois fois dans la ligne,\nla colonne et le bloc de cette case. C'est un 6.",
+  "1. 메모가 세 숫자인 칸을 찾고\n나머지 빈칸이 모두 두 숫자뿐인지 확인합니다.": "1. Trouve la case qui a trois notes et vérifie\nque toutes les autres cases vides n'en ont que deux.",
+  "2. 그 칸의 가로줄, 세로줄, 박스에서\n세 번씩 나오는 숫자를 넣습니다.": "2. Place le chiffre qui apparaît trois fois\ndans la ligne, la colonne et le bloc de cette case.",
+  "빈칸이 모두 메모가 두 숫자뿐인 판을\nBUG라고 합니다.\n한 칸만 숫자가 하나 더 있어서\nBUG+1이라고 합니다.": "Une grille où toutes les cases vides n'ont que deux notes s'appelle un BUG.\nIci, une seule case a une note en plus, d'où le nom BUG+1.",
+  "8단계 마치기": "Terminer l'étape 8"
+}

@@ -14,28 +14,35 @@
   :root { --bg: #0a1736; --panel: #12244d; --line: #2a4277; --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d;
           --pixel: "Mulmaru", system-ui, sans-serif;
           --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right)); }
-  /* One language at a time. Only the inactive one is hidden, so every element
-     keeps whatever display type it would otherwise have. */
-  html[data-lang="ko"] .en { display: none !important; }
-  html[data-lang="en"] .ko { display: none !important; }
+  /* One language at a time. Only the inactive ones are hidden, so every
+     element keeps whatever display type it would otherwise have. */
+  html:not([data-lang="ko"]) .l-ko { display: none !important; }
+  html:not([data-lang="en"]) .l-en { display: none !important; }
+  html:not([data-lang="ja"]) .l-ja { display: none !important; }
+  html:not([data-lang="zh"]) .l-zh { display: none !important; }
+  html:not([data-lang="de"]) .l-de { display: none !important; }
+  html:not([data-lang="es"]) .l-es { display: none !important; }
+  html:not([data-lang="fr"]) .l-fr { display: none !important; }
+  html:not([data-lang="pt"]) .l-pt { display: none !important; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Hiragino Sans", "PingFang TC", "Noto Sans JP", "Noto Sans TC", "Segoe UI", sans-serif;
          word-break: keep-all; overflow-wrap: anywhere; -webkit-text-size-adjust: 100%; }
+  html[data-lang="ja"] body, html[data-lang="zh"] body { word-break: normal; line-break: strict; }
   a { color: var(--gold); }
   a:hover { color: #ffe08a; }
   .wrap { max-width: 860px; margin: 0 auto; padding-inline: var(--gutter); }
   .px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
   header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
   header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
-  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
   .brand:hover { color: var(--ink); }
   .brand img { width: 40px; height: 40px; border-radius: 9px; }
-  .lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 var(--pixel); cursor: pointer; }
+  .lang { flex: none; min-height: 44px; padding: 0 14px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 system-ui, sans-serif; font-weight: 700; cursor: pointer; }
   main { padding: 64px 0 96px; }
   .eyebrow { margin: 0 0 20px; font: 18px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.12em; }
   .doc { background: var(--panel); padding: 36px 40px; }
-  pre { margin: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
+  pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
   pre::first-line { color: var(--ink); font-size: 22px; font-weight: 700; }
   .doc h1, .doc h2 { color: var(--ink); margin: 0 0 12px; }
   .doc h2 { margin-top: 32px; font-size: 20px; }
@@ -49,39 +56,39 @@
     main { padding: 40px 0 64px; }
     .doc { padding: 24px 20px; }
     pre::first-line { font-size: 19px; }
+    .brand { font-size: 18px; }
   }
 </style>
 <script>
   // Language before first paint, so the wrong one never flashes. A stored
-  // choice wins; otherwise the browser's own language decides. localStorage
-  // throws in Safari private mode, so every touch of it is guarded.
+  // choice wins; otherwise the browser's own language decides, and English
+  // stands in for a language the documents are not in. localStorage throws
+  // in Safari private mode, so every touch of it is guarded.
   (function () {
+    var codes = ['ko', 'en', 'ja', 'zh', 'de', 'es', 'fr', 'pt'];
     var lang = null;
     try { lang = window.localStorage.getItem('sl_lang'); } catch (e) {}
-    if (lang !== 'ko' && lang !== 'en') {
-      var tag = (navigator.languages && navigator.languages[0]) ||
-                navigator.language || 'en';
-      lang = String(tag).toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
+    if (codes.indexOf(lang) < 0) {
+      var tag = String((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase();
+      lang = codes.indexOf(tag.slice(0, 2)) >= 0 ? tag.slice(0, 2) : 'en';
     }
     document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : lang;
   })();
 </script>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="ko">스도쿠 리그</span><span class="en">Sudoku League</span></a>
-    <!-- The label is the language you would switch *to*, so it is the one
-         hidden while that language is active. -->
-    <button class="lang px" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button>
+    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="l-ko">스도쿠 리그</span><span class="l-en">Sudoku League</span><span class="l-ja">Sudoku League</span><span class="l-zh">Sudoku League</span><span class="l-de">Sudoku League</span><span class="l-es">Sudoku League</span><span class="l-fr">Sudoku League</span><span class="l-pt">Sudoku League</span></a>
+    <select class="lang px" id="langPick" aria-label="Language"><option value="ko" lang="ko">한국어</option><option value="en" lang="en">English</option><option value="ja" lang="ja">日本語</option><option value="zh" lang="zh-Hant">繁體中文</option><option value="de" lang="de">Deutsch</option><option value="es" lang="es">Español</option><option value="fr" lang="fr">Français</option><option value="pt" lang="pt">Português</option></select>
   </div>
 </header>
 <main>
   <div class="wrap">
     <p class="eyebrow">TERMS OF SERVICE</p>
     <div class="doc px">
-<pre class="ko">이용약관
+<pre class="l-ko">이용약관
 
 시행일: 2026년 9월 23일
 
@@ -173,7 +180,7 @@
 제13조 (문의)
 서비스 관련 문의: contact@jaywithme.com
 앱 내 설정 &gt; 문의·신고 접수의 문의 양식으로 보내면 같은 주소로 접수되며, 답변은 이메일로 드립니다.</pre>
-<pre class="en">Terms of Service
+<pre class="l-en">Terms of Service
 
 Effective date: September 23, 2026
 
@@ -265,27 +272,592 @@ The operator may amend these terms; amendments take effect when announced in the
 Article 13 (Contact)
 Service inquiries: contact@jaywithme.com
 The in-app form at Settings &gt; Contact &amp; report sends your message to the same address, and we reply by email.</pre>
+<pre class="l-ja">利用規約
+
+施行日:2026年9月23日
+
+第1条(目的)
+本規約は、本アプリ(以下“アプリ”といいます)が提供するナンプレゲームおよび関連サービス(以下“サービス”といいます)の利用条件および手続ならびに利用者と運営者の権利・義務を定めるものです。アプリを利用した場合、本規約に同意したものとみなします。
+
+第2条(サービスの内容)
+アプリは、次のサービスを提供します。
+- ナンプレのプレイ、ヒントおよびテクニックの案内
+- リアルタイム対戦(ランクマッチ・フレンド対戦)ならびにレーティング・ティア・シーズンのシステム
+- 今日のナンプレおよびランキング
+- パズル共有コード
+- プレミアム(有料)の追加機能
+
+第3条(アカウント)
+1. 一部の機能(対戦、今日のナンプレ、ランキング)を利用するには、ログインが必要です。
+2. ランクマッチは、正式アカウント(Google・Apple連携またはメールアドレスによる登録)でのみ利用できます。ゲストアカウントはランクマッチに参加できません。
+3. ゲストアカウントの記録は、ログアウト、機種変更またはアプリの削除を行った場合、復元されません。ゲストアカウントはこの端末にのみ存在し、再び開く手段がないためです。記録を保持するには、アカウント連携をご利用ください。
+4. 利用者は、自己のアカウントを第三者に譲渡、貸与または販売することはできません。アカウントの管理不十分により生じた問題については、利用者が責任を負います。
+5. 利用者は、アプリ内でいつでもログアウトおよびアカウントの削除を行うことができます。アカウント削除時の取扱いは、プライバシーポリシーに従います。
+
+第4条(ニックネーム)
+1. ニックネーム、レベル、称号およびニックネームの色は、ランキングおよび対戦結果画面で他の利用者に公開されます。ティア、レーティング、順位および対戦記録もあわせて公開されます。
+2. 次のニックネームは使用できません。確認された場合、事前の通知なく変更または初期化されることがあります。
+   - 暴言、ヘイト表現または性的表現を含むニックネーム
+   - 運営者、管理者、カスタマーサポートなど運営スタッフになりすましたニックネーム
+   - 他人になりすまし、または他人の権利を侵害するニックネーム
+
+第5条(禁止行為)
+利用者は、次の行為を行ってはなりません。
+1. 不正行為
+   - マクロ、ボット、自動解答プログラムなど、人が直接操作しない手段によりパズルを解き、または対戦に参加する行為
+   - クライアント、メモリもしくはネットワーク通信を改ざんし、または正規のアプリ以外の経路でサーバーにリクエストを送信する行為
+   - サービスのバグまたはエラーを報告せずに繰り返し利用する行為
+2. ランクおよび勝敗の操作
+   - 事前に示し合わせて故意に敗北し、または特定の利用者のレーティングを上げる行為
+   - 複数のアカウントを作成し、自己または他人のレーティングを操作する行為
+   - 低いティアで有利に対戦するために、故意にレーティングを下げる行為
+   - ランクの降下を回避する目的で新たにアカウントを作成し、記録を初期化する行為
+3. その他
+   - 他の利用者になりすまし、または不快感を与える行為
+   - サービスの正常な運営を妨げ、またはサーバーに過度な負荷をかける行為
+   - 法令に違反する行為
+
+第6条(通報および措置)
+1. 利用者は、ランキングまたは対戦結果画面から他の利用者を通報できます。
+2. 運営者は、通報内容およびサーバーの記録を確認のうえ、次の措置を講じることがあります。
+   - 警告
+   - ニックネームの強制変更
+   - レーティング・ティアの初期化および不正に取得した記録の削除
+   - 対戦など特定の機能の利用制限
+   - アカウントの一時停止または永久停止
+3. 措置の程度は、違反行為の内容、繰り返しの有無および他の利用者に与えた影響を考慮して決定します。重大または繰り返された不正行為に対しては、事前の通知なく永久停止を適用することがあります。
+4. 虚偽の通報を繰り返した場合、通報者も措置の対象となることがあります。
+5. 措置に異議がある場合は、第13条の問い合わせ先にご連絡ください。運営者は確認のうえ回答します。
+
+第7条(シーズン、レーティング、経験値、報酬)
+1. ランクマッチはシーズン単位で運営され、1シーズンは原則として1か月です。
+2. シーズンが終了すると、当該シーズンの最終順位、ティアおよびレーティングが記録として保存され、すべての利用者のレーティングは基準値の方向へ一部調整(ソフトリセット)されたうえで、次のシーズンが開始されます。シーズンの勝敗記録はシーズンごとに初期化されます。
+3. シーズン報酬は、前シーズンの成績をアプリ内に記録・表示する形で提供され、現金または換金性のある財物は付与されません。
+4. 運営者は、バランスの維持、不正行為への対応およびサービスの改善のため、レーティングの算定方式、ティアの区分、シーズンの日程および報酬の内容を変更することがあります。重要な変更は、アプリ内でお知らせします。
+5. 不正行為により得た順位および記録は、シーズン終了後であっても訂正または削除されることがあります。
+6. パズルの完了およびランクマッチの結果に応じてアカウントに経験値が蓄積され、レベルが決まります。経験値およびレベルはアプリ内の表示用の記録であり、現金または換金性のある財物と交換することはできません。運営者は、バランスの維持および不正行為への対応のため経験値の算定方式を変更することがあり、不正な方法で得た経験値は訂正または削除されることがあります。
+
+第8条(有料サービス)
+1. アプリは、プレミアムのサブスクリプションおよび利用券などの有料サービスを提供することがあり、決済はApple App StoreまたはGoogle Playを通じて行われます。
+2. 決済、申込みの撤回および返金は、各ストアのポリシーおよび手続に従います。運営者は、ストアを介さずに直接返金を行いません。
+3. サブスクリプションは、利用者が解約しない限り、各ストアのポリシーに従って自動更新されます。解約は、ストアのサブスクリプション管理画面から行うことができます。
+4. 未成年者が法定代理人の同意なく決済した場合、法定代理人は、関係法令およびストアのポリシーに従って取消しを求めることができます。
+5. 利用者が本規約に違反したことによりアカウントが永久停止された場合であっても、すでに決済された金額は、ストアのポリシーが定める範囲でのみ返金されます。
+
+第9条(広告)
+アプリには広告が表示されることがあり、一部の機能(ヒント、コンティニュー、自動メモなど)は広告の視聴と連動することがあります。プレミアム利用者は、当該機能を広告なしで利用できます。
+
+第10条(サービスの変更・中断および終了)
+1. 運営者は、サービスの全部または一部を変更または中断することがあります。定期メンテナンスや障害対応などによる一時的な中断は、可能な範囲で事前にお知らせします。
+2. サービスを完全に終了する場合、運営者は、終了日の少なくとも30日前までに、アプリ内のお知らせまたはストアページを通じてその旨を通知します。
+3. サービス終了時の未使用の有料サービスの取扱いは、関係法令および各ストアのポリシーに従います。
+4. サービスが終了した場合、サーバーに保存されたアカウント情報およびゲーム記録は、関係法令に定める保存義務がない限り破棄されます。
+
+第11条(免責)
+1. アプリは“現状のまま”提供され、運営者は、サービスが中断なく、かつエラーなく提供されることを保証しません。
+2. 天災、通信障害、利用者の端末環境など、運営者の合理的な管理の範囲を超える事由により生じた損害について、運営者は責任を負いません。
+3. 利用者間の紛争について、運営者は、通報の処理以外に介入する義務を負いません。
+
+第12条(規約の変更)
+運営者は本規約を変更することがあり、変更後の規約は、アプリ内でお知らせした時点から適用されます。利用者に不利な重要な変更は、適用日より前にお知らせします。
+
+第13条(お問い合わせ)
+サービスに関するお問い合わせ:contact@jaywithme.com
+アプリ内の 設定 &gt; お問い合わせ・通報 のフォームから送信した場合も同じアドレスで受け付け、メールにて回答いたします。
+
+本書は韓国語の原文を翻訳したものです。翻訳文と韓国語の原文の内容が異なる場合は、韓国語の原文が優先します。</pre>
+<pre class="l-zh">服務條款
+
+生效日期：2026年9月23日
+
+第1條（目的）
+本條款規範本應用程式（以下稱“應用程式”）所提供之數獨遊戲及相關服務（以下稱“服務”）之使用條件與程序，以及使用者與營運者之權利義務。使用本應用程式即視為同意本條款。
+
+第2條（服務內容）
+本應用程式提供下列服務：
+- 數獨謎題遊玩、提示及技巧說明
+- 即時對戰（排位賽、友誼賽）及積分、段位、賽季制度
+- 每日數獨及排行榜
+- 謎題分享代碼
+- 進階版（付費）附加功能
+
+第3條（帳號）
+1. 部分功能（對戰、每日數獨、排行榜）須登入後方可使用。
+2. 排位賽僅限正式帳號（連結Google、Apple或以電子郵件註冊之帳號）使用。訪客帳號無法參加排位賽。
+3. 訪客帳號之紀錄於登出、更換裝置或刪除應用程式後將無法復原，因訪客帳號僅存在於此裝置，且無任何方式可重新開啟。如欲保留紀錄，請使用帳號連結功能。
+4. 使用者不得將其帳號轉讓、出借或出售予他人；因帳號管理疏失所生之問題，由使用者自行負責。
+5. 使用者得隨時於應用程式內登出並刪除帳號。帳號刪除之處理方式依隱私權政策辦理。
+
+第4條（暱稱）
+1. 暱稱及等級、稱號、暱稱顏色，將於排行榜及對戰結果畫面中向其他使用者公開。段位、積分、排名及對戰紀錄亦將一併公開。
+2. 下列暱稱不得使用，經確認後得不經事先通知逕行變更或重設：
+   - 含有髒話、仇恨言論或性相關內容之暱稱
+   - 冒充營運者、管理員、客服中心等營運人員之暱稱
+   - 冒充他人或侵害他人權利之暱稱
+
+第5條（禁止行為）
+使用者不得從事下列行為：
+1. 作弊行為
+   - 使用巨集、機器人、自動解題程式等非由本人親自操作之方式解題或參加對戰
+   - 竄改用戶端、記憶體或網路通訊，或透過非正常應用程式之途徑向伺服器發送請求
+   - 發現服務之漏洞或錯誤未予回報而反覆利用
+2. 操縱排名及比賽結果
+   - 事先串通故意落敗，或協助特定使用者提高積分
+   - 建立多個帳號操縱本人或他人之積分
+   - 為於較低段位取得對戰優勢而故意降低積分
+   - 為規避排名下降而建立新帳號以重設紀錄
+3. 其他
+   - 冒充其他使用者或使其他使用者感到不適之行為
+   - 妨礙服務正常營運或對伺服器造成過度負載之行為
+   - 違反法令之行為
+
+第6條（檢舉與處分）
+1. 使用者得於排行榜或對戰結果畫面檢舉其他使用者。
+2. 營運者審查檢舉內容及伺服器紀錄後，得採取下列措施：
+   - 警告
+   - 強制變更暱稱
+   - 重設積分、段位並刪除以不正當方式取得之紀錄
+   - 限制對戰等特定功能之使用
+   - 暫時停權或永久停權
+3. 措施之輕重，將考量違規行為之內容、是否反覆違規及對其他使用者之影響決定。對於情節重大或反覆之作弊行為，得不經事先通知逕予永久停權。
+4. 反覆提出不實檢舉者，檢舉人亦可能受處分。
+5. 對處分有異議者，得透過第13條所列聯絡方式提出，營運者確認後將予以回覆。
+
+第7條（賽季、積分、經驗值、獎勵）
+1. 排位賽以賽季為單位進行，每一賽季原則上為一個月。
+2. 賽季結束時，該賽季之最終排名、段位及積分將儲存為紀錄，所有使用者之積分將朝基準值方向進行部分調整（軟重置）後，開始下一賽季。賽季勝負紀錄於每一賽季重設。
+3. 賽季獎勵以於應用程式內記錄、顯示上一賽季成績之形式提供，不發放現金或具兌換價值之物品。
+4. 營運者為維持平衡、因應作弊行為及改善服務，得變更積分計算方式、段位區間、賽季時程及獎勵內容。重大變更將於應用程式內公告。
+5. 以作弊行為取得之排名及紀錄，於賽季結束後仍得予以更正或刪除。
+6. 帳號將依完成謎題及排位賽結果累積經驗值並決定等級。經驗值及等級為應用程式內顯示用之紀錄，不得兌換為現金或具兌換價值之物品。營運者為維持平衡及因應作弊行為，得變更經驗值計算方式；以不正當方式取得之經驗值得予以更正或刪除。
+
+第8條（付費服務）
+1. 本應用程式得提供進階版訂閱及使用券等付費服務，付款透過Apple App Store或Google Play進行。
+2. 付款、撤回購買及退款，依各商店之政策及程序辦理。營運者不會繞過商店直接退款。
+3. 除使用者取消外，訂閱將依各商店政策自動續訂；取消可於商店之訂閱管理畫面進行。
+4. 未成年人未經法定代理人同意而付款者，法定代理人得依相關法令及商店政策請求取消。
+5. 使用者因違反本條款而遭永久停權時，已付款項亦僅於商店政策規定之範圍內退款。
+
+第9條（廣告）
+本應用程式可能顯示廣告，部分功能（提示、接續遊戲、自動筆記等）可能與觀看廣告連動。進階版使用者可免看廣告使用該等功能。
+
+第10條（服務之變更、中斷及終止）
+1. 營運者得變更或中斷服務之全部或一部。定期維護、故障處理等暫時性中斷，將於可行範圍內事先公告。
+2. 服務全面終止時，營運者將至少於終止日30日前，透過應用程式內公告或商店頁面通知。
+3. 服務終止時，未使用之付費服務依相關法令及各商店政策處理。
+4. 服務終止後，伺服器上儲存之帳號資訊及遊戲紀錄，除相關法令規定應予保存者外，將予以銷毀。
+
+第11條（免責）
+1. 本應用程式係依“現狀”提供，營運者不保證服務不會中斷或無錯誤。
+2. 因天災、通訊障礙、使用者裝置環境等超出營運者合理控制範圍之事由所生之損害，營運者不負賠償責任。
+3. 對於使用者間之糾紛，營運者除處理檢舉外，不負介入義務。
+
+第12條（條款之變更）
+營運者得變更本條款，變更後之條款自於應用程式內公告時起適用。對使用者不利之重大變更，將於適用日前公告。
+
+第13條（聯絡方式）
+服務相關諮詢：contact@jaywithme.com
+透過應用程式內“設定 &gt; 聯絡與檢舉”之聯絡表單寄送者，將送達同一信箱，並以電子郵件回覆。
+
+本文件係譯自韓文原文。譯文與韓文原文內容如有歧異，應以韓文原文為準。</pre>
+<pre class="l-de">Nutzungsbedingungen
+
+Gültig ab: 23. September 2026
+
+Artikel 1 (Zweck)
+Diese Bedingungen regeln die Voraussetzungen und Abläufe für die Nutzung des Sudoku-Spiels und der damit verbundenen Dienste (im Folgenden „Dienst“), die diese App (im Folgenden „App“) bereitstellt, sowie die Rechte und Pflichten der Nutzer und des Betreibers. Mit der Nutzung der App erklären Sie sich mit diesen Bedingungen einverstanden.
+
+Artikel 2 (Leistungen)
+Die App bietet folgende Leistungen:
+- Sudoku-Rätsel spielen, Tipps und Erläuterungen zu Techniken
+- Echtzeit-Duelle (Ranglisten- und Freundschaftsduelle) mit einem System aus Wertung, Stufen und Saisons
+- Tägliches Sudoku und Ranglisten
+- Codes zum Teilen von Rätseln
+- Kostenpflichtige Premium-Zusatzfunktionen
+
+Artikel 3 (Konto)
+1. Einige Funktionen (Duelle, Tägliches Sudoku, Ranglisten) erfordern eine Anmeldung.
+2. Ranglistenduelle stehen nur vollwertigen Konten zur Verfügung (mit Google oder Apple verknüpft oder mit einer E-Mail-Adresse registriert). Gastkonten können nicht an Ranglistenduellen teilnehmen.
+3. Die Daten eines Gastkontos können nach dem Abmelden, einem Gerätewechsel oder dem Löschen der App nicht wiederhergestellt werden, da ein Gastkonto nur auf diesem Gerät existiert und es keine Möglichkeit gibt, es erneut zu öffnen. Um Ihre Daten zu behalten, verknüpfen Sie Ihr Konto.
+4. Sie dürfen Ihr Konto nicht an Dritte übertragen, verleihen oder verkaufen. Für Probleme, die durch eine unzureichende Sicherung Ihres Kontos entstehen, sind Sie selbst verantwortlich.
+5. Sie können sich jederzeit in der App abmelden und Ihr Konto löschen. Die Löschung erfolgt wie in der Datenschutzerklärung beschrieben.
+
+Artikel 4 (Spitzname)
+1. Ihr Spitzname, Ihr Level, Ihr Titel und die Farbe Ihres Spitznamens werden anderen Nutzern in Ranglisten und auf den Ergebnisbildschirmen von Duellen angezeigt. Ihre Stufe, Wertung, Platzierung und Duellergebnisse werden dort ebenfalls angezeigt.
+2. Folgende Spitznamen sind nicht zulässig und können bei Feststellung ohne vorherige Ankündigung geändert oder zurückgesetzt werden:
+   - Spitznamen mit Beschimpfungen, Hassrede oder sexuellen Inhalten
+   - Spitznamen, die sich als Betreiber, Administrator, Kundenservice oder sonstiges Betreiberpersonal ausgeben
+   - Spitznamen, die sich als andere Personen ausgeben oder die Rechte Dritter verletzen
+
+Artikel 5 (Verbotene Handlungen)
+Folgende Handlungen sind untersagt:
+1. Betrug
+   - Rätsel lösen oder an Duellen teilnehmen mithilfe von Makros, Bots, automatischen Lösungsprogrammen oder anderen Mitteln, die nicht von Ihnen selbst bedient werden
+   - Den Client, den Speicher oder die Netzwerkkommunikation manipulieren oder Anfragen auf anderem Weg als über die reguläre App an den Server senden
+   - Fehler oder Störungen des Dienstes wiederholt ausnutzen, statt sie zu melden
+2. Manipulation von Ranglisten und Spielergebnissen
+   - Nach vorheriger Absprache absichtlich verlieren oder die Wertung eines bestimmten Nutzers gezielt erhöhen
+   - Mehrere Konten erstellen, um die eigene Wertung oder die anderer Nutzer zu manipulieren
+   - Die eigene Wertung absichtlich senken, um auf einer niedrigeren Stufe mit Vorteil zu spielen
+   - Ein neues Konto erstellen, um die eigenen Daten zurückzusetzen und einem Abstieg zu entgehen
+3. Sonstiges
+   - Sich als andere Nutzer ausgeben oder andere Nutzer belästigen
+   - Den ordnungsgemäßen Betrieb des Dienstes stören oder eine übermäßige Serverlast verursachen
+   - Gegen geltendes Recht verstoßen
+
+Artikel 6 (Meldungen und Sanktionen)
+1. Sie können andere Nutzer über eine Rangliste oder einen Ergebnisbildschirm eines Duells melden.
+2. Der Betreiber prüft die Meldung und die Serveraufzeichnungen und kann folgende Maßnahmen ergreifen:
+   - Verwarnung
+   - Zwangsweise Änderung des Spitznamens
+   - Zurücksetzen von Wertung und Stufe sowie Löschung unrechtmäßig erlangter Daten
+   - Einschränkung bestimmter Funktionen wie Duelle
+   - Vorübergehende oder dauerhafte Sperrung des Kontos
+3. Die Schwere der Maßnahme richtet sich nach der Art des Verstoßes, einer etwaigen Wiederholung und den Auswirkungen auf andere Nutzer. Bei schwerem oder wiederholtem Betrug kann ohne vorherige Ankündigung eine dauerhafte Sperrung verhängt werden.
+4. Wer wiederholt falsche Meldungen abgibt, kann ebenfalls sanktioniert werden.
+5. Wenn Sie mit einer Sanktion nicht einverstanden sind, können Sie sich an die in Artikel 13 genannte Kontaktadresse wenden. Der Betreiber prüft den Fall und antwortet Ihnen.
+
+Artikel 7 (Saisons, Wertung, Erfahrungspunkte und Belohnungen)
+1. Ranglistenduelle werden in Saisons ausgetragen. Eine Saison dauert grundsätzlich einen Monat.
+2. Am Ende einer Saison werden die endgültige Platzierung, Stufe und Wertung dieser Saison gespeichert. Anschließend wird die Wertung aller Nutzer teilweise in Richtung des Ausgangswerts angepasst (Soft Reset) und die nächste Saison beginnt. Die Sieg- und Niederlagenbilanz wird in jeder Saison zurückgesetzt.
+3. Saisonbelohnungen bestehen darin, dass die Ergebnisse der vergangenen Saison in der App gespeichert und angezeigt werden. Bargeld oder in Geld umtauschbare Güter werden nicht ausgegeben.
+4. Der Betreiber kann die Berechnung der Wertung, die Stufengrenzen, den Saisonplan und die Belohnungen ändern, um die Spielbalance zu erhalten, gegen Betrug vorzugehen oder den Dienst zu verbessern. Wesentliche Änderungen werden in der App bekannt gegeben.
+5. Durch Betrug erlangte Platzierungen und Daten können auch nach Ende einer Saison korrigiert oder gelöscht werden.
+6. Durch abgeschlossene Rätsel und die Ergebnisse von Ranglistenduellen sammelt Ihr Konto Erfahrungspunkte, aus denen sich Ihr Level ergibt. Erfahrungspunkte und Level sind Daten, die nur in der App angezeigt werden, und können nicht in Bargeld oder in Geld umtauschbare Güter umgewandelt werden. Der Betreiber kann die Berechnung der Erfahrungspunkte ändern, um die Spielbalance zu erhalten oder gegen Betrug vorzugehen. Unrechtmäßig erlangte Erfahrungspunkte können korrigiert oder gelöscht werden.
+
+Artikel 8 (Kostenpflichtige Dienste)
+1. Die App kann kostenpflichtige Dienste wie Premium-Abonnements und Pässe anbieten. Die Zahlung erfolgt über den Apple App Store oder Google Play.
+2. Zahlung, Widerruf und Erstattung richten sich nach den Richtlinien und Verfahren des jeweiligen Stores. Der Betreiber nimmt keine Erstattungen außerhalb der Stores vor.
+3. Abonnements verlängern sich gemäß den Richtlinien des jeweiligen Stores automatisch, sofern Sie sie nicht kündigen. Die Kündigung erfolgt in der Abonnementverwaltung des jeweiligen Stores.
+4. Hat ein Minderjähriger ohne Zustimmung seines gesetzlichen Vertreters eine Zahlung vorgenommen, kann der gesetzliche Vertreter nach den geltenden Gesetzen und den Richtlinien des Stores die Stornierung verlangen.
+5. Auch wenn Ihr Konto wegen eines Verstoßes gegen diese Bedingungen dauerhaft gesperrt wird, werden bereits gezahlte Beträge nur in dem Umfang erstattet, den die Richtlinien des Stores vorsehen.
+
+Artikel 9 (Werbung)
+In der App kann Werbung angezeigt werden, und einige Funktionen (Tipps, Weiterspielen, Auto-Notizen usw.) können an das Ansehen von Werbung gekoppelt sein. Premium-Nutzer können diese Funktionen ohne Werbung nutzen.
+
+Artikel 10 (Änderung, Unterbrechung und Einstellung des Dienstes)
+1. Der Betreiber kann den Dienst ganz oder teilweise ändern oder unterbrechen. Vorübergehende Unterbrechungen wie regelmäßige Wartungsarbeiten oder die Behebung von Störungen werden, soweit möglich, im Voraus angekündigt.
+2. Wird der Dienst vollständig eingestellt, informiert der Betreiber mindestens 30 Tage vor dem Einstellungsdatum per Mitteilung in der App oder auf der Store-Seite darüber.
+3. Bei Einstellung des Dienstes richtet sich der Umgang mit nicht genutzten kostenpflichtigen Diensten nach den geltenden Gesetzen und den Richtlinien des jeweiligen Stores.
+4. Nach Einstellung des Dienstes werden die auf den Servern gespeicherten Kontoinformationen und Spieldaten vernichtet, sofern keine gesetzliche Aufbewahrungspflicht besteht.
+
+Artikel 11 (Haftungsausschluss)
+1. Die App wird „wie besehen“ bereitgestellt. Der Betreiber gewährleistet nicht, dass der Dienst unterbrechungsfrei und fehlerfrei zur Verfügung steht.
+2. Der Betreiber haftet nicht für Schäden, die auf Ursachen außerhalb seiner zumutbaren Kontrolle beruhen, etwa Naturkatastrophen, Kommunikationsstörungen oder die Geräteumgebung des Nutzers.
+3. Bei Streitigkeiten zwischen Nutzern ist der Betreiber über die Bearbeitung von Meldungen hinaus nicht zum Eingreifen verpflichtet.
+
+Artikel 12 (Änderung der Bedingungen)
+Der Betreiber kann diese Bedingungen ändern. Die geänderten Bedingungen gelten ab dem Zeitpunkt ihrer Bekanntgabe in der App. Wesentliche Änderungen zum Nachteil der Nutzer werden vor ihrem Inkrafttreten bekannt gegeben.
+
+Artikel 13 (Kontakt)
+Anfragen zum Dienst: contact@jaywithme.com
+Wenn Sie das Formular in der App unter Einstellungen &gt; Anfragen &amp; Meldungen verwenden, geht Ihre Nachricht an dieselbe Adresse ein. Die Antwort erhalten Sie per E-Mail.
+
+Dieses Dokument ist eine Übersetzung des koreanischen Originals. Bei Abweichungen zwischen der Übersetzung und dem koreanischen Original ist das koreanische Original maßgeblich.</pre>
+<pre class="l-es">Términos del servicio
+
+Fecha de entrada en vigor: 23 de septiembre de 2026
+
+Artículo 1 (Objeto)
+Estos términos establecen las condiciones y los procedimientos de uso del juego de sudoku y los servicios relacionados (en adelante, el "Servicio") que ofrece esta aplicación (en adelante, la "aplicación"), así como los derechos y obligaciones de los usuarios y del operador. Al usar la aplicación, se considera que usted acepta estos términos.
+
+Artículo 2 (Contenido del Servicio)
+La aplicación ofrece los siguientes servicios:
+- Juego de sudoku, pistas y guía de técnicas
+- Duelos en tiempo real (partidas clasificatorias y amistosas) y sistema de puntuación, divisiones y temporadas
+- Sudoku del día y tablas de clasificación
+- Códigos para compartir puzzles
+- Funciones adicionales Premium (de pago)
+
+Artículo 3 (Cuentas)
+1. Algunas funciones (duelos, Sudoku del día y tablas de clasificación) requieren iniciar sesión.
+2. Las partidas clasificatorias solo están disponibles para cuentas registradas (vinculadas con Google o Apple, o creadas con un correo electrónico). Las cuentas de invitado no pueden participar en partidas clasificatorias.
+3. Los registros de una cuenta de invitado no se pueden recuperar después de cerrar sesión, cambiar de dispositivo o eliminar la aplicación, ya que la cuenta de invitado existe únicamente en este dispositivo y no hay ninguna forma de volver a abrirla. Para conservar sus registros, vincule una cuenta.
+4. El usuario no puede ceder, prestar ni vender su cuenta a terceros, y es responsable de los problemas que se deriven de no administrarla con el debido cuidado.
+5. El usuario puede cerrar sesión y eliminar su cuenta en cualquier momento desde la aplicación. El tratamiento de los datos al eliminar la cuenta se rige por la Política de privacidad.
+
+Artículo 4 (Apodos)
+1. El apodo, el nivel, el título y el color del apodo se muestran a otros usuarios en las tablas de clasificación y en las pantallas de resultados de los duelos. También se muestran la división, la puntuación, la posición y el historial de duelos.
+2. No se permiten los siguientes apodos; si se detectan, podrán modificarse o restablecerse sin previo aviso.
+   - Apodos que contengan groserías, expresiones de odio o contenido sexual
+   - Apodos que suplanten al equipo de operación, como el operador, los administradores o el servicio de atención al cliente
+   - Apodos que suplanten a otra persona o vulneren los derechos de terceros
+
+Artículo 5 (Conductas prohibidas)
+El usuario no debe realizar las siguientes conductas:
+1. Trampas
+   - Resolver puzzles o participar en duelos mediante macros, bots, programas de resolución automática u otros medios que no sean el manejo directo de una persona
+   - Alterar el cliente, la memoria o las comunicaciones de red, o enviar solicitudes al servidor por vías distintas de la aplicación normal
+   - Aprovechar de forma reiterada errores o fallos del Servicio sin reportarlos
+2. Manipulación de clasificaciones y resultados
+   - Perder intencionalmente por acuerdo previo o subir la puntuación de un usuario determinado
+   - Crear varias cuentas para manipular la puntuación propia o la de otros usuarios
+   - Bajar intencionalmente la puntuación para competir con ventaja en divisiones inferiores
+   - Crear una cuenta nueva para restablecer el historial con el fin de evitar un descenso en la clasificación
+3. Otros
+   - Suplantar a otros usuarios o causarles molestias
+   - Interferir en el funcionamiento normal del Servicio o provocar una carga excesiva en los servidores
+   - Infringir la ley
+
+Artículo 6 (Denuncias y sanciones)
+1. El usuario puede denunciar a otro usuario desde una tabla de clasificación o desde la pantalla de resultados de un duelo.
+2. El operador revisará el contenido de la denuncia y los registros del servidor, y podrá tomar las siguientes medidas:
+   - Advertencia
+   - Cambio obligatorio del apodo
+   - Restablecimiento de la puntuación y la división, y eliminación de los registros obtenidos de forma fraudulenta
+   - Restricción del uso de funciones específicas, como los duelos
+   - Suspensión temporal o permanente de la cuenta
+3. La gravedad de la medida se determina considerando la naturaleza de la infracción, si es reiterada y su efecto en otros usuarios. Ante trampas graves o reiteradas, podrá aplicarse la suspensión permanente sin previo aviso.
+4. Quien presente denuncias falsas de forma reiterada también podrá ser objeto de sanciones.
+5. Si no está de acuerdo con una sanción, puede comunicarse con el contacto indicado en el artículo 13; el operador lo revisará y le responderá.
+
+Artículo 7 (Temporadas, puntuación, experiencia y recompensas)
+1. Las partidas clasificatorias se organizan por temporadas; en principio, cada temporada dura un mes.
+2. Al terminar una temporada, se guardan como registro la posición, la división y la puntuación finales de esa temporada; la puntuación de todos los usuarios se ajusta parcialmente hacia el valor de referencia (reinicio parcial) y luego comienza la siguiente temporada. El registro de victorias y derrotas se reinicia en cada temporada.
+3. Las recompensas de temporada consisten en registrar y mostrar en la aplicación los resultados de la temporada anterior; no se entrega dinero en efectivo ni bienes canjeables por dinero.
+4. El operador podrá modificar el método de cálculo de la puntuación, los rangos de las divisiones, el calendario de temporadas y el contenido de las recompensas para mantener el equilibrio del juego, combatir las trampas y mejorar el Servicio. Los cambios importantes se anunciarán en la aplicación.
+5. Las posiciones y los registros obtenidos mediante trampas podrán corregirse o eliminarse incluso después de finalizada la temporada.
+6. Al completar puzzles y según los resultados de las partidas clasificatorias, la cuenta acumula puntos de experiencia que determinan su nivel. La experiencia y el nivel son registros que solo se muestran en la aplicación y no pueden canjearse por dinero en efectivo ni por bienes canjeables por dinero. El operador podrá modificar el método de cálculo de la experiencia para mantener el equilibrio del juego y combatir las trampas, y la experiencia obtenida de forma fraudulenta podrá corregirse o eliminarse.
+
+Artículo 8 (Servicios de pago)
+1. La aplicación puede ofrecer servicios de pago, como suscripciones y pases Premium, y los pagos se realizan a través de Apple App Store o Google Play.
+2. Los pagos, el desistimiento y los reembolsos se rigen por las políticas y los procedimientos de cada tienda. El operador no realiza reembolsos directos al margen de las tiendas.
+3. Las suscripciones se renuevan automáticamente según la política de cada tienda, salvo que el usuario las cancele; la cancelación puede hacerse en la pantalla de administración de suscripciones de la tienda.
+4. Si un menor de edad realizó un pago sin el consentimiento de su representante legal, este podrá solicitar la cancelación conforme a la legislación aplicable y a la política de la tienda.
+5. Aun cuando la cuenta del usuario haya sido suspendida de forma permanente por incumplir estos términos, los importes ya pagados solo se reembolsarán en la medida que lo permita la política de la tienda.
+
+Artículo 9 (Publicidad)
+La aplicación puede mostrar anuncios, y algunas funciones (pistas, continuar partida, Notas automáticas, etc.) pueden estar vinculadas a ver un anuncio. Los usuarios Premium pueden usar esas funciones sin anuncios.
+
+Artículo 10 (Modificación, interrupción y cierre del Servicio)
+1. El operador podrá modificar o interrumpir la totalidad o parte del Servicio. Las interrupciones temporales, como el mantenimiento periódico o la atención de fallos, se anunciarán con antelación en la medida de lo posible.
+2. Si el Servicio se cierra definitivamente, el operador lo notificará mediante un aviso en la aplicación o en la página de la tienda con al menos 30 días de antelación a la fecha de cierre.
+3. Al cerrar el Servicio, los servicios de pago no utilizados se tratarán conforme a la legislación aplicable y a las políticas de cada tienda.
+4. Al cerrar el Servicio, la información de las cuentas y los registros de juego almacenados en los servidores se destruirán, salvo que la legislación aplicable obligue a conservarlos.
+
+Artículo 11 (Exención de responsabilidad)
+1. La aplicación se ofrece "tal cual", y el operador no garantiza que el Servicio se preste sin interrupciones ni errores.
+2. El operador no se hace responsable de los daños derivados de causas ajenas a su control razonable, como desastres naturales, fallos de comunicación o el entorno del dispositivo del usuario.
+3. En las disputas entre usuarios, el operador no tiene la obligación de intervenir más allá de gestionar las denuncias.
+
+Artículo 12 (Modificación de los términos)
+El operador podrá modificar estos términos, y los términos modificados se aplicarán desde el momento en que se anuncien en la aplicación. Los cambios importantes que resulten desfavorables para el usuario se anunciarán antes de su fecha de aplicación.
+
+Artículo 13 (Contacto)
+Consultas sobre el Servicio: contact@jaywithme.com
+Los mensajes enviados mediante el formulario de consulta de la aplicación, en Ajustes &gt; Consultas y denuncias, se reciben en esta misma dirección, y la respuesta se envía por correo electrónico.
+
+Este documento es una traducción del original en coreano. En caso de discrepancia entre la traducción y el original en coreano, prevalecerá el original en coreano.</pre>
+<pre class="l-fr">Conditions d'utilisation
+
+Date d'entrée en vigueur : 23 septembre 2026
+
+Article 1 (Objet)
+Les présentes conditions définissent les conditions et modalités d'utilisation du jeu de sudoku et des services associés (ci-après le "Service") fournis par la présente application (ci-après l'"Application"), ainsi que les droits et obligations des utilisateurs et de l'exploitant. En utilisant l'Application, vous êtes réputé avoir accepté les présentes conditions.
+
+Article 2 (Contenu du Service)
+L'Application fournit les services suivants :
+- Parties de sudoku, indices et explications des techniques
+- Matchs en temps réel (Matchs classés et matchs amicaux) avec un système de cote, de divisions et de saisons
+- Sudoku du jour et classements
+- Codes de partage de grilles
+- Fonctionnalités supplémentaires Premium (payantes)
+
+Article 3 (Compte)
+1. Certaines fonctionnalités (matchs, Sudoku du jour, classements) nécessitent une connexion.
+2. Les Matchs classés sont réservés aux comptes complets (associés à Google ou Apple, ou créés avec une adresse e-mail). Les comptes invités ne peuvent pas participer aux Matchs classés.
+3. Les données d'un compte invité ne peuvent pas être récupérées après une déconnexion, un changement d'appareil ou la suppression de l'Application. En effet, un compte invité n'existe que sur cet appareil et aucun moyen ne permet de le rouvrir. Pour conserver vos données, associez votre compte.
+4. Vous ne pouvez ni céder, ni prêter, ni vendre votre compte à un tiers, et vous êtes responsable des problèmes résultant d'un manque de vigilance dans la gestion de votre compte.
+5. Vous pouvez à tout moment vous déconnecter et supprimer votre compte depuis l'Application. La suppression du compte est traitée conformément à la Politique de confidentialité.
+
+Article 4 (Pseudo)
+1. Votre pseudo, votre niveau, votre titre et la couleur de votre pseudo sont visibles par les autres utilisateurs dans les classements et sur les écrans de résultats des matchs. Votre division, votre cote, votre classement et votre historique de matchs y sont également visibles.
+2. Les pseudos suivants sont interdits et, s'ils sont constatés, peuvent être modifiés ou réinitialisés sans préavis :
+   - Pseudos contenant des injures, des propos haineux ou des contenus à caractère sexuel
+   - Pseudos usurpant l'identité de l'équipe d'exploitation (exploitant, administrateurs, service client, etc.)
+   - Pseudos usurpant l'identité d'autrui ou portant atteinte aux droits d'autrui
+
+Article 5 (Comportements interdits)
+Vous ne devez pas vous livrer aux comportements suivants :
+1. Triche
+   - Résoudre des grilles ou participer à des matchs à l'aide de macros, de bots, de programmes de résolution automatique ou de tout autre moyen ne reposant pas sur une manipulation humaine directe
+   - Modifier le client, la mémoire ou les communications réseau, ou envoyer des requêtes au serveur par un autre moyen que l'Application normale
+   - Exploiter de manière répétée un bug ou une erreur du Service sans le signaler
+2. Manipulation du classement et des résultats
+   - Perdre volontairement à la suite d'un accord préalable, ou faire monter la cote d'un utilisateur donné
+   - Créer plusieurs comptes pour manipuler votre cote ou celle d'autrui
+   - Faire baisser volontairement votre cote afin de jouer à votre avantage dans une division inférieure
+   - Créer un nouveau compte pour réinitialiser votre historique afin d'éviter une baisse de rang
+3. Autres
+   - Usurper l'identité d'autres utilisateurs ou adopter un comportement offensant à leur égard
+   - Entraver le fonctionnement normal du Service ou provoquer une charge excessive sur les serveurs
+   - Enfreindre la loi
+
+Article 6 (Signalements et sanctions)
+1. Vous pouvez signaler un autre utilisateur depuis un classement ou un écran de résultats de match.
+2. Après examen du signalement et des enregistrements du serveur, l'exploitant peut prendre les mesures suivantes :
+   - Avertissement
+   - Changement forcé du pseudo
+   - Réinitialisation de la cote et de la division, et suppression des résultats obtenus de manière frauduleuse
+   - Restriction de l'accès à certaines fonctionnalités, comme les matchs
+   - Suspension temporaire ou définitive du compte
+3. Le niveau de la mesure est déterminé en tenant compte de la nature de l'infraction, de son caractère répété et de ses conséquences pour les autres utilisateurs. En cas de triche grave ou répétée, une suspension définitive peut être appliquée sans préavis.
+4. Les auteurs de faux signalements répétés peuvent eux aussi faire l'objet de sanctions.
+5. Pour contester une sanction, vous pouvez utiliser les coordonnées indiquées à l'article 13 ; l'exploitant vous répondra après vérification.
+
+Article 7 (Saisons, cote, points d'expérience et récompenses)
+1. Les Matchs classés sont organisés par saisons ; une saison dure en principe un mois.
+2. À la fin d'une saison, le classement, la division et la cote finaux de la saison sont archivés, la cote de tous les utilisateurs est partiellement ajustée en direction de la valeur de référence (réinitialisation partielle), puis la saison suivante commence. Le bilan de victoires et de défaites est remis à zéro à chaque saison.
+3. Les récompenses de saison prennent la forme d'un enregistrement et d'un affichage, dans l'Application, des résultats de la saison précédente ; aucune somme d'argent ni aucun bien convertible en argent n'est attribué.
+4. Pour maintenir l'équilibre du jeu, lutter contre la triche et améliorer le Service, l'exploitant peut modifier le mode de calcul de la cote, les seuils des divisions, le calendrier des saisons et le contenu des récompenses. Les modifications importantes sont annoncées dans l'Application.
+5. Les classements et résultats obtenus par la triche peuvent être corrigés ou supprimés, même après la fin de la saison.
+6. En fonction des grilles terminées et des résultats des Matchs classés, votre compte accumule des points d'expérience (XP), qui déterminent votre niveau. Les XP et les niveaux sont des données affichées dans l'Application et ne peuvent pas être échangés contre de l'argent ou un bien convertible en argent. L'exploitant peut modifier le mode de calcul des XP pour maintenir l'équilibre du jeu et lutter contre la triche, et les XP obtenus de manière frauduleuse peuvent être corrigés ou supprimés.
+
+Article 8 (Services payants)
+1. L'Application peut proposer des services payants, tels que des abonnements Premium et des pass. Les paiements sont effectués via l'Apple App Store ou Google Play.
+2. Le paiement, la rétractation et les remboursements sont régis par les politiques et procédures de chaque store. L'exploitant n'effectue aucun remboursement direct en dehors des stores.
+3. Sauf résiliation de votre part, l'abonnement est renouvelé automatiquement conformément à la politique du store concerné. Vous pouvez le résilier depuis l'écran de gestion des abonnements du store.
+4. Si un mineur a effectué un achat sans le consentement de son représentant légal, ce dernier peut en demander l'annulation conformément à la législation applicable et à la politique du store.
+5. Même si votre compte est définitivement suspendu pour violation des présentes conditions, les sommes déjà payées ne sont remboursées que dans la limite prévue par la politique du store.
+
+Article 9 (Publicité)
+Des publicités peuvent être affichées dans l'Application, et certaines fonctionnalités (indices, reprise de la partie, Notes auto, etc.) peuvent être liées au visionnage d'une publicité. Les utilisateurs Premium peuvent utiliser ces fonctionnalités sans publicité.
+
+Article 10 (Modification, interruption et fin du Service)
+1. L'exploitant peut modifier ou interrompre tout ou partie du Service. Les interruptions temporaires, notamment pour maintenance périodique ou résolution d'incidents, sont annoncées à l'avance dans la mesure du possible.
+2. En cas d'arrêt définitif du Service, l'exploitant en informe les utilisateurs par une annonce dans l'Application ou sur la page du store au moins 30 jours avant la date d'arrêt.
+3. En cas d'arrêt du Service, les services payants non utilisés sont traités conformément à la législation applicable et aux politiques de chaque store.
+4. À l'arrêt du Service, les informations de compte et les données de jeu stockées sur les serveurs sont détruites, sauf obligation légale de conservation.
+
+Article 11 (Limitation de responsabilité)
+1. L'Application est fournie "en l'état" ; l'exploitant ne garantit pas que le Service sera fourni sans interruption ni erreur.
+2. L'exploitant n'est pas responsable des dommages résultant de causes échappant à son contrôle raisonnable, telles que les catastrophes naturelles, les pannes de réseau ou l'environnement de votre appareil.
+3. En cas de litige entre utilisateurs, l'exploitant n'a aucune obligation d'intervention autre que le traitement des signalements.
+
+Article 12 (Modification des conditions)
+L'exploitant peut modifier les présentes conditions ; les conditions modifiées s'appliquent à compter de leur annonce dans l'Application. Les modifications importantes défavorables aux utilisateurs sont annoncées avant leur date d'application.
+
+Article 13 (Contact)
+Questions relatives au Service : contact@jaywithme.com
+Les messages envoyés via le formulaire de l'Application (Paramètres &gt; Contact et signalement) parviennent à la même adresse ; nous vous répondons par e-mail.
+
+Ce document est une traduction de l'original en coréen. En cas de divergence entre la traduction et l'original en coréen, l'original en coréen prévaut.</pre>
+<pre class="l-pt">Termos de Uso
+
+Data de vigência: 23 de setembro de 2026
+
+Artigo 1 (Objetivo)
+Estes Termos definem as condições e os procedimentos de uso do jogo de sudoku e dos serviços relacionados (doravante "Serviço") oferecidos por este aplicativo (doravante "Aplicativo"), bem como os direitos e as obrigações dos usuários e do operador. Ao usar o Aplicativo, considera-se que o usuário concordou com estes Termos.
+
+Artigo 2 (Conteúdo do Serviço)
+O Aplicativo oferece os seguintes serviços:
+- Jogo de quebra-cabeças de sudoku, dicas e orientações sobre técnicas
+- Partidas em tempo real (ranqueadas e amistosas) e sistema de rating, divisões e temporadas
+- Sudoku do Dia e tabelas de classificação
+- Códigos de compartilhamento de quebra-cabeças
+- Recursos adicionais Premium (pagos)
+
+Artigo 3 (Conta)
+1. Alguns recursos (partidas, Sudoku do Dia e tabelas de classificação) exigem login.
+2. As partidas ranqueadas estão disponíveis apenas para contas registradas (vinculadas ao Google ou à Apple, ou cadastradas com e-mail). Contas de convidado não podem participar de partidas ranqueadas.
+3. Os registros de uma conta de convidado não poderão ser recuperados após o logout, a troca de dispositivo ou a exclusão do aplicativo, pois a conta de convidado existe apenas neste dispositivo e não há nenhum meio de reabri-la. Para manter os seus registros, vincule uma conta.
+4. O usuário não pode ceder, emprestar ou vender a sua conta a terceiros, e é responsável pelos problemas decorrentes da falta de cuidado na gestão da sua conta.
+5. O usuário pode sair e excluir a sua conta a qualquer momento no Aplicativo. O tratamento dos dados em caso de exclusão da conta segue a Política de Privacidade.
+
+Artigo 4 (Apelido)
+1. O apelido, o nível, o título e a cor do apelido ficam visíveis para os outros usuários nas tabelas de classificação e nas telas de resultado das partidas. A divisão, o rating, a posição e o histórico de partidas também são exibidos.
+2. Os seguintes apelidos não são permitidos e, quando identificados, poderão ser alterados ou redefinidos sem aviso prévio:
+   - Apelidos que contenham palavrões, discurso de ódio ou conteúdo sexual
+   - Apelidos que se façam passar pela equipe de operação, como operador, administrador ou atendimento ao cliente
+   - Apelidos que se façam passar por outra pessoa ou que violem direitos de terceiros
+
+Artigo 5 (Condutas proibidas)
+O usuário não deve praticar as seguintes condutas:
+1. Trapaça
+   - Resolver quebra-cabeças ou participar de partidas por meios que não sejam operados diretamente por uma pessoa, como macros, bots ou programas de resolução automática
+   - Adulterar o cliente, a memória ou a comunicação de rede, ou enviar solicitações ao servidor por vias que não sejam o aplicativo legítimo
+   - Explorar repetidamente bugs ou erros do Serviço sem reportá-los
+2. Manipulação de ranking e de resultados
+   - Perder intencionalmente mediante acordo prévio ou elevar o rating de determinado usuário
+   - Criar várias contas para manipular o próprio rating ou o de outros usuários
+   - Reduzir intencionalmente o próprio rating para jogar com vantagem em divisões mais baixas
+   - Criar uma nova conta para zerar o histórico com o objetivo de evitar a queda no ranking
+3. Outras
+   - Fazer-se passar por outros usuários ou causar-lhes constrangimento
+   - Prejudicar o funcionamento normal do Serviço ou provocar carga excessiva nos servidores
+   - Violar a legislação
+
+Artigo 6 (Denúncias e sanções)
+1. O usuário pode denunciar outros usuários nas tabelas de classificação ou na tela de resultado das partidas.
+2. O operador poderá analisar o conteúdo da denúncia e os registros do servidor e adotar as seguintes medidas:
+   - Advertência
+   - Alteração obrigatória do apelido
+   - Redefinição do rating e da divisão e exclusão dos registros obtidos de forma irregular
+   - Restrição do uso de determinados recursos, como as partidas
+   - Suspensão temporária ou permanente da conta
+3. O grau da medida será definido considerando a natureza da infração, a sua reincidência e o impacto sobre os outros usuários. Em caso de trapaça grave ou reiterada, a suspensão permanente poderá ser aplicada sem aviso prévio.
+4. Quem fizer denúncias falsas de forma reiterada também poderá ser sancionado.
+5. Caso discorde de uma sanção, o usuário pode entrar em contato pelo canal indicado no Artigo 13, e o operador responderá após a análise.
+
+Artigo 7 (Temporada, rating, experiência e recompensas)
+1. As partidas ranqueadas são organizadas por temporadas, e cada temporada dura, em regra, um mês.
+2. Ao final de cada temporada, a posição final, a divisão e o rating daquela temporada são salvos como registro; em seguida, o rating de todos os usuários é parcialmente ajustado em direção ao valor de referência (soft reset) e a temporada seguinte começa. O registro de vitórias e derrotas é zerado a cada temporada.
+3. As recompensas de temporada são oferecidas na forma de registro e exibição, dentro do Aplicativo, do desempenho na temporada anterior; não são concedidos dinheiro nem bens conversíveis em dinheiro.
+4. O operador poderá alterar o método de cálculo do rating, as faixas de divisão, o calendário das temporadas e o conteúdo das recompensas para manter o equilíbrio, combater trapaças e melhorar o Serviço. Alterações importantes serão comunicadas no Aplicativo.
+5. Posições e registros obtidos por meio de trapaça poderão ser corrigidos ou excluídos mesmo após o término da temporada.
+6. A conta acumula pontos de experiência (XP) conforme a conclusão de quebra-cabeças e os resultados das partidas ranqueadas, e o nível é definido com base neles. A XP e o nível são registros para exibição no Aplicativo e não podem ser trocados por dinheiro nem por bens conversíveis em dinheiro. O operador poderá alterar o método de cálculo da XP para manter o equilíbrio e combater trapaças, e a XP obtida de forma irregular poderá ser corrigida ou excluída.
+
+Artigo 8 (Serviços pagos)
+1. O Aplicativo poderá oferecer serviços pagos, como assinaturas Premium e passes, e os pagamentos são realizados por meio da Apple App Store ou do Google Play.
+2. O pagamento, a desistência da compra e o reembolso seguem as políticas e os procedimentos de cada loja. O operador não realiza reembolsos diretamente, fora da loja.
+3. A assinatura é renovada automaticamente conforme a política de cada loja, a menos que o usuário a cancele; o cancelamento pode ser feito na tela de gerenciamento de assinaturas da loja.
+4. Caso um menor de idade realize um pagamento sem o consentimento do seu representante legal, o representante legal poderá solicitar o cancelamento conforme a legislação aplicável e a política da loja.
+5. Mesmo que a conta do usuário seja suspensa permanentemente por violação destes Termos, os valores já pagos somente serão reembolsados na medida prevista pela política da loja.
+
+Artigo 9 (Publicidade)
+O Aplicativo poderá exibir anúncios, e alguns recursos (dicas, continuar, Notas automáticas etc.) poderão estar vinculados à visualização de anúncios. Usuários Premium podem usar esses recursos sem anúncios.
+
+Artigo 10 (Alteração, interrupção e encerramento do Serviço)
+1. O operador poderá alterar ou interromper o Serviço, no todo ou em parte. Interrupções temporárias, como manutenções programadas e correção de falhas, serão comunicadas previamente sempre que possível.
+2. Em caso de encerramento definitivo do Serviço, o operador fará o aviso com pelo menos 30 dias de antecedência da data de encerramento, por meio de comunicado no Aplicativo ou na página da loja.
+3. No encerramento do Serviço, o tratamento dos serviços pagos não utilizados seguirá a legislação aplicável e as políticas de cada loja.
+4. Com o encerramento do Serviço, as informações de conta e os registros de jogo armazenados nos servidores serão eliminados, salvo se houver obrigação legal de guarda.
+
+Artigo 11 (Isenção de responsabilidade)
+1. O Aplicativo é fornecido "no estado em que se encontra", e o operador não garante que o Serviço será prestado sem interrupções ou sem erros.
+2. O operador não se responsabiliza por danos decorrentes de causas fora do seu controle razoável, como desastres naturais, falhas de comunicação ou o ambiente do dispositivo do usuário.
+3. Em disputas entre usuários, o operador não tem obrigação de intervir além do tratamento das denúncias.
+
+Artigo 12 (Alteração dos Termos)
+O operador poderá alterar estes Termos, e os Termos alterados passarão a valer a partir do momento em que forem publicados no Aplicativo. Alterações importantes desfavoráveis ao usuário serão comunicadas antes da data em que passarem a valer.
+
+Artigo 13 (Contato)
+Dúvidas sobre o Serviço: contact@jaywithme.com
+As mensagens enviadas pelo formulário em Configurações &gt; Contato e denúncias, no Aplicativo, são recebidas nesse mesmo endereço, e a resposta é enviada por e-mail.
+
+Este documento é uma tradução do original em coreano. Em caso de divergência entre a tradução e o original em coreano, prevalecerá o original em coreano.</pre>
+
     </div>
   </div>
 </main>
 <footer>
   <div class="wrap">
-    <a href="privacy.html"><span class="ko">개인정보처리방침</span><span class="en">Privacy Policy</span></a>
-    <a href="terms.html"><span class="ko">이용약관</span><span class="en">Terms of Service</span></a>
-    <a href="data-deletion.html"><span class="ko">계정 삭제 안내</span><span class="en">Account Deletion</span></a>
-    <span><span class="ko">문의</span><span class="en">Contact</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
-    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="ko">Apple 표준 EULA</span><span class="en">Apple's standard EULA</span></a>
+    <a href="privacy.html"><span class="l-ko">개인정보처리방침</span><span class="l-en">Privacy Policy</span><span class="l-ja">プライバシーポリシー</span><span class="l-zh">隱私權政策</span><span class="l-de">Datenschutzerklärung</span><span class="l-es">Política de privacidad</span><span class="l-fr">Politique de confidentialité</span><span class="l-pt">Política de Privacidade</span></a>
+    <a href="terms.html"><span class="l-ko">이용약관</span><span class="l-en">Terms of Service</span><span class="l-ja">利用規約</span><span class="l-zh">服務條款</span><span class="l-de">Nutzungsbedingungen</span><span class="l-es">Términos de servicio</span><span class="l-fr">Conditions d'utilisation</span><span class="l-pt">Termos de Uso</span></a>
+    <a href="data-deletion.html"><span class="l-ko">계정 삭제 안내</span><span class="l-en">Account Deletion</span><span class="l-ja">アカウント削除のご案内</span><span class="l-zh">帳號刪除說明</span><span class="l-de">Hinweise zur Kontolöschung</span><span class="l-es">Eliminación de la cuenta</span><span class="l-fr">Suppression du compte</span><span class="l-pt">Exclusão de conta</span></a>
+    <span><span class="l-ko">문의</span><span class="l-en">Contact</span><span class="l-ja">お問い合わせ</span><span class="l-zh">聯絡我們</span><span class="l-de">Kontakt</span><span class="l-es">Contacto</span><span class="l-fr">Contact</span><span class="l-pt">Contato</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="l-ko">Apple 표준 EULA</span><span class="l-en">Apple's standard EULA</span><span class="l-ja">Apple標準EULA</span><span class="l-zh">Apple 標準 EULA</span><span class="l-de">Standard-EULA von Apple</span><span class="l-es">EULA estándar de Apple</span><span class="l-fr">CLUF standard d'Apple</span><span class="l-pt">EULA padrão da Apple</span></a>
   </div>
 </footer>
 <script>
-  // Toggle only; these pages have no script-written strings, so the CSS switch
+  // These pages have no script-written strings, so switching the attribute
   // is the whole re-render.
-  document.getElementById('langToggle').addEventListener('click', function () {
-    var next =
-      document.documentElement.getAttribute('data-lang') === 'en' ? 'ko' : 'en';
-    document.documentElement.setAttribute('data-lang', next);
-    document.documentElement.lang = next;
-    try { window.localStorage.setItem('sl_lang', next); } catch (e) {}
+  var pick = document.getElementById('langPick');
+  pick.value = document.documentElement.getAttribute('data-lang');
+  pick.addEventListener('change', function () {
+    document.documentElement.setAttribute('data-lang', pick.value);
+    document.documentElement.lang = pick.value === 'zh' ? 'zh-Hant' : pick.value;
+    try { window.localStorage.setItem('sl_lang', pick.value); } catch (e) {}
   });
 </script>
 </body>

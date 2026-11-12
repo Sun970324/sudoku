@@ -11,7 +11,13 @@
 <link rel="canonical" href="https://sudoku.jaywithme.com/en/">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/">
-<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/">
+<link rel="alternate" hreflang="ja" href="https://sudoku.jaywithme.com/ja/">
+<link rel="alternate" hreflang="zh-Hant" href="https://sudoku.jaywithme.com/zh-hant/">
+<link rel="alternate" hreflang="de" href="https://sudoku.jaywithme.com/de/">
+<link rel="alternate" hreflang="es" href="https://sudoku.jaywithme.com/es/">
+<link rel="alternate" hreflang="fr" href="https://sudoku.jaywithme.com/fr/">
+<link rel="alternate" hreflang="pt" href="https://sudoku.jaywithme.com/pt/">
+<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/en/">
 <!-- Search Console ownership (URL-prefix property https://sudoku.jaywithme.com/).
      Keep it: removing it un-verifies the property. -->
 <meta name="google-site-verification" content="8xQ_NZLjbsyDT1OmwtUXrYPTnJqFZ0o_kPQQTi03dUY">
@@ -21,6 +27,12 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="zh_TW">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="es_LA">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="pt_BR">
 <meta property="og:title" content="Free Sudoku · Play Online and Learn Techniques">
 <meta property="og:description" content="Play free classic sudoku in your browser, no install. Four levels from Easy to Expert. Stuck? A hint names the technique, shows where it applies, and links to a lesson.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
@@ -70,7 +82,13 @@
       "operatingSystem": "iOS, Android",
       "inLanguage": [
         "ko",
-        "en"
+        "en",
+        "ja",
+        "zh-Hant",
+        "de",
+        "es",
+        "fr",
+        "pt"
       ],
       "offers": {
         "@type": "Offer",
@@ -193,7 +211,9 @@
    multiple of 12. The board and the number pad are Pretendard (owner's call). */
 [hidden] { display: none !important; }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+/* No double-tap zoom anywhere (owner, 11-12): fast taps on the pad and the
+   tools would zoom the page. Pinch zoom stays. */
+html { -webkit-text-size-adjust: 100%; touch-action: manipulation; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); word-break: keep-all; overflow-wrap: anywhere; }
 a { color: var(--gold); }
 a:hover { color: #ffe08a; }
@@ -221,8 +241,15 @@ header.top { border-bottom: 2px solid var(--line); }
 .nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
 .nav a[aria-current="page"] { color: var(--gold); box-shadow: inset 0 -4px 0 var(--gold); }
-.lang { align-self: center; margin-left: auto; font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
-.lang:hover { color: var(--ink); border-color: var(--ink-2); }
+/* The language menu: this page's language, opening onto all eight. */
+.lang { position: relative; align-self: center; margin-left: auto; }
+.lang summary { display: block; list-style: none; cursor: pointer; font-size: 14px; line-height: 1; color: var(--ink-2); border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.lang summary::-webkit-details-marker { display: none; }
+.lang summary:hover, .lang[open] summary { color: var(--ink); border-color: var(--ink-2); }
+.lang ul { position: absolute; top: calc(100% + 6px); right: 0; z-index: 50; min-width: 168px; margin: 0; padding: 4px 0; list-style: none; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line), 0 8px 24px rgba(0, 0, 0, 0.45); }
+.lang a { display: flex; align-items: center; min-height: 44px; padding: 0 16px; color: var(--ink); text-decoration: none; font-size: 15px; white-space: nowrap; }
+.lang a:hover { background: #18306a; color: var(--ink); }
+.lang a[aria-current="page"] { color: var(--gold); }
 
 /* Game: board on the left, panel on the right. */
 .game { max-width: 1040px; margin: 0 auto; padding: 24px var(--gutter) 0; display: grid; grid-template-columns: 540px minmax(0, 1fr); gap: 32px; align-items: start; }
@@ -375,7 +402,7 @@ dialog.coupon::backdrop { background: rgba(4, 10, 28, 0.82); }
 .ticket-main { min-width: 0; padding: 22px 24px; background: var(--gold); color: var(--bg); }
 .ticket-brand { font: 12px/1.5 var(--pixel); letter-spacing: 0.15em; }
 .ticket-big { margin: 8px 0 6px; font: 48px/1.1 var(--pixel); }
-html[lang="en"] .ticket-big { font-size: 36px; }
+html:not([lang="ko"]) .ticket-big { font-size: 36px; }
 .ticket-perks { font-size: 15px; font-weight: 700; }
 .ticket-stub { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; background: #ffd86b; color: var(--bg); border-left: 4px dashed var(--bg); text-align: center; }
 .ticket-stub span { font: 12px/1 var(--pixel); letter-spacing: 0.15em; }
@@ -467,7 +494,8 @@ footer .copy-r { margin-left: auto; }
   .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .nav { min-width: 0; }
   .nav a { min-height: 0; padding: 0 8px; }
-  .lang { flex: none; padding: 6px 8px; font-size: 13px; }
+  .lang { flex: none; }
+  .lang summary { padding: 6px 8px; font-size: 13px; }
 
   .game { max-width: calc(540px + 2 * var(--gutter)); padding-top: 12px; display: flex; flex-direction: column; align-items: stretch; gap: 0; }
   .panel { display: contents; }
@@ -480,9 +508,11 @@ footer .copy-r { margin-left: auto; }
   .status b { margin-left: 4px; font-size: 12px; }
   .status .t-label { display: none; }
   .pause { height: 36px; background: transparent; }
-  .board-col { order: -1; width: 100%; max-width: max(240px, calc(100svh - 260px)); align-self: center; }
-  .frame { padding: 6px; }
-  .sb-confirm { inset: 6px; }
+  /* The board runs to 8px from the screen's edges, past the 16px gutter,
+     with no gold frame (owner, 11-12). */
+  .board-col { order: -1; width: calc(100% + 16px); margin-inline: -8px; max-width: max(240px, calc(100svh - 260px)); align-self: center; }
+  .frame { padding: 0; background: transparent; }
+  .sb-confirm { inset: 0; }
   .sb-cell:nth-child(3n):not(:last-child) { border-right-width: 2px; }
   .sb-row:nth-child(3n):not(:last-child) .sb-cell { border-bottom-width: 2px; }
   .tools { margin-top: 8px; gap: 6px; }
@@ -508,7 +538,7 @@ footer .copy-r { margin-left: auto; }
   .coupon h2 { font-size: 24px; }
   .ticket, .event-ticket { grid-template-columns: minmax(0, 1fr); }
   .ticket-main { padding: 18px 16px; }
-  .ticket-big, html[lang="en"] .ticket-big { font-size: 36px; }
+  .ticket-big, html:not([lang="ko"]) .ticket-big { font-size: 36px; }
   .ticket-perks { font-size: 14px; }
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
@@ -540,7 +570,19 @@ footer .copy-r { margin-left: auto; }
       <a href="./" aria-current="page">Play</a>
       <a href="techniques/">Learn techniques</a>
     </nav>
-    <a class="lang" href="../" hreflang="ko" lang="ko" data-set-lang="ko">한국어</a>
+    <details class="lang" id="langMenu">
+      <summary lang="en">English ▾</summary>
+      <ul>
+        <li><a href="../" hreflang="ko" lang="ko" data-set-lang="ko">한국어</a></li>
+        <li><a href="./" lang="en" aria-current="page">English</a></li>
+        <li><a href="../ja/" hreflang="ja" lang="ja" data-set-lang="ja">日本語</a></li>
+        <li><a href="../zh-hant/" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh">繁體中文</a></li>
+        <li><a href="../de/" hreflang="de" lang="de" data-set-lang="de">Deutsch</a></li>
+        <li><a href="../es/" hreflang="es" lang="es" data-set-lang="es">Español</a></li>
+        <li><a href="../fr/" hreflang="fr" lang="fr" data-set-lang="fr">Français</a></li>
+        <li><a href="../pt/" hreflang="pt" lang="pt" data-set-lang="pt">Português</a></li>
+      </ul>
+    </details>
   </div>
 </header>
 
@@ -744,13 +786,122 @@ footer .copy-r { margin-left: auto; }
 
 <script>
   // A language link remembers the choice: the Korean page stops offering
-  // English, and the bilingual policy pages open in the same language.
+  // another language, and the policy pages open in the same one.
   document.querySelectorAll('[data-set-lang]').forEach(function (a) {
     a.addEventListener('click', function () {
       try { localStorage.setItem('sl_lang', a.getAttribute('data-set-lang')); } catch (e) {}
     });
   });
+  // The language menu closes on a tap elsewhere and on Escape.
+  (function () {
+    var menu = document.getElementById('langMenu');
+    document.addEventListener('click', function (e) { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); }
+    });
+  })();
 </script>
+<script type="application/json" id="sl-text" data-techniques="techniques/">
+{
+  "game.loadFail": "Could not load a puzzle. Please refresh.",
+  "game.clear": "Solved!",
+  "game.over": "3 mistakes",
+  "game.overText": "That is the end of this game.",
+  "game.retry": "Try again",
+  "game.again": "Play again",
+  "game.harder": "Try {level}",
+  "game.rankOf": "Among {level} clears",
+  "game.rank": "Top {pct}%",
+  "game.fast": "Faster",
+  "game.slow": "Slower",
+  "game.me": "You",
+  "game.rankSource": "Based on Sudoku League app clears",
+  "game.level": "Level",
+  "game.used": "Techniques in this puzzle",
+  "game.hinted": "hint used",
+  "game.cell": "row {row}, column {col}",
+  "game.leaveTitle": "This game will be lost",
+  "game.keep": "Keep playing",
+  "game.leave": "New game",
+  "game.leaveText": "Start a new {level} game?",
+  "hint.wrong1": "There is a wrong digit on the board.",
+  "hint.wrong2": "The digit in the red cell is wrong.",
+  "hint.wrong3": "You can clear the wrong digit.",
+  "hint.fallback1": "Try this cell next.",
+  "hint.fallback2": "Look at the marked cell.",
+  "hint.fallback3": "This cell is {digit}.",
+  "hint.use": "You can use {name}.",
+  "hint.fullHouse.row": "This row has one empty cell left.",
+  "hint.fullHouse.col": "This column has one empty cell left.",
+  "hint.fullHouse.box": "This box has one empty cell left.",
+  "hint.nakedSingle": "Only one digit fits in this cell.",
+  "hint.hiddenSingle.row": "In this row, {digit} fits in only one cell.",
+  "hint.hiddenSingle.col": "In this column, {digit} fits in only one cell.",
+  "hint.hiddenSingle.box": "In this box, {digit} fits in only one cell.",
+  "hint.pointing.row": "In this box, {digit} can only go in one row.",
+  "hint.pointing.col": "In this box, {digit} can only go in one column.",
+  "hint.claiming.row": "In this row, {digit} can only go inside one box.",
+  "hint.claiming.col": "In this column, {digit} can only go inside one box.",
+  "hint.naked": "The {count} marked cells can only hold {digits}.",
+  "hint.hidden.row": "In this row, {digits} fit only in the {count} marked cells.",
+  "hint.hidden.col": "In this column, {digits} fit only in the {count} marked cells.",
+  "hint.hidden.box": "In this box, {digits} fit only in the {count} marked cells.",
+  "hint.pattern": "Here is the {name} pattern. Look at the marked cells.",
+  "hint.answerReveal": "So this cell is {digit}.",
+  "hint.answerElimOne": "So {digits} cannot go in the red cells.",
+  "hint.answerElimMany": "So {digits} cannot go in the red cells.",
+  "hint.close": "Close hint",
+  "hint.showWhere": "Show where",
+  "hint.showAnswer": "Show answer",
+  "hint.fill": "Fill it in",
+  "hint.clear": "Clear",
+  "hint.removeNotes": "Remove from notes",
+  "hint.learn": "Learn {name} ▸",
+  "coupon.claiming": "Getting…",
+  "coupon.soldout": "{platform} sold out",
+  "coupon.claimed": "Got {platform} code",
+  "coupon.copy": "Copy",
+  "coupon.copied": "Copied",
+  "level.easy": "Easy",
+  "level.medium": "Medium",
+  "level.hard": "Hard",
+  "level.expert": "Expert",
+  "game.time": "Time",
+  "game.mistakes": "Mistakes",
+  "game.next": "New game",
+  "tech.fullHouse": "Full House",
+  "tech.nakedSingle": "Naked Single",
+  "tech.hiddenSingle": "Hidden Single",
+  "tech.intersectionPointing": "Pointing",
+  "tech.intersectionClaiming": "Claiming",
+  "tech.lockedPair": "Locked Pair",
+  "tech.lockedTriple": "Locked Triple",
+  "tech.nakedPair": "Naked Pair",
+  "tech.nakedTriple": "Naked Triple",
+  "tech.nakedQuad": "Naked Quad",
+  "tech.hiddenPair": "Hidden Pair",
+  "tech.hiddenTriple": "Hidden Triple",
+  "tech.hiddenQuad": "Hidden Quad",
+  "tech.xWing": "X-Wing",
+  "tech.finnedXWing": "Finned X-Wing",
+  "tech.sashimiXWing": "Sashimi X-Wing",
+  "tech.swordfish": "Swordfish",
+  "tech.finnedSwordfish": "Finned Swordfish",
+  "tech.jellyfish": "Jellyfish",
+  "tech.skyscraper": "Skyscraper",
+  "tech.twoStringKite": "2-String Kite",
+  "tech.turbotFish": "Turbot Fish",
+  "tech.simpleColoring": "Simple Coloring",
+  "tech.multiColoring": "Multi-Coloring",
+  "tech.remotePair": "Remote Pair",
+  "tech.xyWing": "XY-Wing",
+  "tech.xyzWing": "XYZ-Wing",
+  "tech.wWing": "W-Wing",
+  "tech.sueDeCoq": "Sue de Coq",
+  "tech.tripleFirework": "Triple Firework"
+}
+</script>
+<script defer src="../play/text.js"></script>
 <script defer src="../play/hints.js"></script>
 <script defer src="../play/sudoku.js"></script>
 <script defer src="../play/coupon.js"></script>

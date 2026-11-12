@@ -201,47 +201,47 @@
   }
 
   // ---- names and pages ----
-  const TECH = {
-    fullHouse: ['풀 하우스', 'Full House', 'naked-single'],
-    nakedSingle: ['네이키드 싱글', 'Naked Single', 'naked-single'],
-    hiddenSingle: ['히든 싱글', 'Hidden Single', 'hidden-single'],
-    intersectionPointing: ['포인팅', 'Pointing', 'pointing'],
-    intersectionClaiming: ['클레이밍', 'Claiming', 'claiming'],
-    lockedPair: ['락드 페어', 'Locked Pair', 'naked-pair'],
-    lockedTriple: ['락드 트리플', 'Locked Triple', 'naked-pair'],
-    nakedPair: ['네이키드 페어', 'Naked Pair', 'naked-pair'],
-    nakedTriple: ['네이키드 트리플', 'Naked Triple', 'naked-pair'],
-    nakedQuad: ['네이키드 쿼드', 'Naked Quad', 'naked-pair'],
-    hiddenPair: ['히든 페어', 'Hidden Pair', 'hidden-pair'],
-    hiddenTriple: ['히든 트리플', 'Hidden Triple', 'hidden-pair'],
-    hiddenQuad: ['히든 쿼드', 'Hidden Quad', 'hidden-pair'],
-    xWing: ['X-윙', 'X-Wing', 'x-wing'],
-    finnedXWing: ['핀드 X-윙', 'Finned X-Wing', 'finned-x-wing'],
-    sashimiXWing: ['사시미 X-윙', 'Sashimi X-Wing', 'sashimi-x-wing'],
-    swordfish: ['소드피쉬', 'Swordfish', 'swordfish'],
-    finnedSwordfish: ['핀드 소드피쉬', 'Finned Swordfish', 'swordfish'],
-    jellyfish: ['젤리피쉬', 'Jellyfish', 'jellyfish'],
-    skyscraper: ['스카이스크래퍼', 'Skyscraper', 'skyscraper'],
-    twoStringKite: ['2-스트링 카이트', '2-String Kite', 'two-string-kite'],
-    turbotFish: ['터봇 피쉬', 'Turbot Fish', 'skyscraper'],
-    simpleColoring: ['심플 컬러링', 'Simple Coloring', 'simple-coloring'],
-    multiColoring: ['멀티 컬러링', 'Multi-Coloring', 'multi-coloring'],
-    remotePair: ['리모트 페어', 'Remote Pair', 'remote-pair'],
-    xyWing: ['XY-윙', 'XY-Wing', 'xy-wing'],
-    xyzWing: ['XYZ-윙', 'XYZ-Wing', 'xyz-wing'],
-    wWing: ['W-윙', 'W-Wing', 'w-wing'],
-    sueDeCoq: ['수 드 코크', 'Sue de Coq', 'sue-de-coq'],
-    tripleFirework: ['트리플 파이어워크', 'Triple Firework', 'triple-firework'],
+  // Each technique's page; the name is the page's own (text.js, tech.<t>).
+  const SLUG = {
+    fullHouse: 'naked-single',
+    nakedSingle: 'naked-single',
+    hiddenSingle: 'hidden-single',
+    intersectionPointing: 'pointing',
+    intersectionClaiming: 'claiming',
+    lockedPair: 'naked-pair',
+    lockedTriple: 'naked-pair',
+    nakedPair: 'naked-pair',
+    nakedTriple: 'naked-pair',
+    nakedQuad: 'naked-pair',
+    hiddenPair: 'hidden-pair',
+    hiddenTriple: 'hidden-pair',
+    hiddenQuad: 'hidden-pair',
+    xWing: 'x-wing',
+    finnedXWing: 'finned-x-wing',
+    sashimiXWing: 'sashimi-x-wing',
+    swordfish: 'swordfish',
+    finnedSwordfish: 'swordfish',
+    jellyfish: 'jellyfish',
+    skyscraper: 'skyscraper',
+    twoStringKite: 'two-string-kite',
+    turbotFish: 'skyscraper',
+    simpleColoring: 'simple-coloring',
+    multiColoring: 'multi-coloring',
+    remotePair: 'remote-pair',
+    xyWing: 'xy-wing',
+    xyzWing: 'xyz-wing',
+    wWing: 'w-wing',
+    sueDeCoq: 'sue-de-coq',
+    tripleFirework: 'triple-firework',
   };
-  // Pages live at /techniques/ (ko) and /en/techniques/ (en), relative to the site root.
-  let siteRoot = '/';
-  function names(t, ko) {
-    const e = TECH[t];
-    if (!e) return null;
-    return { name: ko ? e[0] : e[1], href: e[2] ? `${siteRoot}${ko ? '' : 'en/'}techniques/${e[2]}.html` : null };
+  function names(t) {
+    const slug = SLUG[t];
+    if (!slug) return null;
+    const text = root.SLText;
+    return { name: text('tech.' + t), href: `${text.techniques}${slug}.html` };
   }
 
-  const api = { findHint, basic, candidates, names, TECH, UNITS, setRoot: (r) => { siteRoot = r; } };
+  const api = { findHint, basic, candidates, names, SLUG, UNITS };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SudokuHints = api;
 })(typeof window !== 'undefined' ? window : this);
@@ -258,68 +258,34 @@
   let stage = 0;
   let api = null;
 
-  const ko = document.documentElement.lang === 'ko';
-  const unitName = (u) => (ko ? { row: '가로줄', col: '세로줄', box: '박스' } : { row: 'row', col: 'column', box: 'box' })[u < 9 ? 'row' : u < 18 ? 'col' : 'box'];
+  const T = window.SLText;
   const list = (ds) => ds.join(', ');
-  // Korean particle by whether the word ends in a final consonant. Digits are
-  // read as 일 이 삼 사 오 육 칠 팔 구: 2, 4, 5 and 9 end in a vowel.
-  function josa(word, withFinal, without) {
-    const s = String(word);
-    const last = s[s.length - 1];
-    let final;
-    if (/[0-9]/.test(last)) final = !['2', '4', '5', '9'].includes(last);
-    else if (/[가-힣]/.test(last)) final = (last.charCodeAt(0) - 0xac00) % 28 !== 0;
-    else final = false;
-    return s + (final ? withFinal : without);
-  }
 
+  // The three stages' sentences. A sentence that names a row, column or box
+  // has one template per kind, so each language can agree with the noun.
   function texts(h) {
-    const n = H.names(h.t, ko);
+    if (h.kind === 'wrong') return [T('hint.wrong1'), T('hint.wrong2'), T('hint.wrong3')];
+    if (h.t === 'fallback') return [T('hint.fallback1'), T('hint.fallback2'), T('hint.fallback3', { digit: h.digit })];
+    const n = H.names(h.t);
     const name = n ? n.name : '';
-    const elimDigits = h.elims ? [...new Set(h.elims.map((e) => e[1]))] : [];
-    if (h.kind === 'wrong') {
-      return ko
-        ? ['판에 틀린 숫자가 있어요.', '빨간 칸의 숫자가 틀렸어요.', '틀린 숫자를 지울 수 있어요.']
-        : ['There is a wrong digit on the board.', 'The digit in the red cell is wrong.', 'You can clear the wrong digit.'];
-    }
-    if (h.t === 'fallback') {
-      return ko
-        ? ['이 칸부터 채워 볼까요?', '표시한 칸을 보세요.', `이 칸에는 ${josa(h.digit, '이', '가')} 들어가요.`]
-        : ['Try this cell next.', 'Look at the marked cell.', `This cell is ${h.digit}.`];
-    }
-    const first = ko ? `${josa(name, '을', '를')} 쓸 수 있어요.` : `You can use ${name}.`;
-    const ga = (d) => josa(d, '이', '가');
-    const neun = (d) => josa(d, '은', '는');
+    const kind = (u) => (u < 9 ? 'row' : u < 18 ? 'col' : 'box');
+    const v = { name, digit: h.digit, count: h.cells.length, digits: h.digits && list(h.digits) };
     let where;
-    switch (h.t) {
-      case 'fullHouse':
-        where = ko ? `이 ${unitName(h.unit)}에 빈칸이 하나만 남았어요.` : `This ${unitName(h.unit)} has one empty cell left.`;
-        break;
-      case 'nakedSingle':
-        where = ko ? '이 칸에 들어갈 수 있는 숫자는 하나뿐이에요.' : 'Only one digit fits in this cell.';
-        break;
-      case 'hiddenSingle':
-        where = ko ? `이 ${unitName(h.unit)}에서 ${ga(h.digit)} 들어갈 칸은 하나뿐이에요.` : `In this ${unitName(h.unit)}, ${h.digit} fits in only one cell.`;
-        break;
-      case 'intersectionPointing':
-        where = ko ? `이 박스에서 ${neun(h.digit)} 한 ${unitName(h.line)}에만 들어갈 수 있어요.` : `In this box, ${h.digit} can only go in one ${unitName(h.line)}.`;
-        break;
-      case 'intersectionClaiming':
-        where = ko ? `이 ${unitName(h.line)}에서 ${neun(h.digit)} 한 박스 안에만 들어갈 수 있어요.` : `In this ${unitName(h.line)}, ${h.digit} can only go inside one box.`;
-        break;
-      default:
-        if (/^naked/.test(h.t) || /^locked/.test(h.t)) {
-          where = ko ? `표시한 ${h.cells.length}칸에는 ${list(h.digits)}만 들어갈 수 있어요.` : `The ${h.cells.length} marked cells can only hold ${list(h.digits)}.`;
-        } else if (/^hidden/.test(h.t)) {
-          where = ko ? `이 ${unitName(h.unit)}에서 ${ga(list(h.digits))} 들어갈 수 있는 칸은 표시한 ${h.cells.length}칸뿐이에요.` : `In this ${unitName(h.unit)}, ${list(h.digits)} fit only in the ${h.cells.length} marked cells.`;
-        } else {
-          where = ko ? `${name} 모양이에요. 표시한 칸들을 보세요.` : `Here is the ${name} pattern. Look at the marked cells.`;
-        }
+    if (h.t === 'fullHouse') where = T(`hint.fullHouse.${kind(h.unit)}`);
+    else if (h.t === 'nakedSingle') where = T('hint.nakedSingle');
+    else if (h.t === 'hiddenSingle') where = T(`hint.hiddenSingle.${kind(h.unit)}`, v);
+    else if (h.t === 'intersectionPointing') where = T(`hint.pointing.${kind(h.line)}`, v);
+    else if (h.t === 'intersectionClaiming') where = T(`hint.claiming.${kind(h.line)}`, v);
+    else if (/^naked/.test(h.t) || /^locked/.test(h.t)) where = T('hint.naked', v);
+    else if (/^hidden/.test(h.t)) where = T(`hint.hidden.${kind(h.unit)}`, v);
+    else where = T('hint.pattern', v);
+    let answer;
+    if (h.kind === 'reveal') answer = T('hint.answerReveal', v);
+    else {
+      const elimDigits = [...new Set(h.elims.map((e) => e[1]))];
+      answer = T(elimDigits.length === 1 ? 'hint.answerElimOne' : 'hint.answerElimMany', { digits: list(elimDigits) });
     }
-    const answer = h.kind === 'reveal'
-      ? (ko ? `그래서 이 칸에는 ${ga(h.digit)} 들어가요.` : `So this cell is ${h.digit}.`)
-      : (ko ? `그래서 빨간 칸에는 ${ga(list(elimDigits))} 들어갈 수 없어요.` : `So ${list(elimDigits)} cannot go in the red cells.`);
-    return [first, where, answer];
+    return [T('hint.use', v), where, answer];
   }
 
   function render() {
@@ -327,7 +293,7 @@
     if (!hint) { card.hidden = true; return; }
     card.hidden = false;
     const [t1, t2, t3] = texts(hint);
-    const n = H.names(hint.t, ko);
+    const n = H.names(hint.t);
     const head = document.createElement('div');
     head.className = 'sb-hint-head';
     const eyebrow = document.createElement('span');
@@ -335,7 +301,7 @@
     const x = document.createElement('button');
     x.type = 'button';
     x.className = 'sb-hint-close';
-    x.setAttribute('aria-label', ko ? '힌트 닫기' : 'Close hint');
+    x.setAttribute('aria-label', T('hint.close'));
     x.textContent = '×';
     x.addEventListener('click', close);
     head.append(eyebrow, x);
@@ -346,16 +312,16 @@
     const btn = document.createElement('button');
     btn.type = 'button';
     if (stage < 3) {
-      btn.textContent = ko ? (stage === 1 ? '위치 보기' : '답 보기') : (stage === 1 ? 'Show where' : 'Show answer');
+      btn.textContent = T(stage === 1 ? 'hint.showWhere' : 'hint.showAnswer');
       btn.addEventListener('click', () => advance());
     } else if (hint.kind === 'reveal') {
-      btn.textContent = ko ? '이 숫자 넣기' : 'Fill it in';
+      btn.textContent = T('hint.fill');
       btn.addEventListener('click', () => { const i = hint.cell; close(); api.reveal(i); });
     } else if (hint.kind === 'wrong') {
-      btn.textContent = ko ? '지우기' : 'Clear';
+      btn.textContent = T('hint.clear');
       btn.addEventListener('click', () => { const cells = hint.cells; close(); api.clearCells(cells); });
     } else {
-      btn.textContent = ko ? '메모에서 지우기' : 'Remove from notes';
+      btn.textContent = T('hint.removeNotes');
       btn.addEventListener('click', () => { const e = hint.elims; close(); api.removeNotes(e); });
     }
     row.appendChild(btn);
@@ -365,7 +331,7 @@
       const a = document.createElement('a');
       a.href = n.href;
       a.className = 'sb-hint-learn';
-      a.textContent = ko ? `${n.name} 배우기 ▸` : `Learn ${n.name} ▸`;
+      a.textContent = T('hint.learn', { name: n.name });
       a.addEventListener('click', () => api.count(`hint-learn/${hint.t}`));
       card.appendChild(a);
     }

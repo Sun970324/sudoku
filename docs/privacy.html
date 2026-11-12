@@ -14,28 +14,35 @@
   :root { --bg: #0a1736; --panel: #12244d; --line: #2a4277; --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d;
           --pixel: "Mulmaru", system-ui, sans-serif;
           --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right)); }
-  /* One language at a time. Only the inactive one is hidden, so every element
-     keeps whatever display type it would otherwise have. */
-  html[data-lang="ko"] .en { display: none !important; }
-  html[data-lang="en"] .ko { display: none !important; }
+  /* One language at a time. Only the inactive ones are hidden, so every
+     element keeps whatever display type it would otherwise have. */
+  html:not([data-lang="ko"]) .l-ko { display: none !important; }
+  html:not([data-lang="en"]) .l-en { display: none !important; }
+  html:not([data-lang="ja"]) .l-ja { display: none !important; }
+  html:not([data-lang="zh"]) .l-zh { display: none !important; }
+  html:not([data-lang="de"]) .l-de { display: none !important; }
+  html:not([data-lang="es"]) .l-es { display: none !important; }
+  html:not([data-lang="fr"]) .l-fr { display: none !important; }
+  html:not([data-lang="pt"]) .l-pt { display: none !important; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Hiragino Sans", "PingFang TC", "Noto Sans JP", "Noto Sans TC", "Segoe UI", sans-serif;
          word-break: keep-all; overflow-wrap: anywhere; -webkit-text-size-adjust: 100%; }
+  html[data-lang="ja"] body, html[data-lang="zh"] body { word-break: normal; line-break: strict; }
   a { color: var(--gold); }
   a:hover { color: #ffe08a; }
   .wrap { max-width: 860px; margin: 0 auto; padding-inline: var(--gutter); }
   .px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
   header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
   header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
-  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
   .brand:hover { color: var(--ink); }
   .brand img { width: 40px; height: 40px; border-radius: 9px; }
-  .lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 var(--pixel); cursor: pointer; }
+  .lang { flex: none; min-height: 44px; padding: 0 14px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 system-ui, sans-serif; font-weight: 700; cursor: pointer; }
   main { padding: 64px 0 96px; }
   .eyebrow { margin: 0 0 20px; font: 18px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.12em; }
   .doc { background: var(--panel); padding: 36px 40px; }
-  pre { margin: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
+  pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
   pre::first-line { color: var(--ink); font-size: 22px; font-weight: 700; }
   .doc h1, .doc h2 { color: var(--ink); margin: 0 0 12px; }
   .doc h2 { margin-top: 32px; font-size: 20px; }
@@ -49,39 +56,39 @@
     main { padding: 40px 0 64px; }
     .doc { padding: 24px 20px; }
     pre::first-line { font-size: 19px; }
+    .brand { font-size: 18px; }
   }
 </style>
 <script>
   // Language before first paint, so the wrong one never flashes. A stored
-  // choice wins; otherwise the browser's own language decides. localStorage
-  // throws in Safari private mode, so every touch of it is guarded.
+  // choice wins; otherwise the browser's own language decides, and English
+  // stands in for a language the documents are not in. localStorage throws
+  // in Safari private mode, so every touch of it is guarded.
   (function () {
+    var codes = ['ko', 'en', 'ja', 'zh', 'de', 'es', 'fr', 'pt'];
     var lang = null;
     try { lang = window.localStorage.getItem('sl_lang'); } catch (e) {}
-    if (lang !== 'ko' && lang !== 'en') {
-      var tag = (navigator.languages && navigator.languages[0]) ||
-                navigator.language || 'en';
-      lang = String(tag).toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
+    if (codes.indexOf(lang) < 0) {
+      var tag = String((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase();
+      lang = codes.indexOf(tag.slice(0, 2)) >= 0 ? tag.slice(0, 2) : 'en';
     }
     document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : lang;
   })();
 </script>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="ko">스도쿠 리그</span><span class="en">Sudoku League</span></a>
-    <!-- The label is the language you would switch *to*, so it is the one
-         hidden while that language is active. -->
-    <button class="lang px" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button>
+    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="l-ko">스도쿠 리그</span><span class="l-en">Sudoku League</span><span class="l-ja">Sudoku League</span><span class="l-zh">Sudoku League</span><span class="l-de">Sudoku League</span><span class="l-es">Sudoku League</span><span class="l-fr">Sudoku League</span><span class="l-pt">Sudoku League</span></a>
+    <select class="lang px" id="langPick" aria-label="Language"><option value="ko" lang="ko">한국어</option><option value="en" lang="en">English</option><option value="ja" lang="ja">日本語</option><option value="zh" lang="zh-Hant">繁體中文</option><option value="de" lang="de">Deutsch</option><option value="es" lang="es">Español</option><option value="fr" lang="fr">Français</option><option value="pt" lang="pt">Português</option></select>
   </div>
 </header>
 <main>
   <div class="wrap">
     <p class="eyebrow">PRIVACY POLICY</p>
     <div class="doc px">
-<pre class="ko">개인정보처리방침
+<pre class="l-ko">개인정보처리방침
 
 시행일: 2026년 11월 9일 (2026년 7월 26일 제정, 8월 11일 서비스 이용 기록·설치 식별자·결제 정보·오류 진단 항목 추가, 9월 3일 대전·데일리 수 기록 서버 보관·이용 기록 세부 항목·문의 기록 추가, 9월 23일 경험치·레벨·칭호 항목 추가, 10월 14일 완료 연출·이벤트 진행·이벤트 닉네임 색 항목 추가, 10월 21일 웹사이트 방문 통계 항목 추가, 11월 6일 앱 설치 단계 집계·공유 기록·공유 이미지·결제 경로 항목 추가, 11월 9일 혼자 하기 기록 계정 보관 추가)
 
@@ -211,7 +218,7 @@
 - 앱 내 설정 &gt; 문의·신고 접수의 문의 양식으로 보내면 같은 주소로 접수되며, 답변은 남기신 이메일 주소로 드립니다.
 
 본 방침은 변경될 수 있으며, 중요한 변경은 앱 내에 공지합니다.</pre>
-<pre class="en">Privacy Policy
+<pre class="l-en">Privacy Policy
 
 Effective date: November 9, 2026 (first issued July 26, 2026; August 11: usage records, installation identifier, purchase information and diagnostics added; September 3: server-kept race and daily replays, detailed usage records and inquiry records added; September 23: XP, levels and titles added; October 14: completion effects, event progress and event nickname colors added; October 21: website visit statistics added; November 6: install step counts, share records, share images and purchase source added; November 9: solo records kept on the account added)
 
@@ -341,27 +348,820 @@ The app does not request location permission, and does not access your contacts,
 - The in-app form at Settings &gt; Contact &amp; report sends your message to the same address, and we reply by email.
 
 This policy may change; significant changes will be announced in the app.</pre>
+<pre class="l-ja">プライバシーポリシー
+
+施行日：2026年11月9日（2026年7月26日制定、8月11日 サービス利用記録・インストール識別子・決済情報・エラー診断の項目を追加、9月3日 対戦・今日のナンプレの手順記録のサーバー保管・利用記録の詳細項目・お問い合わせ記録を追加、9月23日 経験値・レベル・称号の項目を追加、10月14日 完了演出・イベント進行・イベントニックネームの色の項目を追加、10月21日 ウェブサイト訪問統計の項目を追加、11月6日 アプリのインストール段階の集計・共有記録・共有画像・購入経路の項目を追加、11月9日 ソロプレイ記録のアカウント保管を追加）
+
+本アプリ（以下“アプリ”）は、利用者の個人情報を大切に考え、関連法令を遵守します。本ポリシーは、アプリがどのような情報を収集し、どのように利用するかを説明するものです。
+
+1. 収集する情報
+
+(1) アカウント情報
+- GoogleまたはAppleアカウントでログインする場合：当該サービスが提供するアカウント識別子、メールアドレス
+  · Appleでのログイン時に“メールを非公開”を選択した場合、アプリはAppleが発行する転送用アドレス（private relay）のみを受け取り、実際のメールアドレスを知ることはできません。
+- メールアドレスで登録する場合：メールアドレス（パスワードはアプリでは保管せず、認証サービスが一方向暗号化して保存します）
+- ゲストアカウント：ログイン画面の“ゲストで始める”をタップすると作成され、1台の端末につき1回のみ作成できます。匿名のアカウント識別子のみを持ち、メールアドレスなどの個人を識別する情報は含みません。後からGoogle・Appleアカウントを連携するか、メールアドレスを登録すると、記録を保持したまま正式なアカウントとなり、その時点から上記のアカウント情報を収集します。
+- アプリ内で設定したニックネーム
+
+(2) ゲーム記録
+- リアルタイム対戦の記録（勝敗、レーティング、対戦相手、対戦日時、終了理由）
+- シーズン終了時点の最終順位・ティア・レーティングの記録
+- 今日のナンプレの完了記録（完了日時、所要時間、ミスの回数、ヒントの使用回数）
+- ソロプレイの記録：ログインしているアカウント（ゲストアカウントを除く）では、ソロプレイを1回終えるごとに、そのゲームの難易度、クリアしたかどうか、所要時間、ミス・ヒントなしでクリアしたかどうかがアカウントに保存されます。これは、端末を変更したりアプリを再インストールしたりしても難易度別の記録（プレイ回数・パーフェクト・最高記録・平均）を引き継げるようにするためであり、この記録は本人にのみ表示され、ランキングや報酬には使用されません。この機能の導入前に端末に蓄積されていた難易度別の合計と、ログインしていない状態でプレイしたゲームの記録は、その端末で次にログインするアカウントに1回だけ加算されます。ゲストアカウントの場合やログインしていない間の記録は、端末にのみ保存されます。
+- これとは別に、パズルをクリアすると、“この難易度を10秒単位の区間ごとに何人がクリアしたか”を数える共用の集計表の数値が1増えます（ログインの有無にかかわりません）。この集計表には利用者の識別子が含まれないため、特定の利用者の記録をたどることはできず、上位何%かを算出して分布を表示するためにのみ使用されます。ただし、ログインした状態でクリアした場合は、下記(10)の経験値付与記録と(6)のサービス利用記録がアカウントに残ります。クリアタイムは、そのどちらにも経験値とともに送信されることはありません。
+
+(3) 通報情報
+- 他の利用者を通報すると、通報者と通報対象者のアカウント識別子、通報理由、利用者が直接入力した詳細内容、関連する対戦の識別子が保存されます。この情報は通報の確認と措置の判断にのみ使用され、他の利用者に公開されることはありません。
+- 通報を処理するため、運営者は該当する対戦の手順記録（リプレイ）を閲覧することがあります。この目的以外で閲覧することはありません。
+
+(4) 広告関連情報
+- アプリはGoogle AdMobを通じてリワード広告を表示します。AdMobは広告配信のため、広告識別子（ADID/IDFA）などの端末情報を収集することがあります。詳しくはGoogleのプライバシーポリシー（https://policies.google.com/privacy）をご確認ください。
+- パーソナライズ広告を使用するかどうかは、アプリの初回起動時に表示される同意画面（Google User Messaging Platform）で選択でき、iOSでは端末の設定 &gt; プライバシーとセキュリティ &gt; トラッキングからいつでも変更できます。Androidでは設定 &gt; Google &gt; 広告から広告IDをリセットまたは削除できます。
+
+(5) 端末内に保存される情報
+- プレイ中のゲーム、リプレイ記録、お気に入り、設定（テーマ・言語・サウンドなど）はサーバーに送信されず、利用者の端末にのみ保存されます。難易度別の統計は、ログインしているアカウントであれば上記(2)のソロプレイ記録としてアカウントにも保管され、ゲストアカウントの場合やログインしていない間は端末にのみ保存されます。
+- ただし、ランクマッチ（1:1）と今日のナンプレを最後までプレイした場合、そのゲームの手順記録（リプレイ）はサーバーにも送信・保管されます。ソロプレイ、テクニック練習、フレンド対戦、パーティー対戦の手順記録は、これまでどおり端末にのみ保存されます。
+
+(6) サービス利用記録
+- サービス改善のため、ログインしているアカウントの主要機能の使用イベント（初回起動の時点、会員登録、アプリの起動日時、初めてのパズルクリア、パズルのクリア記録（難易度・所要時間・ヒント/ミスの数）、テクニック練習の完了、ヒントの使用、今日のナンプレのクリア、対戦ロビーへの訪問、リプレイの閲覧、プレミアム画面の閲覧、共有の実行と共有したものの種類（フレンドルーム・パズル・結果・月間カード）、アプリのリンクからアプリが開かれたことおよびそのリンクの種類）とその発生日時を収集します。共有を受け取った相手に関する情報は記録しません。
+- この利用記録には広告識別子や端末のハードウェア情報は含まれず、アカウント識別子にのみ紐づけられます。ログインしていない状態では収集されません。
+
+(7) インストール識別子（重複ログイン防止用）
+- 1つのアカウントが複数の端末で同時に使用されることを防ぐため、アプリのインストール時に生成されるランダムなインストール識別子をアカウントとともに保存します。
+- この値は端末のハードウェアや広告の識別子ではなく、“このアプリのインストール”のみを指すもので、アプリを削除して再インストールすると新しい値が発行されます。最後にログインしたインストール1件分のみが保管されます。
+
+(8) 決済情報
+- プレミアムを購入すると、商品識別子、ストアの区分（App Store / Google Play）、サブスクリプションの有効期限、ストアが発行した取引識別子がアカウントとともに保存されます。これは購入の事実を確認し、端末を変更しても利用権を復元するためのものです。
+- 購入ごとに、購入経路（有料購入・プロモーションコード・オファーコード・初回購入割引・テスト購入・運営者による付与の区分）、決済金額と通貨（ストアから通知される場合）、購入日時をあわせて保存します。実際の売上とコードの利用を区別するためのものです。
+- アプリおよびサーバーは、カード番号などの決済手段の情報を受け取ることも保存することもありません。実際の決済はApp StoreまたはGoogle Playが処理します。
+- レシートの検証に失敗した場合、原因を把握するため、失敗の理由と当時の商品・ストア情報が記録されることがあります。
+
+(9) エラー・診断情報
+- アプリが異常終了したりエラーが発生したりした場合、Google Firebase Crashlyticsを通じて、エラーの発生箇所、端末のモデルとOSのバージョン、Firebaseが発行したインストール識別子が収集されます。これは原因を特定して修正するためのもので、利用者が入力した内容やパズルの記録は含まれません。
+- この収集は正式にリリースされたアプリでのみ行われます。
+
+(10) 経験値・レベル・称号
+- パズルをクリアするとアカウントに経験値がたまり、累積経験値によってレベルが決まります。経験値とレベルは、ゲストアカウントを含むログイン状態のすべてのアカウントに保存されます。ログインしていない場合やオフラインの場合は付与されず、テクニック練習・やり直し・お気に入り・共有コード・リプレイからの続きのプレイ、およびフレンド対戦・パーティー対戦も付与の対象外です。
+- 付与履歴は種類ごとに直近の1件のみが保管され、次の付与によって以前の記録は上書きされます。ゲームごとに蓄積される記録はありません。
+  · ソロプレイ：アプリがそのゲームに割り当てたゲーム識別子と付与日時。付与日時は、同じゲームに繰り返し付与されることを防ぐための最小間隔の確認にのみ使用されます。この付与記録には難易度・ミス・ヒント・所要時間は残りません（ソロプレイの記録については上記(2)を参照）。
+  · 今日のナンプレ：日付、付与された経験値、その数値の計算内訳（基本ポイント、ミスなし・ヒントなしかどうか、デイリーボーナス）
+  · ランクマッチ：対戦識別子、付与された経験値、その数値の計算内訳（難易度、勝敗、終了理由、基本ポイントと倍率）
+- 称号とニックネームの色のため、アカウントに次の情報を保存します：獲得した称号と獲得日時、装備中の称号とニックネームの色、獲得したイベントニックネームの色と獲得日時、獲得した完了演出と装備中の完了演出、称号の集計を開始した時点のランクマッチ勝利数、そしてテクニック系統（12種）ごとにそのテクニックを使ってクリアしたゲーム数。テクニック使用ゲーム数は、ゲーム終了時にアプリが系統名のみを送信して1ずつ増やす数値であり、どのパズルをどのように解いたかはサーバーに残りません。
+- イベント：経験値を集めるイベントが開催されている間に限り、開催回ごとにその期間の経験値の合計と、最後にカウントしたゲームの識別子を保存します。
+- レベル、称号、ニックネームの色は他の利用者に公開されます（ランキング、対戦結果画面など）。経験値の数値、付与履歴、テクニック使用ゲーム数は、いかなる場合も他の利用者に公開されません。
+- 経験値はアプリ内でのみ使用される表示用の数値であり、現金や換金性のある財貨に交換することはできません。
+
+(11) ウェブサイト訪問統計
+- アプリの紹介ページとテクニック解説ページ（sudoku.jaywithme.com）では、どのページがどれだけ読まれているかを把握するため、GoatCounterで訪問統計を取っています。収集されるのは、訪問したページのアドレス、流入経路（リファラー）、ブラウザ・OSの種類、画面サイズ、IPアドレスから推定した国、ストアのダウンロードボタンをタップしたかどうかです。
+- Cookieは使用せず、IPアドレスは保存しません。同じ訪問者を1日の中でのみ区別するための一時的な値を生成しますが、この値は保存されません。アプリのアカウントとも紐づけられません。
+- アプリ内では収集されません。
+
+(12) アプリのインストール段階の集計
+- 新しくインストールされたアプリがどの段階まで進むかを把握するため、ログインの有無にかかわらず、次の各段階に初めて到達するたびに、共用の集計表の数値が1増えるのみです：初回起動、最初のゲーム開始、最初のゲームのガイドの承諾・拒否・完了、最初のソロプレイのクリア、2回目のゲーム開始、翌日および7日後の再起動。
+- 集計表には“アプリを初めて開いた日付、段階、OS（iOS/Android）、アプリのビルド番号”ごとの数値のみが含まれ、利用者・端末・インストールの識別子は一切含まれません。したがって、いずれの数値も特定の利用者にたどることはできません。
+
+(13) 共有画像
+- 結果画面や月間カードで画像を選んで共有すると、その画像をサーバーにアップロードし、メッセンジャーには画像を開くリンクを1行送信します。画像には、選んだデザインに応じて、ニックネーム（正式なアカウントの場合のみ。ゲストの場合は表示しません）、記録（クリアタイム・難易度・順位など）、パズルの初期の数字が含まれることがあります。
+- この画像は、リンクを持っている人であれば誰でも閲覧できます。リンクのアドレスは推測できないランダムな値であり、画像の一覧を取得する機能はありません。
+- ログインしていない状態では画像をアップロードせず、アプリのリンクのみを送信します。
+
+アプリは位置情報の権限を要求せず、連絡先・写真・マイク・カメラにもアクセスしません。ただし、広告を配信するGoogle AdMobは、広告掲載のためにIPアドレスなどからおおよその地域を推定することがあります。アプリが端末の位置情報機能を使って位置を確認することはありません。
+
+2. 情報の利用目的
+- アカウントの管理およびログイン状態の維持
+- リアルタイム対戦のマッチング、レーティング・ティアの算定、対戦記録の提供
+- 今日のナンプレおよびレーティングランキングの提供
+- 経験値・レベル・称号の算定と表示、重複付与の防止
+- 通報の受付および不正行為への対応
+- 広告の表示
+- サービス利用統計の分析と改善
+- 1つのアカウントの同時使用の防止（重複ログインの遮断）
+- プレミアム購入の確認および利用権の復元
+- エラー原因の把握とアプリの安定性の向上
+- 共有リンクによる共有画像の表示
+
+3. 情報の保管および破棄
+- アカウント情報とゲーム記録は、アカウントが存続している間保管されます。
+- アカウントを削除すると、ログイン手段（Google・Appleとの連携、セッション）とメールアドレスは直ちに破棄され、ニックネームは“退会したユーザー”に置き換えられ、個人を識別できなくなります。
+- ただし、対戦記録そのものは削除されず、匿名化された状態で残ります。1つの対戦記録は対戦相手の戦績・レーティング履歴でもあるため、これを消去すると他の利用者の記録も損なわれるためです。
+- ランクマッチと今日のナンプレの手順記録（リプレイ）は、収集日から30日が経過すると自動的に破棄されます。
+- 通報記録は、確認および再発防止のため、処理完了後最長1年間保管したのち破棄します。
+- お問い合わせ記録（メールアドレス・お問い合わせ内容）は、受付日から1年間保管したのち破棄します。
+- アカウント削除後7日間は、同じアカウントで再登録することはできません。これを確認するため、ログイン識別子（メールアドレス、ソーシャルログインの識別子）の一方向ハッシュ値のみを7日間保管したのち、自動的に破棄します。ハッシュ値は元の値に戻すことができず、新規登録が同じアカウントかどうかを照合する目的にのみ使用され、利用者の記録や身元とは紐づけられません。
+- サービス利用記録は、収集日から13か月が経過すると自動的に破棄され、アカウントを削除すると直ちにあわせて削除されます。
+- ソロプレイの記録は、アカウントが存続している間保管され、アカウントを削除すると直ちにあわせて削除されます。
+- 経験値とレベル、種類ごとの直近の付与記録、および称号・ニックネームの色・完了演出・テクニック使用ゲーム数・イベント経験値の合計は、アカウントが存続している間保管され、アカウントを削除すると直ちにあわせて削除されます。長期間使用されていないゲストアカウントが整理される際にも、あわせて削除されます。
+- インストール識別子と決済情報は、アカウントを削除すると直ちにあわせて削除されます。
+- 共有画像は、アップロードした日から30日が経過すると自動的に削除されます。画像はアカウントと紐づけて保存しないため、アカウントを削除しても、それ以前にアップロードした画像は30日が経過するまで残ります。
+- アプリのインストール段階の集計は、個人を識別できない数値のみを含むため、個別には破棄しません。
+- エラー・診断情報は、Google Firebase Crashlyticsのポリシーに従い最長90日間保管されたのち破棄されます。
+- 端末内に保存される情報は、アプリを削除するとあわせて削除されます。
+
+4. 第三者提供および処理の委託
+- アプリは、法令に基づく場合を除き、利用者の個人情報を第三者に販売または提供しません。
+- サービス運営のため、次の事業者に処理を委託しています。
+  · Supabase Inc.：アカウント認証、プロフィール・対戦・今日のナンプレ・経験値の記録の保存
+  · Google LLC：広告配信（AdMob）、Googleアカウントでのログイン、エラー収集（Firebase Crashlytics）、決済処理およびレシート検証（Google Play）
+  · Apple Inc.：Appleアカウントでのログイン、決済処理およびレシート検証（App Store）
+  · GoatCounter（goatcounter.com）：ウェブサイト訪問統計
+- 上記事業者のサーバーは大韓民国以外の地域に所在する場合があり、利用者はアプリを利用することにより、サービス提供に必要な範囲での国外移転に同意することになります。
+
+5. 児童の個人情報
+- アプリは14歳未満（大韓民国の基準）および13歳未満（その他の地域）の児童を対象としておらず、該当する年齢の利用者から故意に個人情報を収集することはありません。その事実が確認された場合は、遅滞なくアカウントと情報を削除します。
+
+6. 利用者の権利
+- 利用者は、アプリ内のマイページからいつでもニックネームの変更、ログアウト、アカウントの削除を行うことができます。
+- 個人情報の閲覧・訂正・削除・処理停止を求める場合は、下記のお問い合わせ先までご連絡ください。受付後、遅滞なく対応します。
+
+7. お問い合わせ先
+- メール：contact@jaywithme.com
+- アプリ内の設定 &gt; お問い合わせ・通報 のお問い合わせフォームから送信すると同じアドレスで受け付けられ、回答はご入力いただいたメールアドレスにお送りします。
+
+本ポリシーは変更されることがあり、重要な変更はアプリ内でお知らせします。
+
+本書は韓国語の原文を翻訳したものです。翻訳文と韓国語の原文の内容が異なる場合は、韓国語の原文が優先します。</pre>
+<pre class="l-zh">隱私權政策
+
+施行日期：2026年11月9日（2026年7月26日訂定；8月11日新增服務使用紀錄、安裝識別碼、付款資訊、錯誤診斷項目；9月3日新增對戰與每日數獨步驟紀錄之伺服器保存、使用紀錄細項、詢問紀錄；9月23日新增經驗值、等級、稱號項目；10月14日新增完成特效、活動進度、活動暱稱顏色項目；10月21日新增網站造訪統計項目；11月6日新增應用程式安裝階段統計、分享紀錄、分享圖片、購買途徑項目；11月9日新增單人模式紀錄之帳號保存）
+
+本應用程式（以下稱“應用程式”）重視使用者的個人資料，並遵守相關法令。本政策說明應用程式蒐集哪些資訊，以及如何使用這些資訊。
+
+1. 蒐集的資訊
+
+(1) 帳號資訊
+- 使用 Google 或 Apple 帳號登入時：該服務提供的帳號識別碼、電子郵件地址
+  · 若於 Apple 登入時選擇“隱藏我的電子郵件”，應用程式僅會收到 Apple 核發的轉寄用地址（private relay），無從得知您的實際電子郵件地址。
+- 以電子郵件註冊時：電子郵件地址（應用程式不保存密碼，密碼由驗證服務以單向加密方式儲存）
+- 訪客帳號：於登入畫面點選“以訪客身分開始”即會建立，每部裝置僅限一次。訪客帳號僅有匿名帳號識別碼，不含電子郵件等可識別個人之資訊。日後若連結 Google、Apple 帳號或註冊電子郵件地址，將在保留紀錄的情況下成為正式帳號，並自該時起蒐集上述帳號資訊。
+- 於應用程式內設定的暱稱
+
+(2) 遊戲紀錄
+- 即時對戰紀錄（勝負、積分、對手、對戰時間、結束原因）
+- 賽季結束時的最終排名、段位、積分紀錄
+- 每日數獨完成紀錄（完成時間、所用時間、錯誤次數、提示使用次數）
+- 單人模式紀錄：已登入的帳號（訪客帳號除外）每完成一局單人模式，該局的難度、是否完成、所用時間，以及是否在無錯誤且無提示的情況下完成，皆會儲存於帳號中。此係為了在更換裝置或重新安裝應用程式後，仍能延續各難度的紀錄（局數、完美局數、最佳紀錄、平均），這些紀錄僅本人可見，不會用於排名或獎勵。此功能推出前裝置上累積的各難度合計，以及未登入狀態下所玩局的紀錄，將一次性加入該裝置下次登入的帳號。使用訪客帳號或未登入期間的紀錄，僅儲存於裝置中。
+- 此外，完成謎題時，用於統計“此難度在每10秒區間內有多少人完成”的公用統計表數字會增加1（與是否登入無關）。此統計表不含使用者識別碼，因此無法回溯特定使用者的紀錄，僅用於計算前百分之幾的排名及顯示分布。但若於登入狀態下完成，下方(10)的經驗值發放紀錄與(6)的服務使用紀錄將留存於帳號中。完成時間不會與經驗值一併傳送至上述兩者中的任何一方。
+
+(3) 檢舉資訊
+- 檢舉其他使用者時，將儲存檢舉人與被檢舉人的帳號識別碼、檢舉原因、使用者自行輸入的詳細內容及相關對戰識別碼。此資訊僅用於審查檢舉及判斷處分，不會公開給其他使用者。
+- 為處理檢舉，營運者得查閱該場對戰的步驟紀錄（重播）。除此目的外，不會查閱。
+
+(4) 廣告相關資訊
+- 應用程式透過 Google AdMob 顯示獎勵廣告。AdMob 可能為提供廣告而蒐集廣告識別碼（ADID/IDFA）等裝置資訊。詳細內容請參閱 Google 隱私權政策（https://policies.google.com/privacy）。
+- 是否使用個人化廣告，可於首次啟動應用程式時顯示的同意視窗（Google User Messaging Platform）中選擇；在 iOS 上，可隨時於裝置的設定 &gt; 隱私權與安全性 &gt; 追蹤中變更。在 Android 上，可於設定 &gt; Google &gt; 廣告中重設或刪除廣告 ID。
+
+(5) 裝置內儲存的資訊
+- 進行中的遊戲、重播紀錄、收藏、設定（主題、語言、音效等）不會傳送至伺服器，僅儲存於使用者的裝置中。各難度統計若為已登入的帳號，亦會以上述(2)的單人模式紀錄保存於帳號中；使用訪客帳號或未登入期間，則僅儲存於裝置中。
+- 但完成排位賽（1:1）與每日數獨時，該局的步驟紀錄（重播）亦會傳送並保存於伺服器。單人模式、技巧練習、好友對戰及派對對戰的步驟紀錄，仍與以往相同，僅儲存於裝置中。
+
+(6) 服務使用紀錄
+- 為改善服務，將蒐集已登入帳號的主要功能使用事件（首次啟動時間、註冊、應用程式啟動時間、首次完成謎題、謎題完成紀錄（難度、所用時間、提示/錯誤次數）、完成技巧練習、使用提示、完成每日數獨、造訪對戰大廳、查看重播、查看進階版畫面、執行分享及分享內容的類型（好友房間、謎題、結果、月度卡片）、透過應用程式連結開啟應用程式及該連結的類型）及其發生時間。不會記錄接收分享者的任何資訊。
+- 此使用紀錄不包含廣告識別碼或裝置的硬體資訊，僅與帳號識別碼連結。未登入狀態下不會蒐集。
+
+(7) 安裝識別碼（防止重複登入用）
+- 為防止同一帳號同時在多部裝置上使用，會將應用程式安裝時產生的隨機安裝識別碼與帳號一併儲存。
+- 此值並非裝置的硬體識別碼或廣告識別碼，僅指“此應用程式的安裝版本”，刪除應用程式後重新安裝將核發新值。僅保存最後一次登入的安裝版本。
+
+(8) 付款資訊
+- 購買進階版時，商品識別碼、商店類別（App Store / Google Play）、訂閱到期日、商店核發的交易識別碼將與帳號一併儲存。此係為確認購買事實，並於更換裝置時恢復使用權。
+- 每筆購買亦會一併儲存購買途徑（付費購買、促銷代碼、優惠代碼、首購優惠、測試購買、營運者發放之區分）、付款金額與幣別（商店有提供時）及購買時間。此係為區分實際營收與代碼使用。
+- 應用程式與伺服器皆不會接收或儲存信用卡號碼等付款方式資訊。實際付款由 App Store 或 Google Play 處理。
+- 收據驗證失敗時，為查明原因，可能會記錄失敗原因及當時的商品、商店資訊。
+
+(9) 錯誤與診斷資訊
+- 應用程式異常結束或發生錯誤時，將透過 Google Firebase Crashlytics 蒐集錯誤發生位置、裝置型號與作業系統版本，以及 Firebase 核發的安裝識別碼。此係為找出原因並加以修正，不包含使用者輸入的內容或謎題紀錄。
+- 此蒐集僅於正式發布的應用程式中進行。
+
+(10) 經驗值、等級、稱號
+- 完成謎題時，帳號會累積經驗值，並依累積經驗值決定等級。經驗值與等級儲存於包含訪客帳號在內的所有已登入帳號中。未登入或離線時不會發放；技巧練習、重新開始、收藏、分享代碼、從重播接續作答，以及好友對戰、派對對戰亦不在發放對象之列。
+- 發放紀錄每一種類僅保存最近一筆，下次發放將覆蓋先前紀錄。不會保留每局累積的紀錄。
+  · 單人模式：應用程式賦予該局的遊戲識別碼及發放時間。發放時間僅用於確認最短間隔，以防同一局重複發放。此發放紀錄不會留存難度、錯誤、提示、所用時間（單人模式紀錄請參閱上述(2)）。
+  · 每日數獨：日期、發放的經驗值、該數值的計算明細（基本分數、是否無錯誤、是否無提示、每日獎勵）
+  · 排位賽：對戰識別碼、發放的經驗值、該數值的計算明細（難度、勝負、結束原因、基本分數與倍率）
+- 為提供稱號與暱稱顏色，帳號將儲存下列資訊：獲得的稱號及獲得時間、裝備的稱號與暱稱顏色、獲得的活動暱稱顏色及獲得時間、獲得的完成特效與裝備的完成特效、開始統計稱號時的排位賽勝場數，以及各技巧類別（12種）中使用該技巧完成的局數。技巧使用局數是每局結束時，由應用程式僅傳送類別名稱並逐次加1的數字，伺服器不會留存您解了哪一道謎題或如何解題。
+- 活動：僅於經驗值累積活動進行期間，每一期儲存該期間的經驗值合計及最後計入之一局的識別碼。
+- 等級、稱號與暱稱顏色會公開給其他使用者（排行榜、對戰結果畫面等）。經驗值數值、發放明細及技巧使用局數，在任何情況下皆不會公開給其他使用者。
+- 經驗值僅為應用程式內使用的顯示用數值，無法兌換為現金或具兌換價值的財物。
+
+(11) 網站造訪統計
+- 應用程式介紹頁面與技巧說明頁面（sudoku.jaywithme.com）為了解哪些頁面被閱讀及閱讀頻率，使用 GoatCounter 進行造訪統計。蒐集項目為造訪的頁面網址、來源路徑（參照網址）、瀏覽器與作業系統類型、螢幕尺寸、依 IP 位址推估的國家，以及是否點選商店下載按鈕。
+- 不使用 Cookie，亦不儲存 IP 位址。為僅在一天內區分同一訪客，會產生暫時值，此值不會被儲存，亦不會與應用程式帳號連結。
+- 應用程式內不會進行此項蒐集。
+
+(12) 應用程式安裝階段統計
+- 為了解新安裝的應用程式會進行到哪個階段，不論是否登入，每當首次到達下列階段時，僅會使公用統計表中的數字增加1：首次啟動、首次開始遊戲、接受/拒絕/完成首局引導、首次完成單人模式、開始第二局遊戲、隔天及7天後再次開啟。
+- 統計表僅包含依“首次開啟應用程式的日期、階段、作業系統（iOS/Android）、應用程式組建編號”區分的數字，完全不含使用者、裝置或安裝版本的識別碼。因此任何數字皆無法回溯至特定使用者。
+
+(13) 分享圖片
+- 於結果畫面或月度卡片中選擇圖片分享時，該圖片將上傳至伺服器，並透過通訊軟體傳送一行開啟該圖片的連結。依所選樣式，圖片可能包含暱稱（僅限正式帳號，訪客不顯示）、紀錄（完成時間、難度、排名等）及謎題的初始數字。
+- 任何持有連結者皆可查看此圖片。連結網址為無法猜測的隨機值，且不提供查詢圖片列表的功能。
+- 未登入狀態下不會上傳圖片，僅傳送應用程式連結。
+
+應用程式不會要求位置權限，亦不會存取聯絡人、照片、麥克風或相機。但提供廣告的 Google AdMob 可能為投放廣告而透過 IP 位址等資訊推估大致地區。應用程式不會使用裝置的定位功能確認您的位置。
+
+2. 資訊的使用目的
+- 帳號管理及維持登入
+- 即時對戰配對、積分與段位計算、提供對戰紀錄
+- 提供每日數獨及積分排行榜
+- 經驗值、等級、稱號的計算與顯示，以及防止重複發放
+- 受理檢舉及處理不當行為
+- 顯示廣告
+- 服務使用統計分析及改善
+- 防止同一帳號同時使用（阻擋重複登入）
+- 確認進階版購買及恢復使用權
+- 查明錯誤原因及改善應用程式穩定性
+- 透過分享連結顯示分享圖片
+
+3. 資訊的保存及銷毀
+- 帳號資訊與遊戲紀錄於帳號存續期間保存。
+- 刪除帳號時，登入方式（Google、Apple 連結、工作階段）與電子郵件地址將立即銷毀，暱稱將替換為“已退出的使用者”，使個人無法被識別。
+- 但對戰紀錄本身不會刪除，將以匿名化狀態保留。因為一筆對戰紀錄同時也是對手的戰績與積分歷程，若予以刪除，其他使用者的紀錄亦將一併受損。
+- 排位賽與每日數獨的步驟紀錄（重播）自蒐集日起滿30日後自動銷毀。
+- 檢舉紀錄為審查及防止再犯，於處理完畢後最多保存1年，之後銷毀。
+- 詢問紀錄（電子郵件地址、詢問內容）自受理日起保存1年，之後銷毀。
+- 刪除帳號後7日內，無法以同一帳號重新註冊。為確認此事，僅保存登入識別碼（電子郵件地址、社群登入識別碼）的單向雜湊值7日，之後自動銷毀。雜湊值無法還原為原始值，僅用於比對新註冊是否為同一帳號，不會與使用者的紀錄或身分連結。
+- 服務使用紀錄自蒐集日起滿13個月後自動銷毀，刪除帳號時亦立即一併刪除。
+- 單人模式紀錄於帳號存續期間保存，刪除帳號時立即一併刪除。
+- 經驗值與等級、各種類最後一筆發放紀錄，以及稱號、暱稱顏色、完成特效、技巧使用局數、活動經驗值合計，於帳號存續期間保存，刪除帳號時立即一併刪除。長期未使用的訪客帳號遭清理時，亦一併刪除。
+- 安裝識別碼與付款資訊於刪除帳號時立即一併刪除。
+- 分享圖片自上傳日起滿30日後自動刪除。由於圖片並未與帳號連結儲存，即使刪除帳號，先前上傳的圖片仍會保留至滿30日為止。
+- 應用程式安裝階段統計僅包含無法識別個人的數字，因此不另行銷毀。
+- 錯誤與診斷資訊依 Google Firebase Crashlytics 的政策最多保存90日，之後銷毀。
+- 裝置內儲存的資訊於刪除應用程式時一併刪除。
+
+4. 提供第三方及委託處理
+- 除依法令規定外，應用程式不會將使用者的個人資料出售或提供給第三方。
+- 為營運服務，委託下列業者進行處理：
+  · Supabase Inc.：帳號驗證，以及個人檔案、對戰、每日數獨、經驗值紀錄的儲存
+  · Google LLC：提供廣告（AdMob）、Google 帳號登入、錯誤蒐集（Firebase Crashlytics）、付款處理及收據驗證（Google Play）
+  · Apple Inc.：Apple 帳號登入、付款處理及收據驗證（App Store）
+  · GoatCounter（goatcounter.com）：網站造訪統計
+- 上述業者的伺服器可能位於大韓民國以外地區，使用者使用應用程式即表示同意在提供服務所需範圍內進行境外傳輸。
+
+5. 兒童的個人資料
+- 應用程式並非以未滿14歲（以大韓民國為準）及未滿13歲（其他地區）之兒童為對象，亦不會故意向該年齡層的使用者蒐集個人資料。經確認有此情形時，將立即刪除其帳號及資訊。
+
+6. 使用者的權利
+- 使用者可隨時於應用程式內的個人頁面變更暱稱、登出及刪除帳號。
+- 如欲請求查閱、更正、刪除或停止處理個人資料，請透過下列聯絡方式與我們聯繫。受理後將立即處理。
+
+7. 聯絡方式
+- 電子郵件：contact@jaywithme.com
+- 透過應用程式內設定 &gt; 詢問與檢舉中的詢問表單傳送，亦會寄送至同一地址，我們將回覆至您留下的電子郵件地址。
+
+本政策可能有所變更，重大變更將於應用程式內公告。
+
+本文件係譯自韓文原文。譯文與韓文原文內容如有歧異，應以韓文原文為準。</pre>
+<pre class="l-de">Datenschutzerklärung
+
+Gültig ab: 9. November 2026 (erlassen am 26. Juli 2026; 11. August: Nutzungsdaten, Installationskennung, Zahlungsinformationen und Fehlerdiagnose ergänzt; 3. September: Speicherung der Zugaufzeichnungen von Duellen und Täglichem Sudoku auf dem Server, Einzelangaben zu Nutzungsdaten und Anfragedaten ergänzt; 23. September: Erfahrungspunkte, Level und Titel ergänzt; 14. Oktober: Abschlusseffekte, Event-Fortschritt und Event-Nicknamefarben ergänzt; 21. Oktober: Besuchsstatistik der Website ergänzt; 6. November: Zählung der Installationsschritte, Daten zum Teilen, geteilte Bilder und Kaufweg ergänzt; 9. November: Speicherung der Solo-Daten im Konto ergänzt)
+
+Diese App (im Folgenden "App") nimmt den Schutz Ihrer personenbezogenen Daten ernst und hält die geltenden Gesetze ein. Diese Erklärung beschreibt, welche Daten die App erhebt und wie sie verwendet werden.
+
+1. Erhobene Daten
+
+(1) Kontodaten
+- Bei Anmeldung mit einem Google- oder Apple-Konto: die von diesem Dienst bereitgestellte Kontokennung und E-Mail-Adresse
+  · Wenn Sie bei der Apple-Anmeldung "E-Mail-Adresse verbergen" wählen, erhält die App nur die von Apple ausgegebene Weiterleitungsadresse (Private Relay) und erfährt Ihre tatsächliche E-Mail-Adresse nicht.
+- Bei Registrierung per E-Mail: die E-Mail-Adresse (das Passwort speichert die App nicht; der Authentifizierungsdienst speichert es nur als Einweg-Hash)
+- Gastkonto: Es wird erstellt, wenn Sie auf dem Anmeldebildschirm auf "Als Gast starten" tippen, und ist nur einmal pro Gerät möglich. Es enthält nur eine anonyme Kontokennung und keine personenbezogenen Identifikationsdaten wie eine E-Mail-Adresse. Wenn Sie später ein Google- oder Apple-Konto verknüpfen oder eine E-Mail-Adresse hinterlegen, wird es unter Beibehaltung Ihrer Daten zu einem regulären Konto; ab diesem Zeitpunkt werden die oben genannten Kontodaten erhoben.
+- Der in der App festgelegte Nickname
+
+(2) Spieldaten
+- Daten zu Echtzeit-Duellen (Sieg/Niederlage, Wertung, Gegner, Zeitpunkt des Duells, Grund für das Ende)
+- Endgültiger Rang, Stufe und Wertung zum Saisonende
+- Abschlussdaten des Täglichen Sudoku (Abschlusszeitpunkt, benötigte Zeit, Anzahl der Fehler, Anzahl der genutzten Tipps)
+- Solo-Daten: Bei angemeldeten Konten (ausgenommen Gastkonten) werden nach jeder beendeten Solo-Partie deren Schwierigkeit, ob sie gelöst wurde, die benötigte Zeit und ob sie ohne Fehler und ohne Tipps gelöst wurde, im Konto gespeichert. So bleiben Ihre Statistiken je Schwierigkeit (Anzahl der Partien, perfekte Partien, Bestzeit, Durchschnitt) auch nach einem Gerätewechsel oder einer Neuinstallation der App erhalten. Diese Daten sind nur für Sie sichtbar und werden nicht für Ranglisten oder Belohnungen verwendet. Die vor Einführung dieser Funktion auf dem Gerät gesammelten Summen je Schwierigkeit sowie die Daten von Partien, die ohne Anmeldung gespielt wurden, werden einmalig dem nächsten Konto hinzugefügt, das sich auf diesem Gerät anmeldet. Bei Gastkonten oder solange Sie nicht angemeldet sind, werden die Daten nur auf dem Gerät gespeichert.
+- Unabhängig davon wird beim Abschluss eines Rätsels (unabhängig von einer Anmeldung) in einer gemeinsamen Zähltabelle, die erfasst, "wie viele Spieler diese Schwierigkeit in welchem 10-Sekunden-Intervall abgeschlossen haben", eine Zahl um 1 erhöht. Diese Tabelle enthält keine Nutzerkennung, sodass sich die Daten eines bestimmten Nutzers nicht zurückverfolgen lassen; sie dient ausschließlich dazu, Ihre prozentuale Platzierung zu berechnen und die Verteilung anzuzeigen. Wenn Sie ein Rätsel im angemeldeten Zustand abschließen, verbleiben jedoch der Vergabeeintrag der Erfahrungspunkte gemäß (10) und die Nutzungsdaten gemäß (6) in Ihrem Konto. Die Abschlusszeit wird in keinem der beiden Fälle zusammen mit den Erfahrungspunkten übermittelt.
+
+(3) Meldungen
+- Wenn Sie einen anderen Nutzer melden, werden die Kontokennungen der meldenden und der gemeldeten Person, der Meldegrund, die von Ihnen selbst eingegebenen Details und die Kennung des betreffenden Duells gespeichert. Diese Daten werden ausschließlich zur Prüfung der Meldung und zur Entscheidung über Sanktionen verwendet und anderen Nutzern nicht angezeigt.
+- Zur Bearbeitung einer Meldung kann der Betreiber die Zugaufzeichnung (Replay) des betreffenden Duells einsehen. Zu anderen Zwecken erfolgt keine Einsicht.
+
+(4) Werbebezogene Daten
+- Die App zeigt über Google AdMob Werbung mit Belohnung an. AdMob kann zur Bereitstellung von Werbung Geräteinformationen wie die Werbe-ID (ADID/IDFA) erheben. Einzelheiten finden Sie in der Datenschutzerklärung von Google (https://policies.google.com/privacy).
+- Ob personalisierte Werbung verwendet wird, können Sie im Einwilligungsdialog (Google User Messaging Platform) festlegen, der beim ersten Start der App angezeigt wird. Unter iOS können Sie dies jederzeit unter Einstellungen &gt; Datenschutz &amp; Sicherheit &gt; Tracking ändern. Unter Android können Sie die Werbe-ID unter Einstellungen &gt; Google &gt; Werbung zurücksetzen oder löschen.
+
+(5) Auf dem Gerät gespeicherte Daten
+- Laufende Spiele, Replays, Favoriten und Einstellungen (Design, Sprache, Ton usw.) werden nicht an den Server übertragen, sondern nur auf Ihrem Gerät gespeichert. Statistiken je Schwierigkeit werden bei angemeldeten Konten als Solo-Daten gemäß (2) auch im Konto gespeichert; bei Gastkonten oder solange Sie nicht angemeldet sind, nur auf dem Gerät.
+- Wenn Sie jedoch ein Ranglistenduell (1:1) oder das Tägliche Sudoku abschließen, wird die Zugaufzeichnung (Replay) dieser Partie auch an den Server übertragen und dort gespeichert. Die Zugaufzeichnungen von Solo-Partien, Technik-Übungen, Freundschaftsduellen und Party-Duellen werden wie bisher nur auf dem Gerät gespeichert.
+
+(6) Nutzungsdaten
+- Zur Verbesserung des Dienstes erheben wir für angemeldete Konten Ereignisse zur Nutzung wichtiger Funktionen (Zeitpunkt des ersten Starts, Registrierung, Zeitpunkt jedes App-Starts, erstes abgeschlossenes Rätsel, Daten zu abgeschlossenen Rätseln (Schwierigkeit, benötigte Zeit, Anzahl der Tipps/Fehler), abgeschlossene Technik-Übungen, Nutzung von Tipps, Abschluss des Täglichen Sudoku, Besuch der Duell-Lobby, Aufruf von Replays, Aufruf der Premium-Seite, Teilen und die Art des geteilten Inhalts (Freundesraum, Rätsel, Ergebnis, Monatskarte), Öffnen der App über einen App-Link und die Art dieses Links) sowie den jeweiligen Zeitpunkt. Daten über die Empfänger geteilter Inhalte werden nicht erfasst.
+- Diese Nutzungsdaten enthalten weder Werbe-IDs noch Hardwareinformationen des Geräts und sind ausschließlich mit der Kontokennung verknüpft. Solange Sie nicht angemeldet sind, werden sie nicht erhoben.
+
+(7) Installationskennung (zur Verhinderung mehrfacher Anmeldungen)
+- Um zu verhindern, dass ein Konto gleichzeitig auf mehreren Geräten genutzt wird, wird eine bei der Installation der App erzeugte zufällige Installationskennung zusammen mit dem Konto gespeichert.
+- Dieser Wert ist weder eine Hardwarekennung noch eine Werbe-ID des Geräts, sondern bezeichnet ausschließlich "diese Installation der App"; wird die App gelöscht und erneut installiert, wird ein neuer Wert vergeben. Gespeichert wird nur die zuletzt angemeldete Installation.
+
+(8) Zahlungsinformationen
+- Beim Kauf von Premium werden die Produktkennung, der Store (App Store / Google Play), das Ablaufdatum des Abonnements und die vom Store ausgegebene Transaktionskennung zusammen mit dem Konto gespeichert. Dies dient dazu, den Kauf zu bestätigen und die Berechtigung auch nach einem Gerätewechsel wiederherzustellen.
+- Zu jedem Kauf werden außerdem der Kaufweg (bezahlter Kauf, Promo-Code, Angebotscode, Rabatt für den Erstkauf, Testkauf oder Vergabe durch den Betreiber), der gezahlte Betrag und die Währung (sofern vom Store mitgeteilt) sowie der Kaufzeitpunkt gespeichert. Dies dient dazu, tatsächliche Umsätze von Code-Einlösungen zu unterscheiden.
+- Weder die App noch der Server erhalten oder speichern Daten zu Zahlungsmitteln wie Kartennummern. Die eigentliche Zahlung wird vom App Store oder von Google Play abgewickelt.
+- Schlägt die Belegprüfung fehl, können zur Ermittlung der Ursache der Fehlergrund sowie die betreffenden Produkt- und Store-Informationen erfasst werden.
+
+(9) Fehler- und Diagnosedaten
+- Wenn die App unerwartet beendet wird oder ein Fehler auftritt, werden über Google Firebase Crashlytics die Fehlerstelle, das Gerätemodell, die Betriebssystemversion und eine von Firebase ausgegebene Installationskennung erhoben. Dies dient dazu, die Ursache zu finden und zu beheben; von Ihnen eingegebene Inhalte und Rätseldaten sind darin nicht enthalten.
+- Diese Erhebung erfolgt nur in offiziell veröffentlichten Versionen der App.
+
+(10) Erfahrungspunkte, Level und Titel
+- Wenn Sie ein Rätsel abschließen, erhält Ihr Konto Erfahrungspunkte (EP); aus der Gesamtzahl der EP ergibt sich Ihr Level. EP und Level werden für alle angemeldeten Konten einschließlich Gastkonten gespeichert. Solange Sie nicht angemeldet oder offline sind, werden keine EP vergeben; auch für Technik-Übungen, Neustarts, Favoriten, Teilen-Codes, das Weiterspielen aus einem Replay sowie Freundschaftsduelle und Party-Duelle werden keine EP vergeben.
+- Von den Vergaben wird je Art nur der jeweils letzte Eintrag gespeichert; die nächste Vergabe überschreibt den vorherigen Eintrag. Ein Verlauf pro Partie wird nicht gespeichert.
+  · Solo: die Spielkennung, die die App der Partie zugewiesen hat, und der Zeitpunkt der Vergabe. Der Zeitpunkt wird ausschließlich zur Prüfung eines Mindestabstands verwendet, der wiederholte Vergaben für dieselbe Partie verhindert. Dieser Vergabeeintrag enthält weder Schwierigkeit noch Fehler, Tipps oder benötigte Zeit (zu den Solo-Daten siehe (2)).
+  · Tägliches Sudoku: das Datum, die vergebenen EP und deren Berechnung (Grundpunkte, ob ohne Fehler und ohne Tipps gelöst, Tagesbonus)
+  · Ranglistenduell: die Duellkennung, die vergebenen EP und deren Berechnung (Schwierigkeit, Sieg/Niederlage, Grund für das Ende, Grundpunkte und Multiplikator)
+- Für Titel und Nicknamefarben werden im Konto gespeichert: erhaltene Titel und der Zeitpunkt des Erhalts, der ausgewählte Titel und die ausgewählte Nicknamefarbe, erhaltene Event-Nicknamefarben und der Zeitpunkt des Erhalts, erhaltene Abschlusseffekte und der ausgewählte Abschlusseffekt, die Anzahl der Ranglistensiege zu Beginn der Titelzählung sowie für jede der 12 Technikgruppen die Anzahl der Partien, die Sie unter Verwendung dieser Technik abgeschlossen haben. Diese Anzahl ist ein Zähler, der beim Beenden einer Partie um 1 erhöht wird, wobei die App nur den Namen der Technikgruppe sendet; welches Rätsel Sie wie gelöst haben, wird nicht auf dem Server gespeichert.
+- Events: Nur während eines laufenden EP-Sammel-Events werden je Durchgang die EP-Summe in diesem Zeitraum und die Kennung der zuletzt gezählten Partie gespeichert.
+- Level, Titel und Nicknamefarbe sind für andere Nutzer sichtbar (Ranglisten, Ergebnisbildschirme von Duellen usw.). Die EP-Zahl, der Vergabeverlauf und die Anzahl der Partien je Technik werden anderen Nutzern in keinem Fall angezeigt.
+- EP sind ein reiner Anzeigewert innerhalb der App und können nicht in Bargeld oder geldwerte Güter umgetauscht werden.
+
+(11) Besuchsstatistik der Website
+- Die Vorstellungsseite der App und die Seiten mit Technik-Erklärungen (sudoku.jaywithme.com) erstellen mit GoatCounter Besuchsstatistiken, um zu erfahren, welche Seiten wie oft gelesen werden. Erhoben werden die Adresse der besuchten Seite, die verweisende Seite (Referrer), Browser- und Betriebssystemtyp, die Bildschirmgröße, das anhand der IP-Adresse geschätzte Land sowie, ob eine Store-Download-Schaltfläche geklickt wurde.
+- Es werden keine Cookies verwendet und keine IP-Adressen gespeichert. Um denselben Besucher innerhalb eines Tages unterscheiden zu können, wird ein temporärer Wert erzeugt, der nicht gespeichert wird. Eine Verknüpfung mit einem App-Konto erfolgt nicht.
+- Innerhalb der App findet diese Erhebung nicht statt.
+
+(12) Zählung der Installationsschritte
+- Um zu erfahren, wie weit neu installierte Apps genutzt werden, wird unabhängig von einer Anmeldung beim erstmaligen Erreichen jedes der folgenden Schritte lediglich eine Zahl in einer gemeinsamen Zähltabelle um 1 erhöht: erster Start, erstes gestartetes Spiel, Annahme, Ablehnung oder Abschluss der Anleitung zur ersten Partie, erste abgeschlossene Solo-Partie, zweites gestartetes Spiel sowie erneutes Öffnen am nächsten Tag und 7 Tage später.
+- Die Zähltabelle enthält nur Zahlen je "Datum des ersten Öffnens der App, Schritt, Betriebssystem (iOS/Android) und Build-Nummer der App" und keinerlei Kennungen von Nutzern, Geräten oder Installationen. Daher lässt sich keine Zahl auf einen bestimmten Nutzer zurückführen.
+
+(13) Geteilte Bilder
+- Wenn Sie auf einem Ergebnisbildschirm oder einer Monatskarte ein Bild auswählen und teilen, wird das Bild auf den Server hochgeladen, und an den Messenger wird eine Zeile mit einem Link gesendet, über den sich das Bild öffnen lässt. Je nach gewähltem Design kann das Bild Ihren Nickname (nur bei regulären Konten; bei Gästen wird er nicht angezeigt), Ihre Ergebnisse (Abschlusszeit, Schwierigkeit, Rang usw.) und die Startziffern des Rätsels enthalten.
+- Dieses Bild kann jeder sehen, der den Link besitzt. Die Link-Adresse ist ein zufälliger, nicht erratbarer Wert, und es gibt keine Funktion, mit der sich eine Liste der Bilder abrufen lässt.
+- Solange Sie nicht angemeldet sind, wird kein Bild hochgeladen, sondern nur ein App-Link gesendet.
+
+Die App fordert keine Standortberechtigung an und greift nicht auf Kontakte, Fotos, Mikrofon oder Kamera zu. Google AdMob, das die Werbung bereitstellt, kann jedoch zur Auslieferung von Werbung anhand der IP-Adresse oder ähnlicher Daten eine ungefähre Region schätzen. Die App ermittelt Ihren Standort zu keinem Zeitpunkt über die Ortungsfunktionen des Geräts.
+
+2. Zwecke der Datenverwendung
+- Kontoverwaltung und Aufrechterhaltung der Anmeldung
+- Zuordnung von Gegnern in Echtzeit-Duellen, Berechnung von Wertung und Stufe, Bereitstellung des Duellverlaufs
+- Bereitstellung des Täglichen Sudoku und der Wertungs-Rangliste
+- Berechnung und Anzeige von Erfahrungspunkten, Level und Titeln sowie Verhinderung doppelter Vergaben
+- Entgegennahme von Meldungen und Vorgehen gegen unfaires Verhalten
+- Anzeige von Werbung
+- Analyse von Nutzungsstatistiken und Verbesserung des Dienstes
+- Verhinderung der gleichzeitigen Nutzung eines Kontos (Sperre mehrfacher Anmeldungen)
+- Bestätigung von Premium-Käufen und Wiederherstellung von Berechtigungen
+- Ermittlung von Fehlerursachen und Verbesserung der Stabilität der App
+- Anzeige geteilter Bilder über Teilen-Links
+
+3. Speicherung und Löschung der Daten
+- Kontodaten und Spieldaten werden gespeichert, solange das Konto besteht.
+- Wenn Sie Ihr Konto löschen, werden die Anmeldemittel (Verknüpfung mit Google/Apple, Sitzungen) und die E-Mail-Adresse sofort vernichtet, und der Nickname wird durch "Gelöschter Nutzer" ersetzt, sodass eine Identifizierung Ihrer Person nicht mehr möglich ist.
+- Die Duelldaten selbst werden jedoch nicht gelöscht, sondern verbleiben in anonymisierter Form. Da ein Duelleintrag zugleich Teil der Bilanz und des Wertungsverlaufs des Gegners ist, würde seine Löschung auch die Daten anderer Nutzer beschädigen.
+- Zugaufzeichnungen (Replays) von Ranglistenduellen und dem Täglichen Sudoku werden 30 Tage nach der Erhebung automatisch vernichtet.
+- Meldungen werden zur Prüfung und zur Verhinderung von Wiederholungen nach Abschluss der Bearbeitung bis zu 1 Jahr gespeichert und anschließend vernichtet.
+- Anfragedaten (E-Mail-Adresse, Inhalt der Anfrage) werden ab dem Eingangsdatum 1 Jahr lang gespeichert und anschließend vernichtet.
+- Nach der Löschung eines Kontos ist eine erneute Registrierung mit demselben Konto 7 Tage lang nicht möglich. Um dies zu prüfen, wird nur ein Einweg-Hashwert der Anmeldekennungen (E-Mail-Adresse, Kennung der Anmeldung über soziale Netzwerke) 7 Tage lang gespeichert und anschließend automatisch vernichtet. Der Hashwert kann nicht in den ursprünglichen Wert zurückverwandelt werden, dient ausschließlich dem Abgleich, ob eine neue Registrierung dasselbe Konto betrifft, und ist weder mit Ihren Daten noch mit Ihrer Identität verknüpft.
+- Nutzungsdaten werden 13 Monate nach der Erhebung automatisch vernichtet und bei Löschung des Kontos sofort mitgelöscht.
+- Solo-Daten werden gespeichert, solange das Konto besteht, und bei Löschung des Kontos sofort mitgelöscht.
+- Erfahrungspunkte und Level, der letzte Vergabeeintrag je Art sowie Titel, Nicknamefarben, Abschlusseffekte, die Anzahl der Partien je Technik und die EP-Summen aus Events werden gespeichert, solange das Konto besteht, und bei Löschung des Kontos sofort mitgelöscht. Sie werden auch mitgelöscht, wenn lange nicht genutzte Gastkonten bereinigt werden.
+- Installationskennung und Zahlungsinformationen werden bei Löschung des Kontos sofort mitgelöscht.
+- Geteilte Bilder werden 30 Tage nach dem Hochladen automatisch gelöscht. Da die Bilder nicht mit dem Konto verknüpft gespeichert werden, bleiben zuvor hochgeladene Bilder auch nach der Löschung des Kontos bis zum Ablauf der 30 Tage bestehen.
+- Die Zählung der Installationsschritte enthält nur Zahlen, die keine Identifizierung von Personen ermöglichen, und wird daher nicht gesondert vernichtet.
+- Fehler- und Diagnosedaten werden gemäß den Richtlinien von Google Firebase Crashlytics bis zu 90 Tage gespeichert und anschließend vernichtet.
+- Auf dem Gerät gespeicherte Daten werden beim Löschen der App mitgelöscht.
+
+4. Weitergabe an Dritte und Auftragsverarbeitung
+- Die App verkauft personenbezogene Daten nicht an Dritte und gibt sie nicht an Dritte weiter, es sei denn, dies ist gesetzlich vorgeschrieben.
+- Für den Betrieb des Dienstes werden folgende Unternehmen mit der Verarbeitung beauftragt:
+  · Supabase Inc.: Kontoauthentifizierung, Speicherung von Profilen, Duellen, Daten zum Täglichen Sudoku und Erfahrungspunkten
+  · Google LLC: Bereitstellung von Werbung (AdMob), Anmeldung mit Google-Konto, Fehlererfassung (Firebase Crashlytics), Zahlungsabwicklung und Belegprüfung (Google Play)
+  · Apple Inc.: Anmeldung mit Apple-Konto, Zahlungsabwicklung und Belegprüfung (App Store)
+  · GoatCounter (goatcounter.com): Besuchsstatistik der Website
+- Die Server dieser Unternehmen können sich außerhalb der Republik Korea befinden. Durch die Nutzung der App willigen Sie in die Übermittlung ins Ausland in dem für die Bereitstellung des Dienstes erforderlichen Umfang ein.
+
+5. Personenbezogene Daten von Kindern
+- Die App richtet sich nicht an Kinder unter 14 Jahren (Republik Korea) bzw. unter 13 Jahren (übrige Regionen) und erhebt nicht wissentlich personenbezogene Daten von Nutzern dieses Alters. Wird ein solcher Fall festgestellt, werden Konto und Daten unverzüglich gelöscht.
+
+6. Rechte der Nutzer
+- Sie können in der App unter "Meine Seite" jederzeit Ihren Nickname ändern, sich abmelden und Ihr Konto löschen.
+- Um Auskunft, Berichtigung, Löschung oder Aussetzung der Verarbeitung Ihrer personenbezogenen Daten zu verlangen, wenden Sie sich bitte an die unten genannte Kontaktstelle. Ihr Anliegen wird nach Eingang unverzüglich bearbeitet.
+
+7. Kontakt
+- E-Mail: contact@jaywithme.com
+- Nachrichten, die Sie über das Kontaktformular in der App unter Einstellungen &gt; Kontakt &amp; Meldung senden, gehen an dieselbe Adresse; die Antwort erhalten Sie an die von Ihnen angegebene E-Mail-Adresse.
+
+Diese Erklärung kann geändert werden; wesentliche Änderungen werden in der App bekannt gegeben.
+
+Dieses Dokument ist eine Übersetzung des koreanischen Originals. Bei Abweichungen zwischen der Übersetzung und dem koreanischen Original ist das koreanische Original maßgeblich.</pre>
+<pre class="l-es">Política de privacidad
+
+Fecha de entrada en vigor: 9 de noviembre de 2026 (promulgada el 26 de julio de 2026; el 11 de agosto se añadieron los registros de uso del servicio, el identificador de instalación, la información de pago y los datos de diagnóstico de errores; el 3 de septiembre se añadieron la conservación en el servidor de los registros de jugadas de las partidas y del Sudoku del día, los detalles de los registros de uso y los registros de consultas; el 23 de septiembre se añadieron la experiencia, los niveles y los títulos; el 14 de octubre se añadieron los efectos de finalización, el progreso de eventos y los colores de apodo de eventos; el 21 de octubre se añadieron las estadísticas de visitas al sitio web; el 6 de noviembre se añadieron el recuento de etapas de instalación de la app, los registros de uso compartido, las imágenes compartidas y la vía de compra; el 9 de noviembre se añadió la conservación en la cuenta de los registros del modo individual)
+
+Esta aplicación (en adelante, la "app") considera importante la información personal de los usuarios y cumple la normativa aplicable. Esta política explica qué información recopila la app y cómo la utiliza.
+
+1. Información que se recopila
+
+(1) Información de la cuenta
+- Al iniciar sesión con una cuenta de Google o Apple: el identificador de cuenta y la dirección de correo electrónico proporcionados por dicho servicio
+  · Si en el inicio de sesión con Apple se elige "Ocultar mi correo electrónico", la app solo recibe la dirección de reenvío emitida por Apple (private relay) y no puede conocer la dirección de correo electrónico real.
+- Al registrarse con correo electrónico: la dirección de correo electrónico (la app no guarda la contraseña; el servicio de autenticación la almacena cifrada de forma unidireccional)
+- Cuenta de invitado: se crea al tocar "Empezar como invitado" en la pantalla de inicio de sesión y solo puede crearse una vez por dispositivo. Contiene únicamente un identificador de cuenta anónimo, sin correo electrónico ni otros datos de identificación personal. Si más adelante se vincula una cuenta de Google o Apple o se registra una dirección de correo electrónico, pasa a ser una cuenta completa conservando los registros, y a partir de ese momento se recopila la información de cuenta indicada arriba.
+- El apodo configurado en la app
+
+(2) Registros de juego
+- Registros de partidas en tiempo real (resultado, puntuación, rival, hora de la partida, motivo de finalización)
+- Registro de la clasificación final, la categoría y la puntuación al término de cada temporada
+- Registros de finalización del Sudoku del día (hora de finalización, tiempo empleado, número de errores, número de pistas usadas)
+- Registros del modo individual: en las cuentas con sesión iniciada (excepto las cuentas de invitado), cada vez que se termina una partida individual se guardan en la cuenta su dificultad, si se completó, el tiempo empleado y si se completó sin errores ni pistas. El objetivo es que los registros por dificultad (número de partidas, partidas perfectas, mejor tiempo, promedio) se conserven aunque se cambie de dispositivo o se reinstale la app; estos registros solo son visibles para el propio usuario y no se utilizan para clasificaciones ni recompensas. Los totales por dificultad acumulados en el dispositivo antes de esta función y los registros de las partidas jugadas sin haber iniciado sesión se suman una sola vez a la próxima cuenta que inicie sesión en ese dispositivo. Los registros generados con una cuenta de invitado o sin sesión iniciada se guardan únicamente en el dispositivo.
+- Aparte de esto, al completar un sudoku aumenta en 1 un número de una tabla de recuento compartida que cuenta "cuántas personas completaron esta dificultad en cada intervalo de 10 segundos" (independientemente de si hay sesión iniciada). Esta tabla no contiene identificadores de usuario, por lo que no es posible rastrear el registro de ningún usuario concreto, y se utiliza únicamente para calcular en qué porcentaje superior se ubica un resultado y para mostrar la distribución. No obstante, si se completa con la sesión iniciada, quedan en la cuenta el registro de otorgamiento de XP descrito en el punto (10) y el registro de uso del servicio descrito en el punto (6). En ninguno de los dos casos se envía el tiempo de finalización junto con la XP.
+
+(3) Información de reportes
+- Al reportar a otro usuario se guardan los identificadores de cuenta del usuario que reporta y del usuario reportado, el motivo del reporte, los detalles introducidos directamente por el usuario y el identificador de la partida relacionada. Esta información se utiliza únicamente para revisar el reporte y decidir sanciones, y no se muestra a otros usuarios.
+- Para tramitar un reporte, el operador puede consultar el registro de jugadas (Repetición) de la partida correspondiente. No se consulta con ningún otro fin.
+
+(4) Información relacionada con la publicidad
+- La app muestra anuncios con recompensa a través de Google AdMob. AdMob puede recopilar información del dispositivo, como el identificador de publicidad (ADID/IDFA), para ofrecer anuncios. Para más información, consulte la Política de Privacidad de Google (https://policies.google.com/privacy).
+- El uso de anuncios personalizados puede elegirse en la ventana de consentimiento (Google User Messaging Platform) que se muestra al abrir la app por primera vez, y en iOS puede cambiarse en cualquier momento en Configuración &gt; Privacidad y seguridad &gt; Rastreo del dispositivo. En Android, el ID de publicidad puede restablecerse o eliminarse en Configuración &gt; Google &gt; Anuncios.
+
+(5) Información almacenada en el dispositivo
+- Las partidas en curso, los registros de revisión (Repetición), los favoritos y los ajustes (tema, idioma, sonido, etc.) no se envían al servidor y se almacenan únicamente en el dispositivo del usuario. Las estadísticas por dificultad, en el caso de una cuenta con sesión iniciada, también se conservan en la cuenta como registros del modo individual descritos en el punto (2); con una cuenta de invitado o sin sesión iniciada, se almacenan únicamente en el dispositivo.
+- No obstante, cuando se termina una partida clasificatoria (1:1) o el Sudoku del día, el registro de jugadas (Repetición) de esa partida también se envía al servidor y se conserva en él. Los registros de jugadas del modo individual, de la práctica de técnicas, de los duelos con amigos y de las partidas en grupo siguen almacenándose únicamente en el dispositivo, como hasta ahora.
+
+(6) Registros de uso del servicio
+- Para mejorar el servicio, en las cuentas con sesión iniciada se recopilan los eventos de uso de las funciones principales (primera apertura, registro, hora de apertura de la app, primer sudoku completado, registros de sudokus completados (dificultad, tiempo empleado, número de pistas y errores), práctica de técnicas completada, uso de pistas, Sudoku del día completado, visita al lobby de partidas, visualización de repeticiones, visualización de la pantalla Premium, uso de la función de compartir y tipo de contenido compartido (sala de amigos, sudoku, resultado, tarjeta mensual), apertura de la app desde un enlace de la app y tipo de dicho enlace) y la hora en que ocurren. No se registra información sobre las personas que reciben lo compartido.
+- Estos registros de uso no incluyen el identificador de publicidad ni información del hardware del dispositivo, y se vinculan únicamente al identificador de cuenta. No se recopilan si no hay sesión iniciada.
+
+(7) Identificador de instalación (para evitar inicios de sesión simultáneos)
+- Para impedir que una misma cuenta se use a la vez en varios dispositivos, se guarda junto con la cuenta un identificador de instalación aleatorio generado al instalar la app.
+- Este valor no es el identificador de hardware ni de publicidad del dispositivo, sino que identifica únicamente "esta instalación de la app"; si la app se desinstala y se vuelve a instalar, se emite un valor nuevo. Solo se conserva el de la última instalación en la que se inició sesión.
+
+(8) Información de pago
+- Al comprar Premium, se guardan junto con la cuenta el identificador del producto, la tienda (App Store / Google Play), la fecha de vencimiento de la suscripción y el identificador de transacción emitido por la tienda. Esto sirve para confirmar la compra y restaurar el derecho de uso aunque se cambie de dispositivo.
+- En cada compra se guardan además la vía de compra (compra pagada, código promocional, código de oferta, descuento de primera compra, compra de prueba u otorgamiento por el operador), el importe pagado y la moneda (cuando la tienda los informa) y la hora de la compra. Esto sirve para distinguir los ingresos reales del uso de códigos.
+- Ni la app ni el servidor reciben ni almacenan información de medios de pago, como números de tarjeta. El pago en sí lo procesa App Store o Google Play.
+- Si falla la verificación del recibo, pueden registrarse el motivo del fallo y la información del producto y la tienda de ese momento para identificar la causa.
+
+(9) Información de errores y diagnóstico
+- Cuando la app se cierra inesperadamente o se produce un error, Google Firebase Crashlytics recopila el punto donde ocurrió el error, el modelo del dispositivo y la versión del sistema operativo, y un identificador de instalación emitido por Firebase. Su finalidad es encontrar y corregir la causa, y no incluye el contenido introducido por el usuario ni sus registros de sudokus.
+- Esta recopilación solo se realiza en las versiones de la app publicadas oficialmente.
+
+(10) Experiencia, niveles y títulos
+- Al completar un sudoku se acumula experiencia (XP) en la cuenta, y el nivel se determina a partir de la XP acumulada. La XP y el nivel se guardan en todas las cuentas con sesión iniciada, incluidas las cuentas de invitado. No se otorga XP sin sesión iniciada ni sin conexión, y tampoco la otorgan la práctica de técnicas, los reinicios, los favoritos, los códigos compartidos, la continuación desde una repetición, los duelos con amigos ni las partidas en grupo.
+- Del historial de otorgamiento solo se conserva el registro más reciente de cada tipo, y cada nuevo otorgamiento sobrescribe el anterior. No se guarda ningún historial por partida.
+  · Modo individual: el identificador de partida que la app asignó a esa partida y la hora del otorgamiento. La hora del otorgamiento solo se utiliza para comprobar el intervalo mínimo que impide otorgar XP repetidamente por una misma partida. Este registro de otorgamiento no conserva la dificultad, los errores, las pistas ni el tiempo empleado (para los registros del modo individual, véase el punto (2)).
+  · Sudoku del día: la fecha, la XP otorgada y el desglose del cálculo de esa cantidad (puntos base, si se completó sin errores y sin pistas, bonificación diaria)
+  · Partida clasificatoria: el identificador de la partida, la XP otorgada y el desglose del cálculo de esa cantidad (dificultad, resultado, motivo de finalización, puntos base y multiplicador)
+- Para los títulos y los colores de apodo, se guarda en la cuenta lo siguiente: los títulos obtenidos y la hora en que se obtuvieron, el título y el color de apodo equipados, los colores de apodo de eventos obtenidos y la hora en que se obtuvieron, los efectos de finalización obtenidos y el efecto de finalización equipado, el número de victorias en partidas clasificatorias en el momento en que empezó el recuento de títulos y, para cada familia de técnicas (12 en total), el número de partidas completadas usando esa técnica. El número de partidas por técnica es una cifra que aumenta de 1 en 1 cuando la app envía únicamente el nombre de la familia al terminar una partida; en el servidor no queda constancia de qué sudoku se resolvió ni de cómo.
+- Eventos: solo mientras haya un evento de acumulación de XP en curso, se guardan para cada edición el total de XP de ese periodo y el identificador de la última partida contabilizada.
+- El nivel, el título y el color de apodo se muestran a otros usuarios (en la tabla de clasificación, la pantalla de resultados de las partidas, etc.). La cifra de XP, el historial de otorgamiento y el número de partidas por técnica no se muestran a otros usuarios en ningún caso.
+- La XP es un valor de visualización que solo se usa dentro de la app y no puede canjearse por dinero ni por bienes con valor de cambio.
+
+(11) Estadísticas de visitas al sitio web
+- La página de presentación de la app y las páginas de explicación de técnicas (sudoku.jaywithme.com) usan GoatCounter para obtener estadísticas de visitas y saber qué páginas se leen y con qué frecuencia. Se recopilan la dirección de la página visitada, la procedencia de la visita (referente), el tipo de navegador y de sistema operativo, el tamaño de pantalla, el país estimado a partir de la dirección IP y si se pulsó el botón de descarga de la tienda.
+- No se usan cookies y no se almacenan direcciones IP. Se genera un valor temporal para distinguir al mismo visitante solo dentro de un mismo día, y ese valor no se almacena. Tampoco se vincula con ninguna cuenta de la app.
+- No se recopila nada dentro de la app.
+
+(12) Recuento de etapas de instalación de la app
+- Para saber hasta qué etapa llegan las nuevas instalaciones de la app, independientemente de si hay sesión iniciada, cada vez que se alcanza por primera vez una de las siguientes etapas solo aumenta en 1 un número de una tabla de recuento compartida: primera apertura, inicio de la primera partida, aceptación, rechazo o finalización de la guía de la primera partida, primera partida individual completada, inicio de la segunda partida, y nueva apertura de la app al día siguiente y a los 7 días.
+- La tabla de recuento solo contiene cifras por "fecha de la primera apertura de la app, etapa, sistema operativo (iOS/Android) y número de compilación de la app", y no contiene ningún identificador de usuario, dispositivo ni instalación. Por lo tanto, ninguna cifra puede rastrearse hasta un usuario concreto.
+
+(13) Imágenes compartidas
+- Cuando se elige compartir una imagen desde la pantalla de resultados o la tarjeta mensual, la imagen se sube al servidor y a la aplicación de mensajería se envía una línea con un enlace que abre la imagen. Según el diseño elegido, la imagen puede incluir el apodo (solo en cuentas completas; nunca se muestra el de los invitados), los registros (tiempo de finalización, dificultad, clasificación, etc.) y los números iniciales del sudoku.
+- Cualquier persona que tenga el enlace puede ver la imagen. La dirección del enlace es un valor aleatorio que no puede adivinarse, y no existe ninguna función para consultar el listado de imágenes.
+- Si no hay sesión iniciada, no se sube ninguna imagen y solo se envía un enlace de la app.
+
+La app no solicita permiso de ubicación ni accede a los contactos, las fotos, el micrófono ni la cámara. No obstante, Google AdMob, que proporciona los anuncios, puede estimar una región aproximada a partir de datos como la dirección IP para mostrar anuncios. La app nunca utiliza las funciones de ubicación del dispositivo para determinar la ubicación.
+
+2. Finalidad del uso de la información
+- Gestión de la cuenta y mantenimiento de la sesión
+- Emparejamiento de partidas en tiempo real, cálculo de la puntuación y la categoría, y acceso al historial de partidas
+- Sudoku del día y tablas de clasificación por puntuación
+- Cálculo y visualización de la XP, los niveles y los títulos, y prevención de otorgamientos duplicados
+- Recepción de reportes y respuesta a conductas fraudulentas
+- Visualización de anuncios
+- Análisis de estadísticas de uso del servicio y mejora del servicio
+- Prevención del uso simultáneo de una misma cuenta (bloqueo de inicios de sesión simultáneos)
+- Confirmación de compras Premium y restauración del derecho de uso
+- Identificación de las causas de errores y mejora de la estabilidad de la app
+- Visualización de imágenes compartidas mediante enlaces compartidos
+
+3. Conservación y eliminación de la información
+- La información de la cuenta y los registros de juego se conservan mientras la cuenta exista.
+- Al eliminar la cuenta, los medios de inicio de sesión (vinculación con Google o Apple, sesiones) y la dirección de correo electrónico se destruyen de inmediato, y el apodo se sustituye por "Usuario eliminado", de modo que ya no es posible identificar a la persona.
+- No obstante, los registros de partidas en sí no se eliminan y permanecen de forma anonimizada. Esto se debe a que cada registro de partida forma parte también del historial de resultados y de puntuación del rival, por lo que eliminarlo dañaría a la vez los registros de otro usuario.
+- Los registros de jugadas (Repetición) de las partidas clasificatorias y del Sudoku del día se destruyen automáticamente transcurridos 30 días desde su recopilación.
+- Los registros de reportes se conservan durante un máximo de 1 año tras completarse su tramitación, con fines de revisión y prevención de reincidencias, y después se destruyen.
+- Los registros de consultas (dirección de correo electrónico y contenido de la consulta) se conservan durante 1 año desde la fecha de recepción y después se destruyen.
+- Durante los 7 días posteriores a la eliminación de la cuenta, no es posible volver a registrarse con la misma cuenta. Para comprobarlo, solo se conserva durante 7 días un valor hash unidireccional de los identificadores de inicio de sesión (dirección de correo electrónico, identificador de inicio de sesión social), que después se destruye automáticamente. El valor hash no puede revertirse al valor original, se utiliza únicamente para comprobar si un nuevo registro corresponde a la misma cuenta y no se vincula con los registros ni con la identidad del usuario.
+- Los registros de uso del servicio se destruyen automáticamente transcurridos 13 meses desde su recopilación y se eliminan de inmediato al eliminar la cuenta.
+- Los registros del modo individual se conservan mientras la cuenta exista y se eliminan de inmediato al eliminar la cuenta.
+- La XP y el nivel, el último registro de otorgamiento de cada tipo, y los títulos, colores de apodo, efectos de finalización, número de partidas por técnica y totales de XP de eventos se conservan mientras la cuenta exista y se eliminan de inmediato al eliminar la cuenta. También se eliminan cuando se depuran las cuentas de invitado que llevan mucho tiempo sin usarse.
+- El identificador de instalación y la información de pago se eliminan de inmediato al eliminar la cuenta.
+- Las imágenes compartidas se eliminan automáticamente transcurridos 30 días desde que se subieron. Como las imágenes no se almacenan vinculadas a la cuenta, las imágenes subidas antes de eliminar la cuenta permanecen hasta cumplir los 30 días.
+- El recuento de etapas de instalación de la app solo contiene cifras que no permiten identificar a ninguna persona, por lo que no se destruye por separado.
+- La información de errores y diagnóstico se conserva durante un máximo de 90 días conforme a la política de Google Firebase Crashlytics y después se destruye.
+- La información almacenada en el dispositivo se elimina al desinstalar la app.
+
+4. Cesión a terceros y encargo del tratamiento
+- La app no vende ni cede la información personal de los usuarios a terceros, salvo en los casos previstos por la ley.
+- Para operar el servicio, se encarga el tratamiento a las siguientes empresas:
+  · Supabase Inc.: autenticación de cuentas y almacenamiento de perfiles, partidas, registros del Sudoku del día y registros de XP
+  · Google LLC: publicidad (AdMob), inicio de sesión con cuenta de Google, recopilación de errores (Firebase Crashlytics), procesamiento de pagos y verificación de recibos (Google Play)
+  · Apple Inc.: inicio de sesión con cuenta de Apple, procesamiento de pagos y verificación de recibos (App Store)
+  · GoatCounter (goatcounter.com): estadísticas de visitas al sitio web
+- Los servidores de estas empresas pueden estar ubicados fuera de la República de Corea, y al usar la app el usuario consiente la transferencia internacional en la medida necesaria para prestar el servicio.
+
+5. Información personal de menores
+- La app no está dirigida a menores de 14 años (en la República de Corea) ni a menores de 13 años (en las demás regiones), y no recopila intencionadamente información personal de usuarios de esas edades. Si se confirma que se ha hecho, la cuenta y la información se eliminarán sin demora.
+
+6. Derechos del usuario
+- El usuario puede cambiar su apodo, cerrar sesión y eliminar su cuenta en cualquier momento desde Mi página en la app.
+- Para solicitar el acceso, la rectificación, la supresión o la suspensión del tratamiento de la información personal, comuníquese con el contacto indicado a continuación. Las solicitudes se tramitarán sin demora tras su recepción.
+
+7. Contacto
+- Correo electrónico: contact@jaywithme.com
+- Las consultas enviadas mediante el formulario de Ajustes &gt; Contacto y reportes de la app se reciben en la misma dirección, y la respuesta se envía a la dirección de correo electrónico que se haya indicado.
+
+Esta política puede modificarse; los cambios importantes se anunciarán en la app.
+
+Este documento es una traducción del original en coreano. En caso de discrepancia entre la traducción y el original en coreano, prevalecerá el original en coreano.</pre>
+<pre class="l-fr">Politique de confidentialité
+
+Date d'entrée en vigueur : 9 novembre 2026 (établie le 26 juillet 2026 ; 11 août : ajout de l'historique d'utilisation du service, de l'identifiant d'installation, des informations de paiement et des informations de diagnostic d'erreurs ; 3 septembre : ajout de la conservation sur le serveur des enregistrements de coups des matchs et du Sudoku du jour, du détail de l'historique d'utilisation et de l'historique des demandes ; 23 septembre : ajout de l'expérience, des niveaux et des titres ; 14 octobre : ajout des effets de fin de partie, de la progression des événements et des couleurs de pseudo d'événement ; 21 octobre : ajout des statistiques de visite du site web ; 6 novembre : ajout du décompte des étapes d'installation de l'application, de l'historique de partage, des images partagées et du mode d'achat ; 9 novembre : ajout de la conservation des statistiques en solo sur le compte)
+
+La présente application (ci-après l'"Application") accorde une grande importance aux données personnelles de ses utilisateurs et respecte la législation applicable. La présente politique explique quelles informations l'Application collecte et comment elles sont utilisées.
+
+1. Informations collectées
+
+(1) Informations de compte
+- En cas de connexion avec un compte Google ou Apple : l'identifiant de compte et l'adresse e-mail fournis par ce service
+  · Si vous choisissez "Masquer mon adresse e-mail" lors de la connexion avec Apple, l'Application reçoit uniquement l'adresse de relais émise par Apple (private relay) et ne peut pas connaître votre adresse e-mail réelle.
+- En cas d'inscription par e-mail : l'adresse e-mail (l'Application ne conserve pas le mot de passe ; le service d'authentification le stocke sous forme chiffrée à sens unique)
+- Compte invité : il est créé lorsque vous appuyez sur "Commencer en tant qu'invité" sur l'écran de connexion, une seule fois par appareil. Il ne comporte qu'un identifiant de compte anonyme, sans adresse e-mail ni autre information d'identification personnelle. Si vous associez ultérieurement un compte Google ou Apple ou enregistrez une adresse e-mail, il devient un compte complet tout en conservant votre historique, et les informations de compte ci-dessus sont collectées à partir de ce moment.
+- Le pseudo défini dans l'Application
+
+(2) Historique de jeu
+- Historique des matchs en temps réel (victoire ou défaite, cote, adversaire, heure du match, motif de fin)
+- Classement final, rang et cote enregistrés à la fin de chaque saison
+- Historique de réussite du Sudoku du jour (heure de fin, temps écoulé, nombre d'erreurs, nombre d'indices utilisés)
+- Statistiques en solo : pour un compte connecté (hors compte invité), chaque partie en solo terminée enregistre sur le compte sa difficulté, si elle a été réussie ou non, le temps écoulé et si elle a été réussie sans erreur ni indice. Cela permet de conserver vos statistiques par difficulté (nombre de parties, parties parfaites, meilleur temps, moyenne) en cas de changement d'appareil ou de réinstallation de l'Application. Ces statistiques ne sont visibles que par vous et ne sont utilisées ni pour les classements ni pour les récompenses. Les totaux par difficulté accumulés sur l'appareil avant cette fonctionnalité, ainsi que les parties jouées sans être connecté, sont ajoutés une seule fois au prochain compte qui se connecte sur cet appareil. Tant que vous utilisez un compte invité ou n'êtes pas connecté, les statistiques sont enregistrées uniquement sur l'appareil.
+- Par ailleurs, lorsque vous terminez une grille, un compteur d'un tableau de décompte commun, qui recense "combien de joueurs ont terminé cette difficulté dans chaque tranche de 10 secondes", augmente de 1 (que vous soyez connecté ou non). Ce tableau ne contient aucun identifiant d'utilisateur ; il est donc impossible de retrouver l'historique d'un utilisateur donné. Il sert uniquement à calculer votre position en pourcentage et à afficher la répartition. Toutefois, si vous terminez une grille en étant connecté, l'historique d'attribution d'XP décrit au point (10) et l'historique d'utilisation du service décrit au point (6) sont conservés sur votre compte. Dans aucun de ces deux cas, le temps de résolution n'est transmis avec l'XP.
+
+(3) Informations de signalement
+- Lorsque vous signalez un autre utilisateur, sont enregistrés les identifiants de compte de l'auteur du signalement et de l'utilisateur signalé, le motif du signalement, les détails que vous avez saisis vous-même et l'identifiant du match concerné. Ces informations sont utilisées uniquement pour examiner le signalement et décider d'éventuelles sanctions, et ne sont pas divulguées aux autres utilisateurs.
+- Afin de traiter un signalement, l'exploitant peut consulter l'enregistrement des coups (Replay) du match concerné. Il ne le consulte à aucune autre fin.
+
+(4) Informations liées à la publicité
+- L'Application affiche des publicités avec récompense via Google AdMob. AdMob peut collecter des informations sur l'appareil, telles que l'identifiant publicitaire (ADID/IDFA), afin de diffuser des publicités. Pour en savoir plus, consultez les Règles de confidentialité de Google (https://policies.google.com/privacy).
+- Vous pouvez choisir d'accepter ou non les publicités personnalisées dans la fenêtre de consentement (Google User Messaging Platform) affichée au premier lancement de l'Application. Sur iOS, vous pouvez modifier ce choix à tout moment dans Réglages &gt; Confidentialité et sécurité &gt; Suivi. Sur Android, vous pouvez réinitialiser ou supprimer l'identifiant publicitaire dans Paramètres &gt; Google &gt; Annonces.
+
+(5) Informations stockées sur l'appareil
+- Les parties en cours, les enregistrements de revue (Replay), les favoris et les paramètres (thème, langue, son, etc.) ne sont pas transmis au serveur et sont stockés uniquement sur votre appareil. Si vous êtes connecté, les statistiques par difficulté sont également conservées sur le compte sous forme des statistiques en solo décrites au point (2) ; avec un compte invité ou sans connexion, elles sont stockées uniquement sur l'appareil.
+- Toutefois, lorsque vous terminez un match classé (1:1) ou le Sudoku du jour, l'enregistrement des coups (Replay) de cette partie est également transmis au serveur et y est conservé. Les enregistrements des coups des parties en solo, des entraînements aux techniques, des matchs amicaux et des matchs à plusieurs restent, comme auparavant, stockés uniquement sur l'appareil.
+
+(6) Historique d'utilisation du service
+- Afin d'améliorer le service, nous collectons, pour les comptes connectés, les événements d'utilisation des principales fonctionnalités (premier lancement, inscription, heure de lancement de l'Application, première grille terminée, grilles terminées (difficulté, temps écoulé, nombre d'indices et d'erreurs), entraînement à une technique terminé, utilisation d'un indice, Sudoku du jour terminé, visite du salon des matchs, consultation d'un Replay, consultation de l'écran Premium, lancement d'un partage et type de contenu partagé (salon entre amis, grille, résultat, carte mensuelle), ouverture de l'Application via un lien de l'Application et type de ce lien) ainsi que l'heure à laquelle ils se produisent. Aucune information sur les destinataires du partage n'est enregistrée.
+- Cet historique d'utilisation ne comporte ni identifiant publicitaire ni information matérielle sur l'appareil ; il est rattaché uniquement à l'identifiant de compte. Rien n'est collecté lorsque vous n'êtes pas connecté.
+
+(7) Identifiant d'installation (pour empêcher les connexions simultanées)
+- Afin d'empêcher qu'un même compte soit utilisé simultanément sur plusieurs appareils, un identifiant d'installation aléatoire généré lors de l'installation de l'Application est enregistré avec le compte.
+- Cette valeur ne correspond ni au matériel de l'appareil ni à l'identifiant publicitaire : elle désigne uniquement "cette installation de l'Application", et une nouvelle valeur est attribuée si vous supprimez puis réinstallez l'Application. Seule la dernière installation connectée est conservée.
+
+(8) Informations de paiement
+- Lorsque vous achetez Premium, l'identifiant du produit, la boutique (App Store / Google Play), la date d'expiration de l'abonnement et l'identifiant de transaction émis par la boutique sont enregistrés avec votre compte. Ces informations servent à confirmer l'achat et à restaurer votre accès même en cas de changement d'appareil.
+- Pour chaque achat, nous enregistrons également son mode d'obtention (achat payant, code promotionnel, code d'offre, réduction de premier achat, achat test ou attribution par l'exploitant), le montant payé et la devise (lorsque la boutique les communique) ainsi que l'heure de l'achat. Il s'agit de distinguer le chiffre d'affaires réel de l'utilisation de codes.
+- Ni l'Application ni le serveur ne reçoivent ni ne stockent les informations relatives aux moyens de paiement, telles que les numéros de carte. Le paiement proprement dit est traité par l'App Store ou Google Play.
+- En cas d'échec de la vérification du reçu, le motif de l'échec ainsi que les informations sur le produit et la boutique concernés peuvent être enregistrés afin d'en déterminer la cause.
+
+(9) Informations d'erreur et de diagnostic
+- En cas d'arrêt anormal de l'Application ou d'erreur, Google Firebase Crashlytics collecte l'emplacement de l'erreur, le modèle de l'appareil et la version du système d'exploitation, ainsi que l'identifiant d'installation émis par Firebase. Ces informations servent à identifier et à corriger la cause du problème ; elles n'incluent ni le contenu que vous avez saisi ni vos historiques de grilles.
+- Cette collecte n'a lieu que dans les versions officiellement publiées de l'Application.
+
+(10) Expérience, niveaux et titres
+- Lorsque vous terminez une grille, des points d'expérience (XP) s'accumulent sur votre compte, et votre niveau est déterminé par le total d'XP cumulé. L'XP et le niveau sont enregistrés pour tout compte connecté, y compris les comptes invités. Aucune XP n'est attribuée lorsque vous n'êtes pas connecté ou êtes hors ligne, et les entraînements aux techniques, les parties recommencées, les favoris, les codes de partage, les reprises depuis une revue, les matchs amicaux et les matchs à plusieurs n'y donnent pas droit.
+- Seule l'attribution la plus récente de chaque type est conservée, la suivante remplaçant la précédente. Aucun historique n'est accumulé partie par partie.
+  · Solo : l'identifiant de partie attribué par l'Application à cette partie et l'heure d'attribution. L'heure d'attribution sert uniquement à vérifier l'intervalle minimal qui empêche qu'une même partie donne lieu à des attributions répétées. Cet enregistrement d'attribution ne conserve ni la difficulté, ni les erreurs, ni les indices, ni le temps écoulé (pour les statistiques en solo, voir le point (2) ci-dessus).
+  · Sudoku du jour : la date, l'XP attribuée et le détail de son calcul (points de base, absence d'erreur et absence d'indice, bonus quotidien)
+  · Match classé : l'identifiant du match, l'XP attribuée et le détail de son calcul (difficulté, victoire ou défaite, motif de fin, points de base et multiplicateur)
+- Pour les titres et les couleurs de pseudo, les éléments suivants sont enregistrés sur votre compte : les titres obtenus et le moment de leur obtention, le titre et la couleur de pseudo équipés, les couleurs de pseudo d'événement obtenues et le moment de leur obtention, les effets de fin de partie obtenus et celui qui est équipé, le nombre de victoires en match classé au moment où le décompte des titres a commencé, et, pour chaque famille de techniques (12 au total), le nombre de parties terminées en utilisant cette technique. Ce nombre est incrémenté de 1 lorsque l'Application envoie uniquement le nom de la famille à la fin d'une partie ; aucune information sur la grille résolue ni sur la manière de la résoudre n'est conservée sur le serveur.
+- Événements : uniquement pendant la durée d'un événement de collecte d'XP, sont enregistrés, pour chaque édition, le total d'XP obtenu pendant la période et l'identifiant de la dernière partie comptabilisée.
+- Le niveau, le titre et la couleur de pseudo sont visibles par les autres utilisateurs (classements, écrans de résultats des matchs, etc.). La valeur d'XP, l'historique d'attribution et le nombre de parties par technique ne sont en aucun cas visibles par les autres utilisateurs.
+- L'XP est une valeur d'affichage utilisée uniquement dans l'Application ; elle ne peut être convertie ni en argent ni en aucun bien monnayable.
+
+(11) Statistiques de visite du site web
+- La page de présentation de l'Application et les pages d'explication des techniques (sudoku.jaywithme.com) utilisent GoatCounter pour établir des statistiques de visite, afin de savoir quelles pages sont lues et dans quelle mesure. Sont collectés : l'adresse de la page visitée, la page de provenance (référent), le type de navigateur et de système d'exploitation, la taille de l'écran, le pays estimé à partir de l'adresse IP, et le fait d'avoir appuyé ou non sur un bouton de téléchargement vers une boutique.
+- Aucun cookie n'est utilisé et les adresses IP ne sont pas stockées. Une valeur temporaire est générée pour distinguer un même visiteur au cours d'une seule journée, et cette valeur n'est pas stockée. Ces données ne sont pas non plus liées à un compte de l'Application.
+- Aucune donnée n'est collectée dans l'Application.
+
+(12) Décompte des étapes d'installation
+- Afin de savoir jusqu'à quelle étape progressent les nouvelles installations, que vous soyez connecté ou non, seul un compteur d'un tableau de décompte commun augmente de 1 la première fois que chacune des étapes suivantes est atteinte : premier lancement, première partie commencée, acceptation, refus ou fin du guide de la première partie, première partie en solo terminée, deuxième partie commencée, réouverture de l'Application le lendemain et 7 jours plus tard.
+- Le tableau ne contient que des nombres par "date de première ouverture de l'Application, étape, système d'exploitation (iOS/Android) et numéro de build de l'Application", et aucun identifiant d'utilisateur, d'appareil ou d'installation. Aucun de ces nombres ne peut donc être rattaché à un utilisateur en particulier.
+
+(13) Images partagées
+- Lorsque vous choisissez une image à partager depuis un écran de résultat ou une carte mensuelle, cette image est téléversée sur le serveur, et une ligne contenant un lien permettant de l'ouvrir est envoyée dans la messagerie. Selon le modèle choisi, l'image peut comporter votre pseudo (uniquement pour un compte complet ; celui d'un invité n'est pas affiché), votre résultat (temps de résolution, difficulté, classement, etc.) et les chiffres de départ de la grille.
+- Toute personne disposant du lien peut voir cette image. L'adresse du lien est une valeur aléatoire impossible à deviner, et il n'existe aucune fonction permettant de consulter la liste des images.
+- Si vous n'êtes pas connecté, aucune image n'est téléversée et seul un lien vers l'Application est envoyé.
+
+L'Application ne demande pas l'autorisation d'accès à la localisation et n'accède ni aux contacts, ni aux photos, ni au micro, ni à l'appareil photo. Toutefois, Google AdMob, qui fournit les publicités, peut estimer une région approximative à partir d'informations telles que l'adresse IP afin de diffuser les publicités. L'Application n'utilise jamais les services de localisation de l'appareil pour déterminer votre position.
+
+2. Finalités de l'utilisation des informations
+- Gestion des comptes et maintien de la connexion
+- Appariement des matchs en temps réel, calcul de la cote et du rang, mise à disposition de l'historique des matchs
+- Mise à disposition du Sudoku du jour et des classements par cote
+- Calcul et affichage de l'XP, des niveaux et des titres, prévention des attributions en double
+- Réception des signalements et lutte contre la triche
+- Affichage des publicités
+- Analyse des statistiques d'utilisation et amélioration du service
+- Prévention de l'utilisation simultanée d'un même compte (blocage des connexions multiples)
+- Confirmation des achats Premium et restauration de l'accès
+- Identification des causes d'erreurs et amélioration de la stabilité de l'Application
+- Affichage des images partagées via les liens de partage
+
+3. Conservation et destruction des informations
+- Les informations de compte et l'historique de jeu sont conservés tant que le compte existe.
+- Lorsque vous supprimez votre compte, les moyens de connexion (association Google ou Apple, sessions) et l'adresse e-mail sont détruits immédiatement, et le pseudo est remplacé par "Utilisateur supprimé", de sorte que vous ne pouvez plus être identifié.
+- Toutefois, l'historique des matchs lui-même n'est pas supprimé et subsiste sous forme anonymisée. Un enregistrement de match constitue également le bilan et l'historique de cote de l'adversaire ; le supprimer porterait donc atteinte à l'historique d'un autre utilisateur.
+- Les enregistrements des coups (Replay) des matchs classés et du Sudoku du jour sont automatiquement détruits 30 jours après leur collecte.
+- Les signalements sont conservés au maximum 1 an après la fin de leur traitement, à des fins d'examen et de prévention de la récidive, puis détruits.
+- L'historique des demandes (adresse e-mail et contenu de la demande) est conservé 1 an à compter de sa réception, puis détruit.
+- Pendant 7 jours après la suppression d'un compte, il n'est pas possible de s'inscrire à nouveau avec le même compte. Pour le vérifier, seule une empreinte obtenue par hachage à sens unique des identifiants de connexion (adresse e-mail, identifiant de connexion via un réseau social) est conservée pendant 7 jours, puis automatiquement détruite. Cette empreinte ne permet pas de retrouver la valeur d'origine, sert uniquement à vérifier si une nouvelle inscription correspond au même compte et n'est liée ni à votre historique ni à votre identité.
+- L'historique d'utilisation du service est automatiquement détruit 13 mois après sa collecte et supprimé immédiatement en cas de suppression du compte.
+- Les statistiques en solo sont conservées tant que le compte existe et supprimées immédiatement en cas de suppression du compte.
+- L'XP et le niveau, le dernier enregistrement d'attribution de chaque type, ainsi que les titres, les couleurs de pseudo, les effets de fin de partie, le nombre de parties par technique et les totaux d'XP des événements sont conservés tant que le compte existe et supprimés immédiatement en cas de suppression du compte. Ils sont également supprimés lors du nettoyage des comptes invités inutilisés depuis longtemps.
+- L'identifiant d'installation et les informations de paiement sont supprimés immédiatement en cas de suppression du compte.
+- Les images partagées sont automatiquement supprimées 30 jours après leur téléversement. Comme elles ne sont pas enregistrées en lien avec le compte, les images téléversées avant la suppression du compte subsistent jusqu'à l'expiration de ce délai de 30 jours.
+- Le décompte des étapes d'installation ne contenant que des nombres qui ne permettent d'identifier personne, il ne fait pas l'objet d'une destruction distincte.
+- Les informations d'erreur et de diagnostic sont conservées au maximum 90 jours conformément à la politique de Google Firebase Crashlytics, puis détruites.
+- Les informations stockées sur l'appareil sont supprimées lors de la désinstallation de l'Application.
+
+4. Communication à des tiers et sous-traitance
+- Sauf dans les cas prévus par la loi, l'Application ne vend ni ne communique les données personnelles des utilisateurs à des tiers.
+- Pour l'exploitation du service, le traitement est confié aux prestataires suivants.
+  · Supabase Inc. : authentification des comptes, stockage des profils, des matchs, du Sudoku du jour et de l'XP
+  · Google LLC : diffusion des publicités (AdMob), connexion avec un compte Google, collecte des erreurs (Firebase Crashlytics), traitement des paiements et vérification des reçus (Google Play)
+  · Apple Inc. : connexion avec un compte Apple, traitement des paiements et vérification des reçus (App Store)
+  · GoatCounter (goatcounter.com) : statistiques de visite du site web
+- Les serveurs de ces prestataires peuvent être situés en dehors de la République de Corée ; en utilisant l'Application, vous consentez au transfert international dans la mesure nécessaire à la fourniture du service.
+
+5. Données personnelles des enfants
+- L'Application ne s'adresse pas aux enfants de moins de 14 ans (en République de Corée) ni aux enfants de moins de 13 ans (dans les autres pays), et ne collecte pas sciemment de données personnelles auprès d'utilisateurs de ces âges. Si un tel cas est constaté, le compte et les données sont supprimés sans délai.
+
+6. Droits des utilisateurs
+- Vous pouvez à tout moment modifier votre pseudo, vous déconnecter et supprimer votre compte depuis Mon profil dans l'Application.
+- Pour demander l'accès, la rectification, la suppression ou la suspension du traitement de vos données personnelles, contactez-nous à l'adresse ci-dessous. Votre demande sera traitée sans délai après sa réception.
+
+7. Contact
+- E-mail : contact@jaywithme.com
+- Les messages envoyés via le formulaire de contact accessible dans Paramètres &gt; Contact et signalement de l'Application sont reçus à la même adresse, et la réponse est envoyée à l'adresse e-mail que vous avez indiquée.
+
+La présente politique peut être modifiée ; toute modification importante sera annoncée dans l'Application.
+
+Ce document est une traduction de l'original en coréen. En cas de divergence entre la traduction et l'original en coréen, l'original en coréen prévaut.</pre>
+<pre class="l-pt">Política de Privacidade
+
+Data de vigência: 9 de novembro de 2026 (publicada em 26 de julho de 2026; 11 de agosto: inclusão de registros de uso do serviço, identificador de instalação, informações de pagamento e informações de diagnóstico de erros; 3 de setembro: inclusão do armazenamento em servidor dos registros de jogadas das partidas e do Sudoku do Dia, de itens detalhados dos registros de uso e de registros de contato; 23 de setembro: inclusão de XP, níveis e títulos; 14 de outubro: inclusão de efeitos de conclusão, progresso em eventos e cores de apelido de eventos; 21 de outubro: inclusão de estatísticas de visitas ao site; 6 de novembro: inclusão da contagem das etapas de instalação do app, de registros de compartilhamento, de imagens compartilhadas e da origem da compra; 9 de novembro: inclusão do armazenamento na conta dos registros do modo solo)
+
+Este aplicativo (doravante, o "app") valoriza as informações pessoais dos usuários e cumpre a legislação aplicável. Esta política explica quais informações o app coleta e como elas são utilizadas.
+
+1. Informações coletadas
+
+(1) Informações da conta
+- Ao fazer login com uma conta Google ou Apple: o identificador da conta e o endereço de e-mail fornecidos pelo respectivo serviço
+  · Se você escolher "Ocultar meu e-mail" no login com a Apple, o app recebe apenas o endereço de encaminhamento emitido pela Apple (private relay) e não tem como saber o seu endereço de e-mail real.
+- Ao se cadastrar com e-mail: o endereço de e-mail (o app não armazena a senha; o serviço de autenticação a armazena com criptografia unidirecional)
+- Conta de convidado: é criada ao tocar em "Começar como convidado" na tela de login e só pode ser criada uma vez por dispositivo. Contém apenas um identificador de conta anônimo, sem e-mail ou outras informações de identificação pessoal. Se, posteriormente, você vincular uma conta Google ou Apple ou cadastrar um endereço de e-mail, ela se tornará uma conta completa, mantendo seus registros, e a partir desse momento as informações da conta acima passarão a ser coletadas.
+- O apelido definido no app
+
+(2) Registros de jogo
+- Registros de partidas em tempo real (vitória ou derrota, rating, adversário, horário da partida, motivo do encerramento)
+- Registros da posição final, da divisão (tier) e do rating no encerramento de cada temporada
+- Registros de conclusão do Sudoku do Dia (horário de conclusão, tempo gasto, número de erros, número de dicas usadas)
+- Registros do modo solo: para contas com login (exceto contas de convidado), cada vez que uma partida solo é encerrada, são salvos na conta a dificuldade, se o jogo foi concluído, o tempo gasto e se foi concluído sem erros e sem dicas. O objetivo é manter os registros por dificuldade (número de partidas, partidas perfeitas, melhor tempo, média) mesmo que você troque de dispositivo ou reinstale o app. Esses registros são visíveis apenas para você e não são usados em classificações nem em recompensas. Os totais por dificuldade já acumulados no dispositivo antes deste recurso, bem como os registros de partidas jogadas sem login, são somados uma única vez à próxima conta que fizer login nesse dispositivo. Os registros feitos com conta de convidado ou sem login ficam armazenados apenas no dispositivo.
+- Além disso, ao concluir um quebra-cabeça, aumenta em 1 um número em uma tabela de contagem compartilhada que registra "quantas pessoas concluíram esta dificuldade em cada faixa de 10 segundos" (independentemente de haver login). Essa tabela não contém identificadores de usuário, de modo que não é possível rastrear o registro de um usuário específico, e é usada apenas para calcular em qual percentual superior você está e para exibir a distribuição. No entanto, ao concluir com login, o registro de concessão de XP descrito no item (10) e o registro de uso do serviço descrito no item (6) ficam na conta. O tempo de conclusão não é enviado junto com o XP em nenhum dos dois.
+
+(3) Informações de denúncias
+- Ao denunciar outro usuário, são armazenados os identificadores de conta do denunciante e do denunciado, o motivo da denúncia, os detalhes digitados pelo próprio usuário e o identificador da partida relacionada. Essas informações são usadas apenas para analisar a denúncia e decidir sobre sanções, e não são divulgadas a outros usuários.
+- Para processar a denúncia, o operador pode consultar o registro de jogadas (Replay) da partida em questão. Esse registro não é consultado para nenhuma outra finalidade.
+
+(4) Informações relacionadas a anúncios
+- O app exibe anúncios com recompensa por meio do Google AdMob. O AdMob pode coletar informações do dispositivo, como o identificador de publicidade (ADID/IDFA), para fornecer os anúncios. Para mais detalhes, consulte a Política de Privacidade do Google (https://policies.google.com/privacy).
+- Você pode escolher se deseja anúncios personalizados na janela de consentimento (Google User Messaging Platform) exibida na primeira execução do app. No iOS, é possível alterar essa opção a qualquer momento em Ajustes &gt; Privacidade e Segurança &gt; Rastreamento. No Android, é possível redefinir ou excluir o ID de publicidade em Configurações &gt; Google &gt; Anúncios.
+
+(5) Informações armazenadas no dispositivo
+- Jogos em andamento, registros de revisão (Replay), favoritos e configurações (tema, idioma, som etc.) não são enviados ao servidor e ficam armazenados apenas no dispositivo do usuário. As estatísticas por dificuldade, no caso de contas com login, também são mantidas na conta como registros do modo solo descritos no item (2); com conta de convidado ou sem login, ficam armazenadas apenas no dispositivo.
+- No entanto, ao concluir uma partida ranqueada (1:1) ou o Sudoku do Dia, o registro de jogadas (Replay) dessa partida também é enviado ao servidor e armazenado nele. Os registros de jogadas do modo solo, do treino de técnicas, das partidas amistosas e das partidas em grupo continuam sendo armazenados apenas no dispositivo, como até agora.
+
+(6) Registros de uso do serviço
+- Para melhorar o serviço, coletamos, de contas com login, os eventos de uso das principais funções (momento da primeira execução, cadastro, horários de abertura do app, primeiro quebra-cabeça concluído, registros de quebra-cabeças concluídos (dificuldade, tempo gasto, número de dicas e de erros), treinos de técnicas concluídos, uso de dicas, conclusão do Sudoku do Dia, visitas ao lobby de partidas, visualização de Replays, visualização da tela Premium, uso da função de compartilhar e o tipo do que foi compartilhado (sala de amigos, quebra-cabeça, resultado, cartão mensal), abertura do app por um link do app e o tipo desse link) e o horário em que cada um ocorreu. Não registramos nenhuma informação sobre quem recebeu o compartilhamento.
+- Esses registros de uso não incluem identificadores de publicidade nem informações de hardware do dispositivo e são vinculados apenas ao identificador da conta. Nada é coletado enquanto não houver login.
+
+(7) Identificador de instalação (para impedir login simultâneo)
+- Para impedir que uma conta seja usada em vários dispositivos ao mesmo tempo, armazenamos, junto com a conta, um identificador de instalação aleatório gerado quando o app é instalado.
+- Esse valor não é o identificador de hardware nem o identificador de publicidade do dispositivo; ele se refere apenas a "esta instalação do app", e um novo valor é emitido se você desinstalar e reinstalar o app. Apenas a instalação que fez o último login é mantida.
+
+(8) Informações de pagamento
+- Ao comprar o Premium, o identificador do produto, a loja (App Store / Google Play), a data de expiração da assinatura e o identificador da transação emitido pela loja são armazenados junto com a conta. Isso serve para confirmar a compra e restaurar o acesso mesmo que você troque de dispositivo.
+- Para cada compra, armazenamos também a origem da compra (compra paga, código promocional, código de oferta, desconto de primeira compra, compra de teste ou concessão pelo operador), o valor pago e a moeda (quando informados pela loja) e o horário da compra. Isso serve para distinguir a receita real do uso de códigos.
+- Nem o app nem o servidor recebem ou armazenam informações de meios de pagamento, como números de cartão. O pagamento em si é processado pela App Store ou pelo Google Play.
+- Se a verificação do recibo falhar, o motivo da falha e as informações do produto e da loja naquele momento podem ser registrados para identificar a causa.
+
+(9) Informações de erros e diagnóstico
+- Se o app fechar inesperadamente ou ocorrer um erro, o Google Firebase Crashlytics coleta o local onde o erro ocorreu, o modelo do dispositivo, a versão do sistema operacional e um identificador de instalação emitido pelo Firebase. Isso serve para encontrar e corrigir a causa, e não inclui o conteúdo digitado pelo usuário nem registros de quebra-cabeças.
+- Essa coleta ocorre apenas nas versões do app oficialmente distribuídas.
+
+(10) XP, níveis e títulos
+- Ao concluir um quebra-cabeça, pontos de experiência (XP) são acumulados na conta, e o nível é definido com base no XP acumulado. O XP e o nível são armazenados em todas as contas com login, inclusive contas de convidado. Não há concessão sem login ou offline, e o treino de técnicas, o recomeço, os favoritos, os códigos compartilhados, a continuação a partir da revisão, as partidas amistosas e as partidas em grupo também não concedem XP.
+- Apenas a concessão mais recente de cada tipo é mantida, e a concessão seguinte substitui o registro anterior. Não há registros acumulados por partida.
+  · Modo solo: o identificador de jogo que o app atribuiu àquela partida e o horário da concessão. O horário da concessão é usado apenas para verificar o intervalo mínimo que impede que a mesma partida receba XP repetidamente. Esse registro de concessão não guarda dificuldade, erros, dicas nem tempo gasto (para os registros do modo solo, consulte o item (2)).
+  · Sudoku do Dia: a data, o XP concedido e o detalhamento do cálculo desse valor (pontuação base, se houve conclusão sem erros e sem dicas, bônus diário)
+  · Partida ranqueada: o identificador da partida, o XP concedido e o detalhamento do cálculo desse valor (dificuldade, vitória ou derrota, motivo do encerramento, pontuação base e multiplicador)
+- Para os títulos e as cores de apelido, armazenamos na conta: os títulos recebidos e quando foram recebidos, o título e a cor de apelido equipados, as cores de apelido de eventos recebidas e quando foram recebidas, os efeitos de conclusão recebidos e o efeito de conclusão equipado, o número de vitórias ranqueadas no momento em que a contagem de títulos começou e, para cada família de técnicas (12 tipos), o número de partidas concluídas usando aquela técnica. O número de partidas com uso de técnicas é um número que aumenta em 1 quando o app envia apenas o nome da família ao terminar uma partida; o servidor não guarda qual quebra-cabeça foi resolvido nem como.
+- Eventos: somente enquanto um evento de acumular XP estiver em andamento, armazenamos, para cada edição, o total de XP daquele período e o identificador da última partida contabilizada.
+- O nível, o título e a cor do apelido são exibidos a outros usuários (no ranking, na tela de resultado das partidas etc.). O valor de XP, o histórico de concessões e o número de partidas com uso de técnicas não são exibidos a outros usuários em nenhuma hipótese.
+- O XP é um valor apenas de exibição, usado somente dentro do app, e não pode ser trocado por dinheiro nem por bens conversíveis em dinheiro.
+
+(11) Estatísticas de visitas ao site
+- A página de apresentação do app e as páginas de explicação das técnicas (sudoku.jaywithme.com) geram estatísticas de visitas com o GoatCounter para saber quais páginas são lidas e com que frequência. São coletados o endereço da página visitada, o caminho de origem (referenciador), o tipo de navegador e de sistema operacional, o tamanho da tela, o país estimado a partir do endereço IP e se o botão de download da loja foi tocado.
+- Não são usados cookies, e o endereço IP não é armazenado. É gerado um valor temporário para distinguir o mesmo visitante apenas dentro de um dia, e esse valor não é armazenado. Essas informações também não são vinculadas à conta do app.
+- Nada disso é coletado dentro do app.
+
+(12) Contagem das etapas de instalação do app
+- Para saber até que etapa um app recém-instalado avança, independentemente de haver login, apenas um número em uma tabela de contagem compartilhada aumenta em 1 na primeira vez em que cada uma das seguintes etapas é alcançada: primeira execução, início do primeiro jogo, aceitação, recusa ou conclusão do guia da primeira partida, primeira partida solo concluída, início do segundo jogo e nova abertura do app no dia seguinte e 7 dias depois.
+- A tabela contém apenas números por "data da primeira abertura do app, etapa, sistema operacional (iOS/Android) e número de build do app", sem nenhum identificador de usuário, de dispositivo ou de instalação. Por isso, nenhum número pode ser rastreado até um usuário específico.
+
+(13) Imagens compartilhadas
+- Ao escolher e compartilhar uma imagem a partir da tela de resultado ou do cartão mensal, essa imagem é enviada ao servidor, e o aplicativo de mensagens recebe uma linha com um link que abre a imagem. Dependendo do modelo escolhido, a imagem pode conter o apelido (apenas em contas completas; o de convidados não é exibido), registros (tempo de conclusão, dificuldade, posição etc.) e os números iniciais do quebra-cabeça.
+- Qualquer pessoa que tenha o link pode ver a imagem. O endereço do link é um valor aleatório que não pode ser adivinhado, e não existe nenhuma função para listar as imagens.
+- Sem login, nenhuma imagem é enviada, e apenas o link do app é compartilhado.
+
+O app não solicita permissão de localização e não acessa contatos, fotos, microfone nem câmera. No entanto, o Google AdMob, que fornece os anúncios, pode estimar a região aproximada a partir do endereço IP e de outras informações para veicular os anúncios. O app nunca usa o recurso de localização do dispositivo para determinar a sua localização.
+
+2. Finalidades do uso das informações
+- Gerenciamento da conta e manutenção do login
+- Pareamento de partidas em tempo real, cálculo de rating e divisão, e disponibilização do histórico de partidas
+- Disponibilização do Sudoku do Dia e do ranking de rating
+- Cálculo e exibição de XP, níveis e títulos, e prevenção de concessões em duplicidade
+- Recebimento de denúncias e resposta a condutas fraudulentas
+- Exibição de anúncios
+- Análise de estatísticas de uso do serviço e melhorias
+- Prevenção do uso simultâneo de uma mesma conta (bloqueio de login simultâneo)
+- Confirmação de compras do Premium e restauração do acesso
+- Identificação da causa de erros e melhoria da estabilidade do app
+- Exibição de imagens compartilhadas por meio de links de compartilhamento
+
+3. Armazenamento e descarte das informações
+- As informações da conta e os registros de jogo são mantidos enquanto a conta existir.
+- Ao excluir a conta, os meios de login (vínculos com Google e Apple, sessões) e o endereço de e-mail são destruídos imediatamente, e o apelido é substituído por "Usuário excluído", de modo que não seja mais possível identificar a pessoa.
+- No entanto, os registros de partidas em si não são excluídos e permanecem anonimizados. Isso porque cada registro de partida também faz parte do histórico de resultados e de rating do adversário, e apagá-lo prejudicaria também os registros de outro usuário.
+- Os registros de jogadas (Replays) das partidas ranqueadas e do Sudoku do Dia são descartados automaticamente após 30 dias da data de coleta.
+- Os registros de denúncias são mantidos por até 1 ano após a conclusão do processamento, para análise e prevenção de reincidência, e depois são descartados.
+- Os registros de contato (endereço de e-mail e conteúdo da mensagem) são mantidos por 1 ano a partir da data de recebimento e depois descartados.
+- Durante 7 dias após a exclusão da conta, não é possível se cadastrar novamente com a mesma conta. Para verificar isso, apenas o hash unidirecional dos identificadores de login (endereço de e-mail, identificador de login social) é mantido por 7 dias e depois descartado automaticamente. O hash não pode ser revertido ao valor original, é usado apenas para verificar se um novo cadastro corresponde à mesma conta e não está vinculado aos registros nem à identidade do usuário.
+- Os registros de uso do serviço são descartados automaticamente após 13 meses da data de coleta e, se a conta for excluída, são excluídos imediatamente junto com ela.
+- Os registros do modo solo são mantidos enquanto a conta existir e, se a conta for excluída, são excluídos imediatamente junto com ela.
+- O XP e o nível, o último registro de concessão de cada tipo e os títulos, as cores de apelido, os efeitos de conclusão, o número de partidas com uso de técnicas e o total de XP de eventos são mantidos enquanto a conta existir e, se a conta for excluída, são excluídos imediatamente junto com ela. Também são excluídos quando contas de convidado sem uso por um longo período são removidas.
+- O identificador de instalação e as informações de pagamento são excluídos imediatamente junto com a conta, caso ela seja excluída.
+- As imagens compartilhadas são excluídas automaticamente após 30 dias da data de envio. Como as imagens não são armazenadas vinculadas à conta, mesmo que a conta seja excluída, as imagens enviadas antes disso permanecem até completarem 30 dias.
+- A contagem das etapas de instalação do app contém apenas números que não permitem identificar ninguém e, por isso, não é descartada separadamente.
+- As informações de erros e diagnóstico são mantidas por até 90 dias, conforme a política do Google Firebase Crashlytics, e depois descartadas.
+- As informações armazenadas no dispositivo são excluídas quando o app é desinstalado.
+
+4. Fornecimento a terceiros e terceirização do tratamento
+- O app não vende nem fornece as informações pessoais dos usuários a terceiros, exceto nos casos previstos em lei.
+- Para operar o serviço, o tratamento é confiado às seguintes empresas:
+  · Supabase Inc.: autenticação de contas e armazenamento de perfis e de registros de partidas, do Sudoku do Dia e de XP
+  · Google LLC: fornecimento de anúncios (AdMob), login com conta Google, coleta de erros (Firebase Crashlytics), processamento de pagamentos e verificação de recibos (Google Play)
+  · Apple Inc.: login com conta Apple, processamento de pagamentos e verificação de recibos (App Store)
+  · GoatCounter (goatcounter.com): estatísticas de visitas ao site
+- Os servidores dessas empresas podem estar localizados fora da República da Coreia e, ao usar o app, o usuário concorda com a transferência internacional na medida necessária para a prestação do serviço.
+
+5. Informações pessoais de crianças
+- O app não se destina a crianças menores de 14 anos (na República da Coreia) nem a menores de 13 anos (em outras regiões) e não coleta intencionalmente informações pessoais de usuários dessas idades. Caso isso seja constatado, a conta e as informações serão excluídas sem demora.
+
+6. Direitos do usuário
+- O usuário pode, a qualquer momento, alterar o apelido, sair da conta e excluir a conta na Minha Página do app.
+- Para solicitar acesso, correção, exclusão ou suspensão do tratamento das informações pessoais, entre em contato pelo canal abaixo. As solicitações serão atendidas sem demora após o recebimento.
+
+7. Contato
+- E-mail: contact@jaywithme.com
+- Mensagens enviadas pelo formulário de contato em Configurações &gt; Contato e denúncias, no app, são recebidas no mesmo endereço, e a resposta é enviada para o endereço de e-mail informado.
+
+Esta política pode ser alterada, e alterações importantes serão comunicadas no app.
+
+Este documento é uma tradução do original em coreano. Em caso de divergência entre a tradução e o original em coreano, prevalecerá o original em coreano.</pre>
+
     </div>
   </div>
 </main>
 <footer>
   <div class="wrap">
-    <a href="privacy.html"><span class="ko">개인정보처리방침</span><span class="en">Privacy Policy</span></a>
-    <a href="terms.html"><span class="ko">이용약관</span><span class="en">Terms of Service</span></a>
-    <a href="data-deletion.html"><span class="ko">계정 삭제 안내</span><span class="en">Account Deletion</span></a>
-    <span><span class="ko">문의</span><span class="en">Contact</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
-    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="ko">Apple 표준 EULA</span><span class="en">Apple's standard EULA</span></a>
+    <a href="privacy.html"><span class="l-ko">개인정보처리방침</span><span class="l-en">Privacy Policy</span><span class="l-ja">プライバシーポリシー</span><span class="l-zh">隱私權政策</span><span class="l-de">Datenschutzerklärung</span><span class="l-es">Política de privacidad</span><span class="l-fr">Politique de confidentialité</span><span class="l-pt">Política de Privacidade</span></a>
+    <a href="terms.html"><span class="l-ko">이용약관</span><span class="l-en">Terms of Service</span><span class="l-ja">利用規約</span><span class="l-zh">服務條款</span><span class="l-de">Nutzungsbedingungen</span><span class="l-es">Términos de servicio</span><span class="l-fr">Conditions d'utilisation</span><span class="l-pt">Termos de Uso</span></a>
+    <a href="data-deletion.html"><span class="l-ko">계정 삭제 안내</span><span class="l-en">Account Deletion</span><span class="l-ja">アカウント削除のご案内</span><span class="l-zh">帳號刪除說明</span><span class="l-de">Hinweise zur Kontolöschung</span><span class="l-es">Eliminación de la cuenta</span><span class="l-fr">Suppression du compte</span><span class="l-pt">Exclusão de conta</span></a>
+    <span><span class="l-ko">문의</span><span class="l-en">Contact</span><span class="l-ja">お問い合わせ</span><span class="l-zh">聯絡我們</span><span class="l-de">Kontakt</span><span class="l-es">Contacto</span><span class="l-fr">Contact</span><span class="l-pt">Contato</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="l-ko">Apple 표준 EULA</span><span class="l-en">Apple's standard EULA</span><span class="l-ja">Apple標準EULA</span><span class="l-zh">Apple 標準 EULA</span><span class="l-de">Standard-EULA von Apple</span><span class="l-es">EULA estándar de Apple</span><span class="l-fr">CLUF standard d'Apple</span><span class="l-pt">EULA padrão da Apple</span></a>
   </div>
 </footer>
 <script>
-  // Toggle only; these pages have no script-written strings, so the CSS switch
+  // These pages have no script-written strings, so switching the attribute
   // is the whole re-render.
-  document.getElementById('langToggle').addEventListener('click', function () {
-    var next =
-      document.documentElement.getAttribute('data-lang') === 'en' ? 'ko' : 'en';
-    document.documentElement.setAttribute('data-lang', next);
-    document.documentElement.lang = next;
-    try { window.localStorage.setItem('sl_lang', next); } catch (e) {}
+  var pick = document.getElementById('langPick');
+  pick.value = document.documentElement.getAttribute('data-lang');
+  pick.addEventListener('change', function () {
+    document.documentElement.setAttribute('data-lang', pick.value);
+    document.documentElement.lang = pick.value === 'zh' ? 'zh-Hant' : pick.value;
+    try { window.localStorage.setItem('sl_lang', pick.value); } catch (e) {}
   });
 </script>
 </body>

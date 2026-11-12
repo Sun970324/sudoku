@@ -11,7 +11,13 @@
 <link rel="canonical" href="https://sudoku.jaywithme.com/">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/">
-<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/">
+<link rel="alternate" hreflang="ja" href="https://sudoku.jaywithme.com/ja/">
+<link rel="alternate" hreflang="zh-Hant" href="https://sudoku.jaywithme.com/zh-hant/">
+<link rel="alternate" hreflang="de" href="https://sudoku.jaywithme.com/de/">
+<link rel="alternate" hreflang="es" href="https://sudoku.jaywithme.com/es/">
+<link rel="alternate" hreflang="fr" href="https://sudoku.jaywithme.com/fr/">
+<link rel="alternate" hreflang="pt" href="https://sudoku.jaywithme.com/pt/">
+<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/en/">
 <!-- Search Console ownership (URL-prefix property https://sudoku.jaywithme.com/).
      Keep it: removing it un-verifies the property. -->
 <meta name="google-site-verification" content="8xQ_NZLjbsyDT1OmwtUXrYPTnJqFZ0o_kPQQTi03dUY">
@@ -21,6 +27,12 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="zh_TW">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="es_LA">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="pt_BR">
 <meta property="og:title" content="무료 스도쿠 · 바로 풀고, 막히면 기법까지 배우기">
 <meta property="og:description" content="설치 없이 브라우저에서 바로 푸는 무료 클래식 스도쿠. 쉬움부터 전문가까지 4단계, 막히면 힌트가 기법 이름과 위치를 알려 주고 그 기법을 배울 수 있어요.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
@@ -70,7 +82,13 @@
       "operatingSystem": "iOS, Android",
       "inLanguage": [
         "ko",
-        "en"
+        "en",
+        "ja",
+        "zh-Hant",
+        "de",
+        "es",
+        "fr",
+        "pt"
       ],
       "offers": {
         "@type": "Offer",
@@ -193,7 +211,9 @@
    multiple of 12. The board and the number pad are Pretendard (owner's call). */
 [hidden] { display: none !important; }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+/* No double-tap zoom anywhere (owner, 11-12): fast taps on the pad and the
+   tools would zoom the page. Pinch zoom stays. */
+html { -webkit-text-size-adjust: 100%; touch-action: manipulation; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); word-break: keep-all; overflow-wrap: anywhere; }
 a { color: var(--gold); }
 a:hover { color: #ffe08a; }
@@ -221,8 +241,15 @@ header.top { border-bottom: 2px solid var(--line); }
 .nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
 .nav a[aria-current="page"] { color: var(--gold); box-shadow: inset 0 -4px 0 var(--gold); }
-.lang { align-self: center; margin-left: auto; font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
-.lang:hover { color: var(--ink); border-color: var(--ink-2); }
+/* The language menu: this page's language, opening onto all eight. */
+.lang { position: relative; align-self: center; margin-left: auto; }
+.lang summary { display: block; list-style: none; cursor: pointer; font-size: 14px; line-height: 1; color: var(--ink-2); border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.lang summary::-webkit-details-marker { display: none; }
+.lang summary:hover, .lang[open] summary { color: var(--ink); border-color: var(--ink-2); }
+.lang ul { position: absolute; top: calc(100% + 6px); right: 0; z-index: 50; min-width: 168px; margin: 0; padding: 4px 0; list-style: none; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line), 0 8px 24px rgba(0, 0, 0, 0.45); }
+.lang a { display: flex; align-items: center; min-height: 44px; padding: 0 16px; color: var(--ink); text-decoration: none; font-size: 15px; white-space: nowrap; }
+.lang a:hover { background: #18306a; color: var(--ink); }
+.lang a[aria-current="page"] { color: var(--gold); }
 
 /* Game: board on the left, panel on the right. */
 .game { max-width: 1040px; margin: 0 auto; padding: 24px var(--gutter) 0; display: grid; grid-template-columns: 540px minmax(0, 1fr); gap: 32px; align-items: start; }
@@ -375,7 +402,7 @@ dialog.coupon::backdrop { background: rgba(4, 10, 28, 0.82); }
 .ticket-main { min-width: 0; padding: 22px 24px; background: var(--gold); color: var(--bg); }
 .ticket-brand { font: 12px/1.5 var(--pixel); letter-spacing: 0.15em; }
 .ticket-big { margin: 8px 0 6px; font: 48px/1.1 var(--pixel); }
-html[lang="en"] .ticket-big { font-size: 36px; }
+html:not([lang="ko"]) .ticket-big { font-size: 36px; }
 .ticket-perks { font-size: 15px; font-weight: 700; }
 .ticket-stub { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; background: #ffd86b; color: var(--bg); border-left: 4px dashed var(--bg); text-align: center; }
 .ticket-stub span { font: 12px/1 var(--pixel); letter-spacing: 0.15em; }
@@ -467,7 +494,8 @@ footer .copy-r { margin-left: auto; }
   .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .nav { min-width: 0; }
   .nav a { min-height: 0; padding: 0 8px; }
-  .lang { flex: none; padding: 6px 8px; font-size: 13px; }
+  .lang { flex: none; }
+  .lang summary { padding: 6px 8px; font-size: 13px; }
 
   .game { max-width: calc(540px + 2 * var(--gutter)); padding-top: 12px; display: flex; flex-direction: column; align-items: stretch; gap: 0; }
   .panel { display: contents; }
@@ -480,9 +508,11 @@ footer .copy-r { margin-left: auto; }
   .status b { margin-left: 4px; font-size: 12px; }
   .status .t-label { display: none; }
   .pause { height: 36px; background: transparent; }
-  .board-col { order: -1; width: 100%; max-width: max(240px, calc(100svh - 260px)); align-self: center; }
-  .frame { padding: 6px; }
-  .sb-confirm { inset: 6px; }
+  /* The board runs to 8px from the screen's edges, past the 16px gutter,
+     with no gold frame (owner, 11-12). */
+  .board-col { order: -1; width: calc(100% + 16px); margin-inline: -8px; max-width: max(240px, calc(100svh - 260px)); align-self: center; }
+  .frame { padding: 0; background: transparent; }
+  .sb-confirm { inset: 0; }
   .sb-cell:nth-child(3n):not(:last-child) { border-right-width: 2px; }
   .sb-row:nth-child(3n):not(:last-child) .sb-cell { border-bottom-width: 2px; }
   .tools { margin-top: 8px; gap: 6px; }
@@ -508,7 +538,7 @@ footer .copy-r { margin-left: auto; }
   .coupon h2 { font-size: 24px; }
   .ticket, .event-ticket { grid-template-columns: minmax(0, 1fr); }
   .ticket-main { padding: 18px 16px; }
-  .ticket-big, html[lang="en"] .ticket-big { font-size: 36px; }
+  .ticket-big, html:not([lang="ko"]) .ticket-big { font-size: 36px; }
   .ticket-perks { font-size: 14px; }
   .ticket-stub { flex-direction: row; gap: 10px; padding: 8px; border-left: 0; border-top: 4px dashed var(--bg); }
   .ticket-stub br { display: none; }
@@ -535,10 +565,19 @@ footer .copy-r { margin-left: auto; }
 <a class="lang-hint" id="langHint" href="en/" hreflang="en" lang="en" data-set-lang="en" data-nosnippet hidden>This page in English ▸</a>
 <script>
   (function () {
+    var offers = {"en":{"href":"en/","text":"This page in English ▸","set":"en"},"ja":{"href":"ja/","text":"このページを日本語で見る ▸","set":"ja"},"zh-Hant":{"href":"zh-hant/","text":"查看此頁面的繁體中文版 ▸","set":"zh"},"de":{"href":"de/","text":"Diese Seite auf Deutsch ▸","set":"de"},"es":{"href":"es/","text":"Ver esta página en español ▸","set":"es"},"fr":{"href":"fr/","text":"Voir cette page en français ▸","set":"fr"},"pt":{"href":"pt/","text":"Ver esta página em português ▸","set":"pt"}};
     var chosen = null;
     try { chosen = localStorage.getItem('sl_lang'); } catch (e) {}
-    var tag = (navigator.languages && navigator.languages[0]) || navigator.language || '';
-    if (!chosen && String(tag).toLowerCase().indexOf('ko') !== 0) document.getElementById('langHint').hidden = false;
+    var tag = String((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+    if (chosen || tag.indexOf('ko') === 0) return;
+    var code = tag.indexOf('zh') === 0 ? 'zh-Hant' : tag.slice(0, 2);
+    var o = offers[code] || offers.en;
+    var a = document.getElementById('langHint');
+    a.href = o.href;
+    a.hreflang = a.lang = offers[code] ? code : 'en';
+    a.setAttribute('data-set-lang', o.set);
+    a.textContent = o.text;
+    a.hidden = false;
   })();
 </script>
 
@@ -549,7 +588,19 @@ footer .copy-r { margin-left: auto; }
       <a href="./" aria-current="page">게임하기</a>
       <a href="techniques/">기법 배우기</a>
     </nav>
-    <a class="lang" href="en/" hreflang="en" lang="en" data-set-lang="en">English</a>
+    <details class="lang" id="langMenu">
+      <summary lang="ko">한국어 ▾</summary>
+      <ul>
+        <li><a href="./" lang="ko" aria-current="page">한국어</a></li>
+        <li><a href="en/" hreflang="en" lang="en" data-set-lang="en">English</a></li>
+        <li><a href="ja/" hreflang="ja" lang="ja" data-set-lang="ja">日本語</a></li>
+        <li><a href="zh-hant/" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh">繁體中文</a></li>
+        <li><a href="de/" hreflang="de" lang="de" data-set-lang="de">Deutsch</a></li>
+        <li><a href="es/" hreflang="es" lang="es" data-set-lang="es">Español</a></li>
+        <li><a href="fr/" hreflang="fr" lang="fr" data-set-lang="fr">Français</a></li>
+        <li><a href="pt/" hreflang="pt" lang="pt" data-set-lang="pt">Português</a></li>
+      </ul>
+    </details>
   </div>
 </header>
 
@@ -753,13 +804,122 @@ footer .copy-r { margin-left: auto; }
 
 <script>
   // A language link remembers the choice: the Korean page stops offering
-  // English, and the bilingual policy pages open in the same language.
+  // another language, and the policy pages open in the same one.
   document.querySelectorAll('[data-set-lang]').forEach(function (a) {
     a.addEventListener('click', function () {
       try { localStorage.setItem('sl_lang', a.getAttribute('data-set-lang')); } catch (e) {}
     });
   });
+  // The language menu closes on a tap elsewhere and on Escape.
+  (function () {
+    var menu = document.getElementById('langMenu');
+    document.addEventListener('click', function (e) { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); }
+    });
+  })();
 </script>
+<script type="application/json" id="sl-text" data-techniques="techniques/">
+{
+  "game.loadFail": "퍼즐을 불러오지 못했어요. 새로고침해 주세요.",
+  "game.clear": "클리어!",
+  "game.over": "실수 3번",
+  "game.overText": "이번 판은 여기까지예요.",
+  "game.retry": "다시 하기",
+  "game.again": "한 판 더",
+  "game.harder": "{level} 도전",
+  "game.rankOf": "{level} 클리어 기록 중",
+  "game.rank": "상위 {pct}%",
+  "game.fast": "빠름",
+  "game.slow": "느림",
+  "game.me": "나",
+  "game.rankSource": "스도쿠 리그 앱 기록 기준",
+  "game.level": "난이도",
+  "game.used": "이 판에 나온 기법",
+  "game.hinted": "힌트 씀",
+  "game.cell": "{row}행 {col}열",
+  "game.leaveTitle": "풀던 판이 지워져요",
+  "game.keep": "계속 풀기",
+  "game.leave": "새 판 시작",
+  "game.leaveText": "{level:으로/로} 새 판을 시작할까요?",
+  "hint.wrong1": "판에 틀린 숫자가 있어요.",
+  "hint.wrong2": "빨간 칸의 숫자가 틀렸어요.",
+  "hint.wrong3": "틀린 숫자를 지울 수 있어요.",
+  "hint.fallback1": "이 칸부터 채워 볼까요?",
+  "hint.fallback2": "표시한 칸을 보세요.",
+  "hint.fallback3": "이 칸에는 {digit:이/가} 들어가요.",
+  "hint.use": "{name:을/를} 쓸 수 있어요.",
+  "hint.fullHouse.row": "이 가로줄에 빈칸이 하나만 남았어요.",
+  "hint.fullHouse.col": "이 세로줄에 빈칸이 하나만 남았어요.",
+  "hint.fullHouse.box": "이 박스에 빈칸이 하나만 남았어요.",
+  "hint.nakedSingle": "이 칸에 들어갈 수 있는 숫자는 하나뿐이에요.",
+  "hint.hiddenSingle.row": "이 가로줄에서 {digit:이/가} 들어갈 칸은 하나뿐이에요.",
+  "hint.hiddenSingle.col": "이 세로줄에서 {digit:이/가} 들어갈 칸은 하나뿐이에요.",
+  "hint.hiddenSingle.box": "이 박스에서 {digit:이/가} 들어갈 칸은 하나뿐이에요.",
+  "hint.pointing.row": "이 박스에서 {digit:은/는} 한 가로줄에만 들어갈 수 있어요.",
+  "hint.pointing.col": "이 박스에서 {digit:은/는} 한 세로줄에만 들어갈 수 있어요.",
+  "hint.claiming.row": "이 가로줄에서 {digit:은/는} 한 박스 안에만 들어갈 수 있어요.",
+  "hint.claiming.col": "이 세로줄에서 {digit:은/는} 한 박스 안에만 들어갈 수 있어요.",
+  "hint.naked": "표시한 {count}칸에는 {digits}만 들어갈 수 있어요.",
+  "hint.hidden.row": "이 가로줄에서 {digits:이/가} 들어갈 수 있는 칸은 표시한 {count}칸뿐이에요.",
+  "hint.hidden.col": "이 세로줄에서 {digits:이/가} 들어갈 수 있는 칸은 표시한 {count}칸뿐이에요.",
+  "hint.hidden.box": "이 박스에서 {digits:이/가} 들어갈 수 있는 칸은 표시한 {count}칸뿐이에요.",
+  "hint.pattern": "{name} 모양이에요. 표시한 칸들을 보세요.",
+  "hint.answerReveal": "그래서 이 칸에는 {digit:이/가} 들어가요.",
+  "hint.answerElimOne": "그래서 빨간 칸에는 {digits:이/가} 들어갈 수 없어요.",
+  "hint.answerElimMany": "그래서 빨간 칸에는 {digits:이/가} 들어갈 수 없어요.",
+  "hint.close": "힌트 닫기",
+  "hint.showWhere": "위치 보기",
+  "hint.showAnswer": "답 보기",
+  "hint.fill": "이 숫자 넣기",
+  "hint.clear": "지우기",
+  "hint.removeNotes": "메모에서 지우기",
+  "hint.learn": "{name} 배우기 ▸",
+  "coupon.claiming": "받는 중…",
+  "coupon.soldout": "{platform} 쿠폰 소진",
+  "coupon.claimed": "{platform} 쿠폰 받음",
+  "coupon.copy": "복사",
+  "coupon.copied": "복사했어요",
+  "level.easy": "쉬움",
+  "level.medium": "보통",
+  "level.hard": "어려움",
+  "level.expert": "전문가",
+  "game.time": "시간",
+  "game.mistakes": "실수",
+  "game.next": "새 게임",
+  "tech.fullHouse": "풀 하우스",
+  "tech.nakedSingle": "네이키드 싱글",
+  "tech.hiddenSingle": "히든 싱글",
+  "tech.intersectionPointing": "포인팅",
+  "tech.intersectionClaiming": "클레이밍",
+  "tech.lockedPair": "락드 페어",
+  "tech.lockedTriple": "락드 트리플",
+  "tech.nakedPair": "네이키드 페어",
+  "tech.nakedTriple": "네이키드 트리플",
+  "tech.nakedQuad": "네이키드 쿼드",
+  "tech.hiddenPair": "히든 페어",
+  "tech.hiddenTriple": "히든 트리플",
+  "tech.hiddenQuad": "히든 쿼드",
+  "tech.xWing": "X-윙",
+  "tech.finnedXWing": "핀드 X-윙",
+  "tech.sashimiXWing": "사시미 X-윙",
+  "tech.swordfish": "소드피쉬",
+  "tech.finnedSwordfish": "핀드 소드피쉬",
+  "tech.jellyfish": "젤리피쉬",
+  "tech.skyscraper": "스카이스크래퍼",
+  "tech.twoStringKite": "2-스트링 카이트",
+  "tech.turbotFish": "터봇 피쉬",
+  "tech.simpleColoring": "심플 컬러링",
+  "tech.multiColoring": "멀티 컬러링",
+  "tech.remotePair": "리모트 페어",
+  "tech.xyWing": "XY-윙",
+  "tech.xyzWing": "XYZ-윙",
+  "tech.wWing": "W-윙",
+  "tech.sueDeCoq": "수 드 코크",
+  "tech.tripleFirework": "트리플 파이어워크"
+}
+</script>
+<script defer src="play/text.js"></script>
 <script defer src="play/hints.js"></script>
 <script defer src="play/sudoku.js"></script>
 <script defer src="play/coupon.js"></script>

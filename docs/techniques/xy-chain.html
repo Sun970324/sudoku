@@ -8,7 +8,13 @@
 <link rel="canonical" href="https://sudoku.jaywithme.com/techniques/xy-chain.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/xy-chain.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/xy-chain.html">
-<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/techniques/xy-chain.html">
+<link rel="alternate" hreflang="ja" href="https://sudoku.jaywithme.com/ja/techniques/xy-chain.html">
+<link rel="alternate" hreflang="zh-Hant" href="https://sudoku.jaywithme.com/zh-hant/techniques/xy-chain.html">
+<link rel="alternate" hreflang="de" href="https://sudoku.jaywithme.com/de/techniques/xy-chain.html">
+<link rel="alternate" hreflang="es" href="https://sudoku.jaywithme.com/es/techniques/xy-chain.html">
+<link rel="alternate" hreflang="fr" href="https://sudoku.jaywithme.com/fr/techniques/xy-chain.html">
+<link rel="alternate" hreflang="pt" href="https://sudoku.jaywithme.com/pt/techniques/xy-chain.html">
+<link rel="alternate" hreflang="x-default" href="https://sudoku.jaywithme.com/en/techniques/xy-chain.html">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0a1736">
 <meta property="og:type" content="article">
@@ -156,8 +162,14 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 .nav a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
 .nav a[aria-current="page"] { color: var(--gold); box-shadow: inset 0 -4px 0 var(--gold); }
-.lang { align-self: center; margin-left: auto; font-size: 14px; line-height: 1; color: var(--ink-2); text-decoration: none; border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; }
-.lang:hover { color: var(--ink); border-color: var(--ink-2); }
+.lang { position: relative; align-self: center; margin-left: auto; }
+.lang summary { display: block; list-style: none; cursor: pointer; font-size: 14px; line-height: 1; color: var(--ink-2); border: 2px solid var(--line); padding: 6px 10px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.lang summary::-webkit-details-marker { display: none; }
+.lang summary:hover, .lang[open] summary { color: var(--ink); border-color: var(--ink-2); }
+.lang ul { position: absolute; top: calc(100% + 6px); right: 0; z-index: 50; min-width: 168px; margin: 0; padding: 4px 0; list-style: none; background: var(--panel); box-shadow: inset 0 0 0 2px var(--line), 0 8px 24px rgba(0, 0, 0, 0.45); }
+.lang a { display: flex; align-items: center; min-height: 44px; padding: 0 16px; color: var(--ink); text-decoration: none; font-size: 15px; white-space: nowrap; }
+.lang a:hover { background: #18306a; color: var(--ink); }
+.lang a[aria-current="page"] { color: var(--gold); }
 @media (max-width: 899px) {
   .bar { height: 56px; gap: 4px; }
   .brand { flex: none; margin-right: 4px; }
@@ -165,7 +177,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   .brand .name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .nav { min-width: 0; }
   .nav a { min-height: 0; padding: 0 8px; }
-  .lang { flex: none; padding: 6px 8px; font-size: 13px; }
+  .lang { flex: none; }
+  .lang summary { padding: 6px 8px; font-size: 13px; }
 }
 .get { display: flex; flex-direction: column; gap: 16px; }
 .event-ticket { display: grid; grid-template-columns: minmax(0, 1fr) 120px; filter: drop-shadow(0 6px 0 #071029); color: var(--bg); text-decoration: none; }
@@ -201,7 +214,19 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <a href="../">게임하기</a>
       <a href="./" aria-current="page">기법 배우기</a>
     </nav>
-    <a class="lang" href="../en/techniques/xy-chain.html" hreflang="en" lang="en">English</a>
+    <details class="lang" id="langMenu">
+      <summary lang="ko">한국어 ▾</summary>
+      <ul>
+        <li><a href="./xy-chain.html" lang="ko" aria-current="page">한국어</a></li>
+        <li><a href="../en/techniques/xy-chain.html" hreflang="en" lang="en" data-set-lang="en">English</a></li>
+        <li><a href="../ja/techniques/xy-chain.html" hreflang="ja" lang="ja" data-set-lang="ja">日本語</a></li>
+        <li><a href="../zh-hant/techniques/xy-chain.html" hreflang="zh-Hant" lang="zh-Hant" data-set-lang="zh">繁體中文</a></li>
+        <li><a href="../de/techniques/xy-chain.html" hreflang="de" lang="de" data-set-lang="de">Deutsch</a></li>
+        <li><a href="../es/techniques/xy-chain.html" hreflang="es" lang="es" data-set-lang="es">Español</a></li>
+        <li><a href="../fr/techniques/xy-chain.html" hreflang="fr" lang="fr" data-set-lang="fr">Français</a></li>
+        <li><a href="../pt/techniques/xy-chain.html" hreflang="pt" lang="pt" data-set-lang="pt">Português</a></li>
+      </ul>
+    </details>
   </div>
 </header>
 
@@ -343,6 +368,19 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   </div>
 </footer>
 <script>
+  document.querySelectorAll('[data-set-lang]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      try { localStorage.setItem('sl_lang', a.getAttribute('data-set-lang')); } catch (e) {}
+    });
+  });
+  (function () {
+    var menu = document.getElementById('langMenu');
+    document.addEventListener('click', function (e) { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); }
+    });
+  })();
+</script><script>
   // Count only the canonical host: not a local preview, not github.io.
   if (location.hostname === 'sudoku.jaywithme.com') {
     var gc = document.createElement('script');
@@ -351,12 +389,24 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     gc.dataset.goatcounter = 'https://jaywithme.goatcounter.com/count';
     document.head.appendChild(gc);
   }
-</script><script src="../play/lesson.js" defer></script>
+</script><script type="application/json" id="sl-text">
+{
+  "lesson.prev": "이전",
+  "lesson.next": "다음",
+  "lesson.find": "찾아서 눌러 보세요",
+  "lesson.restart": "처음부터 다시",
+  "lesson.nextTech": "다음 기법",
+  "lesson.app": "앱에서 실전 판 풀기",
+  "lesson.fail": "레슨을 불러오지 못했어요. 페이지를 새로 고쳐 주세요."
+}
+</script>
+<script src="../play/text.js" defer></script>
+<script src="../play/lesson.js" defer></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.sl-host').forEach(function (host) {
       SudokuLesson.start(host).catch(function () {
-        host.querySelector('.sl-wait').textContent = '레슨을 불러오지 못했어요. 페이지를 새로 고쳐 주세요.';
+        host.querySelector('.sl-wait').textContent = SLText('lesson.fail');
       });
     });
   });

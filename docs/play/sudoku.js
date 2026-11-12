@@ -10,32 +10,7 @@
   const MAX_HINTS = 3;
   const SAVE_KEY = 'sl-web-game';
   const PLAYED_KEY = 'sl-web-played';
-  const ko = document.documentElement.lang === 'ko';
-  const T = ko
-    ? {
-        easy: '쉬움', medium: '보통', hard: '어려움', expert: '전문가',
-        loading: '퍼즐을 불러오는 중…', loadFail: '퍼즐을 불러오지 못했어요. 새로고침해 주세요.',
-        clear: '클리어!', over: '실수 3번', overText: '이번 판은 여기까지예요.',
-        retry: '다시 하기', next: '새 게임', again: '한 판 더', harder: (l) => `${l} 도전`,
-        rankOf: (l) => `${l} 클리어 기록 중`, rank: (p) => `상위 ${p}%`, fast: '빠름', slow: '느림', me: '나',
-        rankSource: '스도쿠 리그 앱 기록 기준',
-        level: '난이도', time: '시간', mistakes: '실수', used: '이 판에 나온 기법', hinted: '힌트 씀',
-        paused: '일시정지', resume: '계속하기', cell: (r, c) => `${r}행 ${c}열`,
-        leaveTitle: '풀던 판이 지워져요', keep: '계속 풀기', leave: '새 판 시작',
-        leaveText: (l) => `${{ easy: '쉬움으로', medium: '보통으로', hard: '어려움으로', expert: '전문가로' }[l]} 새 판을 시작할까요?`,
-      }
-    : {
-        easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert',
-        loading: 'Loading a puzzle…', loadFail: 'Could not load a puzzle. Please refresh.',
-        clear: 'Solved!', over: '3 mistakes', overText: 'That is the end of this game.',
-        retry: 'Try again', next: 'New game', again: 'Play again', harder: (l) => `Try ${l}`,
-        rankOf: (l) => `Among ${l} clears`, rank: (p) => `Top ${p}%`, fast: 'Faster', slow: 'Slower', me: 'You',
-        rankSource: 'Based on Sudoku League app clears',
-        level: 'Level', time: 'Time', mistakes: 'Mistakes', used: 'Techniques in this puzzle', hinted: 'hint used',
-        paused: 'Paused', resume: 'Resume', cell: (r, c) => `row ${r}, column ${c}`,
-        leaveTitle: 'This game will be lost', keep: 'Keep playing', leave: 'New game',
-        leaveText: (l) => `Start a new ${{ easy: 'Easy', medium: 'Medium', hard: 'Hard', expert: 'Expert' }[l]} game?`,
-      };
+  const T = window.SLText;
 
   const $ = (sel) => document.querySelector(sel);
   const boardEl = $('#sb-board');
@@ -43,7 +18,6 @@
   // Relative to this script, not the domain root: the same pages are also
   // served from sun970324.github.io/sudoku/.
   const BASE = new URL('.', document.currentScript.src).href;
-  if (window.SudokuHints) window.SudokuHints.setRoot(new URL('..', BASE).pathname);
 
   const store = {
     get(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } },
@@ -135,7 +109,7 @@
         count(`play-start/${level}`);
       }
     } catch (e) {
-      boardEl.textContent = T.loadFail;
+      boardEl.textContent = T('game.loadFail');
       return;
     }
     boardEl.removeAttribute('aria-busy');
@@ -155,7 +129,7 @@
       else a.removeAttribute('aria-current');
     });
     const label = $('#sb-level');
-    if (label) label.textContent = T[level];
+    if (label) label.textContent = T('level.' + level);
   }
 
   // ---- clock ----
@@ -217,7 +191,7 @@
       const r = Math.floor(i / 9) + 1, c = (i % 9) + 1;
       if (v) {
         el.textContent = v;
-        el.setAttribute('aria-label', `${T.cell(r, c)}: ${v}`);
+        el.setAttribute('aria-label', `${T('game.cell', { row: r, col: c })}: ${v}`);
       } else if (game.notes[i]) {
         el.textContent = '';
         const grid = document.createElement('span');
@@ -229,10 +203,10 @@
           grid.appendChild(s);
         }
         el.appendChild(grid);
-        el.setAttribute('aria-label', T.cell(r, c));
+        el.setAttribute('aria-label', T('game.cell', { row: r, col: c }));
       } else {
         el.textContent = '';
-        el.setAttribute('aria-label', T.cell(r, c));
+        el.setAttribute('aria-label', T('game.cell', { row: r, col: c }));
       }
     }
     if (window.SudokuHintUI) window.SudokuHintUI.paint(cells);
@@ -381,13 +355,13 @@
   function showOver() {
     openModal([
       h('p', { class: 'sb-modal-eyebrow' }, 'GAME OVER'),
-      h('h2', {}, T.over),
-      h('p', {}, T.overText),
+      h('h2', {}, T('game.over')),
+      h('p', {}, T('game.overText')),
       h('div', { class: 'sb-modal-actions' }),
     ]);
     const row = modal.querySelector('.sb-modal-actions');
-    row.appendChild(h('button', { class: 'primary', onclick: () => start(game.level, { n: game.n }) }, T.retry));
-    row.appendChild(h('button', { onclick: () => start(game.level) }, T.next));
+    row.appendChild(h('button', { class: 'primary', onclick: () => start(game.level, { n: game.n }) }, T('game.retry')));
+    row.appendChild(h('button', { onclick: () => start(game.level) }, T('game.next')));
   }
 
   // The app's solo clear times per level, in buckets of `bucket` seconds
@@ -425,8 +399,8 @@
       const mine = Math.min(Math.floor(m / size), bins.length - 1);
       const top = Math.max(...bins);
       const head = h('div', { class: 'sb-rank-head' });
-      head.appendChild(h('span', {}, T.rankOf(T[level])));
-      head.appendChild(h('b', {}, T.rank(pct)));
+      head.appendChild(h('span', {}, T('game.rankOf', { level: T('level.' + level) })));
+      head.appendChild(h('b', {}, T('game.rank', { pct })));
       const bars = h('div', { class: 'sb-rank-bars', 'aria-hidden': 'true' });
       bins.forEach((c, i) => {
         const bar = h('i', { class: i === mine ? 'me' : i < mine ? 'fast' : '' });
@@ -437,16 +411,16 @@
       // The marker sits under its bar; an end label it would run into
       // gives way to it.
       const at = Math.min(92, Math.max(8, ((mine + 0.5) * 100) / bins.length));
-      const fast = h('span', {}, T.fast);
-      const slow = h('span', {}, T.slow);
+      const fast = h('span', {}, T('game.fast'));
+      const slow = h('span', {}, T('game.slow'));
       if (at < 25) fast.style.visibility = 'hidden';
       if (at > 75) slow.style.visibility = 'hidden';
-      const me = h('b', {}, `▲ ${T.me}`);
+      const me = h('b', {}, `▲ ${T('game.me')}`);
       me.style.left = `${at}%`;
       axis.appendChild(fast);
       axis.appendChild(me);
       axis.appendChild(slow);
-      [head, bars, axis, h('p', { class: 'sb-rank-src' }, T.rankSource)].forEach((el) => card.appendChild(el));
+      [head, bars, axis, h('p', { class: 'sb-rank-src' }, T('game.rankSource'))].forEach((el) => card.appendChild(el));
       card.hidden = false;
     }).catch(() => {});
     return card;
@@ -460,7 +434,7 @@
       uses[st.t] = (uses[st.t] || 0) + 1;
     }
     const stats = h('div', { class: 'sb-modal-stats' });
-    [[T.level, T[game.level]], [T.time, fmt(game.elapsed)], [T.mistakes, String(game.mistakes)]].forEach(([k, v]) => {
+    [[T('game.level'), T('level.' + game.level)], [T('game.time'), fmt(game.elapsed)], [T('game.mistakes'), String(game.mistakes)]].forEach(([k, v]) => {
       const box = h('div');
       box.appendChild(h('span', {}, k));
       box.appendChild(h('b', {}, v));
@@ -469,33 +443,33 @@
     const list = h('ul', { class: 'sb-modal-techs' });
     const names = window.SudokuHints ? window.SudokuHints.names : null;
     used.forEach((t) => {
-      const info = names && names(t, ko);
+      const info = names && names(t);
       if (!info) return;
       const li = h('li');
       const label = info.href ? h('a', { href: info.href }, info.name) : h('span', {}, info.name);
       label.appendChild(h('small', {}, ` × ${uses[t]}`));
       li.appendChild(label);
-      if (game.hinted.includes(t)) li.appendChild(h('em', {}, T.hinted));
+      if (game.hinted.includes(t)) li.appendChild(h('em', {}, T('game.hinted')));
       list.appendChild(li);
     });
     const next = LEVELS[LEVELS.indexOf(game.level) + 1];
     const actions = h('div', { class: 'sb-modal-actions' });
-    actions.appendChild(h('button', { class: 'primary', onclick: () => start(game.level) }, T.again));
-    if (next) actions.appendChild(h('button', { onclick: () => go(next) }, T.harder(T[next])));
+    actions.appendChild(h('button', { class: 'primary', onclick: () => start(game.level) }, T('game.again')));
+    if (next) actions.appendChild(h('button', { onclick: () => go(next) }, T('game.harder', { level: T('level.' + next) })));
     // Two columns on a wide screen (record | techniques and buttons), one
     // on a phone; the CSS decides.
     const record = h('div', { class: 'sb-clear-col' });
     record.appendChild(stats);
     record.appendChild(rankCard(game.level, game.elapsed));
     const more = h('div', { class: 'sb-clear-col' });
-    [h('p', { class: 'sb-modal-label' }, T.used), list, actions].forEach((el) => more.appendChild(el));
+    [h('p', { class: 'sb-modal-label' }, T('game.used')), list, actions].forEach((el) => more.appendChild(el));
     const cols = h('div', { class: 'sb-clear-cols' });
     cols.appendChild(record);
     cols.appendChild(more);
     const app = $('#sb-app-card');
     const nodes = [
       h('p', { class: 'sb-modal-eyebrow' }, 'STAGE CLEAR'),
-      h('h2', {}, T.clear),
+      h('h2', {}, T('game.clear')),
       cols,
     ];
     if (app) {
@@ -542,12 +516,12 @@
     if (confirmEl.hidden) confirmWasPaused = paused;
     setPaused(true);
     confirmEl.textContent = '';
-    const keep = h('button', { type: 'button', class: 'primary', onclick: () => { closeConfirm(true); backToBoard(); } }, T.keep);
+    const keep = h('button', { type: 'button', class: 'primary', onclick: () => { closeConfirm(true); backToBoard(); } }, T('game.keep'));
     const row = h('div', { class: 'sb-confirm-actions' });
     row.appendChild(keep);
-    row.appendChild(h('button', { type: 'button', onclick: () => { closeConfirm(false); go(level); } }, T.leave));
-    confirmEl.appendChild(h('p', { class: 'sb-confirm-title' }, T.leaveTitle));
-    confirmEl.appendChild(h('p', {}, T.leaveText(level)));
+    row.appendChild(h('button', { type: 'button', onclick: () => { closeConfirm(false); go(level); } }, T('game.leave')));
+    confirmEl.appendChild(h('p', { class: 'sb-confirm-title' }, T('game.leaveTitle')));
+    confirmEl.appendChild(h('p', {}, T('game.leaveText', { level: T('level.' + level) })));
     confirmEl.appendChild(row);
     confirmEl.hidden = false;
     keep.focus();
@@ -627,7 +601,6 @@
     get game() { return game; },
     get puzzle() { return puzzle; },
     get sel() { return sel; },
-    ko,
     count,
     select,
     render,

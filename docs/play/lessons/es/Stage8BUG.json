@@ -1,0 +1,20 @@
+{
+  "8단계": "Etapa 8",
+  "빈칸이 18개 남았습니다.\n그중 17칸은 메모가 두 숫자뿐입니다.": "Quedan 18 celdas vacías.\nEn 17 de ellas solo hay dos notas.",
+  "빨간 칸만 메모가 2, 3, 4 세 숫자입니다.": "Solo la celda roja tiene tres notas: 2, 3 y 4.",
+  "빨간 칸이 있는 5번째 가로줄,\n1번째 세로줄, 4번 박스를 봅니다.": "Mira la fila 5, la columna 1 y la caja 4\nen las que está la celda roja.",
+  "메모 3은 세 곳 모두에서\n두 번씩 나옵니다.": "En cada una de las tres,\nla nota 3 aparece dos veces.",
+  "메모 4도 세 곳 모두에서\n두 번씩 나옵니다.": "En cada una de las tres,\nla nota 4 también aparece dos veces.",
+  "메모 2는 세 곳 모두에서\n세 번씩 나옵니다.": "En cada una de las tres,\nla nota 2 aparece tres veces.",
+  "만약 빨간 칸이 2가 아니라면\n빈칸이 모두 메모가 두 숫자뿐이고\n모든 가로줄, 세로줄, 박스에서\n메모 숫자가 두 번씩 나옵니다.": "Si la celda roja no fuera 2,\ntodas las celdas vacías tendrían solo dos notas\ny en cada fila, columna y caja\ncada nota aparecería dos veces.",
+  "그러면 답이 두 개가 됩니다.\n스도쿠의 답은 하나뿐이라\n이렇게 될 수 없습니다.": "Entonces habría dos soluciones.\nUn sudoku tiene una sola solución,\nasí que esto no puede pasar.",
+  "그래서 빨간 칸은 2입니다.": "Por eso, la celda roja es 2.",
+  "빈칸마다 메모 숫자가 몇 개인지 보세요.\n답을 바로 정할 수 있는 칸을 눌러 보세요.": "Mira cuántas notas hay en cada celda vacía.\nToca la celda que puedes resolver de inmediato.",
+  "메모가 두 숫자뿐인 칸이에요.\n메모가 세 숫자인 칸을 찾아 보세요.": "Esa celda solo tiene dos notas.\nBusca una celda con tres notas.",
+  "숫자가 이미 있는 칸이에요.\n메모가 있는 빈칸을 보세요.": "Esa celda ya tiene un número.\nMira las celdas vacías con notas.",
+  "맞아요. 이 칸의 가로줄, 세로줄, 박스에서\n메모 6이 세 번씩 나와요. 이 칸은 6이에요.": "¡Correcto! En la fila, la columna y la caja de esta celda,\nla nota 6 aparece tres veces. Esta celda es 6.",
+  "1. 메모가 세 숫자인 칸을 찾고\n나머지 빈칸이 모두 두 숫자뿐인지 확인합니다.": "1. Busca la celda con tres notas\ny comprueba que las demás celdas vacías tengan solo dos.",
+  "2. 그 칸의 가로줄, 세로줄, 박스에서\n세 번씩 나오는 숫자를 넣습니다.": "2. En la fila, la columna y la caja de esa celda,\nescribe el número que aparece tres veces.",
+  "8단계 마치기": "Terminar etapa 8",
+  "빈칸이 모두 메모가 두 숫자뿐인 판을\nBUG라고 합니다.\n한 칸만 숫자가 하나 더 있어서\nBUG+1이라고 합니다.": "Un tablero donde todas las celdas vacías tienen solo dos notas\nse llama BUG.\nAquí una sola celda tiene una nota de más,\npor eso se llama BUG+1."
+}

@@ -14,28 +14,35 @@
   :root { --bg: #0a1736; --panel: #12244d; --line: #2a4277; --ink: #eef4ff; --ink-2: #b5c4e6; --gold: #ffc83d;
           --pixel: "Mulmaru", system-ui, sans-serif;
           --gutter: max(20px, env(safe-area-inset-left), env(safe-area-inset-right)); }
-  /* One language at a time. Only the inactive one is hidden, so every element
-     keeps whatever display type it would otherwise have. */
-  html[data-lang="ko"] .en { display: none !important; }
-  html[data-lang="en"] .ko { display: none !important; }
+  /* One language at a time. Only the inactive ones are hidden, so every
+     element keeps whatever display type it would otherwise have. */
+  html:not([data-lang="ko"]) .l-ko { display: none !important; }
+  html:not([data-lang="en"]) .l-en { display: none !important; }
+  html:not([data-lang="ja"]) .l-ja { display: none !important; }
+  html:not([data-lang="zh"]) .l-zh { display: none !important; }
+  html:not([data-lang="de"]) .l-de { display: none !important; }
+  html:not([data-lang="es"]) .l-es { display: none !important; }
+  html:not([data-lang="fr"]) .l-fr { display: none !important; }
+  html:not([data-lang="pt"]) .l-pt { display: none !important; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink);
-         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+         font: 16px/1.8 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Hiragino Sans", "PingFang TC", "Noto Sans JP", "Noto Sans TC", "Segoe UI", sans-serif;
          word-break: keep-all; overflow-wrap: anywhere; -webkit-text-size-adjust: 100%; }
+  html[data-lang="ja"] body, html[data-lang="zh"] body { word-break: normal; line-break: strict; }
   a { color: var(--gold); }
   a:hover { color: #ffe08a; }
   .wrap { max-width: 860px; margin: 0 auto; padding-inline: var(--gutter); }
   .px { clip-path: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px)); }
   header.top { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 2px solid var(--line); }
   header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 16px; }
-  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
+  .brand { display: flex; align-items: center; gap: 12px; min-width: 0; text-decoration: none; color: var(--ink); font: 22px/1 var(--pixel); }
   .brand:hover { color: var(--ink); }
   .brand img { width: 40px; height: 40px; border-radius: 9px; }
-  .lang { min-height: 44px; padding: 0 18px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 var(--pixel); cursor: pointer; }
+  .lang { flex: none; min-height: 44px; padding: 0 14px; background: var(--gold); color: var(--bg); border: 0; font: 15px/1 system-ui, sans-serif; font-weight: 700; cursor: pointer; }
   main { padding: 64px 0 96px; }
   .eyebrow { margin: 0 0 20px; font: 18px/1.4 var(--pixel); color: var(--gold); letter-spacing: 0.12em; }
   .doc { background: var(--panel); padding: 36px 40px; }
-  pre { margin: 0; white-space: pre-wrap; word-break: keep-all; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
+  pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; color: var(--ink-2); }
   pre::first-line { color: var(--ink); font-size: 22px; font-weight: 700; }
   .doc h1, .doc h2 { color: var(--ink); margin: 0 0 12px; }
   .doc h2 { margin-top: 32px; font-size: 20px; }
@@ -49,39 +56,39 @@
     main { padding: 40px 0 64px; }
     .doc { padding: 24px 20px; }
     pre::first-line { font-size: 19px; }
+    .brand { font-size: 18px; }
   }
 </style>
 <script>
   // Language before first paint, so the wrong one never flashes. A stored
-  // choice wins; otherwise the browser's own language decides. localStorage
-  // throws in Safari private mode, so every touch of it is guarded.
+  // choice wins; otherwise the browser's own language decides, and English
+  // stands in for a language the documents are not in. localStorage throws
+  // in Safari private mode, so every touch of it is guarded.
   (function () {
+    var codes = ['ko', 'en', 'ja', 'zh', 'de', 'es', 'fr', 'pt'];
     var lang = null;
     try { lang = window.localStorage.getItem('sl_lang'); } catch (e) {}
-    if (lang !== 'ko' && lang !== 'en') {
-      var tag = (navigator.languages && navigator.languages[0]) ||
-                navigator.language || 'en';
-      lang = String(tag).toLowerCase().indexOf('ko') === 0 ? 'ko' : 'en';
+    if (codes.indexOf(lang) < 0) {
+      var tag = String((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase();
+      lang = codes.indexOf(tag.slice(0, 2)) >= 0 ? tag.slice(0, 2) : 'en';
     }
     document.documentElement.setAttribute('data-lang', lang);
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : lang;
   })();
 </script>
 </head>
 <body>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="ko">스도쿠 리그</span><span class="en">Sudoku League</span></a>
-    <!-- The label is the language you would switch *to*, so it is the one
-         hidden while that language is active. -->
-    <button class="lang px" id="langToggle" type="button"><span class="ko">English</span><span class="en">한국어</span></button>
+    <a class="brand" href="./"><img src="img/icon.png" width="40" height="40" alt=""><span class="l-ko">스도쿠 리그</span><span class="l-en">Sudoku League</span><span class="l-ja">Sudoku League</span><span class="l-zh">Sudoku League</span><span class="l-de">Sudoku League</span><span class="l-es">Sudoku League</span><span class="l-fr">Sudoku League</span><span class="l-pt">Sudoku League</span></a>
+    <select class="lang px" id="langPick" aria-label="Language"><option value="ko" lang="ko">한국어</option><option value="en" lang="en">English</option><option value="ja" lang="ja">日本語</option><option value="zh" lang="zh-Hant">繁體中文</option><option value="de" lang="de">Deutsch</option><option value="es" lang="es">Español</option><option value="fr" lang="fr">Français</option><option value="pt" lang="pt">Português</option></select>
   </div>
 </header>
 <main>
   <div class="wrap">
     <p class="eyebrow">ACCOUNT DELETION</p>
     <div class="doc px">
-<pre class="ko">계정 및 데이터 삭제 안내
+<pre class="l-ko">계정 및 데이터 삭제 안내
 
 앱: 스도쿠 리그 (Sudoku League)
 
@@ -158,7 +165,7 @@
 ■ 문의
 
 contact@jaywithme.com</pre>
-<pre class="en">Account and Data Deletion
+<pre class="l-en">Account and Data Deletion
 
 App: Sudoku League (스도쿠 리그)
 
@@ -241,27 +248,508 @@ destroyed immediately on request, with no grace period.
 ■ Contact
 
 contact@jaywithme.com</pre>
+<pre class="l-ja">アカウントおよびデータの削除について
+
+アプリ:Sudoku League
+
+■ アカウントの削除方法
+
+方法1. アプリで直接削除する(推奨)
+1. アプリを起動し、ホーム画面右上の人型アイコンをタップします。
+2. マイページ画面下部の“アカウント削除”をタップします。
+3. 確認画面で“削除する”をタップすると、直ちに処理されます。
+
+方法2. メールで申請する
+アプリをすでに削除した場合やログインできない場合は、contact@jaywithme.com までご依頼ください。
+ご本人確認の後、処理いたします。
+
+■ 削除されるデータ(ご依頼後直ちに)
+
+- GoogleまたはAppleアカウントとの連携およびアカウント識別子
+- メールアドレス
+- ログインセッション(すべての端末からログアウトされます)
+- ニックネーム(“退会したユーザー”に置き換えられ、個人を識別できなくなります)
+- プロフィール画像
+- Sign in with Appleのトークン(削除とあわせてAppleに失効を要求します)
+- 待機中のマッチング申請、未使用の対戦ルームコード
+- 経験値とレベル、および最後の経験値付与記録(ソロプレイ・デイリー・ランクの各1件)
+- ソロプレイの記録(難易度別のプレイ回数・パーフェクト・最高記録・平均)
+- 獲得した称号、装備中の称号とニックネームカラー、テクニック系統別の使用ゲーム数
+- 獲得したクリア演出と装備中のクリア演出
+- 獲得したイベントのニックネームカラー
+- 経験値集めイベントの開催回ごとの経験値合計と、最後に集計したゲームの識別子
+- 端末内の保存データ(ゲームの進行状況、統計、設定)は、アプリを削除するとあわせて消去されます
+
+■ 保管されるデータとその理由
+
+- 対戦記録(勝敗、レーティングの変動、対戦日時)および今日のナンプレの記録は削除されず、
+  匿名化された状態で残ります。1件の対戦記録は対戦相手の戦績であり、レーティング
+  履歴でもあるため、これを消去すると他の利用者の記録もあわせて損なわれるためです。
+  これらの記録において利用者は“退会したユーザー”としてのみ表示され、個人を識別できる
+  情報は残りません。
+- 通報の記録は、審査および再発防止のため、処理完了後最大1年間保管した後に
+  廃棄します。
+- ログイン識別子(メールアドレス、ソーシャルログイン識別子)の一方向ハッシュ値を7日間
+  保管します。これは下記の“再登録の制限”を確認するためのものであり、ハッシュ値は元の値に
+  戻すことができず、新規登録が同一のアカウントによるものかを照合する目的にのみ使用されます。7日が
+  経過すると自動的に廃棄され、利用者の記録や身元とは紐付けられません。
+
+■ 再登録の制限
+
+アカウントを削除した後7日間は、同じGoogle・Appleアカウントまたは同じメールアドレスで再度
+登録することはできません。削除と再登録を繰り返してレーティングを元に戻したり、通報を回避したりする
+ことを防ぐための措置です。7日が経過すると、特別な手続きなしに再度登録することが
+できます。
+
+■ アカウントを維持したまま一部のデータのみを削除する
+
+アカウントを削除せずに特定の情報のみを消去したい場合は、contact@jaywithme.com までご依頼
+ください。消去を希望する情報をお書き添えいただければ、確認の上で処理いたします。
+ニックネームは、アプリ内のマイページからいつでもご自身で変更できます。
+
+ただし、対戦記録および今日のナンプレの記録は削除いたしかねます。1件の対戦
+記録は対戦相手の戦績であり、レーティング履歴でもあるため、消去すると他の利用者の記録も
+あわせて損なわれるためです。これらの記録には、個人を識別できる情報は残り
+ません。
+
+■ 保管期間
+
+匿名化された対戦・今日のナンプレの記録は個人を識別できない状態であるため、サービスが
+継続する間保管される場合があります。ただし、その対局の手順記録(リプレイ)は例外であり、
+アカウントを維持しているか削除したかにかかわらず、30日が経過すると廃棄されます。通報記録の保管期間は
+最大1年、再登録制限用のハッシュ値の保管期間は7日です。共有機能でアップロードした
+共有画像はアカウントと紐付けられていないため、アカウントを削除しても、アップロード日から30日が
+経過するまで残り、その後自動的に削除されます。その他の個人情報は
+上記の一覧のとおり、ご依頼後直ちに廃棄され、別途の猶予期間はありません。
+
+■ お問い合わせ
+
+contact@jaywithme.com
+
+本書は韓国語の原文を翻訳したものです。翻訳文と韓国語の原文の内容が異なる場合は、韓国語の原文が優先します。</pre>
+<pre class="l-zh">帳號及資料刪除說明
+
+應用程式：數獨聯盟（Sudoku League）
+
+■ 刪除帳號的方式
+
+方法 1. 在應用程式中直接刪除（建議）
+1. 開啟應用程式，點選主畫面右上角的人像圖示。
+2. 點選「我的頁面」畫面下方的“刪除帳號”。
+3. 在確認視窗中點選“刪除”，系統即會立即處理。
+
+方法 2. 透過電子郵件申請
+若您已刪除應用程式或無法登入，請寄信至 contact@jaywithme.com 提出申請。
+我們將於確認您的本人身分後為您處理。
+
+■ 刪除的資料（於申請後立即刪除）
+
+- Google 或 Apple 帳號的連結及帳號識別碼
+- 電子郵件地址
+- 登入工作階段（將於所有裝置上登出）
+- 暱稱：將替換為“已刪除的使用者”，使其無法識別個人身分
+- 個人檔案圖片
+- Sign in with Apple 權杖：刪除時將一併向 Apple 申請撤銷
+- 等待中的配對申請、未使用的對戰房間代碼
+- 經驗值與等級，以及最近一次的經驗值發放紀錄（單人模式、每日數獨、排位賽各一筆）
+- 單人模式紀錄（各難度的局數、完美局數、最佳紀錄、平均紀錄）
+- 已獲得的稱號、已裝備的稱號與暱稱顏色、各技巧類別的使用局數
+- 已獲得的完成特效及已裝備的完成特效
+- 已獲得的活動暱稱顏色
+- 經驗值累積活動各期的經驗值總計，以及最後一次計入之對局的識別碼
+- 裝置內儲存的資訊（遊戲進度、統計、設定）將於刪除應用程式時一併清除
+
+■ 保留的資料及其原因
+
+- 對戰紀錄（勝負、積分變動、對戰時間）與每日數獨紀錄不會刪除，
+  而是以匿名化處理後的狀態保留。由於一筆對戰紀錄同時也是對手的戰績與積分
+  歷程，若予以刪除，將一併損及其他使用者的紀錄。
+  在這些紀錄中，使用者僅會顯示為“已刪除的使用者”，不會留下任何可識別個人的
+  資訊。
+- 檢舉紀錄為供審查及防止再次發生，將於處理完成後保留最多 1 年，之後
+  予以銷毀。
+- 登入識別碼（電子郵件地址、社群登入識別碼）的單向雜湊值將保留 7 天。
+  此係為確認下方“重新註冊限制”之用；雜湊值無法還原為原始值，
+  且僅用於比對新註冊是否為同一帳號。7 天
+  期滿後將自動銷毀，且不會與使用者的紀錄或身分產生關聯。
+
+■ 重新註冊限制
+
+刪除帳號後的 7 天內，無法使用同一個 Google 或 Apple 帳號，或同一個電子郵件地址
+重新註冊。此措施旨在防止透過反覆刪除及重新註冊來回復積分或規避檢舉。
+7 天期滿後，無須任何額外程序即可重新
+註冊。
+
+■ 保留帳號並僅刪除部分資料
+
+若您希望在不刪除帳號的情況下僅清除特定資訊，請寄信至 contact@jaywithme.com 提出
+申請。請註明您希望清除的資訊，我們將於確認後為您處理。
+暱稱可隨時於應用程式內的「我的頁面」自行變更。
+
+但對戰紀錄與每日數獨紀錄恕無法刪除。由於一筆對戰
+紀錄同時也是對手的戰績與積分歷程，若予以刪除，將一併損及其他使用者的
+紀錄。這些紀錄中不會留下任何可識別個人的
+資訊。
+
+■ 保留期間
+
+經匿名化處理的對戰及每日數獨紀錄已無法識別個人身分，因此於服務
+持續營運期間可能予以保留。但該局的每步紀錄（重播）屬例外，
+無論帳號是否保留或刪除，皆將於 30 天後銷毀。檢舉紀錄的保留期間
+最長為 1 年，重新註冊限制用的雜湊值保留期間為 7 天。透過分享功能上傳的
+分享圖片並未與帳號連結，因此即使刪除帳號，仍會保留至上傳日起滿 30 天
+後自動刪除。其他個人資料
+將依上列項目於申請後立即銷毀，不設任何寬限期間。
+
+■ 聯絡我們
+
+contact@jaywithme.com
+
+本文件係譯自韓文原文。譯文與韓文原文內容如有歧異，應以韓文原文為準。</pre>
+<pre class="l-de">Löschung von Konto und Daten
+
+App: Sudoku League (스도쿠 리그)
+
+■ So löschen Sie Ihr Konto
+
+Möglichkeit 1. Direkt in der App (empfohlen)
+1. Öffnen Sie die App und tippen Sie oben rechts auf dem Startbildschirm auf das Personensymbol.
+2. Tippen Sie unten auf der Seite "Mein Profil" auf "Konto löschen".
+3. Tippen Sie im Bestätigungsfenster auf "Löschen". Die Löschung erfolgt sofort.
+
+Möglichkeit 2. Per E-Mail
+Wenn Sie die App bereits deinstalliert haben oder sich nicht anmelden können, wenden Sie sich bitte an contact@jaywithme.com.
+Nach Prüfung Ihrer Identität bearbeiten wir Ihre Anfrage.
+
+■ Gelöschte Daten (sofort auf Anfrage)
+
+- Verknüpfung mit Ihrem Google- oder Apple-Konto sowie die Kontokennung
+- E-Mail-Adresse
+- Anmeldesitzungen (Abmeldung auf allen Geräten)
+- Nickname: wird durch "Gelöschter Nutzer" ersetzt, sodass keine Identifizierung mehr möglich ist
+- Profilbild
+- Sign in with Apple-Token: Mit der Löschung beantragen wir bei Apple deren Widerruf
+- Ausstehende Matchmaking-Anfragen und nicht genutzte Duellraum-Codes
+- Erfahrungspunkte (EP) und Level sowie der jeweils letzte EP-Vergabeeintrag (je einer für Einzelspiel, Tägliches Sudoku und Ranglistenduell)
+- Einzelspiel-Statistiken (Anzahl der Partien, perfekte Partien, Bestzeit und Durchschnitt je Schwierigkeitsgrad)
+- Erhaltene Titel, ausgerüsteter Titel und Nickname-Farbe sowie die Anzahl der Partien je Technikfamilie
+- Erhaltene und ausgerüstete Abschlusseffekte
+- Erhaltene Event-Nickname-Farben
+- EP-Summen je Durchgang von EP-Sammel-Events sowie die Kennung der zuletzt gezählten Partie
+- Auf dem Gerät gespeicherte Daten (Spielfortschritt, Statistiken, Einstellungen) werden beim Deinstallieren der App gelöscht
+
+■ Aufbewahrte Daten und Gründe dafür
+
+- Duellergebnisse (Sieg/Niederlage, Wertungsänderungen, Zeitpunkt des Duells) und
+  Ergebnisse des Täglichen Sudokus werden nicht gelöscht, sondern anonymisiert aufbewahrt.
+  Ein Duellergebnis ist zugleich Teil der Bilanz und Wertungshistorie des Gegners;
+  eine Löschung würde daher auch die Daten anderer Nutzer beschädigen.
+  In diesen Daten erscheinen Sie nur als "Gelöschter Nutzer"; Angaben, die Sie
+  identifizieren könnten, bleiben nicht erhalten.
+- Meldungen werden zur Prüfung und zur Verhinderung erneuter Verstöße nach ihrer
+  Bearbeitung höchstens 1 Jahr aufbewahrt und anschließend vernichtet.
+- Ein Einweg-Hashwert Ihrer Anmeldekennungen (E-Mail-Adresse, Kennung der sozialen
+  Anmeldung) wird 7 Tage lang aufbewahrt. Er dient der Prüfung der unten beschriebenen
+  "Sperre für erneute Registrierung". Ein Hashwert lässt sich nicht in den ursprünglichen Wert
+  zurückverwandeln und wird nur zum Abgleich verwendet, ob eine neue Registrierung dasselbe
+  Konto betrifft. Nach 7 Tagen wird er automatisch vernichtet; er ist nicht mit Ihren Daten oder Ihrer Identität verknüpft.
+
+■ Sperre für erneute Registrierung
+
+Nach der Löschung Ihres Kontos können Sie sich 7 Tage lang weder mit demselben Google- oder
+Apple-Konto noch mit derselben E-Mail-Adresse erneut registrieren. Diese Maßnahme soll verhindern,
+dass durch wiederholtes Löschen und Neuregistrieren die Wertung zurückgesetzt oder Meldungen umgangen werden.
+Nach Ablauf der 7 Tage ist eine erneute Registrierung ohne weiteres Verfahren möglich.
+
+■ Nur einzelne Daten löschen und das Konto behalten
+
+Wenn Sie nur bestimmte Angaben löschen möchten, ohne Ihr Konto zu löschen, wenden Sie sich bitte an contact@jaywithme.com.
+Teilen Sie uns mit, welche Angaben gelöscht werden sollen; wir bearbeiten Ihre Anfrage nach Prüfung.
+Ihren Nickname können Sie jederzeit selbst unter "Mein Profil" in der App ändern.
+
+Duellergebnisse und Ergebnisse des Täglichen Sudokus können wir jedoch nicht löschen. Ein
+Duellergebnis ist zugleich Teil der Bilanz und Wertungshistorie des Gegners; eine Löschung würde
+daher auch die Daten anderer Nutzer beschädigen. Diese Daten enthalten keine Angaben, die Sie
+identifizieren könnten.
+
+■ Aufbewahrungsfristen
+
+Anonymisierte Duell- und Tagesergebnisse lassen keine Identifizierung einer Person zu und
+können daher für die Dauer des Dienstbetriebs aufbewahrt werden. Eine Ausnahme bilden die Zugaufzeichnungen
+dieser Partien (Replays): Sie werden nach 30 Tagen vernichtet, unabhängig davon, ob das Konto fortbesteht oder gelöscht wurde.
+Meldungen werden höchstens 1 Jahr, der Hashwert für die Registrierungssperre 7 Tage aufbewahrt. Über die Teilen-Funktion
+hochgeladene Bilder sind nicht mit dem Konto verknüpft; sie bleiben daher auch nach Löschung des Kontos bis 30 Tage
+nach dem Hochladen gespeichert und werden dann automatisch gelöscht. Alle übrigen personenbezogenen Daten werden
+wie oben aufgeführt sofort auf Anfrage und ohne Übergangsfrist vernichtet.
+
+■ Kontakt
+
+contact@jaywithme.com
+
+Dieses Dokument ist eine Übersetzung des koreanischen Originals. Bei Abweichungen zwischen der Übersetzung und dem koreanischen Original ist das koreanische Original maßgeblich.</pre>
+<pre class="l-es">Eliminación de la cuenta y de los datos
+
+Aplicación: Sudoku League (스도쿠 리그)
+
+■ Cómo eliminar su cuenta
+
+Opción 1. Desde la aplicación (recomendado)
+1. Abra la aplicación y toque el ícono de persona en la esquina superior derecha de la pantalla de inicio.
+2. En la parte inferior de la pantalla Mi página, toque "Eliminar cuenta".
+3. En la ventana de confirmación, toque "Eliminar". La solicitud se procesa de inmediato.
+
+Opción 2. Por correo electrónico
+Si ya desinstaló la aplicación o no puede iniciar sesión, envíe su solicitud a contact@jaywithme.com.
+La procesaremos después de verificar su identidad.
+
+■ Datos que se eliminan (de inmediato al recibir la solicitud)
+
+- Vinculación con su cuenta de Google o Apple e identificador de cuenta
+- Dirección de correo electrónico
+- Sesiones iniciadas (se cierra la sesión en todos los dispositivos)
+- Apodo: se reemplaza por "Usuario eliminado", de modo que ya no permite identificarlo
+- Imagen de perfil
+- Tokens de Sign in with Apple: junto con la eliminación, se solicita a Apple su revocación
+- Solicitudes de emparejamiento pendientes y códigos de sala de duelo no utilizados
+- Experiencia y nivel, y el último registro de experiencia otorgada (uno por cada modo: individual, Sudoku del día y clasificatoria)
+- Registros del modo individual (partidas jugadas, partidas perfectas, mejor marca y promedio por dificultad)
+- Títulos obtenidos, título y color de apodo equipados, y número de partidas por cada familia de técnicas
+- Efectos de finalización obtenidos y efecto de finalización equipado
+- Colores de apodo de eventos obtenidos
+- Total de experiencia por edición de los eventos de acumulación de experiencia e identificador de la última partida contabilizada
+- La información guardada en el dispositivo (progreso de las partidas, estadísticas y configuración) se borra al desinstalar la aplicación
+
+■ Datos que se conservan y por qué
+
+- Los registros de partidas (resultados, variaciones de puntuación y hora de la partida)
+  y los registros del Sudoku del día no se eliminan, sino que se conservan anonimizados.
+  Cada registro de partida forma parte también del historial y de la puntuación del
+  rival, por lo que eliminarlo dañaría los registros de otros usuarios.
+  En estos registros usted figura únicamente como "Usuario eliminado" y no queda
+  ninguna información que permita identificarlo.
+- Los registros de reportes se conservan por un máximo de 1 año una vez resueltos,
+  para su revisión y para prevenir reincidencias, y luego se destruyen.
+- Se conserva durante 7 días un hash unidireccional de sus identificadores de inicio de
+  sesión (dirección de correo electrónico e identificador de inicio de sesión social).
+  Su único fin es aplicar la "Restricción para volver a registrarse" descrita más abajo:
+  el hash no puede revertirse al valor original y solo se usa para comprobar si un nuevo
+  registro corresponde a la misma cuenta. Se destruye automáticamente al cabo de
+  7 días y no está vinculado a sus registros ni a su identidad.
+
+■ Restricción para volver a registrarse
+
+Durante los 7 días posteriores a la eliminación de su cuenta, no podrá volver a registrarse
+con la misma cuenta de Google o Apple ni con la misma dirección de correo electrónico.
+Esta medida busca impedir que se elimine la cuenta y se vuelva a crear para revertir la
+puntuación o evadir reportes. Transcurridos los 7 días, podrá registrarse nuevamente sin
+ningún trámite adicional.
+
+■ Eliminar solo algunos datos y conservar la cuenta
+
+Si desea borrar solo cierta información sin eliminar su cuenta, envíe su solicitud a
+contact@jaywithme.com indicando qué información desea borrar; la procesaremos después de verificarla.
+Puede cambiar su apodo directamente en cualquier momento desde Mi página en la aplicación.
+
+Sin embargo, no podemos eliminar los registros de partidas ni los del Sudoku del día.
+Cada registro de partida forma parte también del historial y de la puntuación del rival,
+por lo que eliminarlo dañaría los registros de otros usuarios. Estos registros no
+contienen información que permita identificarlo.
+
+■ Períodos de conservación
+
+Los registros anonimizados de partidas y del Sudoku del día no permiten identificar a ninguna
+persona, por lo que pueden conservarse mientras se preste el servicio. La excepción es el registro
+de jugadas de cada partida (repetición), que se destruye transcurridos 30 días, tanto si la cuenta
+se mantiene como si se elimina. Los reportes se conservan por un máximo de 1 año y el hash para la
+restricción de nuevo registro, por 7 días. Las imágenes subidas con la función Compartir no están
+vinculadas a la cuenta, por lo que, aunque elimine su cuenta, permanecen hasta cumplir 30 días desde que se subieron y luego se eliminan automáticamente. El resto de la información personal
+se destruye de inmediato al recibir la solicitud, según la lista anterior, sin ningún período de gracia.
+
+■ Contacto
+
+contact@jaywithme.com
+
+Este documento es una traducción del original en coreano. En caso de discrepancia entre la traducción y el original en coreano, prevalecerá el original en coreano.</pre>
+<pre class="l-fr">Suppression du compte et des données
+
+Application : Sudoku League (스도쿠 리그)
+
+■ Comment supprimer votre compte
+
+Méthode 1. Suppression directe dans l'application (recommandée)
+1. Lancez l'application et appuyez sur l'icône de personne en haut à droite de l'écran d'accueil.
+2. En bas de l'écran Ma page, appuyez sur "Supprimer le compte".
+3. Dans la fenêtre de confirmation, appuyez sur "Supprimer" : la suppression est traitée immédiatement.
+
+Méthode 2. Demande par e-mail
+Si vous avez déjà désinstallé l'application ou si vous ne pouvez pas vous connecter, adressez votre demande à contact@jaywithme.com.
+Nous la traiterons après avoir vérifié votre identité.
+
+■ Données supprimées (dès la demande)
+
+- Liaison avec votre compte Google ou Apple et identifiant du compte
+- Adresse e-mail
+- Sessions de connexion (déconnexion de tous les appareils)
+- Pseudo : remplacé par "Utilisateur supprimé", de sorte qu'il ne permet plus de vous identifier
+- Image de profil
+- Jetons Sign in with Apple : leur révocation est demandée à Apple lors de la suppression
+- Demandes de matchmaking en attente et codes de salle de match non utilisés
+- Points d'expérience (XP) et niveau, ainsi que le dernier enregistrement d'attribution d'XP (un pour chacun des modes solo, Sudoku du jour et Match classé)
+- Statistiques solo (nombre de parties, parties parfaites, meilleur temps et moyenne par difficulté)
+- Titres obtenus, titre et couleur de pseudo équipés, nombre de parties jouées par famille de techniques utilisée
+- Effets de fin de partie obtenus et effet de fin de partie équipé
+- Couleurs de pseudo d'événement obtenues
+- Total d'XP par édition des événements de collecte d'XP et identifiant de la dernière partie comptabilisée
+- Les données stockées sur l'appareil (progression des parties, statistiques, paramètres) sont effacées lorsque vous désinstallez l'application
+
+■ Données conservées et raisons de leur conservation
+
+- Les historiques de matchs (victoires et défaites, variations de cote, horaires des matchs) et les historiques du Sudoku du jour ne sont pas supprimés,
+  mais conservés sous forme anonymisée. En effet, un historique de match constitue aussi le palmarès et l'historique de cote
+  de l'adversaire : le supprimer porterait atteinte aux données d'un autre utilisateur.
+  Dans ces historiques, vous apparaissez uniquement comme "Utilisateur supprimé", et aucune information permettant de vous identifier
+  n'est conservée.
+- Les signalements sont conservés pendant une durée maximale d'un an après leur traitement, à des fins d'examen et de prévention des récidives, puis
+  détruits.
+- Une empreinte (hachage à sens unique) de vos identifiants de connexion (adresse e-mail, identifiant de connexion via un réseau social) est conservée pendant 7 jours.
+  Elle sert uniquement à appliquer la "restriction de réinscription" décrite ci-dessous ; une empreinte ne peut pas être reconvertie en sa valeur d'origine
+  et sert seulement à vérifier si une nouvelle inscription correspond au même compte. À l'issue des 7 jours,
+  elle est automatiquement détruite ; elle n'est liée ni à vos historiques ni à votre identité.
+
+■ Restriction de réinscription
+
+Pendant 7 jours après la suppression de votre compte, vous ne pouvez pas vous réinscrire avec le même compte Google ou Apple
+ni avec la même adresse e-mail. Cette mesure vise à empêcher que des suppressions et réinscriptions successives servent à réinitialiser une cote ou à échapper
+à un signalement. Passé ce délai de 7 jours, vous pouvez vous réinscrire sans aucune démarche
+particulière.
+
+■ Supprimer uniquement certaines données tout en conservant votre compte
+
+Si vous souhaitez effacer uniquement certaines informations sans supprimer votre compte, adressez votre demande à contact@jaywithme.com.
+Indiquez-nous les informations que vous souhaitez voir effacées : nous traiterons votre demande après vérification.
+Vous pouvez modifier votre pseudo vous-même à tout moment depuis Ma page dans l'application.
+
+Toutefois, les historiques de matchs et du Sudoku du jour ne peuvent pas être supprimés. Un historique de
+match constitue aussi le palmarès et l'historique de cote de l'adversaire : le supprimer porterait atteinte aux données
+d'un autre utilisateur. Ces historiques ne contiennent aucune information permettant de vous
+identifier.
+
+■ Durées de conservation
+
+Les historiques de matchs et du Sudoku du jour anonymisés ne permettent pas d'identifier une personne et peuvent donc être conservés
+tant que le service est exploité. Font toutefois exception les enregistrements coup par coup de ces parties (Replays) :
+que vous conserviez ou supprimiez votre compte, ils sont détruits au bout de 30 jours. La durée de conservation des signalements
+est d'un an au maximum, et celle de l'empreinte destinée à la restriction de réinscription est de 7 jours. Les images publiées
+via la fonction de partage ne sont pas liées au compte : même après la suppression du compte, elles sont conservées jusqu'à 30 jours après
+leur publication, puis supprimées automatiquement. Les autres données personnelles
+sont détruites dès la demande, conformément à la liste ci-dessus, sans aucun délai de grâce.
+
+■ Contact
+
+contact@jaywithme.com
+
+Ce document est une traduction de l'original en coréen. En cas de divergence entre la traduction et l'original en coréen, l'original en coréen prévaut.</pre>
+<pre class="l-pt">Exclusão de conta e de dados
+
+Aplicativo: Sudoku League (스도쿠 리그)
+
+■ Como excluir sua conta
+
+Opção 1. Diretamente no aplicativo (recomendado)
+1. Abra o aplicativo e toque no ícone de pessoa no canto superior direito da tela inicial.
+2. Na parte inferior da tela Minha Página, toque em "Excluir conta".
+3. Na janela de confirmação, toque em "Excluir". A exclusão será processada imediatamente.
+
+Opção 2. Por e-mail
+Se você já desinstalou o aplicativo ou não consegue fazer login, envie sua solicitação para contact@jaywithme.com.
+A solicitação será processada após a verificação da sua identidade.
+
+■ Dados excluídos (imediatamente após a solicitação)
+
+- Vínculo com a conta Google ou Apple e identificador da conta
+- Endereço de e-mail
+- Sessões de login (logout em todos os dispositivos)
+- Apelido: substituído por "Usuário excluído", de modo que não seja mais possível identificar a pessoa
+- Imagem de perfil
+- Tokens do Sign in with Apple: junto com a exclusão, solicitamos à Apple a sua revogação
+- Solicitações de pareamento pendentes e códigos de sala de partida não utilizados
+- XP e nível, além do último registro de concessão de XP (um de cada tipo: modo solo, Sudoku do Dia e Partida ranqueada)
+- Registros do modo solo (número de partidas, partidas perfeitas, melhor tempo e média por dificuldade)
+- Títulos obtidos, título e cor de apelido equipados, e número de partidas por família de técnicas utilizada
+- Efeitos de conclusão obtidos e efeito de conclusão equipado
+- Cores de apelido de eventos obtidas
+- Total de XP por edição dos eventos de acúmulo de XP e identificador da última partida contabilizada
+- Os dados armazenados no dispositivo (progresso dos jogos, estatísticas, configurações) são apagados ao desinstalar o aplicativo
+
+■ Dados mantidos e o motivo
+
+- Os registros de partidas (vitórias e derrotas, variações de rating, horário da partida) e os
+  registros do Sudoku do Dia não são excluídos e permanecem em forma anonimizada. Cada registro
+  de partida também faz parte do histórico e do rating do adversário, de modo que apagá-lo
+  danificaria os registros de outro usuário. Nesses registros, você aparece apenas como "Usuário excluído",
+  e não permanece nenhuma informação que permita identificar a pessoa.
+- Os registros de denúncias são mantidos por até 1 ano após a conclusão do seu tratamento, para fins
+  de análise e prevenção de reincidência, e em seguida são destruídos.
+- O valor de hash unidirecional dos identificadores de login (endereço de e-mail e identificador de
+  login social) é mantido por 7 dias. Ele serve para verificar a "Restrição de novo cadastro" descrita abaixo;
+  o hash não pode ser revertido ao valor original e é usado apenas para verificar se um novo cadastro
+  corresponde à mesma conta. Após 7 dias, é destruído automaticamente e não fica vinculado aos seus registros nem à sua identidade.
+
+■ Restrição de novo cadastro
+
+Durante 7 dias após a exclusão da conta, não é possível se cadastrar novamente com a mesma conta Google ou Apple
+nem com o mesmo endereço de e-mail. Essa medida impede que a exclusão e o novo cadastro sejam repetidos
+para reverter o rating ou escapar de denúncias. Após 7 dias, você poderá se cadastrar novamente sem nenhum
+procedimento adicional.
+
+■ Excluir apenas parte dos dados mantendo a conta
+
+Se quiser apagar apenas determinadas informações sem excluir a conta, envie sua solicitação para
+contact@jaywithme.com. Informe quais informações deseja apagar e a solicitação será processada após a verificação.
+O apelido pode ser alterado diretamente, a qualquer momento, na tela Minha Página do aplicativo.
+
+No entanto, os registros de partidas e do Sudoku do Dia não podem ser excluídos. Cada registro
+de partida também faz parte do histórico e do rating do adversário, de modo que apagá-lo danificaria
+os registros de outro usuário. Esses registros não contêm nenhuma informação que permita
+identificar a pessoa.
+
+■ Períodos de retenção
+
+Os registros anonimizados de partidas e do Sudoku do Dia não permitem identificar nenhuma pessoa e, por isso,
+podem ser mantidos enquanto o serviço estiver em operação. A exceção são os registros de jogadas de cada partida (Replay),
+que são destruídos após 30 dias, quer a conta seja mantida ou excluída. Os registros de denúncias são mantidos
+por até 1 ano, e o hash usado para a restrição de novo cadastro, por 7 dias. As imagens enviadas pela função
+Compartilhar não ficam vinculadas à conta; por isso, mesmo após a exclusão da conta, permanecem até completar 30 dias
+da data de envio e, então, são excluídas automaticamente. As demais informações pessoais são
+destruídas imediatamente após a solicitação, conforme a lista acima, sem nenhum período de carência.
+
+■ Contato
+
+contact@jaywithme.com
+
+Este documento é uma tradução do original em coreano. Em caso de divergência entre a tradução e o original em coreano, prevalecerá o original em coreano.</pre>
+
     </div>
   </div>
 </main>
 <footer>
   <div class="wrap">
-    <a href="privacy.html"><span class="ko">개인정보처리방침</span><span class="en">Privacy Policy</span></a>
-    <a href="terms.html"><span class="ko">이용약관</span><span class="en">Terms of Service</span></a>
-    <a href="data-deletion.html"><span class="ko">계정 삭제 안내</span><span class="en">Account Deletion</span></a>
-    <span><span class="ko">문의</span><span class="en">Contact</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
-    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="ko">Apple 표준 EULA</span><span class="en">Apple's standard EULA</span></a>
+    <a href="privacy.html"><span class="l-ko">개인정보처리방침</span><span class="l-en">Privacy Policy</span><span class="l-ja">プライバシーポリシー</span><span class="l-zh">隱私權政策</span><span class="l-de">Datenschutzerklärung</span><span class="l-es">Política de privacidad</span><span class="l-fr">Politique de confidentialité</span><span class="l-pt">Política de Privacidade</span></a>
+    <a href="terms.html"><span class="l-ko">이용약관</span><span class="l-en">Terms of Service</span><span class="l-ja">利用規約</span><span class="l-zh">服務條款</span><span class="l-de">Nutzungsbedingungen</span><span class="l-es">Términos de servicio</span><span class="l-fr">Conditions d'utilisation</span><span class="l-pt">Termos de Uso</span></a>
+    <a href="data-deletion.html"><span class="l-ko">계정 삭제 안내</span><span class="l-en">Account Deletion</span><span class="l-ja">アカウント削除のご案内</span><span class="l-zh">帳號刪除說明</span><span class="l-de">Hinweise zur Kontolöschung</span><span class="l-es">Eliminación de la cuenta</span><span class="l-fr">Suppression du compte</span><span class="l-pt">Exclusão de conta</span></a>
+    <span><span class="l-ko">문의</span><span class="l-en">Contact</span><span class="l-ja">お問い合わせ</span><span class="l-zh">聯絡我們</span><span class="l-de">Kontakt</span><span class="l-es">Contacto</span><span class="l-fr">Contact</span><span class="l-pt">Contato</span>: <a class="mail" href="mailto:contact@jaywithme.com">contact@jaywithme.com</a></span>
+    <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"><span class="l-ko">Apple 표준 EULA</span><span class="l-en">Apple's standard EULA</span><span class="l-ja">Apple標準EULA</span><span class="l-zh">Apple 標準 EULA</span><span class="l-de">Standard-EULA von Apple</span><span class="l-es">EULA estándar de Apple</span><span class="l-fr">CLUF standard d'Apple</span><span class="l-pt">EULA padrão da Apple</span></a>
   </div>
 </footer>
 <script>
-  // Toggle only; these pages have no script-written strings, so the CSS switch
+  // These pages have no script-written strings, so switching the attribute
   // is the whole re-render.
-  document.getElementById('langToggle').addEventListener('click', function () {
-    var next =
-      document.documentElement.getAttribute('data-lang') === 'en' ? 'ko' : 'en';
-    document.documentElement.setAttribute('data-lang', next);
-    document.documentElement.lang = next;
-    try { window.localStorage.setItem('sl_lang', next); } catch (e) {}
+  var pick = document.getElementById('langPick');
+  pick.value = document.documentElement.getAttribute('data-lang');
+  pick.addEventListener('change', function () {
+    document.documentElement.setAttribute('data-lang', pick.value);
+    document.documentElement.lang = pick.value === 'zh' ? 'zh-Hant' : pick.value;
+    try { window.localStorage.setItem('sl_lang', pick.value); } catch (e) {}
   });
 </script>
 </body>

@@ -1,0 +1,20 @@
+{
+  "8단계": "Etapa 8",
+  "빈칸이 18개 남았습니다.\n그중 17칸은 메모가 두 숫자뿐입니다.": "Restam 18 células vazias.\nDessas, 17 têm só duas notas.",
+  "빨간 칸만 메모가 2, 3, 4 세 숫자입니다.": "Só a célula vermelha tem três notas: 2, 3 e 4.",
+  "빨간 칸이 있는 5번째 가로줄,\n1번째 세로줄, 4번 박스를 봅니다.": "Veja a linha 5, a coluna 1\ne o bloco 4, onde está a célula vermelha.",
+  "메모 3은 세 곳 모두에서\n두 번씩 나옵니다.": "A nota 3 aparece duas vezes\nem cada um dos três.",
+  "메모 4도 세 곳 모두에서\n두 번씩 나옵니다.": "A nota 4 também aparece duas vezes\nem cada um dos três.",
+  "메모 2는 세 곳 모두에서\n세 번씩 나옵니다.": "A nota 2 aparece três vezes\nem cada um dos três.",
+  "만약 빨간 칸이 2가 아니라면\n빈칸이 모두 메모가 두 숫자뿐이고\n모든 가로줄, 세로줄, 박스에서\n메모 숫자가 두 번씩 나옵니다.": "Se a célula vermelha não fosse 2,\ntodas as células vazias teriam só duas notas\ne, em toda linha, coluna e bloco,\ncada nota apareceria duas vezes.",
+  "그러면 답이 두 개가 됩니다.\n스도쿠의 답은 하나뿐이라\n이렇게 될 수 없습니다.": "Aí o sudoku teria duas soluções.\nUm sudoku tem só uma solução,\nentão isso não pode acontecer.",
+  "그래서 빨간 칸은 2입니다.": "Então a célula vermelha é 2.",
+  "빈칸마다 메모 숫자가 몇 개인지 보세요.\n답을 바로 정할 수 있는 칸을 눌러 보세요.": "Veja quantas notas tem cada célula vazia.\nToque na célula que você já consegue resolver.",
+  "메모가 두 숫자뿐인 칸이에요.\n메모가 세 숫자인 칸을 찾아 보세요.": "Essa célula tem só duas notas.\nProcure uma célula com três notas.",
+  "숫자가 이미 있는 칸이에요.\n메모가 있는 빈칸을 보세요.": "Essa célula já tem um número.\nOlhe as células vazias com notas.",
+  "맞아요. 이 칸의 가로줄, 세로줄, 박스에서\n메모 6이 세 번씩 나와요. 이 칸은 6이에요.": "Isso mesmo. Na linha, coluna e bloco desta célula,\na nota 6 aparece três vezes. Esta célula é 6.",
+  "1. 메모가 세 숫자인 칸을 찾고\n나머지 빈칸이 모두 두 숫자뿐인지 확인합니다.": "1. Encontre a célula com três notas\ne confira se as outras células vazias têm só duas.",
+  "2. 그 칸의 가로줄, 세로줄, 박스에서\n세 번씩 나오는 숫자를 넣습니다.": "2. Na linha, coluna e bloco dessa célula,\ncoloque o número que aparece três vezes.",
+  "8단계 마치기": "Concluir etapa 8",
+  "빈칸이 모두 메모가 두 숫자뿐인 판을\nBUG라고 합니다.\n한 칸만 숫자가 하나 더 있어서\nBUG+1이라고 합니다.": "Um tabuleiro em que todas as células vazias têm só duas notas\nse chama BUG.\nAqui só uma célula tem uma nota a mais,\npor isso se chama BUG+1."
+}
