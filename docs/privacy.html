@@ -90,7 +90,7 @@
     <div class="doc px">
 <pre class="l-ko">개인정보처리방침
 
-시행일: 2026년 11월 9일 (2026년 7월 26일 제정, 8월 11일 서비스 이용 기록·설치 식별자·결제 정보·오류 진단 항목 추가, 9월 3일 대전·데일리 수 기록 서버 보관·이용 기록 세부 항목·문의 기록 추가, 9월 23일 경험치·레벨·칭호 항목 추가, 10월 14일 완료 연출·이벤트 진행·이벤트 닉네임 색 항목 추가, 10월 21일 웹사이트 방문 통계 항목 추가, 11월 6일 앱 설치 단계 집계·공유 기록·공유 이미지·결제 경로 항목 추가, 11월 9일 혼자 하기 기록 계정 보관 추가)
+시행일: 2026년 11월 12일 (2026년 7월 26일 제정, 8월 11일 서비스 이용 기록·설치 식별자·결제 정보·오류 진단 항목 추가, 9월 3일 대전·데일리 수 기록 서버 보관·이용 기록 세부 항목·문의 기록 추가, 9월 23일 경험치·레벨·칭호 항목 추가, 10월 14일 완료 연출·이벤트 진행·이벤트 닉네임 색 항목 추가, 10월 21일 웹사이트 방문 통계 항목 추가, 11월 6일 앱 설치 단계 집계·공유 기록·공유 이미지·결제 경로 항목 추가, 11월 9일 혼자 하기 기록 계정 보관 추가, 11월 12일 서버 요청 집계 항목과 앱 실행 기록의 빌드 번호·운영체제 추가)
 
 본 앱(이하 "앱")은 이용자의 개인정보를 중요하게 생각하며, 관련 법령을 준수합니다. 본 방침은 앱이 어떤 정보를 수집하고 어떻게 이용하는지 설명합니다.
 
@@ -123,7 +123,7 @@
 - 다만 랭크 대전(1:1)과 데일리 스도쿠를 완주한 경우, 그 판의 수 기록(리플레이)은 서버에도 전송·보관됩니다. 혼자 하기, 기법 연습, 친선 대결과 파티 대결의 수 기록은 지금까지와 같이 기기에만 저장됩니다.
 
 (6) 서비스 이용 기록
-- 서비스 개선을 위해 로그인한 계정의 주요 기능 사용 이벤트(첫 실행 시점, 가입, 앱 실행 시각, 첫 퍼즐 완료, 퍼즐 완주 기록(난이도·소요 시간·힌트/실수 수), 기법 연습 완료, 힌트 사용, 데일리 스도쿠 완료, 대결 로비 방문, 리플레이 열람, 프리미엄 화면 열람, 공유하기 실행과 공유한 것의 종류(친구 방·퍼즐·결과·월간 카드), 앱 링크로 앱이 열린 것과 그 링크의 종류)와 발생 시각을 수집합니다. 공유를 받은 사람에 대한 정보는 기록하지 않습니다.
+- 서비스 개선을 위해 로그인한 계정의 주요 기능 사용 이벤트(첫 실행 시점, 가입, 앱 실행 시각과 그때의 앱 빌드 번호·운영체제(iOS/Android), 첫 퍼즐 완료, 퍼즐 완주 기록(난이도·소요 시간·힌트/실수 수), 기법 연습 완료, 힌트 사용, 데일리 스도쿠 완료, 대결 로비 방문, 리플레이 열람, 프리미엄 화면 열람, 공유하기 실행과 공유한 것의 종류(친구 방·퍼즐·결과·월간 카드), 앱 링크로 앱이 열린 것과 그 링크의 종류)와 발생 시각을 수집합니다. 공유를 받은 사람에 대한 정보는 기록하지 않습니다.
 - 이 이용 기록에는 광고 식별자나 기기의 하드웨어 정보가 포함되지 않으며, 계정 식별자에만 연결됩니다. 로그인하지 않은 상태에서는 수집되지 않습니다.
 
 (7) 설치 식별자 (중복 로그인 방지용)
@@ -165,6 +165,10 @@
 - 이 이미지는 링크를 가진 사람은 누구나 볼 수 있습니다. 링크 주소는 추측할 수 없는 임의의 값이며, 이미지 목록을 조회하는 기능은 없습니다.
 - 로그인하지 않은 상태에서는 이미지를 올리지 않고 앱 링크만 보냅니다.
 
+(14) 서버 요청 집계
+- 서비스 장애를 찾아 고치기 위해, 로그인 여부와 관계없이 앱이 서버에 보낸 요청이 성공했는지 실패했는지를 공용 집계표의 숫자로만 모읍니다.
+- 집계표는 "날짜, 요청 종류, 결과(성공·거절·서버 오류·연결 안 됨·응답 지연), 운영체제(iOS/Android), 앱 빌드 번호"별 숫자만 담고, 이용자·기기·설치본 식별자는 전혀 담지 않습니다. 따라서 어느 숫자도 특정 이용자로 되짚을 수 없습니다.
+
 앱은 위치 권한을 요청하지 않으며, 연락처·사진·마이크·카메라에도 접근하지 않습니다. 다만 광고를 제공하는 Google AdMob은 광고 게재를 위해 IP 주소 등으로 대략적인 지역을 추정할 수 있습니다. 앱이 기기의 위치 기능을 사용해 위치를 확인하는 일은 없습니다.
 
 2. 정보의 이용 목적
@@ -189,6 +193,7 @@
 - 문의 기록(이메일 주소·문의 내용)은 접수일로부터 1년간 보관한 뒤 파기합니다.
 - 계정 삭제 후 7일간은 같은 계정으로 다시 가입할 수 없습니다. 이를 확인하기 위해 로그인 식별자(이메일 주소, 소셜 로그인 식별자)의 단방향 해시값만 7일간 보관한 뒤 자동으로 파기합니다. 해시값은 원래 값으로 되돌릴 수 없고, 새 가입이 같은 계정인지 대조하는 용도로만 쓰이며, 이용자의 기록이나 신원과 연결되지 않습니다.
 - 서비스 이용 기록은 수집일로부터 13개월이 지나면 자동으로 파기되며, 계정을 삭제하면 즉시 함께 삭제됩니다.
+- 서버 요청 집계는 집계일로부터 90일이 지나면 자동으로 파기됩니다.
 - 혼자 하기 기록은 계정이 유지되는 동안 보관되고, 계정을 삭제하면 즉시 함께 삭제됩니다.
 - 경험치와 레벨, 종류별 마지막 지급 기록, 그리고 칭호·닉네임 색·완료 연출·기법 사용 판 수·이벤트 경험치 합계는 계정이 유지되는 동안 보관되고, 계정을 삭제하면 즉시 함께 삭제됩니다. 오래 사용되지 않은 게스트 계정이 정리될 때에도 함께 삭제됩니다.
 - 설치 식별자와 결제 정보는 계정을 삭제하면 즉시 함께 삭제됩니다.
@@ -220,7 +225,7 @@
 본 방침은 변경될 수 있으며, 중요한 변경은 앱 내에 공지합니다.</pre>
 <pre class="l-en">Privacy Policy
 
-Effective date: November 9, 2026 (first issued July 26, 2026; August 11: usage records, installation identifier, purchase information and diagnostics added; September 3: server-kept race and daily replays, detailed usage records and inquiry records added; September 23: XP, levels and titles added; October 14: completion effects, event progress and event nickname colors added; October 21: website visit statistics added; November 6: install step counts, share records, share images and purchase source added; November 9: solo records kept on the account added)
+Effective date: November 12, 2026 (first issued July 26, 2026; August 11: usage records, installation identifier, purchase information and diagnostics added; September 3: server-kept race and daily replays, detailed usage records and inquiry records added; September 23: XP, levels and titles added; October 14: completion effects, event progress and event nickname colors added; October 21: website visit statistics added; November 6: install step counts, share records, share images and purchase source added; November 9: solo records kept on the account added; November 12: server request counts, and the build number and operating system on app launch records, added)
 
 This app respects your privacy and complies with applicable laws. This policy explains what information the app collects and how it is used.
 
@@ -253,7 +258,7 @@ This app respects your privacy and complies with applicable laws. This policy ex
 - Finishing a ranked race (1:1) or the daily sudoku is the one exception: that game's move-by-move record (its replay) is also sent to and kept on our servers. Solo games, technique practice, and friendly or party races stay on your device as before.
 
 (6) Usage records
-- To improve the service we record, for signed-in accounts, when a few key features are used (first launch, sign-up, each app launch, first puzzle completed, puzzles completed (difficulty, time taken, hints and mistakes used), technique drills completed, hints used, daily sudoku completed, race lobby visited, replays opened, premium page opened, a share started and what kind of thing was shared (friend room, puzzle, result, monthly card), the app opened from one of our links and what kind of link it was) and when each happened. Nothing about the person you shared with is recorded.
+- To improve the service we record, for signed-in accounts, when a few key features are used (first launch, sign-up, each app launch with the app build number and operating system (iOS/Android) at the time, first puzzle completed, puzzles completed (difficulty, time taken, hints and mistakes used), technique drills completed, hints used, daily sudoku completed, race lobby visited, replays opened, premium page opened, a share started and what kind of thing was shared (friend room, puzzle, result, monthly card), the app opened from one of our links and what kind of link it was) and when each happened. Nothing about the person you shared with is recorded.
 - These usage records contain no advertising identifier and no hardware information about your device; they are tied only to your account identifier. Nothing is recorded while you are not signed in.
 
 (7) Installation identifier (for one-device sign-in)
@@ -295,6 +300,10 @@ This app respects your privacy and complies with applicable laws. This policy ex
 - Anyone who has the link can see the image. The link address is a random value that cannot be guessed, and there is no way to list the images.
 - While you are signed out, nothing is uploaded and only an app link is sent.
 
+(14) Server request counts
+- To find and fix service outages, signed in or not, whether each request the app sends to our server succeeded or failed is counted, and only counted, in a shared tally.
+- The tally holds only a count per date, kind of request, outcome (succeeded, refused, server error, no connection, slow response), operating system (iOS/Android) and app build number. It holds no user, device or installation identifier, so no number can be traced back to anyone.
+
 The app does not request location permission, and does not access your contacts, photos, microphone, or camera. Google AdMob, which serves the ads, may infer an approximate region from information such as your IP address in order to serve them. The app never uses your device's location services to determine where you are.
 
 2. How We Use Information
@@ -319,6 +328,7 @@ The app does not request location permission, and does not access your contacts,
 - Inquiries (the email address and message you send us) are kept for one year from the date we receive them, then deleted.
 - For 7 days after deletion, the same account cannot sign up again. To check this, only a one-way hash of your sign-in identifiers (email address and social sign-in id) is kept for those 7 days and then destroyed automatically. A hash cannot be turned back into the original value; it is used solely to tell whether a new sign-up is the same account, and is linked to no record or identity.
 - Usage records are deleted automatically 13 months after collection, and immediately when you delete your account.
+- Server request counts are deleted automatically 90 days after the day they count.
 - Solo records are kept while your account exists, and are deleted immediately when you delete your account.
 - XP, your level, the most recent award record of each kind, and your titles, nickname colors, completion effects, technique game counts and event XP totals are kept while your account exists, and are deleted immediately when you delete your account. They are also deleted when an unused guest account is cleaned up.
 - The installation identifier and purchase information are deleted immediately when you delete your account.
@@ -350,7 +360,7 @@ The app does not request location permission, and does not access your contacts,
 This policy may change; significant changes will be announced in the app.</pre>
 <pre class="l-ja">プライバシーポリシー
 
-施行日：2026年11月9日（2026年7月26日制定、8月11日 サービス利用記録・インストール識別子・決済情報・エラー診断の項目を追加、9月3日 対戦・今日のナンプレの手順記録のサーバー保管・利用記録の詳細項目・お問い合わせ記録を追加、9月23日 経験値・レベル・称号の項目を追加、10月14日 完了演出・イベント進行・イベントニックネームの色の項目を追加、10月21日 ウェブサイト訪問統計の項目を追加、11月6日 アプリのインストール段階の集計・共有記録・共有画像・購入経路の項目を追加、11月9日 ソロプレイ記録のアカウント保管を追加）
+施行日：2026年11月12日（2026年7月26日制定、8月11日 サービス利用記録・インストール識別子・決済情報・エラー診断の項目を追加、9月3日 対戦・今日のナンプレの手順記録のサーバー保管、利用記録の詳細項目、お問い合わせ記録を追加、9月23日 経験値・レベル・称号の項目を追加、10月14日 完了演出・イベント進行・イベントニックネームカラーの項目を追加、10月21日 ウェブサイト訪問統計の項目を追加、11月6日 アプリインストール段階の集計・共有記録・共有画像・決済経路の項目を追加、11月9日 ソロプレイ記録のアカウントでの保管を追加、11月12日 サーバーリクエスト集計の項目、およびアプリ起動記録のビルド番号・オペレーティングシステムを追加）
 
 本アプリ（以下“アプリ”）は、利用者の個人情報を大切に考え、関連法令を遵守します。本ポリシーは、アプリがどのような情報を収集し、どのように利用するかを説明するものです。
 
@@ -383,7 +393,7 @@ This policy may change; significant changes will be announced in the app.</pre>
 - ただし、ランクマッチ（1:1）と今日のナンプレを最後までプレイした場合、そのゲームの手順記録（リプレイ）はサーバーにも送信・保管されます。ソロプレイ、テクニック練習、フレンド対戦、パーティー対戦の手順記録は、これまでどおり端末にのみ保存されます。
 
 (6) サービス利用記録
-- サービス改善のため、ログインしているアカウントの主要機能の使用イベント（初回起動の時点、会員登録、アプリの起動日時、初めてのパズルクリア、パズルのクリア記録（難易度・所要時間・ヒント/ミスの数）、テクニック練習の完了、ヒントの使用、今日のナンプレのクリア、対戦ロビーへの訪問、リプレイの閲覧、プレミアム画面の閲覧、共有の実行と共有したものの種類（フレンドルーム・パズル・結果・月間カード）、アプリのリンクからアプリが開かれたことおよびそのリンクの種類）とその発生日時を収集します。共有を受け取った相手に関する情報は記録しません。
+- サービス改善のため、ログインしているアカウントについて、主要機能の利用イベント（初回起動の時点、登録、アプリの起動時刻とその時点のアプリのビルド番号・オペレーティングシステム（iOS/Android）、最初のパズルの完了、パズルの完走記録（難易度・所要時間・ヒント数/ミス数）、テクニック練習の完了、ヒントの使用、今日のナンプレの完了、対戦ロビーへの訪問、リプレイの閲覧、プレミアム画面の閲覧、共有の実行と共有したものの種類（フレンドルーム・パズル・結果・月間カード）、アプリリンクからアプリが開かれたこととそのリンクの種類）およびその発生時刻を収集します。共有を受けた方に関する情報は記録しません。
 - この利用記録には広告識別子や端末のハードウェア情報は含まれず、アカウント識別子にのみ紐づけられます。ログインしていない状態では収集されません。
 
 (7) インストール識別子（重複ログイン防止用）
@@ -425,6 +435,10 @@ This policy may change; significant changes will be announced in the app.</pre>
 - この画像は、リンクを持っている人であれば誰でも閲覧できます。リンクのアドレスは推測できないランダムな値であり、画像の一覧を取得する機能はありません。
 - ログインしていない状態では画像をアップロードせず、アプリのリンクのみを送信します。
 
+(14) サーバーリクエスト集計
+- サービス障害を発見して修正するため、ログインの有無にかかわらず、アプリがサーバーに送信したリクエストが成功したか失敗したかを、共用の集計表の数値としてのみ集計します。
+- 集計表には“日付、リクエストの種類、結果（成功・拒否・サーバーエラー・接続不可・応答遅延）、オペレーティングシステム（iOS/Android）、アプリのビルド番号”ごとの数値のみが含まれ、利用者・端末・インストールの識別子は一切含まれません。したがって、いずれの数値からも特定の利用者をたどることはできません。
+
 アプリは位置情報の権限を要求せず、連絡先・写真・マイク・カメラにもアクセスしません。ただし、広告を配信するGoogle AdMobは、広告掲載のためにIPアドレスなどからおおよその地域を推定することがあります。アプリが端末の位置情報機能を使って位置を確認することはありません。
 
 2. 情報の利用目的
@@ -441,21 +455,22 @@ This policy may change; significant changes will be announced in the app.</pre>
 - 共有リンクによる共有画像の表示
 
 3. 情報の保管および破棄
-- アカウント情報とゲーム記録は、アカウントが存続している間保管されます。
-- アカウントを削除すると、ログイン手段（Google・Appleとの連携、セッション）とメールアドレスは直ちに破棄され、ニックネームは“退会したユーザー”に置き換えられ、個人を識別できなくなります。
-- ただし、対戦記録そのものは削除されず、匿名化された状態で残ります。1つの対戦記録は対戦相手の戦績・レーティング履歴でもあるため、これを消去すると他の利用者の記録も損なわれるためです。
+- アカウント情報とゲーム記録は、アカウントが存続する間保管されます。
+- アカウントを削除すると、ログイン手段（Google・Apple連携、セッション）とメールアドレスは直ちに破棄され、ニックネームは“退会したユーザー”に置き換えられ、個人を識別できなくなります。
+- ただし、対戦記録そのものは削除されず、匿名化された状態で残ります。一つの対戦記録は相手の戦績・レーティング履歴でもあるため、これを消去すると他の利用者の記録も損なわれるためです。
 - ランクマッチと今日のナンプレの手順記録（リプレイ）は、収集日から30日が経過すると自動的に破棄されます。
-- 通報記録は、確認および再発防止のため、処理完了後最長1年間保管したのち破棄します。
-- お問い合わせ記録（メールアドレス・お問い合わせ内容）は、受付日から1年間保管したのち破棄します。
-- アカウント削除後7日間は、同じアカウントで再登録することはできません。これを確認するため、ログイン識別子（メールアドレス、ソーシャルログインの識別子）の一方向ハッシュ値のみを7日間保管したのち、自動的に破棄します。ハッシュ値は元の値に戻すことができず、新規登録が同じアカウントかどうかを照合する目的にのみ使用され、利用者の記録や身元とは紐づけられません。
-- サービス利用記録は、収集日から13か月が経過すると自動的に破棄され、アカウントを削除すると直ちにあわせて削除されます。
-- ソロプレイの記録は、アカウントが存続している間保管され、アカウントを削除すると直ちにあわせて削除されます。
-- 経験値とレベル、種類ごとの直近の付与記録、および称号・ニックネームの色・完了演出・テクニック使用ゲーム数・イベント経験値の合計は、アカウントが存続している間保管され、アカウントを削除すると直ちにあわせて削除されます。長期間使用されていないゲストアカウントが整理される際にも、あわせて削除されます。
-- インストール識別子と決済情報は、アカウントを削除すると直ちにあわせて削除されます。
-- 共有画像は、アップロードした日から30日が経過すると自動的に削除されます。画像はアカウントと紐づけて保存しないため、アカウントを削除しても、それ以前にアップロードした画像は30日が経過するまで残ります。
-- アプリのインストール段階の集計は、個人を識別できない数値のみを含むため、個別には破棄しません。
-- エラー・診断情報は、Google Firebase Crashlyticsのポリシーに従い最長90日間保管されたのち破棄されます。
-- 端末内に保存される情報は、アプリを削除するとあわせて削除されます。
+- 通報記録は、確認および再発防止のため、処理完了後最長1年間保管した後に破棄します。
+- お問い合わせ記録（メールアドレス・お問い合わせ内容）は、受付日から1年間保管した後に破棄します。
+- アカウント削除後7日間は、同じアカウントで再登録することはできません。これを確認するため、ログイン識別子（メールアドレス、ソーシャルログイン識別子）の一方向ハッシュ値のみを7日間保管した後、自動的に破棄します。ハッシュ値は元の値に戻すことができず、新規登録が同じアカウントかどうかを照合する目的にのみ使用され、利用者の記録や身元とは紐づけられません。
+- サービス利用記録は、収集日から13か月が経過すると自動的に破棄され、アカウントを削除すると直ちに併せて削除されます。
+- サーバーリクエスト集計は、集計日から90日が経過すると自動的に破棄されます。
+- ソロプレイ記録は、アカウントが存続する間保管され、アカウントを削除すると直ちに併せて削除されます。
+- 経験値とレベル、種類ごとの最終付与記録、ならびに称号・ニックネームカラー・完了演出・テクニック使用ゲーム数・イベント経験値の合計は、アカウントが存続する間保管され、アカウントを削除すると直ちに併せて削除されます。長期間使用されていないゲストアカウントが整理される際にも併せて削除されます。
+- インストール識別子と決済情報は、アカウントを削除すると直ちに併せて削除されます。
+- 共有画像は、アップロードした日から30日が経過すると自動的に削除されます。画像はアカウントと紐づけて保存されないため、アカウントを削除しても、それ以前にアップロードした画像は30日が経過するまで残ります。
+- アプリインストール段階の集計は個人を識別できない数値のみを含むため、個別には破棄しません。
+- エラー・診断情報は、Google Firebase Crashlyticsのポリシーに従い最長90日間保管された後、破棄されます。
+- 端末内に保存された情報は、アプリを削除すると併せて削除されます。
 
 4. 第三者提供および処理の委託
 - アプリは、法令に基づく場合を除き、利用者の個人情報を第三者に販売または提供しません。
@@ -482,7 +497,7 @@ This policy may change; significant changes will be announced in the app.</pre>
 本書は韓国語の原文を翻訳したものです。翻訳文と韓国語の原文の内容が異なる場合は、韓国語の原文が優先します。</pre>
 <pre class="l-zh">隱私權政策
 
-施行日期：2026年11月9日（2026年7月26日訂定；8月11日新增服務使用紀錄、安裝識別碼、付款資訊、錯誤診斷項目；9月3日新增對戰與每日數獨步驟紀錄之伺服器保存、使用紀錄細項、詢問紀錄；9月23日新增經驗值、等級、稱號項目；10月14日新增完成特效、活動進度、活動暱稱顏色項目；10月21日新增網站造訪統計項目；11月6日新增應用程式安裝階段統計、分享紀錄、分享圖片、購買途徑項目；11月9日新增單人模式紀錄之帳號保存）
+施行日期：2026年11月12日（2026年7月26日訂定；8月11日新增服務使用紀錄、安裝識別碼、付款資訊及錯誤診斷項目；9月3日新增對戰及每日數獨解題步驟紀錄之伺服器保存、使用紀錄細項及諮詢紀錄；9月23日新增經驗值、等級及稱號項目；10月14日新增完成特效、活動進度及活動暱稱顏色項目；10月21日新增網站造訪統計項目；11月6日新增應用程式安裝階段統計、分享紀錄、分享圖片及付款管道項目；11月9日新增單人模式紀錄之帳號保存；11月12日新增伺服器請求統計項目，以及應用程式啟動紀錄中之組建編號與作業系統）
 
 本應用程式（以下稱“應用程式”）重視使用者的個人資料，並遵守相關法令。本政策說明應用程式蒐集哪些資訊，以及如何使用這些資訊。
 
@@ -515,8 +530,8 @@ This policy may change; significant changes will be announced in the app.</pre>
 - 但完成排位賽（1:1）與每日數獨時，該局的步驟紀錄（重播）亦會傳送並保存於伺服器。單人模式、技巧練習、好友對戰及派對對戰的步驟紀錄，仍與以往相同，僅儲存於裝置中。
 
 (6) 服務使用紀錄
-- 為改善服務，將蒐集已登入帳號的主要功能使用事件（首次啟動時間、註冊、應用程式啟動時間、首次完成謎題、謎題完成紀錄（難度、所用時間、提示/錯誤次數）、完成技巧練習、使用提示、完成每日數獨、造訪對戰大廳、查看重播、查看進階版畫面、執行分享及分享內容的類型（好友房間、謎題、結果、月度卡片）、透過應用程式連結開啟應用程式及該連結的類型）及其發生時間。不會記錄接收分享者的任何資訊。
-- 此使用紀錄不包含廣告識別碼或裝置的硬體資訊，僅與帳號識別碼連結。未登入狀態下不會蒐集。
+- 為改善服務，我們會蒐集已登入帳號使用主要功能之事件（首次啟動時間、註冊、應用程式啟動時間及當時之應用程式組建編號與作業系統（iOS/Android）、完成第一道謎題、謎題完成紀錄（難度、所用時間、提示／錯誤次數）、完成技巧練習、使用提示、完成每日數獨、造訪對戰大廳、瀏覽重播、瀏覽進階版頁面、執行分享及所分享內容之類型（好友房間、謎題、結果、月度卡片）、透過應用程式連結開啟應用程式及該連結之類型）及其發生時間。我們不會記錄任何關於分享對象之資訊。
+- 此使用紀錄不包含廣告識別碼或裝置之硬體資訊，僅與帳號識別碼連結。未登入狀態下不會蒐集。
 
 (7) 安裝識別碼（防止重複登入用）
 - 為防止同一帳號同時在多部裝置上使用，會將應用程式安裝時產生的隨機安裝識別碼與帳號一併儲存。
@@ -557,6 +572,10 @@ This policy may change; significant changes will be announced in the app.</pre>
 - 任何持有連結者皆可查看此圖片。連結網址為無法猜測的隨機值，且不提供查詢圖片列表的功能。
 - 未登入狀態下不會上傳圖片，僅傳送應用程式連結。
 
+(14) 伺服器請求統計
+- 為發現並修復服務故障，無論是否登入，我們僅以公用統計表中之數字，彙整應用程式傳送至伺服器之請求為成功或失敗。
+- 統計表僅包含依“日期、請求類型、結果（成功、拒絕、伺服器錯誤、無法連線、回應延遲）、作業系統（iOS/Android）、應用程式組建編號”分類之數字，完全不包含使用者、裝置或安裝版本之識別碼。因此，任何數字均無法回溯至特定使用者。
+
 應用程式不會要求位置權限，亦不會存取聯絡人、照片、麥克風或相機。但提供廣告的 Google AdMob 可能為投放廣告而透過 IP 位址等資訊推估大致地區。應用程式不會使用裝置的定位功能確認您的位置。
 
 2. 資訊的使用目的
@@ -572,22 +591,23 @@ This policy may change; significant changes will be announced in the app.</pre>
 - 查明錯誤原因及改善應用程式穩定性
 - 透過分享連結顯示分享圖片
 
-3. 資訊的保存及銷毀
-- 帳號資訊與遊戲紀錄於帳號存續期間保存。
-- 刪除帳號時，登入方式（Google、Apple 連結、工作階段）與電子郵件地址將立即銷毀，暱稱將替換為“已退出的使用者”，使個人無法被識別。
-- 但對戰紀錄本身不會刪除，將以匿名化狀態保留。因為一筆對戰紀錄同時也是對手的戰績與積分歷程，若予以刪除，其他使用者的紀錄亦將一併受損。
-- 排位賽與每日數獨的步驟紀錄（重播）自蒐集日起滿30日後自動銷毀。
-- 檢舉紀錄為審查及防止再犯，於處理完畢後最多保存1年，之後銷毀。
-- 詢問紀錄（電子郵件地址、詢問內容）自受理日起保存1年，之後銷毀。
-- 刪除帳號後7日內，無法以同一帳號重新註冊。為確認此事，僅保存登入識別碼（電子郵件地址、社群登入識別碼）的單向雜湊值7日，之後自動銷毀。雜湊值無法還原為原始值，僅用於比對新註冊是否為同一帳號，不會與使用者的紀錄或身分連結。
-- 服務使用紀錄自蒐集日起滿13個月後自動銷毀，刪除帳號時亦立即一併刪除。
-- 單人模式紀錄於帳號存續期間保存，刪除帳號時立即一併刪除。
-- 經驗值與等級、各種類最後一筆發放紀錄，以及稱號、暱稱顏色、完成特效、技巧使用局數、活動經驗值合計，於帳號存續期間保存，刪除帳號時立即一併刪除。長期未使用的訪客帳號遭清理時，亦一併刪除。
-- 安裝識別碼與付款資訊於刪除帳號時立即一併刪除。
-- 分享圖片自上傳日起滿30日後自動刪除。由於圖片並未與帳號連結儲存，即使刪除帳號，先前上傳的圖片仍會保留至滿30日為止。
-- 應用程式安裝階段統計僅包含無法識別個人的數字，因此不另行銷毀。
-- 錯誤與診斷資訊依 Google Firebase Crashlytics 的政策最多保存90日，之後銷毀。
-- 裝置內儲存的資訊於刪除應用程式時一併刪除。
+3. 資訊之保存及銷毀
+- 帳號資訊及遊戲紀錄於帳號存續期間保存。
+- 刪除帳號時，登入方式（Google、Apple 連結及工作階段）及電子郵件地址將立即銷毀，暱稱將替換為“已刪除的使用者”，使個人無法被識別。
+- 但對戰紀錄本身不會刪除，將以匿名化狀態保留。由於一筆對戰紀錄同時也是對手之戰績及積分歷程，若予以刪除，將一併損及其他使用者之紀錄。
+- 排位賽及每日數獨之解題步驟紀錄（重播）自蒐集日起滿30日後自動銷毀。
+- 檢舉紀錄為供審查及防止再次發生，於處理完成後最長保存1年，其後銷毀。
+- 諮詢紀錄（電子郵件地址、諮詢內容）自受理日起保存1年，其後銷毀。
+- 帳號刪除後7日內，無法以同一帳號重新註冊。為確認此事，僅將登入識別碼（電子郵件地址、社群登入識別碼）之單向雜湊值保存7日，其後自動銷毀。雜湊值無法還原為原始值，僅用於比對新註冊是否為同一帳號，且不會與使用者之紀錄或身分連結。
+- 服務使用紀錄自蒐集日起滿13個月後自動銷毀，刪除帳號時亦將立即一併刪除。
+- 伺服器請求統計自統計日起滿90日後自動銷毀。
+- 單人模式紀錄於帳號存續期間保存，刪除帳號時將立即一併刪除。
+- 經驗值與等級、各類別最後一次發放紀錄，以及稱號、暱稱顏色、完成特效、技巧使用局數及活動經驗值總計，於帳號存續期間保存，刪除帳號時將立即一併刪除。長期未使用之訪客帳號遭清理時，亦將一併刪除。
+- 安裝識別碼及付款資訊於刪除帳號時立即一併刪除。
+- 分享圖片自上傳日起滿30日後自動刪除。由於圖片並未與帳號連結儲存，即使刪除帳號，先前上傳之圖片仍將保留至滿30日為止。
+- 應用程式安裝階段統計僅包含無法識別個人之數字，故不另行銷毀。
+- 錯誤及診斷資訊依 Google Firebase Crashlytics 之政策，最長保存90日後銷毀。
+- 裝置內儲存之資訊將於刪除應用程式時一併刪除。
 
 4. 提供第三方及委託處理
 - 除依法令規定外，應用程式不會將使用者的個人資料出售或提供給第三方。
@@ -614,7 +634,7 @@ This policy may change; significant changes will be announced in the app.</pre>
 本文件係譯自韓文原文。譯文與韓文原文內容如有歧異，應以韓文原文為準。</pre>
 <pre class="l-de">Datenschutzerklärung
 
-Gültig ab: 9. November 2026 (erlassen am 26. Juli 2026; 11. August: Nutzungsdaten, Installationskennung, Zahlungsinformationen und Fehlerdiagnose ergänzt; 3. September: Speicherung der Zugaufzeichnungen von Duellen und Täglichem Sudoku auf dem Server, Einzelangaben zu Nutzungsdaten und Anfragedaten ergänzt; 23. September: Erfahrungspunkte, Level und Titel ergänzt; 14. Oktober: Abschlusseffekte, Event-Fortschritt und Event-Nicknamefarben ergänzt; 21. Oktober: Besuchsstatistik der Website ergänzt; 6. November: Zählung der Installationsschritte, Daten zum Teilen, geteilte Bilder und Kaufweg ergänzt; 9. November: Speicherung der Solo-Daten im Konto ergänzt)
+Gültig ab: 12. November 2026 (erstmals erlassen am 26. Juli 2026; 11. August: Nutzungsdaten, Installationskennung, Zahlungsinformationen und Fehlerdiagnose ergänzt; 3. September: serverseitige Speicherung der Zugaufzeichnungen von Duellen und dem Täglichen Sudoku, detaillierte Angaben zu den Nutzungsdaten sowie Anfrageaufzeichnungen ergänzt; 23. September: Erfahrungspunkte, Level und Titel ergänzt; 14. Oktober: Abschlusseffekte, Eventfortschritt und Event-Nicknamefarben ergänzt; 21. Oktober: Statistiken zu Website-Besuchen ergänzt; 6. November: Zählung der App-Installationsschritte, Aufzeichnungen zum Teilen, geteilte Bilder und Kaufweg ergänzt; 9. November: Speicherung der Einzelspieler-Aufzeichnungen im Konto ergänzt; 12. November: Zählung der Serveranfragen sowie Build-Nummer und Betriebssystem in den Aufzeichnungen zum App-Start ergänzt)
 
 Diese App (im Folgenden "App") nimmt den Schutz Ihrer personenbezogenen Daten ernst und hält die geltenden Gesetze ein. Diese Erklärung beschreibt, welche Daten die App erhebt und wie sie verwendet werden.
 
@@ -647,8 +667,8 @@ Diese App (im Folgenden "App") nimmt den Schutz Ihrer personenbezogenen Daten er
 - Wenn Sie jedoch ein Ranglistenduell (1:1) oder das Tägliche Sudoku abschließen, wird die Zugaufzeichnung (Replay) dieser Partie auch an den Server übertragen und dort gespeichert. Die Zugaufzeichnungen von Solo-Partien, Technik-Übungen, Freundschaftsduellen und Party-Duellen werden wie bisher nur auf dem Gerät gespeichert.
 
 (6) Nutzungsdaten
-- Zur Verbesserung des Dienstes erheben wir für angemeldete Konten Ereignisse zur Nutzung wichtiger Funktionen (Zeitpunkt des ersten Starts, Registrierung, Zeitpunkt jedes App-Starts, erstes abgeschlossenes Rätsel, Daten zu abgeschlossenen Rätseln (Schwierigkeit, benötigte Zeit, Anzahl der Tipps/Fehler), abgeschlossene Technik-Übungen, Nutzung von Tipps, Abschluss des Täglichen Sudoku, Besuch der Duell-Lobby, Aufruf von Replays, Aufruf der Premium-Seite, Teilen und die Art des geteilten Inhalts (Freundesraum, Rätsel, Ergebnis, Monatskarte), Öffnen der App über einen App-Link und die Art dieses Links) sowie den jeweiligen Zeitpunkt. Daten über die Empfänger geteilter Inhalte werden nicht erfasst.
-- Diese Nutzungsdaten enthalten weder Werbe-IDs noch Hardwareinformationen des Geräts und sind ausschließlich mit der Kontokennung verknüpft. Solange Sie nicht angemeldet sind, werden sie nicht erhoben.
+- Zur Verbesserung des Dienstes erfassen wir für angemeldete Konten Ereignisse zur Nutzung wichtiger Funktionen (Zeitpunkt des ersten Starts, Registrierung, Zeitpunkt jedes App-Starts mit der jeweiligen Build-Nummer der App und dem Betriebssystem (iOS/Android), Abschluss des ersten Puzzles, abgeschlossene Puzzles (Schwierigkeitsgrad, benötigte Zeit, Anzahl der Tipps und Fehler), abgeschlossene Technik-Übungen, Nutzung von Tipps, Abschluss des Täglichen Sudokus, Besuch der Duell-Lobby, Ansehen von Replays, Aufruf der Premium-Seite, Starten der Teilen-Funktion und Art des Geteilten (Freundesraum, Puzzle, Ergebnis, Monatskarte), Öffnen der App über einen App-Link und Art dieses Links) sowie den jeweiligen Zeitpunkt. Informationen über die Personen, mit denen Sie etwas teilen, werden nicht erfasst.
+- Diese Nutzungsdaten enthalten keine Werbe-ID und keine Hardwareinformationen Ihres Geräts und sind ausschließlich mit Ihrer Kontokennung verknüpft. Ohne Anmeldung werden sie nicht erfasst.
 
 (7) Installationskennung (zur Verhinderung mehrfacher Anmeldungen)
 - Um zu verhindern, dass ein Konto gleichzeitig auf mehreren Geräten genutzt wird, wird eine bei der Installation der App erzeugte zufällige Installationskennung zusammen mit dem Konto gespeichert.
@@ -689,6 +709,10 @@ Diese App (im Folgenden "App") nimmt den Schutz Ihrer personenbezogenen Daten er
 - Dieses Bild kann jeder sehen, der den Link besitzt. Die Link-Adresse ist ein zufälliger, nicht erratbarer Wert, und es gibt keine Funktion, mit der sich eine Liste der Bilder abrufen lässt.
 - Solange Sie nicht angemeldet sind, wird kein Bild hochgeladen, sondern nur ein App-Link gesendet.
 
+(14) Zählung der Serveranfragen
+- Um Störungen des Dienstes zu finden und zu beheben, wird unabhängig davon, ob Sie angemeldet sind, ausschließlich als Zahl in einer gemeinsamen Zähltabelle erfasst, ob die Anfragen der App an unseren Server erfolgreich waren oder fehlgeschlagen sind.
+- Die Zähltabelle enthält nur Zahlen je "Datum, Art der Anfrage, Ergebnis (erfolgreich, abgelehnt, Serverfehler, keine Verbindung, verzögerte Antwort), Betriebssystem (iOS/Android) und Build-Nummer der App" und keinerlei Kennungen von Nutzern, Geräten oder Installationen. Daher lässt sich keine Zahl auf einen bestimmten Nutzer zurückführen.
+
 Die App fordert keine Standortberechtigung an und greift nicht auf Kontakte, Fotos, Mikrofon oder Kamera zu. Google AdMob, das die Werbung bereitstellt, kann jedoch zur Auslieferung von Werbung anhand der IP-Adresse oder ähnlicher Daten eine ungefähre Region schätzen. Die App ermittelt Ihren Standort zu keinem Zeitpunkt über die Ortungsfunktionen des Geräts.
 
 2. Zwecke der Datenverwendung
@@ -704,22 +728,23 @@ Die App fordert keine Standortberechtigung an und greift nicht auf Kontakte, Fot
 - Ermittlung von Fehlerursachen und Verbesserung der Stabilität der App
 - Anzeige geteilter Bilder über Teilen-Links
 
-3. Speicherung und Löschung der Daten
-- Kontodaten und Spieldaten werden gespeichert, solange das Konto besteht.
-- Wenn Sie Ihr Konto löschen, werden die Anmeldemittel (Verknüpfung mit Google/Apple, Sitzungen) und die E-Mail-Adresse sofort vernichtet, und der Nickname wird durch "Gelöschter Nutzer" ersetzt, sodass eine Identifizierung Ihrer Person nicht mehr möglich ist.
-- Die Duelldaten selbst werden jedoch nicht gelöscht, sondern verbleiben in anonymisierter Form. Da ein Duelleintrag zugleich Teil der Bilanz und des Wertungsverlaufs des Gegners ist, würde seine Löschung auch die Daten anderer Nutzer beschädigen.
-- Zugaufzeichnungen (Replays) von Ranglistenduellen und dem Täglichen Sudoku werden 30 Tage nach der Erhebung automatisch vernichtet.
-- Meldungen werden zur Prüfung und zur Verhinderung von Wiederholungen nach Abschluss der Bearbeitung bis zu 1 Jahr gespeichert und anschließend vernichtet.
-- Anfragedaten (E-Mail-Adresse, Inhalt der Anfrage) werden ab dem Eingangsdatum 1 Jahr lang gespeichert und anschließend vernichtet.
-- Nach der Löschung eines Kontos ist eine erneute Registrierung mit demselben Konto 7 Tage lang nicht möglich. Um dies zu prüfen, wird nur ein Einweg-Hashwert der Anmeldekennungen (E-Mail-Adresse, Kennung der Anmeldung über soziale Netzwerke) 7 Tage lang gespeichert und anschließend automatisch vernichtet. Der Hashwert kann nicht in den ursprünglichen Wert zurückverwandelt werden, dient ausschließlich dem Abgleich, ob eine neue Registrierung dasselbe Konto betrifft, und ist weder mit Ihren Daten noch mit Ihrer Identität verknüpft.
-- Nutzungsdaten werden 13 Monate nach der Erhebung automatisch vernichtet und bei Löschung des Kontos sofort mitgelöscht.
-- Solo-Daten werden gespeichert, solange das Konto besteht, und bei Löschung des Kontos sofort mitgelöscht.
-- Erfahrungspunkte und Level, der letzte Vergabeeintrag je Art sowie Titel, Nicknamefarben, Abschlusseffekte, die Anzahl der Partien je Technik und die EP-Summen aus Events werden gespeichert, solange das Konto besteht, und bei Löschung des Kontos sofort mitgelöscht. Sie werden auch mitgelöscht, wenn lange nicht genutzte Gastkonten bereinigt werden.
-- Installationskennung und Zahlungsinformationen werden bei Löschung des Kontos sofort mitgelöscht.
-- Geteilte Bilder werden 30 Tage nach dem Hochladen automatisch gelöscht. Da die Bilder nicht mit dem Konto verknüpft gespeichert werden, bleiben zuvor hochgeladene Bilder auch nach der Löschung des Kontos bis zum Ablauf der 30 Tage bestehen.
-- Die Zählung der Installationsschritte enthält nur Zahlen, die keine Identifizierung von Personen ermöglichen, und wird daher nicht gesondert vernichtet.
-- Fehler- und Diagnosedaten werden gemäß den Richtlinien von Google Firebase Crashlytics bis zu 90 Tage gespeichert und anschließend vernichtet.
-- Auf dem Gerät gespeicherte Daten werden beim Löschen der App mitgelöscht.
+3. Speicherung und Löschung von Informationen
+- Kontoinformationen und Spielaufzeichnungen werden gespeichert, solange Ihr Konto besteht.
+- Wenn Sie Ihr Konto löschen, werden Ihre Anmeldemethoden (Verknüpfung mit Google/Apple, Sitzungen) und Ihre E-Mail-Adresse sofort vernichtet, und Ihr Nickname wird durch "Gelöschter Nutzer" ersetzt, sodass Sie nicht mehr identifiziert werden können.
+- Die Duellaufzeichnungen selbst werden jedoch nicht gelöscht, sondern verbleiben in anonymisierter Form. Eine Duellaufzeichnung ist zugleich Teil der Bilanz und des Wertungsverlaufs Ihres Gegners; ihre Löschung würde daher auch die Aufzeichnungen anderer Nutzer beschädigen.
+- Die Zugaufzeichnungen (Replays) von Ranglistenduellen und dem Täglichen Sudoku werden 30 Tage nach ihrer Erfassung automatisch vernichtet.
+- Meldungen werden zur Prüfung und zur Verhinderung von Wiederholungen nach Abschluss der Bearbeitung höchstens 1 Jahr lang gespeichert und anschließend vernichtet.
+- Anfrageaufzeichnungen (E-Mail-Adresse und Inhalt der Anfrage) werden ab dem Eingangsdatum 1 Jahr lang gespeichert und anschließend vernichtet.
+- Nach der Löschung eines Kontos ist eine erneute Registrierung mit demselben Konto 7 Tage lang nicht möglich. Um dies zu prüfen, wird lediglich ein Einweg-Hashwert Ihrer Anmeldekennungen (E-Mail-Adresse, Social-Login-Kennung) 7 Tage lang gespeichert und danach automatisch vernichtet. Der Hashwert kann nicht in den ursprünglichen Wert zurückverwandelt werden, dient ausschließlich dem Abgleich, ob eine neue Registrierung von demselben Konto stammt, und ist weder mit Ihren Aufzeichnungen noch mit Ihrer Identität verknüpft.
+- Nutzungsdaten werden 13 Monate nach ihrer Erfassung automatisch vernichtet und bei Löschung Ihres Kontos sofort mitgelöscht.
+- Die Zählung der Serveranfragen wird 90 Tage nach dem Zähltag automatisch vernichtet.
+- Einzelspieler-Aufzeichnungen werden gespeichert, solange Ihr Konto besteht, und bei Löschung Ihres Kontos sofort mitgelöscht.
+- Erfahrungspunkte und Level, die jeweils letzte Vergabeaufzeichnung je Art sowie Titel, Nicknamefarben, Abschlusseffekte, Anzahl der Partien je Technik und die Summe der Event-Erfahrungspunkte werden gespeichert, solange Ihr Konto besteht, und bei Löschung Ihres Kontos sofort mitgelöscht. Sie werden außerdem mitgelöscht, wenn ein lange nicht genutztes Gastkonto bereinigt wird.
+- Installationskennung und Zahlungsinformationen werden bei Löschung Ihres Kontos sofort mitgelöscht.
+- Geteilte Bilder werden 30 Tage nach dem Hochladen automatisch gelöscht. Da die Bilder nicht mit Ihrem Konto verknüpft gespeichert werden, bleiben zuvor hochgeladene Bilder auch nach der Löschung Ihres Kontos bis zum Ablauf der 30 Tage erhalten.
+- Die Zählung der App-Installationsschritte enthält nur Zahlen, die keine Identifizierung einzelner Personen ermöglichen, und wird daher nicht gesondert vernichtet.
+- Fehler- und Diagnoseinformationen werden gemäß den Richtlinien von Google Firebase Crashlytics höchstens 90 Tage lang gespeichert und anschließend vernichtet.
+- Auf dem Gerät gespeicherte Informationen werden beim Deinstallieren der App mitgelöscht.
 
 4. Weitergabe an Dritte und Auftragsverarbeitung
 - Die App verkauft personenbezogene Daten nicht an Dritte und gibt sie nicht an Dritte weiter, es sei denn, dies ist gesetzlich vorgeschrieben.
@@ -746,7 +771,7 @@ Diese Erklärung kann geändert werden; wesentliche Änderungen werden in der Ap
 Dieses Dokument ist eine Übersetzung des koreanischen Originals. Bei Abweichungen zwischen der Übersetzung und dem koreanischen Original ist das koreanische Original maßgeblich.</pre>
 <pre class="l-es">Política de privacidad
 
-Fecha de entrada en vigor: 9 de noviembre de 2026 (promulgada el 26 de julio de 2026; el 11 de agosto se añadieron los registros de uso del servicio, el identificador de instalación, la información de pago y los datos de diagnóstico de errores; el 3 de septiembre se añadieron la conservación en el servidor de los registros de jugadas de las partidas y del Sudoku del día, los detalles de los registros de uso y los registros de consultas; el 23 de septiembre se añadieron la experiencia, los niveles y los títulos; el 14 de octubre se añadieron los efectos de finalización, el progreso de eventos y los colores de apodo de eventos; el 21 de octubre se añadieron las estadísticas de visitas al sitio web; el 6 de noviembre se añadieron el recuento de etapas de instalación de la app, los registros de uso compartido, las imágenes compartidas y la vía de compra; el 9 de noviembre se añadió la conservación en la cuenta de los registros del modo individual)
+Fecha de entrada en vigor: 12 de noviembre de 2026 (emitida el 26 de julio de 2026; 11 de agosto: se añadieron los registros de uso del servicio, el identificador de instalación, la información de pago y los datos de diagnóstico de errores; 3 de septiembre: se añadieron la conservación en el servidor de los registros de jugadas de las partidas y del Sudoku del día, el detalle de los registros de uso y los registros de consultas; 23 de septiembre: se añadieron la experiencia, los niveles y los títulos; 14 de octubre: se añadieron los efectos de finalización, el progreso en eventos y los colores de apodo de eventos; 21 de octubre: se añadieron las estadísticas de visitas al sitio web; 6 de noviembre: se añadieron el recuento de etapas de instalación de la app, los registros de contenido compartido, las imágenes compartidas y la vía de compra; 9 de noviembre: se añadió la conservación en la cuenta de los registros de juego individual; 12 de noviembre: se añadieron el recuento de solicitudes al servidor, así como el número de compilación y el sistema operativo en los registros de inicio de la app)
 
 Esta aplicación (en adelante, la "app") considera importante la información personal de los usuarios y cumple la normativa aplicable. Esta política explica qué información recopila la app y cómo la utiliza.
 
@@ -779,8 +804,8 @@ Esta aplicación (en adelante, la "app") considera importante la información pe
 - No obstante, cuando se termina una partida clasificatoria (1:1) o el Sudoku del día, el registro de jugadas (Repetición) de esa partida también se envía al servidor y se conserva en él. Los registros de jugadas del modo individual, de la práctica de técnicas, de los duelos con amigos y de las partidas en grupo siguen almacenándose únicamente en el dispositivo, como hasta ahora.
 
 (6) Registros de uso del servicio
-- Para mejorar el servicio, en las cuentas con sesión iniciada se recopilan los eventos de uso de las funciones principales (primera apertura, registro, hora de apertura de la app, primer sudoku completado, registros de sudokus completados (dificultad, tiempo empleado, número de pistas y errores), práctica de técnicas completada, uso de pistas, Sudoku del día completado, visita al lobby de partidas, visualización de repeticiones, visualización de la pantalla Premium, uso de la función de compartir y tipo de contenido compartido (sala de amigos, sudoku, resultado, tarjeta mensual), apertura de la app desde un enlace de la app y tipo de dicho enlace) y la hora en que ocurren. No se registra información sobre las personas que reciben lo compartido.
-- Estos registros de uso no incluyen el identificador de publicidad ni información del hardware del dispositivo, y se vinculan únicamente al identificador de cuenta. No se recopilan si no hay sesión iniciada.
+- Para mejorar el servicio, en el caso de las cuentas con sesión iniciada recopilamos los eventos de uso de las funciones principales (momento del primer inicio, registro, hora de cada inicio de la app junto con el número de compilación de la app y el sistema operativo (iOS/Android) en ese momento, primer sudoku completado, registros de sudokus completados (dificultad, tiempo empleado, número de pistas y de errores), práctica de técnicas completada, uso de pistas, Sudoku del día completado, visita a la sala de espera de partidas, visualización de repeticiones, visualización de la pantalla Premium, uso de la función de compartir y tipo de contenido compartido (sala de amigos, sudoku, resultado, tarjeta mensual), apertura de la app mediante un enlace de la app y tipo de dicho enlace), así como la hora en que se produjo cada uno. No se registra ninguna información sobre la persona que recibe lo compartido.
+- Estos registros de uso no incluyen el identificador de publicidad ni información de hardware del dispositivo, y están vinculados únicamente al identificador de la cuenta. No se recopilan mientras usted no haya iniciado sesión.
 
 (7) Identificador de instalación (para evitar inicios de sesión simultáneos)
 - Para impedir que una misma cuenta se use a la vez en varios dispositivos, se guarda junto con la cuenta un identificador de instalación aleatorio generado al instalar la app.
@@ -821,6 +846,10 @@ Esta aplicación (en adelante, la "app") considera importante la información pe
 - Cualquier persona que tenga el enlace puede ver la imagen. La dirección del enlace es un valor aleatorio que no puede adivinarse, y no existe ninguna función para consultar el listado de imágenes.
 - Si no hay sesión iniciada, no se sube ninguna imagen y solo se envía un enlace de la app.
 
+(14) Recuento de solicitudes al servidor
+- Para detectar y corregir fallas del servicio, haya iniciado sesión o no, se recopila únicamente en forma de cifras, en una tabla de recuento común, si cada solicitud que la app envía al servidor tuvo éxito o falló.
+- La tabla de recuento contiene únicamente cifras por "fecha, tipo de solicitud, resultado (éxito, rechazo, error del servidor, sin conexión, respuesta lenta), sistema operativo (iOS/Android) y número de compilación de la app", y no contiene en absoluto identificadores de usuario, de dispositivo ni de instalación. Por lo tanto, ninguna cifra puede rastrearse hasta un usuario determinado.
+
 La app no solicita permiso de ubicación ni accede a los contactos, las fotos, el micrófono ni la cámara. No obstante, Google AdMob, que proporciona los anuncios, puede estimar una región aproximada a partir de datos como la dirección IP para mostrar anuncios. La app nunca utiliza las funciones de ubicación del dispositivo para determinar la ubicación.
 
 2. Finalidad del uso de la información
@@ -838,19 +867,20 @@ La app no solicita permiso de ubicación ni accede a los contactos, las fotos, e
 
 3. Conservación y eliminación de la información
 - La información de la cuenta y los registros de juego se conservan mientras la cuenta exista.
-- Al eliminar la cuenta, los medios de inicio de sesión (vinculación con Google o Apple, sesiones) y la dirección de correo electrónico se destruyen de inmediato, y el apodo se sustituye por "Usuario eliminado", de modo que ya no es posible identificar a la persona.
-- No obstante, los registros de partidas en sí no se eliminan y permanecen de forma anonimizada. Esto se debe a que cada registro de partida forma parte también del historial de resultados y de puntuación del rival, por lo que eliminarlo dañaría a la vez los registros de otro usuario.
-- Los registros de jugadas (Repetición) de las partidas clasificatorias y del Sudoku del día se destruyen automáticamente transcurridos 30 días desde su recopilación.
-- Los registros de reportes se conservan durante un máximo de 1 año tras completarse su tramitación, con fines de revisión y prevención de reincidencias, y después se destruyen.
-- Los registros de consultas (dirección de correo electrónico y contenido de la consulta) se conservan durante 1 año desde la fecha de recepción y después se destruyen.
-- Durante los 7 días posteriores a la eliminación de la cuenta, no es posible volver a registrarse con la misma cuenta. Para comprobarlo, solo se conserva durante 7 días un valor hash unidireccional de los identificadores de inicio de sesión (dirección de correo electrónico, identificador de inicio de sesión social), que después se destruye automáticamente. El valor hash no puede revertirse al valor original, se utiliza únicamente para comprobar si un nuevo registro corresponde a la misma cuenta y no se vincula con los registros ni con la identidad del usuario.
-- Los registros de uso del servicio se destruyen automáticamente transcurridos 13 meses desde su recopilación y se eliminan de inmediato al eliminar la cuenta.
-- Los registros del modo individual se conservan mientras la cuenta exista y se eliminan de inmediato al eliminar la cuenta.
-- La XP y el nivel, el último registro de otorgamiento de cada tipo, y los títulos, colores de apodo, efectos de finalización, número de partidas por técnica y totales de XP de eventos se conservan mientras la cuenta exista y se eliminan de inmediato al eliminar la cuenta. También se eliminan cuando se depuran las cuentas de invitado que llevan mucho tiempo sin usarse.
+- Al eliminar su cuenta, los medios de inicio de sesión (vinculación con Google o Apple y sesiones) y la dirección de correo electrónico se destruyen de inmediato, y su apodo se sustituye por "Usuario eliminado", de modo que ya no sea posible identificarlo.
+- No obstante, los registros de las partidas en sí no se eliminan y se conservan de forma anonimizada. Cada registro de partida forma parte también del historial de victorias y derrotas y de puntuación del rival, por lo que borrarlo dañaría también los registros de otro usuario.
+- Los registros de jugadas (repeticiones) de las partidas clasificatorias y del Sudoku del día se eliminan automáticamente una vez transcurridos 30 días desde su recopilación.
+- Los registros de denuncias se conservan durante un máximo de un año tras su resolución, para su revisión y para prevenir su repetición, y luego se eliminan.
+- Los registros de consultas (dirección de correo electrónico y contenido de la consulta) se conservan durante un año desde la fecha de recepción y luego se eliminan.
+- Durante los 7 días posteriores a la eliminación de la cuenta, no es posible volver a registrarse con la misma cuenta. Para verificarlo, se conserva únicamente un valor hash unidireccional de los identificadores de inicio de sesión (dirección de correo electrónico e identificador de inicio de sesión social) durante 7 días, tras lo cual se destruye automáticamente. El valor hash no puede revertirse al valor original, se utiliza exclusivamente para comprobar si un nuevo registro corresponde a la misma cuenta y no está vinculado a los registros ni a la identidad del usuario.
+- Los registros de uso del servicio se eliminan automáticamente una vez transcurridos 13 meses desde su recopilación y, si usted elimina su cuenta, se eliminan de inmediato junto con ella.
+- El recuento de solicitudes al servidor se elimina automáticamente una vez transcurridos 90 días desde la fecha del recuento.
+- Los registros de juego individual se conservan mientras la cuenta exista y, si usted elimina su cuenta, se eliminan de inmediato junto con ella.
+- La experiencia y el nivel, el último registro de otorgamiento de cada tipo, así como los títulos, los colores de apodo, los efectos de finalización, el número de partidas por técnica utilizada y el total de experiencia de eventos, se conservan mientras la cuenta exista y, si usted elimina su cuenta, se eliminan de inmediato junto con ella. También se eliminan cuando se depuran las cuentas de invitado que no se han utilizado durante mucho tiempo.
 - El identificador de instalación y la información de pago se eliminan de inmediato al eliminar la cuenta.
-- Las imágenes compartidas se eliminan automáticamente transcurridos 30 días desde que se subieron. Como las imágenes no se almacenan vinculadas a la cuenta, las imágenes subidas antes de eliminar la cuenta permanecen hasta cumplir los 30 días.
-- El recuento de etapas de instalación de la app solo contiene cifras que no permiten identificar a ninguna persona, por lo que no se destruye por separado.
-- La información de errores y diagnóstico se conserva durante un máximo de 90 días conforme a la política de Google Firebase Crashlytics y después se destruye.
+- Las imágenes compartidas se eliminan automáticamente una vez transcurridos 30 días desde la fecha en que se subieron. Como las imágenes no se almacenan vinculadas a la cuenta, aunque elimine su cuenta, las imágenes subidas antes se conservan hasta cumplir los 30 días.
+- El recuento de etapas de instalación de la app contiene únicamente cifras que no permiten identificar a ninguna persona, por lo que no se elimina por separado.
+- La información de errores y diagnóstico se conserva durante un máximo de 90 días conforme a la política de Google Firebase Crashlytics y luego se elimina.
 - La información almacenada en el dispositivo se elimina al desinstalar la app.
 
 4. Cesión a terceros y encargo del tratamiento
@@ -878,7 +908,7 @@ Esta política puede modificarse; los cambios importantes se anunciarán en la a
 Este documento es una traducción del original en coreano. En caso de discrepancia entre la traducción y el original en coreano, prevalecerá el original en coreano.</pre>
 <pre class="l-fr">Politique de confidentialité
 
-Date d'entrée en vigueur : 9 novembre 2026 (établie le 26 juillet 2026 ; 11 août : ajout de l'historique d'utilisation du service, de l'identifiant d'installation, des informations de paiement et des informations de diagnostic d'erreurs ; 3 septembre : ajout de la conservation sur le serveur des enregistrements de coups des matchs et du Sudoku du jour, du détail de l'historique d'utilisation et de l'historique des demandes ; 23 septembre : ajout de l'expérience, des niveaux et des titres ; 14 octobre : ajout des effets de fin de partie, de la progression des événements et des couleurs de pseudo d'événement ; 21 octobre : ajout des statistiques de visite du site web ; 6 novembre : ajout du décompte des étapes d'installation de l'application, de l'historique de partage, des images partagées et du mode d'achat ; 9 novembre : ajout de la conservation des statistiques en solo sur le compte)
+Date d'entrée en vigueur : 12 novembre 2026 (version initiale du 26 juillet 2026 ; 11 août : ajout de l'historique d'utilisation du service, de l'identifiant d'installation, des informations de paiement et des données de diagnostic d'erreurs ; 3 septembre : ajout de la conservation sur le serveur des enregistrements de coups des matchs et du Sudoku du jour, du détail de l'historique d'utilisation et de l'historique des demandes ; 23 septembre : ajout des points d'expérience, des niveaux et des titres ; 14 octobre : ajout des effets de fin de partie, de la progression dans les événements et des couleurs de pseudo d'événement ; 21 octobre : ajout des statistiques de visite du site web ; 6 novembre : ajout du décompte des étapes d'installation de l'application, de l'historique des partages, des images partagées et de la provenance des paiements ; 9 novembre : ajout de la conservation sur le compte de l'historique des parties en solo ; 12 novembre : ajout du décompte des requêtes au serveur ainsi que du numéro de build et du système d'exploitation dans l'historique des lancements de l'application)
 
 La présente application (ci-après l'"Application") accorde une grande importance aux données personnelles de ses utilisateurs et respecte la législation applicable. La présente politique explique quelles informations l'Application collecte et comment elles sont utilisées.
 
@@ -911,8 +941,8 @@ La présente application (ci-après l'"Application") accorde une grande importan
 - Toutefois, lorsque vous terminez un match classé (1:1) ou le Sudoku du jour, l'enregistrement des coups (Replay) de cette partie est également transmis au serveur et y est conservé. Les enregistrements des coups des parties en solo, des entraînements aux techniques, des matchs amicaux et des matchs à plusieurs restent, comme auparavant, stockés uniquement sur l'appareil.
 
 (6) Historique d'utilisation du service
-- Afin d'améliorer le service, nous collectons, pour les comptes connectés, les événements d'utilisation des principales fonctionnalités (premier lancement, inscription, heure de lancement de l'Application, première grille terminée, grilles terminées (difficulté, temps écoulé, nombre d'indices et d'erreurs), entraînement à une technique terminé, utilisation d'un indice, Sudoku du jour terminé, visite du salon des matchs, consultation d'un Replay, consultation de l'écran Premium, lancement d'un partage et type de contenu partagé (salon entre amis, grille, résultat, carte mensuelle), ouverture de l'Application via un lien de l'Application et type de ce lien) ainsi que l'heure à laquelle ils se produisent. Aucune information sur les destinataires du partage n'est enregistrée.
-- Cet historique d'utilisation ne comporte ni identifiant publicitaire ni information matérielle sur l'appareil ; il est rattaché uniquement à l'identifiant de compte. Rien n'est collecté lorsque vous n'êtes pas connecté.
+- Afin d'améliorer le service, nous collectons, pour les comptes connectés, les événements d'utilisation des principales fonctionnalités (moment du premier lancement, inscription, heure de chaque lancement de l'application avec le numéro de build et le système d'exploitation (iOS/Android) de l'application à ce moment-là, première grille terminée, grilles terminées (difficulté, temps passé, nombre d'indices et d'erreurs), exercices de technique terminés, utilisation d'indices, Sudoku du jour terminé, visite du salon des matchs, consultation de Replays, consultation de l'écran Premium, lancement d'un partage et type d'élément partagé (salon entre amis, grille, résultat, carte mensuelle), ouverture de l'application depuis un lien de l'application et type de ce lien) ainsi que l'heure à laquelle chacun s'est produit. Aucune information concernant les personnes avec qui vous partagez n'est enregistrée.
+- Cet historique d'utilisation ne contient ni identifiant publicitaire ni informations matérielles sur votre appareil ; il est rattaché uniquement à l'identifiant de votre compte. Aucune donnée n'est collectée lorsque vous n'êtes pas connecté.
 
 (7) Identifiant d'installation (pour empêcher les connexions simultanées)
 - Afin d'empêcher qu'un même compte soit utilisé simultanément sur plusieurs appareils, un identifiant d'installation aléatoire généré lors de l'installation de l'Application est enregistré avec le compte.
@@ -953,6 +983,10 @@ La présente application (ci-après l'"Application") accorde une grande importan
 - Toute personne disposant du lien peut voir cette image. L'adresse du lien est une valeur aléatoire impossible à deviner, et il n'existe aucune fonction permettant de consulter la liste des images.
 - Si vous n'êtes pas connecté, aucune image n'est téléversée et seul un lien vers l'Application est envoyé.
 
+(14) Décompte des requêtes au serveur
+- Afin de détecter et de corriger les pannes du service, nous recueillons, que vous soyez connecté ou non, la réussite ou l'échec des requêtes envoyées par l'application à notre serveur, uniquement sous forme de chiffres dans un tableau de décompte commun.
+- Ce tableau ne contient que des chiffres par "date, type de requête, résultat (réussite, refus, erreur serveur, absence de connexion, réponse lente), système d'exploitation (iOS/Android), numéro de build de l'application" et ne contient aucun identifiant d'utilisateur, d'appareil ou d'installation. Aucun chiffre ne peut donc être rattaché à un utilisateur en particulier.
+
 L'Application ne demande pas l'autorisation d'accès à la localisation et n'accède ni aux contacts, ni aux photos, ni au micro, ni à l'appareil photo. Toutefois, Google AdMob, qui fournit les publicités, peut estimer une région approximative à partir d'informations telles que l'adresse IP afin de diffuser les publicités. L'Application n'utilise jamais les services de localisation de l'appareil pour déterminer votre position.
 
 2. Finalités de l'utilisation des informations
@@ -970,20 +1004,21 @@ L'Application ne demande pas l'autorisation d'accès à la localisation et n'acc
 
 3. Conservation et destruction des informations
 - Les informations de compte et l'historique de jeu sont conservés tant que le compte existe.
-- Lorsque vous supprimez votre compte, les moyens de connexion (association Google ou Apple, sessions) et l'adresse e-mail sont détruits immédiatement, et le pseudo est remplacé par "Utilisateur supprimé", de sorte que vous ne pouvez plus être identifié.
-- Toutefois, l'historique des matchs lui-même n'est pas supprimé et subsiste sous forme anonymisée. Un enregistrement de match constitue également le bilan et l'historique de cote de l'adversaire ; le supprimer porterait donc atteinte à l'historique d'un autre utilisateur.
-- Les enregistrements des coups (Replay) des matchs classés et du Sudoku du jour sont automatiquement détruits 30 jours après leur collecte.
-- Les signalements sont conservés au maximum 1 an après la fin de leur traitement, à des fins d'examen et de prévention de la récidive, puis détruits.
-- L'historique des demandes (adresse e-mail et contenu de la demande) est conservé 1 an à compter de sa réception, puis détruit.
-- Pendant 7 jours après la suppression d'un compte, il n'est pas possible de s'inscrire à nouveau avec le même compte. Pour le vérifier, seule une empreinte obtenue par hachage à sens unique des identifiants de connexion (adresse e-mail, identifiant de connexion via un réseau social) est conservée pendant 7 jours, puis automatiquement détruite. Cette empreinte ne permet pas de retrouver la valeur d'origine, sert uniquement à vérifier si une nouvelle inscription correspond au même compte et n'est liée ni à votre historique ni à votre identité.
-- L'historique d'utilisation du service est automatiquement détruit 13 mois après sa collecte et supprimé immédiatement en cas de suppression du compte.
-- Les statistiques en solo sont conservées tant que le compte existe et supprimées immédiatement en cas de suppression du compte.
-- L'XP et le niveau, le dernier enregistrement d'attribution de chaque type, ainsi que les titres, les couleurs de pseudo, les effets de fin de partie, le nombre de parties par technique et les totaux d'XP des événements sont conservés tant que le compte existe et supprimés immédiatement en cas de suppression du compte. Ils sont également supprimés lors du nettoyage des comptes invités inutilisés depuis longtemps.
+- Lorsque vous supprimez votre compte, vos moyens de connexion (liaison Google/Apple, sessions) et votre adresse e-mail sont immédiatement détruits, et votre pseudo est remplacé par "Utilisateur supprimé", de sorte que vous ne pouvez plus être identifié.
+- Toutefois, les historiques de matchs eux-mêmes ne sont pas supprimés et sont conservés sous forme anonymisée. Un historique de match constitue également le palmarès et l'historique de cote de votre adversaire ; le supprimer porterait donc atteinte aux données d'un autre utilisateur.
+- Les enregistrements des coups (Replays) des Matchs classés et du Sudoku du jour sont automatiquement détruits 30 jours après leur collecte.
+- Les signalements sont conservés pendant 1 an au maximum après la fin de leur traitement, à des fins d'examen et de prévention de la récidive, puis détruits.
+- L'historique des demandes (adresse e-mail, contenu de la demande) est conservé pendant 1 an à compter de la date de réception, puis détruit.
+- Pendant les 7 jours suivant la suppression d'un compte, il est impossible de s'inscrire à nouveau avec le même compte. Pour le vérifier, seule une empreinte (hachage à sens unique) de vos identifiants de connexion (adresse e-mail, identifiant de connexion via un réseau social) est conservée pendant 7 jours, puis automatiquement détruite. Cette empreinte ne peut pas être reconvertie en valeur d'origine ; elle sert uniquement à vérifier si une nouvelle inscription correspond au même compte et n'est liée ni à vos données ni à votre identité.
+- L'historique d'utilisation du service est automatiquement détruit 13 mois après sa collecte, et il est supprimé immédiatement en cas de suppression de votre compte.
+- Le décompte des requêtes au serveur est automatiquement détruit 90 jours après la date du décompte.
+- L'historique des parties en solo est conservé tant que le compte existe et est supprimé immédiatement en cas de suppression du compte.
+- Les points d'expérience et le niveau, le dernier enregistrement d'attribution de chaque type, ainsi que les titres, les couleurs de pseudo, les effets de fin de partie, le nombre de parties par technique utilisée et les totaux de points d'expérience d'événement sont conservés tant que le compte existe et sont supprimés immédiatement en cas de suppression du compte. Ils sont également supprimés lorsqu'un compte invité inutilisé depuis longtemps est supprimé.
 - L'identifiant d'installation et les informations de paiement sont supprimés immédiatement en cas de suppression du compte.
-- Les images partagées sont automatiquement supprimées 30 jours après leur téléversement. Comme elles ne sont pas enregistrées en lien avec le compte, les images téléversées avant la suppression du compte subsistent jusqu'à l'expiration de ce délai de 30 jours.
-- Le décompte des étapes d'installation ne contenant que des nombres qui ne permettent d'identifier personne, il ne fait pas l'objet d'une destruction distincte.
-- Les informations d'erreur et de diagnostic sont conservées au maximum 90 jours conformément à la politique de Google Firebase Crashlytics, puis détruites.
-- Les informations stockées sur l'appareil sont supprimées lors de la désinstallation de l'Application.
+- Les images partagées sont automatiquement supprimées 30 jours après leur mise en ligne. Les images n'étant pas enregistrées en lien avec le compte, celles mises en ligne avant la suppression de votre compte sont conservées jusqu'à l'expiration de ce délai de 30 jours.
+- Le décompte des étapes d'installation de l'application ne contient que des chiffres ne permettant d'identifier personne ; il ne fait donc pas l'objet d'une destruction distincte.
+- Les informations d'erreur et de diagnostic sont conservées pendant 90 jours au maximum, conformément à la politique de Google Firebase Crashlytics, puis détruites.
+- Les informations stockées sur l'appareil sont supprimées lors de la désinstallation de l'application.
 
 4. Communication à des tiers et sous-traitance
 - Sauf dans les cas prévus par la loi, l'Application ne vend ni ne communique les données personnelles des utilisateurs à des tiers.
@@ -1010,7 +1045,7 @@ La présente politique peut être modifiée ; toute modification importante sera
 Ce document est une traduction de l'original en coréen. En cas de divergence entre la traduction et l'original en coréen, l'original en coréen prévaut.</pre>
 <pre class="l-pt">Política de Privacidade
 
-Data de vigência: 9 de novembro de 2026 (publicada em 26 de julho de 2026; 11 de agosto: inclusão de registros de uso do serviço, identificador de instalação, informações de pagamento e informações de diagnóstico de erros; 3 de setembro: inclusão do armazenamento em servidor dos registros de jogadas das partidas e do Sudoku do Dia, de itens detalhados dos registros de uso e de registros de contato; 23 de setembro: inclusão de XP, níveis e títulos; 14 de outubro: inclusão de efeitos de conclusão, progresso em eventos e cores de apelido de eventos; 21 de outubro: inclusão de estatísticas de visitas ao site; 6 de novembro: inclusão da contagem das etapas de instalação do app, de registros de compartilhamento, de imagens compartilhadas e da origem da compra; 9 de novembro: inclusão do armazenamento na conta dos registros do modo solo)
+Data de vigência: 12 de novembro de 2026 (instituída em 26 de julho de 2026; em 11 de agosto, inclusão dos registros de uso do serviço, do identificador de instalação, das informações de pagamento e das informações de diagnóstico de erros; em 3 de setembro, inclusão da conservação no servidor dos registros de jogadas das partidas e do Sudoku do Dia, dos itens detalhados dos registros de uso e dos registros de contato; em 23 de setembro, inclusão de pontos de experiência, níveis e títulos; em 14 de outubro, inclusão de efeitos de conclusão, progresso em eventos e cores de apelido de eventos; em 21 de outubro, inclusão das estatísticas de visitas ao site; em 6 de novembro, inclusão da contagem das etapas de instalação do app, dos registros de compartilhamento, das imagens compartilhadas e da origem do pagamento; em 9 de novembro, inclusão da conservação na conta dos registros do modo solo; em 12 de novembro, inclusão da contagem de solicitações ao servidor e do número de build e do sistema operacional nos registros de abertura do app)
 
 Este aplicativo (doravante, o "app") valoriza as informações pessoais dos usuários e cumpre a legislação aplicável. Esta política explica quais informações o app coleta e como elas são utilizadas.
 
@@ -1043,8 +1078,8 @@ Este aplicativo (doravante, o "app") valoriza as informações pessoais dos usu�
 - No entanto, ao concluir uma partida ranqueada (1:1) ou o Sudoku do Dia, o registro de jogadas (Replay) dessa partida também é enviado ao servidor e armazenado nele. Os registros de jogadas do modo solo, do treino de técnicas, das partidas amistosas e das partidas em grupo continuam sendo armazenados apenas no dispositivo, como até agora.
 
 (6) Registros de uso do serviço
-- Para melhorar o serviço, coletamos, de contas com login, os eventos de uso das principais funções (momento da primeira execução, cadastro, horários de abertura do app, primeiro quebra-cabeça concluído, registros de quebra-cabeças concluídos (dificuldade, tempo gasto, número de dicas e de erros), treinos de técnicas concluídos, uso de dicas, conclusão do Sudoku do Dia, visitas ao lobby de partidas, visualização de Replays, visualização da tela Premium, uso da função de compartilhar e o tipo do que foi compartilhado (sala de amigos, quebra-cabeça, resultado, cartão mensal), abertura do app por um link do app e o tipo desse link) e o horário em que cada um ocorreu. Não registramos nenhuma informação sobre quem recebeu o compartilhamento.
-- Esses registros de uso não incluem identificadores de publicidade nem informações de hardware do dispositivo e são vinculados apenas ao identificador da conta. Nada é coletado enquanto não houver login.
+- Para aprimorar o serviço, coletamos, para contas conectadas, os eventos de uso das principais funções (momento da primeira execução, cadastro, horário de cada abertura do app com o número de build e o sistema operacional (iOS/Android) naquele momento, conclusão do primeiro quebra-cabeça, registros de quebra-cabeças concluídos (dificuldade, tempo gasto, número de dicas e de erros), conclusão de treinos de técnica, uso de dicas, conclusão do Sudoku do Dia, visita ao lobby de partidas, visualização de Replays, visualização da tela Premium, uso da função de compartilhar e o tipo do que foi compartilhado (sala de amigos, quebra-cabeça, resultado, cartão mensal), abertura do app por meio de um link do app e o tipo desse link) e o horário em que cada um ocorreu. Não registramos nenhuma informação sobre a pessoa que recebeu o compartilhamento.
+- Esses registros de uso não incluem identificador de publicidade nem informações de hardware do dispositivo, e são vinculados apenas ao identificador da conta. Nada é coletado enquanto você não estiver conectado.
 
 (7) Identificador de instalação (para impedir login simultâneo)
 - Para impedir que uma conta seja usada em vários dispositivos ao mesmo tempo, armazenamos, junto com a conta, um identificador de instalação aleatório gerado quando o app é instalado.
@@ -1085,6 +1120,10 @@ Este aplicativo (doravante, o "app") valoriza as informações pessoais dos usu�
 - Qualquer pessoa que tenha o link pode ver a imagem. O endereço do link é um valor aleatório que não pode ser adivinhado, e não existe nenhuma função para listar as imagens.
 - Sem login, nenhuma imagem é enviada, e apenas o link do app é compartilhado.
 
+(14) Contagem de solicitações ao servidor
+- Para identificar e corrigir falhas do serviço, independentemente de você estar conectado ou não, registramos se cada solicitação enviada pelo app ao servidor foi bem-sucedida ou falhou, exclusivamente como números em uma tabela de contagem compartilhada.
+- A tabela de contagem contém apenas números por "data, tipo de solicitação, resultado (sucesso, recusa, erro do servidor, sem conexão, resposta lenta), sistema operacional (iOS/Android) e número de build do app", e não contém nenhum identificador de usuário, dispositivo ou instalação. Assim, nenhum número pode ser associado a um usuário específico.
+
 O app não solicita permissão de localização e não acessa contatos, fotos, microfone nem câmera. No entanto, o Google AdMob, que fornece os anúncios, pode estimar a região aproximada a partir do endereço IP e de outras informações para veicular os anúncios. O app nunca usa o recurso de localização do dispositivo para determinar a sua localização.
 
 2. Finalidades do uso das informações
@@ -1100,21 +1139,22 @@ O app não solicita permissão de localização e não acessa contatos, fotos, m
 - Identificação da causa de erros e melhoria da estabilidade do app
 - Exibição de imagens compartilhadas por meio de links de compartilhamento
 
-3. Armazenamento e descarte das informações
-- As informações da conta e os registros de jogo são mantidos enquanto a conta existir.
-- Ao excluir a conta, os meios de login (vínculos com Google e Apple, sessões) e o endereço de e-mail são destruídos imediatamente, e o apelido é substituído por "Usuário excluído", de modo que não seja mais possível identificar a pessoa.
-- No entanto, os registros de partidas em si não são excluídos e permanecem anonimizados. Isso porque cada registro de partida também faz parte do histórico de resultados e de rating do adversário, e apagá-lo prejudicaria também os registros de outro usuário.
-- Os registros de jogadas (Replays) das partidas ranqueadas e do Sudoku do Dia são descartados automaticamente após 30 dias da data de coleta.
-- Os registros de denúncias são mantidos por até 1 ano após a conclusão do processamento, para análise e prevenção de reincidência, e depois são descartados.
-- Os registros de contato (endereço de e-mail e conteúdo da mensagem) são mantidos por 1 ano a partir da data de recebimento e depois descartados.
-- Durante 7 dias após a exclusão da conta, não é possível se cadastrar novamente com a mesma conta. Para verificar isso, apenas o hash unidirecional dos identificadores de login (endereço de e-mail, identificador de login social) é mantido por 7 dias e depois descartado automaticamente. O hash não pode ser revertido ao valor original, é usado apenas para verificar se um novo cadastro corresponde à mesma conta e não está vinculado aos registros nem à identidade do usuário.
-- Os registros de uso do serviço são descartados automaticamente após 13 meses da data de coleta e, se a conta for excluída, são excluídos imediatamente junto com ela.
-- Os registros do modo solo são mantidos enquanto a conta existir e, se a conta for excluída, são excluídos imediatamente junto com ela.
-- O XP e o nível, o último registro de concessão de cada tipo e os títulos, as cores de apelido, os efeitos de conclusão, o número de partidas com uso de técnicas e o total de XP de eventos são mantidos enquanto a conta existir e, se a conta for excluída, são excluídos imediatamente junto com ela. Também são excluídos quando contas de convidado sem uso por um longo período são removidas.
-- O identificador de instalação e as informações de pagamento são excluídos imediatamente junto com a conta, caso ela seja excluída.
-- As imagens compartilhadas são excluídas automaticamente após 30 dias da data de envio. Como as imagens não são armazenadas vinculadas à conta, mesmo que a conta seja excluída, as imagens enviadas antes disso permanecem até completarem 30 dias.
-- A contagem das etapas de instalação do app contém apenas números que não permitem identificar ninguém e, por isso, não é descartada separadamente.
-- As informações de erros e diagnóstico são mantidas por até 90 dias, conforme a política do Google Firebase Crashlytics, e depois descartadas.
+3. Conservação e eliminação das informações
+- As informações da conta e os registros de jogo são conservados enquanto a conta existir.
+- Ao excluir a conta, os meios de login (vínculos com Google e Apple, sessões) e o endereço de e-mail são eliminados imediatamente, e o apelido é substituído por "Usuário excluído", de modo que não seja mais possível identificar a pessoa.
+- No entanto, os registros das partidas em si não são excluídos e permanecem de forma anonimizada. Isso porque cada registro de partida também faz parte do histórico de vitórias e derrotas e de rating do adversário, e apagá-lo prejudicaria também o registro de outro usuário.
+- Os registros de jogadas (Replays) das partidas ranqueadas e do Sudoku do Dia são eliminados automaticamente após 30 dias da data de coleta.
+- Os registros de denúncias são conservados por até 1 ano após a conclusão do seu tratamento, para fins de análise e prevenção de reincidência, e depois eliminados.
+- Os registros de contato (endereço de e-mail e conteúdo da mensagem) são conservados por 1 ano a partir da data de recebimento e depois eliminados.
+- Durante 7 dias após a exclusão da conta, não é possível fazer um novo cadastro com a mesma conta. Para verificar isso, conservamos por 7 dias apenas o valor de hash unidirecional dos identificadores de login (endereço de e-mail e identificador de login social), que é então eliminado automaticamente. O valor de hash não pode ser revertido ao valor original, é usado exclusivamente para verificar se um novo cadastro corresponde à mesma conta e não é vinculado aos registros nem à identidade do usuário.
+- Os registros de uso do serviço são eliminados automaticamente após 13 meses da data de coleta e são excluídos imediatamente quando a conta é excluída.
+- A contagem de solicitações ao servidor é eliminada automaticamente após 90 dias da data da contagem.
+- Os registros do modo solo são conservados enquanto a conta existir e são excluídos imediatamente quando a conta é excluída.
+- Os pontos de experiência e o nível, o registro da última concessão de cada tipo, bem como os títulos, as cores de apelido, os efeitos de conclusão, o número de partidas com uso de cada técnica e o total de pontos de experiência de eventos são conservados enquanto a conta existir e são excluídos imediatamente quando a conta é excluída. Também são excluídos quando uma conta de convidado sem uso por um longo período é removida.
+- O identificador de instalação e as informações de pagamento são excluídos imediatamente quando a conta é excluída.
+- As imagens compartilhadas são excluídas automaticamente após 30 dias da data de envio. Como as imagens não são armazenadas vinculadas à conta, as imagens enviadas antes da exclusão da conta permanecem até completarem 30 dias.
+- A contagem das etapas de instalação do app contém apenas números que não permitem identificar nenhuma pessoa e, por isso, não é eliminada separadamente.
+- As informações de erros e diagnóstico são conservadas por até 90 dias, de acordo com a política do Google Firebase Crashlytics, e depois eliminadas.
 - As informações armazenadas no dispositivo são excluídas quando o app é desinstalado.
 
 4. Fornecimento a terceiros e terceirização do tratamento
