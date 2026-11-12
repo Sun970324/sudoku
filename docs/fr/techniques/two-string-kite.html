@@ -298,7 +298,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="find">Comment trouver le motif <span class="nowrap">2-String Kite</span></h2>
       <ol class="steps">
         <li class="px"><span>Choisis <b>un chiffre</b> et cherche une <b>ligne</b> et une <b>colonne</b> où il n'a que deux candidats.</span></li>
-        <li class="px"><span>Vérifie qu'une extrémité de chaque rangée est <b>dans le même bloc</b> (ce doivent être deux cases différentes).</span></li>
+        <li class="px"><span>Vérifie qu'une extrémité de chaque rangée est <b>dans le même bloc</b> (il faut deux cases différentes).</span></li>
         <li class="px"><span>Retire le chiffre de la case qui <b>voit les deux bouts opposés</b>. C'est en général la case où les deux rangées se croisent.</span></li>
       </ol>
     </section>
@@ -312,7 +312,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">Confusions fréquentes</h2>
       <div class="qa">
         <details class="px" open><summary>Quelle différence avec le Gratte-ciel ?</summary><p>Le Gratte-ciel relie deux rangées parallèles (deux colonnes) par une même ligne. Le 2-String Kite relie une ligne et une colonne par un même bloc.</p></details>
-        <details class="px"><summary>Peut-on vider plusieurs cases ?</summary><p>En général, une seule case voit les deux bouts : celle où les deux rangées se croisent.</p></details>
+        <details class="px"><summary>Peut-on éliminer dans plusieurs cases ?</summary><p>En général, une seule case voit les deux bouts : celle où les deux rangées se croisent.</p></details>
         <details class="px"><summary>Il existe des techniques de la même famille ?</summary><p>Le Gratte-ciel et le Turbot Fish sont de la même famille, et ce sont tous des Chaînes X courtes.</p></details>
       </div>
     </section>
@@ -330,7 +330,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div>
         <p class="eyebrow">DANS L'APP SUDOKU LEAGUE</p>
         <h2 id="app">Tu bloques ? Un indice te montre le motif <span class="nowrap">2-String Kite</span></h2>
-        <p>Si tu bloques et que tu touches Indice, les deux rangées, le lien dans le bloc et la case à vider s'affichent sur la grille. Dans Entraînement aux techniques, tu suis la leçon 2-String Kite sur une vraie grille. La première grille te montre le motif et son explication, puis tu le trouves toi-même sur la suivante.</p>
+        <p>Si tu bloques et que tu touches Indice, les deux rangées, le lien dans le bloc et le candidat à éliminer s'affichent sur la grille. Dans Entraînement aux techniques, tu suis la leçon 2-String Kite sur une vraie grille. La première grille te montre le motif et son explication, puis tu le trouves toi-même sur la suivante.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-fr-two-string-kite&amp;mt=8" data-goatcounter-click="store-ios/tech-fr/two-string-kite"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Télécharger dans l'App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-fr-two-string-kite" data-goatcounter-click="store-android/tech-fr/two-string-kite"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Disponible sur Google Play"></a>
@@ -342,7 +342,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MOIS OFFERT</p>
-        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Entraînement aux techniques</p>
+        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Leçons de techniques</p>
         <span class="ticket-go px">Obtenir le coupon ▸</span>
       </div>
       <div class="ticket-stub px"><span>LIMITED</span><b>Quantité<br> limitée</b></div>
@@ -390,7 +390,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 {
   "lesson.prev": "Précédent",
   "lesson.next": "Suivant",
-  "lesson.find": "Trouve et touche",
+  "lesson.find": "Touche la bonne case",
   "lesson.restart": "Recommencer",
   "lesson.nextTech": "Technique suivante",
   "lesson.app": "Vraies grilles dans l'app",

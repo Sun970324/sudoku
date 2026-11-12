@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>交差(クレーミング)・Box/Line Reduction ナンプレのテクニック・見つけ方と仕組み</title>
+<title>交差(クレーミング)の見つけ方と仕組み｜ナンプレのテクニック (Box/Line Reduction)</title>
 <meta name="description" content="交差(クレーミング)は、ボックス/ラインリダクションとも呼ばれ、1つの行か列である数字の候補が1つのブロックの中にだけあるとき、そのブロックの他のマスからその数字を消すナンプレのテクニックです。 交差(ポインティング)と向きが逆なだけなので、2つ一緒に覚えるのがおすすめです。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/claiming.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/claiming.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="交差(クレーミング)・Box/Line Reduction ナンプレのテクニック・見つけ方と仕組み">
+<meta property="og:title" content="交差(クレーミング)の見つけ方と仕組み｜ナンプレのテクニック (Box/Line Reduction)">
 <meta property="og:description" content="交差(クレーミング)は、ボックス/ラインリダクションとも呼ばれ、1つの行か列である数字の候補が1つのブロックの中にだけあるとき、そのブロックの他のマスからその数字を消すナンプレのテクニックです。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/ja/techniques/claiming.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "交差(クレーミング)・Box/Line Reduction ナンプレのテクニック・見つけ方と仕組み",
+      "headline": "交差(クレーミング)の見つけ方と仕組み｜ナンプレのテクニック (Box/Line Reduction)",
       "description": "交差(クレーミング)は、ボックス/ラインリダクションとも呼ばれ、1つの行か列である数字の候補が1つのブロックの中にだけあるとき、そのブロックの他のマスからその数字を消すナンプレのテクニックです。",
       "inLanguage": "ja",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/ja/techniques/claiming.html",
@@ -243,15 +243,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="aka">ボックス/ラインリダクション · ロックドキャンディデート · Box/Line Reduction</p>
       <p class="lead">交差(クレーミング)は、ボックス/ラインリダクションとも呼ばれ、1つの行か列である数字の候補が1つのブロックの中にだけあるとき、そのブロックの他のマスからその数字を消すナンプレのテクニックです。</p>
       <dl class="facts">
-        <div class="px"><dt>見る数字</dt><dd>1種類</dd></div>
-        <div class="px"><dt>必要な場所</dt><dd>行か列1つと、それが通るブロック</dd></div>
+        <div class="px"><dt>注目する数字</dt><dd>1種類</dd></div>
+        <div class="px"><dt>見る範囲</dt><dd>行か列1つと、それが通るブロック</dd></div>
         <div class="px"><dt>消す場所</dt><dd>行・列の外の同じブロック</dd></div>
       </dl>
     </div>
 
     <section aria-labelledby="shape">
       <h2 id="shape">交差(クレーミング)の形</h2>
-      <p>数字6だけを表示した図です。<b>5行目</b>で6が入れるマスはR5C4とR5C6で、どちらも<b>ブロック5</b>の中にあります。</p>
+      <p>数字6だけを表示した図です。<b>5行目</b>で6を入れられるマスはR5C4とR5C6で、どちらも<b>ブロック5</b>の中にあります。</p>
       <div class="board px">
         <svg viewBox="0 0 400 400" role="img" aria-label="数字6の候補だけを表示した図です。5行目の6の候補はブロック5の中のR5C4とR5C6だけなので、同じブロックのR4C5とR6C4の6が消えます。">
 <defs><clipPath id="board-view-go9v43"><rect x="30" y="30" width="360" height="360"/></clipPath></defs>
@@ -287,7 +287,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">なぜ消せるのですか？</h2>
-      <p>5行目には必ず6が1つ入り、入れる場所はブロック5の中の2マスだけです。つまり<b>ブロック5の6は5行目に入ります。</b></p>
+      <p>5行目には必ず6が1つ入り、入る場所はブロック5の中の2マスだけです。つまり<b>ブロック5の6は5行目に入ります。</b></p>
       <p>ブロックに6は1つしか入らないので、ブロック5の他のマス（R4C5、R6C4）には6が入りません。そこで、それらのマスの6の候補を消します。</p>
     </section>
 
@@ -296,7 +296,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <ol class="steps">
         <li class="px"><span>行か列を1つと<b>数字を1つ</b>決めます。</span></li>
         <li class="px"><span>その行・列の候補が<b>すべて1つのブロックの中に</b>あるか確認します。</span></li>
-        <li class="px"><span>そうなら、<b>そのブロックの、行・列の外のマス</b>からその数字を消します。</span></li>
+        <li class="px"><span>そうであれば、<b>そのブロックの、行・列の外のマス</b>からその数字を消します。</span></li>
       </ol>
     </section>
     <section aria-labelledby="try">
@@ -315,7 +315,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="pointing.html">交差(ポインティング)</a>
         <a class="px" href="hidden-pair.html">ヒドゥンペア</a>

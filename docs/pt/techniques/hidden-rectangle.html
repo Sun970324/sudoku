@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hidden Unique Rectangle: como achar e usar no sudoku</title>
-<meta name="description" content="O Hidden Unique Rectangle (Hidden Rectangle) é uma técnica de sudoku em que quatro células formam um retângulo com dois números e um deles só aparece em duas células na linha e na coluna do canto oposto, e como a resposta é única, você remove o outro número desse canto. É uma técnica de unicidade que usa a regra de que o sudoku tem só uma resposta.">
+<meta name="description" content="O Hidden Unique Rectangle (Hidden Rectangle) é uma técnica de sudoku em que quatro células formam um retângulo com dois números e um deles só aparece em duas células na linha e na coluna do canto oposto; como a resposta é única, você remove o outro número desse canto. É uma técnica de unicidade que usa a regra de que o sudoku tem só uma resposta.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/pt/techniques/hidden-rectangle.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/hidden-rectangle.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/hidden-rectangle.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="Hidden Unique Rectangle: como achar e usar no sudoku">
-<meta property="og:description" content="O Hidden Unique Rectangle (Hidden Rectangle) é uma técnica de sudoku em que quatro células formam um retângulo com dois números e um deles só aparece em duas células na linha e na coluna do canto oposto, e como a resposta é única, você remove o outro número desse canto.">
+<meta property="og:description" content="O Hidden Unique Rectangle (Hidden Rectangle) é uma técnica de sudoku em que quatro células formam um retângulo com dois números e um deles só aparece em duas células na linha e na coluna do canto oposto; como a resposta é única, você remove o outro número desse canto.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/pt/techniques/hidden-rectangle.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "Hidden Unique Rectangle: como achar e usar no sudoku",
-      "description": "O Hidden Unique Rectangle (Hidden Rectangle) é uma técnica de sudoku em que quatro células formam um retângulo com dois números e um deles só aparece em duas células na linha e na coluna do canto oposto, e como a resposta é única, você remove o outro número desse canto.",
+      "description": "O Hidden Unique Rectangle (Hidden Rectangle) é uma técnica de sudoku em que quatro células formam um retângulo com dois números e um deles só aparece em duas células na linha e na coluna do canto oposto; como a resposta é única, você remove o outro número desse canto.",
       "inLanguage": "pt",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/pt/techniques/hidden-rectangle.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,7 +236,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Fase 8 · Unicidade</p>
       <h1>Hidden Unique Rectangle</h1>
       <p class="aka">Retângulo único oculto · Hidden Rectangle</p>
-      <p class="lead">O Hidden Unique Rectangle (Hidden Rectangle) é uma técnica de sudoku em que quatro células formam um retângulo com dois números e um deles só aparece em duas células na linha e na coluna do canto oposto, e como a resposta é única, você remove o outro número desse canto.</p>
+      <p class="lead">O Hidden Unique Rectangle (Hidden Rectangle) é uma técnica de sudoku em que quatro células formam um retângulo com dois números e um deles só aparece em duas células na linha e na coluna do canto oposto; como a resposta é única, você remove o outro número desse canto.</p>
       <dl class="facts">
         <div class="px"><dt>Células necessárias</dt><dd>2 linhas × 2 colunas, 2 blocos</dd></div>
         <div class="px"><dt>Elos necessários</dt><dd>Número em só duas células na linha e na coluna</dd></div>
@@ -313,7 +313,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="faq">
       <h2 id="faq">Dúvidas comuns</h2>
       <div class="qa">
-        <details class="px" open><summary>Qual a diferença para o Unique Rectangle?</summary><p>O Unique Rectangle olha só os candidatos das células. O Hidden Unique Rectangle também vê se um número aparece em só duas células numa linha e numa coluna (elo forte). Por isso, ele funciona mesmo com muitos outros candidatos.</p></details>
+        <details class="px" open><summary>Qual a diferença para o Unique Rectangle?</summary><p>O Unique Rectangle olha só os candidatos das células. O Hidden Unique Rectangle também confere se um número aparece em só duas células numa linha e numa coluna (elo forte). Por isso, ele funciona mesmo com muitos outros candidatos.</p></details>
         <details class="px"><summary>Posso confiar que a resposta é única?</summary><p>Todos os puzzles do Sudoku League são feitos para ter uma única resposta. Em puzzles com várias respostas, essa técnica não vale.</p></details>
         <details class="px"><summary>E se o retângulo ocupar quatro blocos?</summary><p>Aí, ao trocar os números, a regra do bloco é quebrada e não surge uma segunda resposta. Só funciona com dois blocos.</p></details>
       </div>
@@ -333,7 +333,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div>
         <p class="eyebrow">NO APP SUDOKU LEAGUE</p>
         <h2 id="app">Travou? A dica mostra <span class="nowrap">Hidden Unique Rectangle</span> para você</h2>
-        <p>Quando você travar e tocar em dica, o tabuleiro mostra as quatro células do retângulo, os elos fortes e o número a remover. No Treino de técnicas, você aprende o Hidden Unique Rectangle num puzzle de verdade. No primeiro tabuleiro, você vê o padrão e o motivo passo a passo. No próximo, você mesmo encontra.</p>
+        <p>Quando você travar e tocar em dica, o tabuleiro mostra as quatro células do retângulo, os elos fortes e o número a remover. No Treino de técnicas, você aprende o Hidden Unique Rectangle num puzzle de verdade. No primeiro tabuleiro, você vê o padrão e o motivo passo a passo. No próximo, é sua vez de encontrar.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-pt-hidden-rectangle&amp;mt=8" data-goatcounter-click="store-ios/tech-pt/hidden-rectangle"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Baixar na App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-pt-hidden-rectangle" data-goatcounter-click="store-android/tech-pt/hidden-rectangle"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Disponível no Google Play"></a>
@@ -396,7 +396,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   "lesson.find": "Encontre e toque",
   "lesson.restart": "Recomeçar",
   "lesson.nextTech": "Próxima técnica",
-  "lesson.app": "Sudokus reais no app",
+  "lesson.app": "Jogar sudokus no app",
   "lesson.fail": "Não foi possível carregar a lição. Atualize a página."
 }
 </script>

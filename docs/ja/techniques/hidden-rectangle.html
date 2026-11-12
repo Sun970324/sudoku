@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ヒドゥンユニークレクタングル（Hidden Rectangle）ナンプレのテクニック · 見つけ方と仕組み</title>
-<meta name="description" content="ヒドゥンユニークレクタングル（Hidden Rectangle）は、2つの数字で長方形を作る4マスで、ある数字が長方形の行と列に2マスずつしかないとき、答えが1つであることを使って向かいのマスのもう一方の数字を消すナンプレのテクニックです。 答えは1つというルールを使って候補を消す、唯一性のテクニックです。">
+<meta name="description" content="ヒドゥンユニークレクタングル（Hidden Rectangle）は、2つの数字で長方形を作る4マスで、ある数字が長方形の行と列に2マスずつしかないとき、答えが1つであることを使って向かいのマスのもう一方の数字を消すナンプレのテクニックです。 答えが1つというルールを使って候補を消す、唯一解系のテクニックです。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/hidden-rectangle.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/hidden-rectangle.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/hidden-rectangle.html">
@@ -298,7 +298,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="px"><b>2行目と5列目の3</b><span>R2C5が7なので、2行目の3はR2C1、5列目の3はR1C5です。</span></div>
         <div class="px"><b>するとR1C1は</b><span>同じ行と列に3があるので、3ではなく7です。</span></div>
       </div>
-      <p>すると4マスは7・3・3・7で埋まります。この4マスは3と7を入れ替えてもルールに合うので、<b>答えが2つ</b>になってしまいます。正しく作られたナンプレは答えが1つだけなので、R2C5は7になれません。だから7を消します。</p>
+      <p>すると4マスは7・3・3・7で埋まります。この4マスは3と7を入れ替えてもルールに合うので、<b>答えが2つ</b>になってしまいます。正しく作られたナンプレは答えが1つだけなので、R2C5が7になることはありません。だから7を消します。</p>
     </section>
 
     <section aria-labelledby="find">
@@ -325,7 +325,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="bug-plus-one.html">BUG+1</a>
         <a class="px" href="naked-pair.html">ネイキッドペア</a>

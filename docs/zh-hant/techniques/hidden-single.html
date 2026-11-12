@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>隱性唯一（Hidden Single）數獨技巧 · 找法與原理</title>
-<meta name="description" content="隱性唯一（Hidden Single）是一種數獨技巧：在某一列、行或宮裡，某個數字只剩一格能放時，就把那格填上這個數字。 不從格、改從數字出發，藏起來的答案就會出現。">
+<meta name="description" content="隱性唯一（Hidden Single）是一種數獨技巧：在某個橫列、直行或宮裡，某個數字只剩一格能放時，就把那格填上這個數字。 不從格、改從數字出發，藏起來的答案就會出現。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/zh-hant/techniques/hidden-single.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/hidden-single.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/hidden-single.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:title" content="隱性唯一（Hidden Single）數獨技巧 · 找法與原理">
-<meta property="og:description" content="隱性唯一（Hidden Single）是一種數獨技巧：在某一列、行或宮裡，某個數字只剩一格能放時，就把那格填上這個數字。">
+<meta property="og:description" content="隱性唯一（Hidden Single）是一種數獨技巧：在某個橫列、直行或宮裡，某個數字只剩一格能放時，就把那格填上這個數字。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/zh-hant/techniques/hidden-single.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "隱性唯一（Hidden Single）數獨技巧 · 找法與原理",
-      "description": "隱性唯一（Hidden Single）是一種數獨技巧：在某一列、行或宮裡，某個數字只剩一格能放時，就把那格填上這個數字。",
+      "description": "隱性唯一（Hidden Single）是一種數獨技巧：在某個橫列、直行或宮裡，某個數字只剩一格能放時，就把那格填上這個數字。",
       "inLanguage": "zh-Hant",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/zh-hant/techniques/hidden-single.html",
       "author": { "@type": "Organization", "name": "數獨聯盟", "url": "https://sudoku.jaywithme.com/" },
@@ -241,10 +241,10 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · 第1階段 · 唯一數</p>
       <h1>隱性唯一</h1>
       <p class="aka">摒除法 · 隱藏唯一 · Hidden Single</p>
-      <p class="lead">隱性唯一（Hidden Single）是一種數獨技巧：在某一列、行或宮裡，某個數字只剩一格能放時，就把那格填上這個數字。</p>
+      <p class="lead">隱性唯一（Hidden Single）是一種數獨技巧：在某個橫列、直行或宮裡，某個數字只剩一格能放時，就把那格填上這個數字。</p>
       <dl class="facts">
         <div class="px"><dt>觀察數字</dt><dd>一種</dd></div>
-        <div class="px"><dt>觀察範圍</dt><dd>一個列、行或宮</dd></div>
+        <div class="px"><dt>觀察範圍</dt><dd>一個橫列、直行或宮</dd></div>
         <div class="px"><dt>要做的事</dt><dd>填入剩下的一格</dd></div>
       </dl>
     </div>
@@ -292,11 +292,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="find">
       <h2 id="find">找出隱性唯一的步驟</h2>
       <ol class="steps">
-        <li class="px"><span>選定一個列、行或宮，以及<b>一個數字</b>。</span></li>
+        <li class="px"><span>選定一個橫列、直行或宮，以及<b>一個數字</b>。</span></li>
         <li class="px"><span>沿著已經有這個數字的線，劃掉<b>被擋住的格</b>。</span></li>
         <li class="px"><span><b>只剩一格時</b>，就把這個數字填進去。</span></li>
       </ol>
-      <p class="note">從宮來看最簡單。拿同一個數字繞遍整個盤面，找找看哪個宮只剩一格。</p>
+      <p class="note">從宮來看最簡單。把同一個數字在整個盤面上逐一追蹤，找找看哪個宮只剩一格。</p>
     </section>
     <section aria-labelledby="try">
       <h2 id="try">開始隱性唯一課程</h2>
@@ -308,7 +308,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">容易混淆的地方</h2>
       <div class="qa">
         <details class="px" open><summary>跟顯性唯一有什麼不同？</summary><p>隱性唯一是從數字出發，也就是“這個數字能放的格只有一格”。那一格裡可能還有好幾個候選數。</p></details>
-        <details class="px"><summary>在列或行裡也適用嗎？</summary><p>可以。在某一列或行裡，某個數字只剩一格能放時，也一樣可以填。</p></details>
+        <details class="px"><summary>在橫列或直行裡也適用嗎？</summary><p>可以。在某個橫列或直行裡，某個數字只剩一格能放時，也一樣可以填。</p></details>
         <details class="px"><summary>該從哪個數字看起？</summary><p>先看盤面上已經填了很多個的數字。擋住的線比較多，剩下的格很快就會出現。</p></details>
       </div>
     </section>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>WXYZ-Wing: técnica de sudoku, como achar e por que funciona</title>
-<meta name="description" content="O WXYZ-Wing é uma técnica de sudoku com quatro células cujos candidatos, juntos, são só quatro números, e quando só um desses números fica em células que não se veem, ele sai de toda célula que vê todas as células com ele. São quatro células e quatro números, o maior padrão da família dos Wings.">
+<meta name="description" content="O WXYZ-Wing é uma técnica de sudoku em que quatro células têm, juntas, só quatro números candidatos e só um deles fica em células que não se veem. Esse número sai de toda célula que vê todas as células com ele. São quatro células e quatro números, o maior padrão da família dos Wings.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/pt/techniques/wxyz-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/wxyz-wing.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/wxyz-wing.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="WXYZ-Wing: técnica de sudoku, como achar e por que funciona">
-<meta property="og:description" content="O WXYZ-Wing é uma técnica de sudoku com quatro células cujos candidatos, juntos, são só quatro números, e quando só um desses números fica em células que não se veem, ele sai de toda célula que vê todas as células com ele.">
+<meta property="og:description" content="O WXYZ-Wing é uma técnica de sudoku em que quatro células têm, juntas, só quatro números candidatos e só um deles fica em células que não se veem. Esse número sai de toda célula que vê todas as células com ele.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/pt/techniques/wxyz-wing.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "WXYZ-Wing: técnica de sudoku, como achar e por que funciona",
-      "description": "O WXYZ-Wing é uma técnica de sudoku com quatro células cujos candidatos, juntos, são só quatro números, e quando só um desses números fica em células que não se veem, ele sai de toda célula que vê todas as células com ele.",
+      "description": "O WXYZ-Wing é uma técnica de sudoku em que quatro células têm, juntas, só quatro números candidatos e só um deles fica em células que não se veem. Esse número sai de toda célula que vê todas as células com ele.",
       "inLanguage": "pt",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/pt/techniques/wxyz-wing.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,10 +236,10 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Fase 9 · ALS (conjuntos quase travados)</p>
       <h1>WXYZ-Wing</h1>
       <p class="aka"></p>
-      <p class="lead">O WXYZ-Wing é uma técnica de sudoku com quatro células cujos candidatos, juntos, são só quatro números, e quando só um desses números fica em células que não se veem, ele sai de toda célula que vê todas as células com ele.</p>
+      <p class="lead">O WXYZ-Wing é uma técnica de sudoku em que quatro células têm, juntas, só quatro números candidatos e só um deles fica em células que não se veem. Esse número sai de toda célula que vê todas as células com ele.</p>
       <dl class="facts">
-        <div class="px"><dt>Células necessárias</dt><dd>Quatro células com só quatro números juntas</dd></div>
-        <div class="px"><dt>Número comum</dt><dd>O único em células que não se veem</dd></div>
+        <div class="px"><dt>Células necessárias</dt><dd>Quatro células, só quatro números ao todo</dd></div>
+        <div class="px"><dt>Número em comum</dt><dd>O que fica em células que não se veem</dd></div>
         <div class="px"><dt>O que eliminar</dt><dd>Células que veem todas as células com ele</dd></div>
       </dl>
     </div>
@@ -278,7 +278,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 </svg>
         <div class="legend">
           <span><i class="k-key"></i>1, 2 e 4, só em células que se veem</span>
-          <span><i class="k-z"></i>O número comum 7</span>
+          <span><i class="k-z"></i>7, o número em comum</span>
           <span><i class="k-del"></i>7 a eliminar</span>
         </div>
       </div>
@@ -309,7 +309,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="qa">
         <details class="px" open><summary>Precisa ter uma célula no meio?</summary><p>Não. Se quatro células têm juntas só quatro números e só um deles fica espalhado, o formato pode variar.</p></details>
         <details class="px"><summary>Qual a relação com o XYZ-Wing?</summary><p>É o XYZ-Wing ampliado para quatro células e quatro números.</p></details>
-        <details class="px"><summary>Por que é raro ter o que eliminar?</summary><p>A célula precisa ver todas as células com o número comum. Isso costuma acontecer só onde um bloco cruza uma linha ou coluna.</p></details>
+        <details class="px"><summary>Por que é raro ter o que eliminar?</summary><p>A célula precisa ver todas as células com o número em comum. Isso costuma acontecer só onde um bloco cruza uma linha ou coluna.</p></details>
       </div>
     </section>
 
@@ -327,7 +327,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div>
         <p class="eyebrow">NO APP SUDOKU LEAGUE</p>
         <h2 id="app">Travou? A dica mostra <span class="nowrap">WXYZ-Wing</span> para você</h2>
-        <p>Quando você travar e tocar em dica, o app desenha no tabuleiro as quatro células, o número comum e a célula a limpar. No Treino de técnicas, você faz a aula de WXYZ-Wing em um jogo de verdade. No primeiro tabuleiro, você vê o padrão e o motivo passo a passo. No próximo, é você quem encontra.</p>
+        <p>Quando você travar e tocar em dica, o app desenha no tabuleiro as quatro células, o número em comum e a célula a limpar. No Treino de técnicas, você faz a aula de WXYZ-Wing em um jogo de verdade. No primeiro tabuleiro, você vê o padrão e o motivo passo a passo. No próximo, é você quem encontra.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-pt-wxyz-wing&amp;mt=8" data-goatcounter-click="store-ios/tech-pt/wxyz-wing"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Baixar na App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-pt-wxyz-wing" data-goatcounter-click="store-android/tech-pt/wxyz-wing"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Disponível no Google Play"></a>
@@ -390,7 +390,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   "lesson.find": "Encontre e toque",
   "lesson.restart": "Recomeçar",
   "lesson.nextTech": "Próxima técnica",
-  "lesson.app": "Sudokus reais no app",
+  "lesson.app": "Jogar sudokus no app",
   "lesson.fail": "Não foi possível carregar a lição. Atualize a página."
 }
 </script>

@@ -296,8 +296,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="why">Pourquoi ça marche ?</h2>
       <p>Prends le chiffre 1 (c'est pareil pour 5 et 8). Suppose que le 1 ne soit ni en R2C7 ni en R8C2.</p>
       <div class="why">
-        <div class="px"><b>Le 1 de la ligne 2</b><span>Son seul candidat hors du bloc est R2C7, donc il va dans la partie ligne 2 du bloc.</span></div>
-        <div class="px"><b>Le 1 de la colonne 2</b><span>Son seul candidat hors du bloc est R8C2, donc il va dans la partie colonne 2 du bloc.</span></div>
+        <div class="px"><b>Le 1 de la ligne 2</b><span>Hors du bloc, il ne peut aller qu'en R2C7, donc il va dans une case du bloc sur la ligne 2.</span></div>
+        <div class="px"><b>Le 1 de la colonne 2</b><span>Hors du bloc, il ne peut aller qu'en R8C2, donc il va dans une case du bloc sur la colonne 2.</span></div>
       </div>
       <p>Le bloc ne contient qu'un seul 1 : ce doit donc être la même case, celle de la ligne 2 et de la colonne 2, soit R2C2. Donc <b>le 1 est forcément dans une des trois cases.</b> C'est pareil pour 5 et 8. Trois chiffres remplissent les trois cases, un chacun : il ne reste de place pour rien d'autre. Tu retires le 3 de R2C2, le 6 de R2C7 et le 9 de R8C2.</p>
     </section>
@@ -351,7 +351,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MOIS OFFERT</p>
-        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Entraînement aux techniques</p>
+        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Leçons de techniques</p>
         <span class="ticket-go px">Obtenir le coupon ▸</span>
       </div>
       <div class="ticket-stub px"><span>LIMITED</span><b>Quantité<br> limitée</b></div>
@@ -399,7 +399,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 {
   "lesson.prev": "Précédent",
   "lesson.next": "Suivant",
-  "lesson.find": "Trouve et touche",
+  "lesson.find": "Touche la bonne case",
   "lesson.restart": "Recommencer",
   "lesson.nextTech": "Technique suivante",
   "lesson.app": "Vraies grilles dans l'app",

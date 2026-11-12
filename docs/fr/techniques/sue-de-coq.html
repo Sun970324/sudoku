@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sue de Coq : technique de sudoku expliquée</title>
-<meta name="description" content="Le Sue de Coq est une technique de sudoku : quand les candidats des cases où un bloc croise une ligne ou une colonne se répartissent entre une case de la ligne et une case du bloc, tu retires les chiffres de chaque côté du reste de la ligne et du reste du bloc. Nettoie une ligne et un bloc d'un coup, à partir des cases où ils se croisent.">
+<meta name="description" content="Le Sue de Coq est une technique de sudoku : quand les candidats des cases où un bloc croise une ligne ou une colonne se répartissent entre une case de la ligne et une case du bloc, tu retires les chiffres du côté ligne du reste de la ligne, et ceux du côté bloc du reste du bloc. Nettoie une ligne et un bloc d'un coup, à partir des cases où ils se croisent.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/fr/techniques/sue-de-coq.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/sue-de-coq.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/sue-de-coq.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:title" content="Sue de Coq : technique de sudoku expliquée">
-<meta property="og:description" content="Le Sue de Coq est une technique de sudoku : quand les candidats des cases où un bloc croise une ligne ou une colonne se répartissent entre une case de la ligne et une case du bloc, tu retires les chiffres de chaque côté du reste de la ligne et du reste du bloc.">
+<meta property="og:description" content="Le Sue de Coq est une technique de sudoku : quand les candidats des cases où un bloc croise une ligne ou une colonne se répartissent entre une case de la ligne et une case du bloc, tu retires les chiffres du côté ligne du reste de la ligne, et ceux du côté bloc du reste du bloc.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/fr/techniques/sue-de-coq.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "Sue de Coq : technique de sudoku expliquée",
-      "description": "Le Sue de Coq est une technique de sudoku : quand les candidats des cases où un bloc croise une ligne ou une colonne se répartissent entre une case de la ligne et une case du bloc, tu retires les chiffres de chaque côté du reste de la ligne et du reste du bloc.",
+      "description": "Le Sue de Coq est une technique de sudoku : quand les candidats des cases où un bloc croise une ligne ou une colonne se répartissent entre une case de la ligne et une case du bloc, tu retires les chiffres du côté ligne du reste de la ligne, et ceux du côté bloc du reste du bloc.",
       "inLanguage": "fr",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/fr/techniques/sue-de-coq.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,7 +236,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Étape 9 · ALS (ensembles presque verrouillés)</p>
       <h1>Sue de Coq</h1>
       <p class="aka"></p>
-      <p class="lead">Le Sue de Coq est une technique de sudoku : quand les candidats des cases où un bloc croise une ligne ou une colonne se répartissent entre une case de la ligne et une case du bloc, tu retires les chiffres de chaque côté du reste de la ligne et du reste du bloc.</p>
+      <p class="lead">Le Sue de Coq est une technique de sudoku : quand les candidats des cases où un bloc croise une ligne ou une colonne se répartissent entre une case de la ligne et une case du bloc, tu retires les chiffres du côté ligne du reste de la ligne, et ceux du côté bloc du reste du bloc.</p>
       <dl class="facts">
         <div class="px"><dt>Cases nécessaires</dt><dd>2 cases au croisement + 1 côté ligne + 1 côté bloc</dd></div>
         <div class="px"><dt>Candidats</dt><dd>Quatre chiffres en tout</dd></div>
@@ -288,7 +288,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">Pourquoi ça marche ?</h2>
-      <p>Tous les candidats des quatre cases (les deux du croisement, R1C7 et R3C3) sont parmi 1, 2, 4 et 5. Les cases du croisement sont sur la même ligne que la case côté ligne et dans le même bloc que la case côté bloc, donc elles ne peuvent pas répéter leurs chiffres. Le côté ligne (1, 2) et le côté bloc (4, 5) n'ont aucun chiffre en commun, donc <b>les quatre cases prennent 1, 2, 4 et 5, une fois chacun</b>.</p>
+      <p>Tous les candidats des quatre cases (les deux du croisement, R1C7 et R3C3) sont parmi 1, 2, 4 et 5. Les cases du croisement sont sur la même ligne que la case côté ligne et dans le même bloc que la case côté bloc, donc elles ne peuvent avoir aucun chiffre en commun avec ces deux cases. Le côté ligne (1, 2) et le côté bloc (4, 5) n'ont aucun chiffre en commun, donc <b>les quatre cases prennent 1, 2, 4 et 5, une fois chacun</b>.</p>
       <p>Le 1 et le 2 sont donc dans la ligne 1, dans les cases du croisement ou en R1C7 : aucune autre case de la ligne 1 ne peut les contenir. Le 4 et le 5 sont dans le bloc 1, dans les cases du croisement ou en R3C3 : aucune autre case du bloc ne peut les contenir. Tu retires donc le 1 de R1C5 et le 5 de R2C3.</p>
     </section>
 
@@ -341,7 +341,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MOIS OFFERT</p>
-        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Entraînement aux techniques</p>
+        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Leçons de techniques</p>
         <span class="ticket-go px">Obtenir le coupon ▸</span>
       </div>
       <div class="ticket-stub px"><span>LIMITED</span><b>Quantité<br> limitée</b></div>
@@ -389,7 +389,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 {
   "lesson.prev": "Précédent",
   "lesson.next": "Suivant",
-  "lesson.find": "Trouve et touche",
+  "lesson.find": "Touche la bonne case",
   "lesson.restart": "Recommencer",
   "lesson.nextTech": "Technique suivante",
   "lesson.app": "Vraies grilles dans l'app",

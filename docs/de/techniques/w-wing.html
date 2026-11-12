@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>W-Wing: Sudoku-Technik einfach erklärt</title>
-<meta name="description" content="Der W-Wing ist eine Sudoku-Technik, bei der zwei Felder mit denselben zwei Kandidaten über eine starke Verbindung einer dieser Ziffern zusammenhängen und du die andere Ziffer aus jedem Feld streichst, das beide sieht. Eine Linie verbindet zwei weit entfernte Felder mit demselben Ziffernpaar.">
+<meta name="description" content="Der W-Wing ist eine Sudoku-Technik, bei der zwei Felder mit denselben zwei Kandidaten über eine starke Verbindung auf einer dieser Ziffern zusammenhängen und du die andere Ziffer aus jedem Feld streichst, das beide sieht. Eine Linie verbindet zwei weit entfernte Felder mit demselben Ziffernpaar.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/de/techniques/w-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/w-wing.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/w-wing.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="de_DE">
 <meta property="og:title" content="W-Wing: Sudoku-Technik einfach erklärt">
-<meta property="og:description" content="Der W-Wing ist eine Sudoku-Technik, bei der zwei Felder mit denselben zwei Kandidaten über eine starke Verbindung einer dieser Ziffern zusammenhängen und du die andere Ziffer aus jedem Feld streichst, das beide sieht.">
+<meta property="og:description" content="Der W-Wing ist eine Sudoku-Technik, bei der zwei Felder mit denselben zwei Kandidaten über eine starke Verbindung auf einer dieser Ziffern zusammenhängen und du die andere Ziffer aus jedem Feld streichst, das beide sieht.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/de/techniques/w-wing.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "W-Wing: Sudoku-Technik einfach erklärt",
-      "description": "Der W-Wing ist eine Sudoku-Technik, bei der zwei Felder mit denselben zwei Kandidaten über eine starke Verbindung einer dieser Ziffern zusammenhängen und du die andere Ziffer aus jedem Feld streichst, das beide sieht.",
+      "description": "Der W-Wing ist eine Sudoku-Technik, bei der zwei Felder mit denselben zwei Kandidaten über eine starke Verbindung auf einer dieser Ziffern zusammenhängen und du die andere Ziffer aus jedem Feld streichst, das beide sieht.",
       "inLanguage": "de",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/de/techniques/w-wing.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,7 +236,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Stufe 6 · Wings</p>
       <h1>W-Wing</h1>
       <p class="aka"></p>
-      <p class="lead">Der W-Wing ist eine Sudoku-Technik, bei der zwei Felder mit denselben zwei Kandidaten über eine starke Verbindung einer dieser Ziffern zusammenhängen und du die andere Ziffer aus jedem Feld streichst, das beide sieht.</p>
+      <p class="lead">Der W-Wing ist eine Sudoku-Technik, bei der zwei Felder mit denselben zwei Kandidaten über eine starke Verbindung auf einer dieser Ziffern zusammenhängen und du die andere Ziffer aus jedem Feld streichst, das beide sieht.</p>
       <dl class="facts">
         <div class="px"><dt>Benötigte Felder</dt><dd>2 Felder mit denselben 2 Kandidaten</dd></div>
         <div class="px"><dt>Was sie verbindet</dt><dd>Linie mit nur 2 Feldern für eine Ziffer</dd></div>
@@ -245,7 +245,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht <span class="nowrap">W-Wing</span> aus</h2>
+      <h2 id="shape">Das Muster: <span class="nowrap">W-Wing</span></h2>
       <p><b>R2C2</b> und <b>R7C8</b> haben beide die Kandidaten 5 und 8. In <b>Zeile 5</b> hat die 8 nur zwei Felder: R5C2 und R5C8. R5C2 liegt in derselben Spalte wie R2C2, R5C8 in derselben Spalte wie R7C8. So sind die beiden Felder verbunden.</p>
       <div class="board px">
         <svg viewBox="0 0 400 400" role="img" aria-label="Kandidaten von sechs Feldern. R2C2 und R7C8 haben 5 und 8, in Zeile 5 steht die 8 nur in R5C2 und R5C8. Die 5 in R2C8 und R7C2, die beide 5/8-Felder sehen, wird gestrichen.">
@@ -294,7 +294,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du <span class="nowrap">W-Wing</span></h2>
+      <h2 id="find"><span class="nowrap">W-Wing</span> Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Such <b>zwei Felder mit denselben zwei Kandidaten</b> (X und Y), die sich nicht sehen.</span></li>
         <li class="px"><span>Prüf, ob es eine <b>Linie mit genau zwei Feldern für Y</b> gibt, bei der jedes davon eines der beiden Felder sieht.</span></li>
@@ -312,7 +312,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="qa">
         <details class="px" open><summary>Und wenn sich die beiden Felder sehen?</summary><p>Dann ist es ein Nacktes Paar, und du kannst einfacher streichen. Der W-Wing ist für Felder, die auseinanderliegen.</p></details>
         <details class="px"><summary>Darf die starke Verbindung auch ein Block sein?</summary><p>Ja. Ein Block mit genau zwei Feldern für Y geht auch.</p></details>
-        <details class="px"><summary>Was ist der Unterschied zum XY-Wing?</summary><p>Der XY-Wing verbindet drei Felder mit je zwei Kandidaten. Der W-Wing verbindet zwei gleiche Paare über eine starke Verbindung einer Ziffer.</p></details>
+        <details class="px"><summary>Was ist der Unterschied zum XY-Wing?</summary><p>Der XY-Wing verbindet drei Felder mit je zwei Kandidaten. Der W-Wing verbindet zwei gleiche Paare über eine starke Verbindung auf einer Ziffer.</p></details>
       </div>
     </section>
 
@@ -329,8 +329,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">W-Wing</span></h2>
-        <p>Wenn du feststeckst, zeichnet ein Tipp die zwei Felder, die Verbindung dazwischen und die Felder zum Streichen aufs Brett. Im Technik-Training bekommst du an einem echten Rätsel eine Lektion zu W-Wing. Im ersten Rätsel siehst du Muster und Grund, im nächsten findest du es selbst.</p>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">W-Wing</span></h2>
+        <p>Wenn du feststeckst, zeichnet ein Tipp die zwei Felder, die Verbindung dazwischen und die Felder zum Streichen aufs Brett. Im Technik-Training lernst du den W-Wing an einem echten Rätsel. Im ersten Rätsel siehst du das Muster und warum es klappt, im nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-w-wing&amp;mt=8" data-goatcounter-click="store-ios/tech-de/w-wing"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-de-w-wing" data-goatcounter-click="store-android/tech-de/w-wing"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Jetzt bei Google Play"></a>
@@ -341,7 +341,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/w-wing">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

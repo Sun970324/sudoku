@@ -239,7 +239,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">Le Sashimi X-Wing est une technique de sudoku : quand un X-Wing a un coin vide et des candidats (l'aileron) à côté, dans le même bloc, tu peux retirer le chiffre des cases de la colonne du coin vide qui sont dans le même bloc que l'aileron.</p>
       <dl class="facts">
         <div class="px"><dt>Chiffres à suivre</dt><dd>Un seul</dd></div>
-        <div class="px"><dt>Il te faut</dt><dd>Un X-Wing sans un coin + un aileron</dd></div>
+        <div class="px"><dt>Il te faut</dt><dd>Un X-Wing à coin vide + un aileron</dd></div>
         <div class="px"><dt>À retirer</dt><dd>Dans le bloc de l'aileron, colonne du coin vide</dd></div>
       </dl>
     </div>
@@ -293,10 +293,10 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="why">Pourquoi ça marche ?</h2>
       <p>Sépare les cas selon qu'une des deux cases de l'aileron est un 4 ou non.</p>
       <div class="why">
-        <div class="px"><b>Si l'aileron n'a pas de 4</b><span>Le 4 de la ligne 6 est en R6C3. La ligne 2 ne peut donc pas utiliser la colonne 3 : son 4 est en R2C7. Le reste de la colonne 7 n'est pas 4.</span></div>
+        <div class="px"><b>Si l'aileron n'a pas de 4</b><span>Le 4 de la ligne 6 est en R6C3. La ligne 2 ne peut donc pas utiliser la colonne 3 : son 4 est en R2C7. Les autres cases de la colonne 7 ne contiennent pas de 4.</span></div>
         <div class="px"><b>Si l'aileron a un 4</b><span>Les autres cases du bloc 6 ne sont pas 4.</span></div>
       </div>
-      <p>Les cases qui ne sont pas 4 dans les deux cas sont en colonne 7 et dans le bloc 6. Donc <b>le 4 de R4C7</b> est retiré. R5C7 suit la même règle, mais il n'a pas de 4 dans ce schéma.</p>
+      <p>Les cases qui ne sont pas 4 dans les deux cas sont en colonne 7 et dans le bloc 6. Donc <b>le 4 de R4C7</b> est retiré. R5C7 suit la même règle, mais elle n'a pas de 4 dans ce schéma.</p>
     </section>
 
     <section aria-labelledby="find">
@@ -348,7 +348,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MOIS OFFERT</p>
-        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Entraînement aux techniques</p>
+        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Leçons de techniques</p>
         <span class="ticket-go px">Obtenir le coupon ▸</span>
       </div>
       <div class="ticket-stub px"><span>LIMITED</span><b>Quantité<br> limitée</b></div>
@@ -396,7 +396,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 {
   "lesson.prev": "Précédent",
   "lesson.next": "Suivant",
-  "lesson.find": "Trouve et touche",
+  "lesson.find": "Touche la bonne case",
   "lesson.restart": "Recommencer",
   "lesson.nextTech": "Technique suivante",
   "lesson.app": "Vraies grilles dans l'app",

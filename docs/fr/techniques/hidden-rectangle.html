@@ -239,7 +239,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">Le Rectangle unique caché (Hidden Rectangle) est une technique de sudoku : quand quatre cases forment un rectangle sur deux chiffres et qu'un des chiffres n'occupe que deux cases dans la ligne et la colonne du coin opposé, l'unicité de la solution permet d'éliminer l'autre chiffre de ce coin.</p>
       <dl class="facts">
         <div class="px"><dt>Cases nécessaires</dt><dd>2 lignes × 2 colonnes, sur 2 blocs</dd></div>
-        <div class="px"><dt>Liens nécessaires</dt><dd>Un chiffre sur deux cases dans une ligne et une colonne</dd></div>
+        <div class="px"><dt>Liens nécessaires</dt><dd>Un chiffre sur deux cases seulement, en ligne et en colonne</dd></div>
         <div class="px"><dt>À éliminer</dt><dd>L'autre chiffre du coin opposé</dd></div>
       </dl>
     </div>
@@ -293,7 +293,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="px"><b>Ligne 2 et colonne 5</b><span>R2C5 vaut 7, donc le 3 de la ligne 2 est en R2C1 et celui de la colonne 5 est en R1C5.</span></div>
         <div class="px"><b>Alors R1C1</b><span>Sa ligne et sa colonne ont déjà un 3. Ce n'est donc pas 3, c'est 7.</span></div>
       </div>
-      <p>Les quatre cases seraient alors 7, 3, 3, 7. Si on échange les 3 et les 7 entre elles, les règles sont toujours respectées : la grille aurait <b>deux solutions</b>. Un vrai sudoku n'en a qu'une, donc R2C5 ne peut pas être 7. On élimine le 7.</p>
+      <p>Les quatre cases seraient alors 7, 3, 3, 7. Si on échange les 3 et les 7 dans ces cases, les règles sont toujours respectées : la grille aurait <b>deux solutions</b>. Un vrai sudoku n'en a qu'une, donc R2C5 ne peut pas être 7. On élimine le 7.</p>
     </section>
 
     <section aria-labelledby="find">
@@ -345,7 +345,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MOIS OFFERT</p>
-        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Entraînement aux techniques</p>
+        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Leçons de techniques</p>
         <span class="ticket-go px">Obtenir le coupon ▸</span>
       </div>
       <div class="ticket-stub px"><span>LIMITED</span><b>Quantité<br> limitée</b></div>
@@ -393,7 +393,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 {
   "lesson.prev": "Précédent",
   "lesson.next": "Suivant",
-  "lesson.find": "Trouve et touche",
+  "lesson.find": "Touche la bonne case",
   "lesson.restart": "Recommencer",
   "lesson.nextTech": "Technique suivante",
   "lesson.app": "Vraies grilles dans l'app",

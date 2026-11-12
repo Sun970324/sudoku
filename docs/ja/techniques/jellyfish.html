@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ジェリーフィッシュ(Jellyfish)ナンプレ解法 · 見つけ方と仕組み</title>
+<title>ジェリーフィッシュ(Jellyfish) ナンプレのテクニック · 見つけ方と仕組み</title>
 <meta name="description" content="ジェリーフィッシュ(Jellyfish)は、ある数字の候補が4つの行で同じ4つの列の中だけにあるとき、その4列の残りのマスからその数字を消せるナンプレのテクニックです。 フィッシュ系でいちばん大きな形で、難しい盤面の突破口になります。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/jellyfish.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/jellyfish.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="ジェリーフィッシュ(Jellyfish)ナンプレ解法 · 見つけ方と仕組み">
+<meta property="og:title" content="ジェリーフィッシュ(Jellyfish) ナンプレのテクニック · 見つけ方と仕組み">
 <meta property="og:description" content="ジェリーフィッシュ(Jellyfish)は、ある数字の候補が4つの行で同じ4つの列の中だけにあるとき、その4列の残りのマスからその数字を消せるナンプレのテクニックです。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/ja/techniques/jellyfish.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "ジェリーフィッシュ(Jellyfish)ナンプレ解法 · 見つけ方と仕組み",
+      "headline": "ジェリーフィッシュ(Jellyfish) ナンプレのテクニック · 見つけ方と仕組み",
       "description": "ジェリーフィッシュ(Jellyfish)は、ある数字の候補が4つの行で同じ4つの列の中だけにあるとき、その4列の残りのマスからその数字を消せるナンプレのテクニックです。",
       "inLanguage": "ja",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/ja/techniques/jellyfish.html",
@@ -243,7 +243,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="aka">Jellyfish</p>
       <p class="lead">ジェリーフィッシュ(Jellyfish)は、ある数字の候補が4つの行で同じ4つの列の中だけにあるとき、その4列の残りのマスからその数字を消せるナンプレのテクニックです。</p>
       <dl class="facts">
-        <div class="px"><dt>見る数字</dt><dd>1種類</dd></div>
+        <div class="px"><dt>注目する数字</dt><dd>1種類</dd></div>
         <div class="px"><dt>必要な行・列</dt><dd>4行+4列</dd></div>
         <div class="px"><dt>消す場所</dt><dd>4列の残りのマス</dd></div>
       </dl>
@@ -251,7 +251,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="shape">
       <h2 id="shape">ジェリーフィッシュの形</h2>
-      <p>数字2だけを表示した図です。<b>1行目・3行目・6行目・9行目</b>で2が入れるマスは、すべて<b>2列目・4列目・7列目・8列目</b>の中にあります。X-ウィング(線2本)、ソードフィッシュ(線3本)を4本の線に広げた形です。</p>
+      <p>数字2だけを表示した図です。<b>1行目・3行目・6行目・9行目</b>で2が入れるマスは、すべて<b>2列目・4列目・7列目・8列目</b>の中にあります。X-ウィング(2行)、ソードフィッシュ(3行)を4行に広げた形です。</p>
       <div class="board px">
         <svg viewBox="0 0 400 400" role="img" aria-label="数字2の候補だけを表示した図。1行目・3行目・6行目・9行目の2の候補が2列目・4列目・7列目・8列目の中だけにあり、R2C2、R5C4、R7C7、R4C8の2が消える。">
 <defs><clipPath id="board-view-9o33ik"><rect x="30" y="30" width="360" height="360"/></clipPath></defs>
@@ -322,7 +322,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">なぜ消せるのですか？</h2>
-      <p>1行目、3行目、6行目、9行目には2が1つずつ入り、4つとも2列目・4列目・7列目・8列目の中にしか入れません。1つの列に2は1つだけなので、<b>4つの列が、この4行から2を1つずつ受け取ります。</b></p>
+      <p>1行目、3行目、6行目、9行目には2が1つずつ入り、4つとも2列目・4列目・7列目・8列目の中にしか入れません。1つの列に2は1つだけなので、<b>4つの列の2は、すべてこの4行の中に入ります。</b></p>
       <p>すると、4列の残りのマス(R2C2、R5C4、R7C7、R4C8)には2が入りません。そこで、それらのマスの2の候補を消します。</p>
     </section>
 
@@ -346,13 +346,13 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">よくある疑問</h2>
       <div class="qa">
         <details class="px" open><summary>1つの行に候補はいくつあればいいですか？</summary><p>2つから4つまで大丈夫です。4つの行を合わせたときに列が4つだけなら成立します。</p></details>
-        <details class="px"><summary>5本以上の線のものもありますか？</summary><p>理論上はありえます。ただ、5本の線の形があると、残りの線にもっと小さなフィッシュができて、そちらが先に見つかります。そのため、ふつうはジェリーフィッシュまでしか使いません。</p></details>
-        <details class="px"><summary>よく出てきますか？</summary><p>あまり出てきません。難しいパズルでほかのテクニックが行き詰まったときに探してみましょう。</p></details>
+        <details class="px"><summary>5行以上のものもありますか？</summary><p>理論上はありえます。ただ、5行の形があると、残りの行にもっと小さなフィッシュができて、そちらが先に見つかります。そのため、ふつうはジェリーフィッシュまでしか使いません。</p></details>
+        <details class="px"><summary>よく出てきますか？</summary><p>あまり出てきません。難しいパズルでほかのテクニックでは行き詰まったときに探してみましょう。</p></details>
       </div>
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="x-wing.html">X-ウィング</a>
         <a class="px" href="swordfish.html">ソードフィッシュ</a>

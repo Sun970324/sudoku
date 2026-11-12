@@ -245,7 +245,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht <span class="nowrap">Sashimi X-Wing</span> aus</h2>
+      <h2 id="shape">Das Muster: <span class="nowrap">Sashimi X-Wing</span></h2>
       <p>Das Bild zeigt nur die Ziffer 4. In <b>Zeile 2</b> steht die 4 nur in Spalte 3 und 7. <b>Zeile 6</b> hat eine 4 in Spalte 3, aber die Ecke in Spalte 7 (R6C7) ist <b>leer</b>. Dafür steht im selben Block 6 eine 4 in <b>R6C8 und R6C9</b>. Diese zwei Felder sind die Flosse.</p>
       <div class="board px">
         <svg viewBox="0 0 400 400" role="img" aria-label="Nur die Kandidaten für 4. Zeile 2 hat die 4 in Spalte 3 und 7, Zeile 6 nur in Spalte 3. Die Ecke R6C7 ist leer, die Flosse liegt in R6C8 und R6C9. Die 4 in R4C7, im Block der Flosse und in Spalte 7, wird gestrichen.">
@@ -283,7 +283,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="legend">
           <span><i class="k-key"></i>Die drei X-Wing-Felder</span>
           <span><i class="k-pivot"></i>Flosse (R6C8 und R6C9)</span>
-          <span><i class="k-del"></i>Hier wird 4 gestrichen</span>
+          <span><i class="k-del"></i>Hier wird die 4 gestrichen</span>
           <span><i class="k-other"></i>4-Kandidaten, die bleiben</span>
         </div>
       </div>
@@ -293,14 +293,14 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="why">Warum klappt das?</h2>
       <p>Unterscheide, ob eines der zwei Flossenfelder eine 4 ist oder nicht.</p>
       <div class="why">
-        <div class="px"><b>Keine Flosse ist 4</b><span>Dann steht die 4 von Zeile 6 in R6C3. Zeile 2 kann Spalte 3 nicht mehr nutzen, also steht ihre 4 in R2C7. Im Rest von Spalte 7 steht keine 4.</span></div>
-        <div class="px"><b>Eine Flosse ist 4</b><span>Dann steht in den anderen Feldern von Block 6 keine 4.</span></div>
+        <div class="px"><b>Kein Flossenfeld ist 4</b><span>Dann steht die 4 von Zeile 6 in R6C3. Zeile 2 kann Spalte 3 nicht mehr nutzen, also steht ihre 4 in R2C7. Im Rest von Spalte 7 steht keine 4.</span></div>
+        <div class="px"><b>Ein Flossenfeld ist 4</b><span>Dann steht in den anderen Feldern von Block 6 keine 4.</span></div>
       </div>
-      <p>In beiden Fällen keine 4 sind die Felder, die in Spalte 7 und zugleich in Block 6 liegen. Also wird <b>die 4 in R4C7</b> gestrichen. R5C7 erfüllt dieselbe Bedingung, hat in diesem Bild aber keinen 4-Kandidaten.</p>
+      <p>In beiden Fällen steht keine 4 in den Feldern, die in Spalte 7 und zugleich in Block 6 liegen. Also wird <b>die 4 in R4C7</b> gestrichen. R5C7 erfüllt dieselbe Bedingung, hat in diesem Bild aber keinen 4-Kandidaten.</p>
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du <span class="nowrap">Sashimi X-Wing</span></h2>
+      <h2 id="find"><span class="nowrap">Sashimi X-Wing</span> Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Such eine Zeile mit zwei Kandidaten und eine ähnliche Zeile, <b>der nur eine Ecke fehlt</b>.</span></li>
         <li class="px"><span>Prüf, ob die anderen Kandidaten dieser Zeile (die Flosse) <b>im selben Block</b> liegen wie die leere Ecke.</span></li>
@@ -335,8 +335,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">Sashimi X-Wing</span></h2>
-        <p>Steckst du fest, zeigt dir ein Tipp die leere Ecke, die Flosse und die Felder zum Streichen direkt im Gitter. Im Technik-Training lernst du Sashimi X-Wing an einem echten Rätsel. Im ersten Gitter siehst du Muster und Begründung, im nächsten findest du es selbst.</p>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">Sashimi X-Wing</span></h2>
+        <p>Steckst du fest, zeigt dir ein Tipp die leere Ecke, die Flosse und die Felder zum Streichen direkt im Gitter. Im Technik-Training lernst du den Sashimi X-Wing an einem echten Rätsel. Im ersten Gitter siehst du Muster und Begründung, im nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-sashimi-x-wing&amp;mt=8" data-goatcounter-click="store-ios/tech-de/sashimi-x-wing"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-de-sashimi-x-wing" data-goatcounter-click="store-android/tech-de/sashimi-x-wing"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Jetzt bei Google Play"></a>
@@ -347,7 +347,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/sashimi-x-wing">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

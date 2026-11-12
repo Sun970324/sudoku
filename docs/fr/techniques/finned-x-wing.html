@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Finned X-Wing : technique de sudoku, repérage et principe</title>
-<meta name="description" content="Le Finned X-Wing est une technique de sudoku : quand une ligne d'un X-Wing a un ou deux candidats en plus (l'aileron), tu peux retirer le chiffre des cases d'une colonne du X-Wing qui sont dans le même bloc que l'aileron. Un X-Wing avec un candidat en trop peut encore éliminer des candidats.">
+<meta name="description" content="Le Finned X-Wing est une technique de sudoku : quand une ligne d'un X-Wing a un ou deux candidats en plus (l'aileron), tu peux retirer le chiffre des cases d'une colonne du X-Wing qui sont dans le même bloc que l'aileron. Un X-Wing avec un candidat en trop permet encore des éliminations.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/fr/techniques/finned-x-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/finned-x-wing.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/finned-x-wing.html">
@@ -292,10 +292,10 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="why">Pourquoi ça marche ?</h2>
       <p>Sépare les cas selon que l'aileron est un 4 ou non.</p>
       <div class="why">
-        <div class="px"><b>Si l'aileron n'est pas 4</b><span>La ligne 6 n'a son 4 qu'en colonne 3 ou 7 : c'est un X-Wing complet. Le reste des colonnes 3 et 7 n'est pas 4.</span></div>
+        <div class="px"><b>Si l'aileron n'est pas 4</b><span>La ligne 6 n'a son 4 qu'en colonne 3 ou 7 : c'est un X-Wing complet. Les autres cases des colonnes 3 et 7 ne contiennent pas de 4.</span></div>
         <div class="px"><b>Si l'aileron est 4</b><span>Les autres cases de son bloc, le bloc 6, ne sont pas 4.</span></div>
       </div>
-      <p>Seule une case qui n'est pas 4 <b>dans les deux cas</b> peut être nettoyée : une case de la colonne 7 située dans le bloc 6. Le 4 de R5C7 est donc retiré. R8C3 et R9C7 pourraient encore être 4 si l'aileron est 4, donc ils restent.</p>
+      <p>Seule une case qui n'est pas 4 <b>dans les deux cas</b> peut perdre ce candidat : une case de la colonne 7 située dans le bloc 6. Le 4 de R5C7 est donc retiré. R8C3 et R9C7 pourraient encore être 4 si l'aileron est 4, donc elles restent.</p>
     </section>
 
     <section aria-labelledby="find">
@@ -348,7 +348,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MOIS OFFERT</p>
-        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Entraînement aux techniques</p>
+        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Leçons de techniques</p>
         <span class="ticket-go px">Obtenir le coupon ▸</span>
       </div>
       <div class="ticket-stub px"><span>LIMITED</span><b>Quantité<br> limitée</b></div>
@@ -396,7 +396,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 {
   "lesson.prev": "Précédent",
   "lesson.next": "Suivant",
-  "lesson.find": "Trouve et touche",
+  "lesson.find": "Touche la bonne case",
   "lesson.restart": "Recommencer",
   "lesson.nextTech": "Technique suivante",
   "lesson.app": "Vraies grilles dans l'app",

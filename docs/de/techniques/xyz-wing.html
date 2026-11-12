@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>XYZ-Wing: Sudoku-Technik einfach erklärt</title>
-<meta name="description" content="Der XYZ-Wing ist eine Sudoku-Technik, bei der ein mittleres Feld mit drei Kandidaten und zwei Felder mit je zwei Kandidaten, die es sieht, eine Ziffer teilen, die du aus jedem Feld streichst, das alle drei sieht. Ein XY-Wing, dessen mittleres Feld einen Kandidaten mehr hat.">
+<meta name="description" content="Der XYZ-Wing ist eine Sudoku-Technik, bei der ein mittleres Feld mit drei Kandidaten und zwei Felder mit je zwei Kandidaten, die es sieht, eine Ziffer gemeinsam haben und du diese Ziffer aus jedem Feld streichst, das alle drei sieht. Ein XY-Wing, dessen mittleres Feld einen Kandidaten mehr hat.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/de/techniques/xyz-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/xyz-wing.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/xyz-wing.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="de_DE">
 <meta property="og:title" content="XYZ-Wing: Sudoku-Technik einfach erklärt">
-<meta property="og:description" content="Der XYZ-Wing ist eine Sudoku-Technik, bei der ein mittleres Feld mit drei Kandidaten und zwei Felder mit je zwei Kandidaten, die es sieht, eine Ziffer teilen, die du aus jedem Feld streichst, das alle drei sieht.">
+<meta property="og:description" content="Der XYZ-Wing ist eine Sudoku-Technik, bei der ein mittleres Feld mit drei Kandidaten und zwei Felder mit je zwei Kandidaten, die es sieht, eine Ziffer gemeinsam haben und du diese Ziffer aus jedem Feld streichst, das alle drei sieht.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/de/techniques/xyz-wing.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "XYZ-Wing: Sudoku-Technik einfach erklärt",
-      "description": "Der XYZ-Wing ist eine Sudoku-Technik, bei der ein mittleres Feld mit drei Kandidaten und zwei Felder mit je zwei Kandidaten, die es sieht, eine Ziffer teilen, die du aus jedem Feld streichst, das alle drei sieht.",
+      "description": "Der XYZ-Wing ist eine Sudoku-Technik, bei der ein mittleres Feld mit drei Kandidaten und zwei Felder mit je zwei Kandidaten, die es sieht, eine Ziffer gemeinsam haben und du diese Ziffer aus jedem Feld streichst, das alle drei sieht.",
       "inLanguage": "de",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/de/techniques/xyz-wing.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,7 +236,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Stufe 6 · Wings</p>
       <h1>XYZ-Wing</h1>
       <p class="aka"></p>
-      <p class="lead">Der XYZ-Wing ist eine Sudoku-Technik, bei der ein mittleres Feld mit drei Kandidaten und zwei Felder mit je zwei Kandidaten, die es sieht, eine Ziffer teilen, die du aus jedem Feld streichst, das alle drei sieht.</p>
+      <p class="lead">Der XYZ-Wing ist eine Sudoku-Technik, bei der ein mittleres Feld mit drei Kandidaten und zwei Felder mit je zwei Kandidaten, die es sieht, eine Ziffer gemeinsam haben und du diese Ziffer aus jedem Feld streichst, das alle drei sieht.</p>
       <dl class="facts">
         <div class="px"><dt>Benötigte Felder</dt><dd>1 Feld mit 3 + 2 Felder mit 2 Kandidaten</dd></div>
         <div class="px"><dt>Gemeinsame Ziffer</dt><dd>Eine, in allen drei Feldern</dd></div>
@@ -245,7 +245,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht <span class="nowrap">XYZ-Wing</span> aus</h2>
+      <h2 id="shape">Das Muster: <span class="nowrap">XYZ-Wing</span></h2>
       <p>Das mittlere Feld <b>R2C2</b> hat die Kandidaten 1, 4 und 7. <b>R1C3</b> im selben Block hat 1 und 7, <b>R2C7</b> in derselben Zeile hat 4 und 7. Alle drei Felder haben die 7.</p>
       <div class="board px">
         <svg viewBox="0 0 400 160" role="img" aria-label="Kandidaten der drei Felder. Die Mitte R2C2 hat 1, 4 und 7, R1C3 hat 1 und 7, R2C7 hat 4 und 7. Die 7 in R2C3, das alle drei sieht, wird gestrichen.">
@@ -293,7 +293,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du <span class="nowrap">XYZ-Wing</span></h2>
+      <h2 id="find"><span class="nowrap">XYZ-Wing</span> Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Wähle ein Feld mit <b>drei Kandidaten</b> als Mitte, etwa X, Y und Z.</span></li>
         <li class="px"><span>Such unter den Feldern, die es sieht, eines mit <b>X und Z</b> und eines mit <b>Y und Z</b>.</span></li>
@@ -312,7 +312,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="qa">
         <details class="px" open><summary>Was ist der Unterschied zum XY-Wing?</summary><p>Beim XY-Wing hat die Mitte zwei Kandidaten (X und Y), also reicht es, die beiden Außenfelder zu sehen. Beim XYZ-Wing kann die Mitte selbst Z sein. Darum muss das Feld alle drei sehen, auch die Mitte.</p></details>
         <details class="px"><summary>Dürfen beide Außenfelder im selben Block liegen?</summary><p>Ja. Sie müssen nur die Mitte sehen, egal ob über Zeile, Spalte oder Block.</p></details>
-        <details class="px"><summary>Und wenn die Mitte vier Kandidaten hat?</summary><p>Das ist der WXYZ-Wing, dieselbe Idee erweitert. Er verbindet vier Felder über die gemeinsame Ziffer.</p></details>
+        <details class="px"><summary>Und wenn die Mitte vier Kandidaten hat?</summary><p>Das ist der WXYZ-Wing, eine Erweiterung derselben Idee. Er verbindet vier Felder über die gemeinsame Ziffer.</p></details>
       </div>
     </section>
 
@@ -329,8 +329,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">XYZ-Wing</span></h2>
-        <p>Wenn du feststeckst, zeichnet ein Tipp die drei Felder, die gemeinsame Ziffer und das Feld zum Streichen aufs Brett. Im Technik-Training bekommst du an einem echten Rätsel eine Lektion zu XYZ-Wing. Im ersten Rätsel siehst du Muster und Grund, im nächsten findest du es selbst.</p>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">XYZ-Wing</span></h2>
+        <p>Wenn du feststeckst, zeichnet ein Tipp die drei Felder, die gemeinsame Ziffer und das Feld zum Streichen aufs Brett. Im Technik-Training lernst du den XYZ-Wing an einem echten Rätsel. Im ersten Rätsel siehst du das Muster und warum es klappt, im nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-xyz-wing&amp;mt=8" data-goatcounter-click="store-ios/tech-de/xyz-wing"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-de-xyz-wing" data-goatcounter-click="store-android/tech-de/xyz-wing"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Jetzt bei Google Play"></a>
@@ -341,7 +341,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/xyz-wing">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

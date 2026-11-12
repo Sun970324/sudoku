@@ -244,7 +244,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">顯性唯一（Naked Single）是數獨最基本的技巧：某一格只剩一個數字能填時，就把這個數字填進去。</p>
       <dl class="facts">
         <div class="px"><dt>觀察範圍</dt><dd>一格</dd></div>
-        <div class="px"><dt>要找的</dt><dd>只有一個候選數的格</dd></div>
+        <div class="px"><dt>尋找目標</dt><dd>只有一個候選數的格</dd></div>
         <div class="px"><dt>要做的事</dt><dd>填入那個數字</dd></div>
       </dl>
     </div>
@@ -286,15 +286,15 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">為什麼是這個數字？</h2>
-      <p>一格不能填同一列、同一行或同一宮裡已經有的數字。從R5C5看得到的數字有1、2、3、4、5、6、8、9，共八個。</p>
-      <p>所以<b>這格能填的數字只有7。</b>填其他數字的話，列、行、宮其中之一就會出現重複的數字。所以填上7。</p>
+      <p>一格不能填同一橫列、同一直行或同一宮裡已經有的數字。從R5C5看得到的數字有1、2、3、4、5、6、8、9，共八個。</p>
+      <p>所以<b>這格能填的數字只有7。</b>填其他數字的話，橫列、直行或宮其中之一就會出現重複的數字。因此填上7。</p>
     </section>
 
     <section aria-labelledby="find">
       <h2 id="find">找出顯性唯一的步驟</h2>
       <ol class="steps">
         <li class="px"><span>選一個空格。周圍已填的數字越多越好。</span></li>
-        <li class="px"><span>把這格所在<b>列、行、宮</b>裡已有的數字全部劃掉。</span></li>
+        <li class="px"><span>把這格所在<b>橫列、直行和宮</b>裡已有的數字全部劃掉。</span></li>
         <li class="px"><span><b>只剩一個時</b>，就填上那個數字。</span></li>
       </ol>
       <p class="note">在每一格寫下候選數（筆記），只剩一個候選數的格就一目了然。</p>
@@ -310,7 +310,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="qa">
         <details class="px" open><summary>跟隱性唯一有什麼不同？</summary><p>顯性唯一是從格出發，也就是“這格能填的數字只有一個”；隱性唯一是從數字出發，也就是“這個數字能放的格只有一格”。</p></details>
         <details class="px"><summary>簡單的題目只靠這個就能解開嗎？</summary><p>大部分簡單題目只要用顯性唯一和隱性唯一，就能一路解到最後。</p></details>
-        <details class="px"><summary>一定要把候選數全部寫下來嗎？</summary><p>不用。在腦中掃過列、行、宮也可以。不過題目越難，先把候選數寫下來，錯誤會比較少。</p></details>
+        <details class="px"><summary>一定要把候選數全部寫下來嗎？</summary><p>不用。在腦中掃過橫列、直行和宮也可以。不過題目越難，先把候選數寫下來，錯誤會比較少。</p></details>
       </div>
     </section>
 

@@ -243,8 +243,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="aka">W-Wing</p>
       <p class="lead">W翼（W-Wing）是一種數獨技巧：兩個候選數只有相同兩個數字的格，透過其中一個數字的強連結相連時，可以從同時看見這兩格的格中刪去另一個數字。</p>
       <dl class="facts">
-        <div class="px"><dt>需要的格</dt><dd>2格候選數只有同樣兩個數字</dd></div>
-        <div class="px"><dt>連接方式</dt><dd>某數字只有兩格的一條線</dd></div>
+        <div class="px"><dt>需要的格</dt><dd>2個只有相同兩個候選數的格</dd></div>
+        <div class="px"><dt>連接方式</dt><dd>某數字只有兩個候選位置的線</dd></div>
         <div class="px"><dt>刪除位置</dt><dd>同時看見兩格的格</dd></div>
       </dl>
     </div>
@@ -302,7 +302,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="find">找出W翼的步驟</h2>
       <ol class="steps">
         <li class="px"><span>找出兩個<b>候選數只有同樣兩個數字（X·Y）的格</b>。這兩格不能互相看見。</span></li>
-        <li class="px"><span>確認有一條<b>Y的候選數只有兩格的線</b>，而且這兩格分別看見那兩個格。</span></li>
+        <li class="px"><span>確認有一條<b>Y只有兩個候選位置的線</b>，而且這兩格各自看見其中一個X·Y格。</span></li>
         <li class="px"><span>如果有，就從<b>同時看見兩格的格</b>中刪去X。</span></li>
       </ol>
     </section>
@@ -316,7 +316,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">容易混淆的地方</h2>
       <div class="qa">
         <details class="px" open><summary>兩格互相看見的話呢？</summary><p>那就是顯性數對，可以更簡單地刪除。W翼是用在相隔的兩格。</p></details>
-        <details class="px"><summary>強連結不是線，而是宮也可以嗎？</summary><p>可以。Y的候選數只有兩格的宮也行。</p></details>
+        <details class="px"><summary>強連結也可以在宮裡嗎？</summary><p>可以。Y只有兩個候選位置的宮也行。</p></details>
         <details class="px"><summary>和XY翼有什麼不同？</summary><p>XY翼用三個有兩個候選數的格相連。W翼則是用一個數字的強連結，把兩個數對相同的格連起來。</p></details>
       </div>
     </section>

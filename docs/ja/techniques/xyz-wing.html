@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>XYZ-ウィング(XYZ-Wing)ナンプレのテクニック・見つけ方と原理</title>
-<meta name="description" content="XYZ-ウィングは、候補が3つの真ん中のマスと、そのマスを見る候補2つのマス2つが同じ数字を1つ持つとき、3マスすべてを見るマスからその数字を消せるナンプレのテクニックです。 XY-ウィングの真ん中のマスに、候補がもう1つ加わった変形です。">
+<title>XYZ-ウィング(XYZ-Wing)：ナンプレのテクニック、見つけ方と原理</title>
+<meta name="description" content="XYZ-ウィングは、候補が3つの真ん中のマスと、そのマスを見る候補2つのマス2つが、3マスとも同じ数字を持つとき、3マスすべてを見るマスからその数字を消せるナンプレのテクニックです。 XY-ウィングの真ん中のマスに、候補がもう1つ加わった変形です。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/xyz-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/xyz-wing.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/xyz-wing.html">
@@ -20,8 +20,8 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="XYZ-ウィング(XYZ-Wing)ナンプレのテクニック・見つけ方と原理">
-<meta property="og:description" content="XYZ-ウィングは、候補が3つの真ん中のマスと、そのマスを見る候補2つのマス2つが同じ数字を1つ持つとき、3マスすべてを見るマスからその数字を消せるナンプレのテクニックです。">
+<meta property="og:title" content="XYZ-ウィング(XYZ-Wing)：ナンプレのテクニック、見つけ方と原理">
+<meta property="og:description" content="XYZ-ウィングは、候補が3つの真ん中のマスと、そのマスを見る候補2つのマス2つが、3マスとも同じ数字を持つとき、3マスすべてを見るマスからその数字を消せるナンプレのテクニックです。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/ja/techniques/xyz-wing.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -43,8 +43,8 @@
     },
     {
       "@type": "Article",
-      "headline": "XYZ-ウィング(XYZ-Wing)ナンプレのテクニック・見つけ方と原理",
-      "description": "XYZ-ウィングは、候補が3つの真ん中のマスと、そのマスを見る候補2つのマス2つが同じ数字を1つ持つとき、3マスすべてを見るマスからその数字を消せるナンプレのテクニックです。",
+      "headline": "XYZ-ウィング(XYZ-Wing)：ナンプレのテクニック、見つけ方と原理",
+      "description": "XYZ-ウィングは、候補が3つの真ん中のマスと、そのマスを見る候補2つのマス2つが、3マスとも同じ数字を持つとき、3マスすべてを見るマスからその数字を消せるナンプレのテクニックです。",
       "inLanguage": "ja",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/ja/techniques/xyz-wing.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -241,7 +241,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · ステージ6・ウィング</p>
       <h1>XYZ-ウィング</h1>
       <p class="aka">XYZ-Wing</p>
-      <p class="lead">XYZ-ウィングは、候補が3つの真ん中のマスと、そのマスを見る候補2つのマス2つが同じ数字を1つ持つとき、3マスすべてを見るマスからその数字を消せるナンプレのテクニックです。</p>
+      <p class="lead">XYZ-ウィングは、候補が3つの真ん中のマスと、そのマスを見る候補2つのマス2つが、3マスとも同じ数字を持つとき、3マスすべてを見るマスからその数字を消せるナンプレのテクニックです。</p>
       <dl class="facts">
         <div class="px"><dt>必要なマス</dt><dd>候補3つのマス1つ+2つのマス2つ</dd></div>
         <div class="px"><dt>共通の数字</dt><dd>3マスすべてにある1つ</dd></div>
@@ -281,7 +281,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="legend">
           <span><i class="k-pivot"></i>真ん中のマスの残りの候補</span>
           <span><i class="k-key"></i>真ん中と共有する数字</span>
-          <span><i class="k-z"></i>3マスの共通の数字7</span>
+          <span><i class="k-z"></i>3マスに共通する7</span>
           <span><i class="k-del"></i>消せる7</span>
         </div>
       </div>
@@ -300,7 +300,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="find">
       <h2 id="find"><span class="nowrap">XYZ-ウィング</span>の見つけ方</h2>
       <ol class="steps">
-        <li class="px"><span>候補が<b>3つのマス</b>を真ん中に決めます。たとえばX・Y・Z。</span></li>
+        <li class="px"><span>候補が<b>3つのマス</b>を選んで、真ん中のマスにします。たとえばX・Y・Z。</span></li>
         <li class="px"><span>真ん中のマスが見るマスの中から、<b>X・Z</b>のマスと<b>Y・Z</b>のマスを探します。</span></li>
         <li class="px"><span><b>3マスすべてを見るマス</b>からZを消します。</span></li>
       </ol>
@@ -322,7 +322,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="xy-wing.html">XY-ウィング</a>
         <a class="px" href="wxyz-wing.html">WXYZ-ウィング</a>

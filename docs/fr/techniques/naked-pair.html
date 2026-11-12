@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Paire nue (Naked Pair) au sudoku : la technique expliquée</title>
-<meta name="description" content="La paire nue (Naked Pair) est une technique de sudoku : quand deux cases d'une même ligne, colonne ou d'un même bloc n'ont que les deux mêmes candidats, tu retires ces deux chiffres des autres cases de cette ligne, colonne ou de ce bloc. Deux cases suffisent pour nettoyer les candidats de toute une ligne, colonne ou d'un bloc.">
+<meta name="description" content="La paire nue (Naked Pair) est une technique de sudoku : quand deux cases d'une même ligne, colonne ou d'un même bloc n'ont que les deux mêmes candidats, tu retires ces deux chiffres des autres cases de cette ligne, colonne ou de ce bloc. Deux cases suffisent pour faire le ménage dans les candidats de toute une ligne, une colonne ou un bloc.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/fr/techniques/naked-pair.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/naked-pair.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/naked-pair.html">
@@ -238,9 +238,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="aka">Naked Pair</p>
       <p class="lead">La paire nue (Naked Pair) est une technique de sudoku : quand deux cases d'une même ligne, colonne ou d'un même bloc n'ont que les deux mêmes candidats, tu retires ces deux chiffres des autres cases de cette ligne, colonne ou de ce bloc.</p>
       <dl class="facts">
-        <div class="px"><dt>Où chercher</dt><dd>Une ligne, colonne ou un bloc</dd></div>
-        <div class="px"><dt>Quoi chercher</dt><dd>Deux cases avec les deux mêmes candidats</dd></div>
-        <div class="px"><dt>Quoi retirer</dt><dd>Ces deux chiffres dans les autres cases</dd></div>
+        <div class="px"><dt>Où chercher</dt><dd>Une ligne, une colonne ou un bloc</dd></div>
+        <div class="px"><dt>À chercher</dt><dd>Deux cases avec les deux mêmes candidats</dd></div>
+        <div class="px"><dt>À retirer</dt><dd>Ces deux chiffres dans les autres cases</dd></div>
       </dl>
     </div>
 
@@ -302,7 +302,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <li class="px"><span>Regarde si la même ligne, colonne ou le même bloc contient <b>une autre case avec exactement les mêmes candidats</b>.</span></li>
         <li class="px"><span>Si oui, retire ces deux chiffres de <b>toutes les autres cases</b> de cette ligne, colonne ou de ce bloc.</span></li>
       </ol>
-      <p class="note">Si les deux cases sont à la fois dans la même ligne et dans le même bloc, tu peux retirer les chiffres des deux côtés.</p>
+      <p class="note">Si les deux cases sont à la fois dans la même ligne et dans le même bloc, tu peux retirer les chiffres dans la ligne comme dans le bloc.</p>
     </section>
     <section aria-labelledby="try">
       <h2 id="try">Suis la leçon Paire nue</h2>
@@ -314,8 +314,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">Confusions fréquentes</h2>
       <div class="qa">
         <details class="px" open><summary>Et si les deux cases ont 3·7 et 3·8 ?</summary><p>Ce n'est pas une paire nue. Les deux cases doivent avoir exactement les deux mêmes chiffres.</p></details>
-        <details class="px"><summary>Et si trois cases se partagent trois chiffres ?</summary><p>Avec le même principe, c'est un triplet nu. Chacune des trois cases ne doit contenir que des chiffres parmi ces trois.</p></details>
-        <details class="px"><summary>Quelle différence avec la paire cachée ?</summary><p>Une paire nue, ce sont deux cases qui n'ont que deux chiffres. Une paire cachée, ce sont deux chiffres qui ne vont que dans deux cases. Elles retirent aussi des candidats à l'opposé l'une de l'autre.</p></details>
+        <details class="px"><summary>Et si trois cases se partagent trois chiffres ?</summary><p>C'est le même principe : on parle alors de triplet nu. Chacune des trois cases ne doit contenir que des chiffres parmi ces trois.</p></details>
+        <details class="px"><summary>Quelle différence avec la paire cachée ?</summary><p>Une paire nue, ce sont deux cases qui n'ont que deux chiffres. Une paire cachée, ce sont deux chiffres qui ne vont que dans deux cases. Et elles ne retirent pas les candidats au même endroit : c'est l'inverse.</p></details>
       </div>
     </section>
 
@@ -345,7 +345,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MOIS OFFERT</p>
-        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Entraînement aux techniques</p>
+        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Leçons de techniques</p>
         <span class="ticket-go px">Obtenir le coupon ▸</span>
       </div>
       <div class="ticket-stub px"><span>LIMITED</span><b>Quantité<br> limitée</b></div>
@@ -393,7 +393,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 {
   "lesson.prev": "Précédent",
   "lesson.next": "Suivant",
-  "lesson.find": "Trouve et touche",
+  "lesson.find": "Touche la bonne case",
   "lesson.restart": "Recommencer",
   "lesson.nextTech": "Technique suivante",
   "lesson.app": "Vraies grilles dans l'app",

@@ -245,12 +245,12 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht <span class="nowrap">2-String Kite</span> aus</h2>
-      <p>Das Bild zeigt nur die Ziffer 6. In <b>Zeile 2</b> hat die 6 nur zwei Kandidaten, in Spalte 2 und 7. In <b>Spalte 3</b> sind es nur Zeile 1 und 8. Je ein Ende der beiden Linien (R2C2 und R1C3) liegt in <b>Block 1</b>. Zwei Schnüre, in einem Block verknotet: Das sieht aus wie ein Drachen, daher der Name Kite.</p>
+      <h2 id="shape">Das Muster: <span class="nowrap">2-String Kite</span></h2>
+      <p>Das Bild zeigt nur die Ziffer 6. In <b>Zeile 2</b> gibt es für die 6 nur zwei Kandidaten, in Spalte 2 und 7. In <b>Spalte 3</b> sind es nur Zeile 1 und 8. Je ein Ende der beiden Linien (R2C2 und R1C3) liegt in <b>Block 1</b>. Zwei Schnüre, in einem Block verknotet: Das sieht aus wie ein Drachen, daher der Name Kite.</p>
       <div class="board px">
-        <svg viewBox="0 0 400 400" role="img" aria-label="Nur die Kandidaten für 6. In Zeile 2 steht die 6 nur in Spalte 2 und 7, in Spalte 3 nur in Zeile 1 und 8. Beide treffen sich in Block 1. Die 6 in R8C7, das beide fernen Enden R2C7 und R8C3 sieht, wird gestrichen.">
-<defs><clipPath id="board-view-gnfhhz"><rect x="30" y="30" width="360" height="360"/></clipPath></defs>
-<g clip-path="url(#board-view-gnfhhz)">
+        <svg viewBox="0 0 400 400" role="img" aria-label="Nur die Kandidaten für 6. In Zeile 2 steht die 6 nur in Spalte 2 und 7, in Spalte 3 nur in Zeile 1 und 8. Beide treffen sich in Block 1. R8C7 sieht beide fernen Enden R2C7 und R8C3, daher wird dort die 6 gestrichen.">
+<defs><clipPath id="board-view-68jj6b"><rect x="30" y="30" width="360" height="360"/></clipPath></defs>
+<g clip-path="url(#board-view-68jj6b)">
 <rect x="30" y="30" width="360" height="360" fill="#0e1d42"/>
 <rect x="30" y="30" width="120" height="120" fill="#16306a"/>
 <rect x="30" y="70" width="360" height="40" fill="#1d3a7a"/>
@@ -295,7 +295,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du <span class="nowrap">2-String Kite</span></h2>
+      <h2 id="find"><span class="nowrap">2-String Kite</span> Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Wähle <b>eine Ziffer</b> und such eine <b>Zeile</b> und eine <b>Spalte</b> mit je genau zwei Kandidaten.</span></li>
         <li class="px"><span>Prüf, ob je ein Ende der beiden Linien <b>im selben Block</b> liegt (es müssen verschiedene Felder sein).</span></li>
@@ -312,7 +312,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">Häufige Fragen</h2>
       <div class="qa">
         <details class="px" open><summary>Was ist der Unterschied zum Skyscraper?</summary><p>Der Skyscraper verbindet zwei parallele Linien (zwei Spalten) über eine gemeinsame Zeile. Der 2-String Kite verbindet eine Zeile und eine Spalte über einen gemeinsamen Block.</p></details>
-        <details class="px"><summary>Können mehrere Felder wegfallen?</summary><p>Meist nur eines: das Feld, in dem sich die beiden Linien kreuzen.</p></details>
+        <details class="px"><summary>Kann man in mehreren Feldern streichen?</summary><p>Meist nur eines: das Feld, in dem sich die beiden Linien kreuzen.</p></details>
         <details class="px"><summary>Gibt es verwandte Techniken?</summary><p>Skyscraper und Turbot Fish gehören zur selben Familie. Alle sind kurze X-Ketten.</p></details>
       </div>
     </section>
@@ -329,8 +329,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">2-String Kite</span></h2>
-        <p>Wenn du feststeckst, zeichnet ein Tipp die zwei Linien, die Verbindung im Block und das zu streichende Feld aufs Brett. Im Technik-Training lernst du 2-String Kite an einem echten Rätsel. Im ersten Rätsel siehst du Muster und Grund gemeinsam, im nächsten findest du es selbst.</p>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">2-String Kite</span></h2>
+        <p>Wenn du feststeckst, zeichnet ein Tipp die zwei Linien, die Verbindung im Block und das zu streichende Feld aufs Brett. Im Technik-Training lernst du den 2-String Kite an einem echten Rätsel. Im ersten Rätsel zeigen wir dir Muster und Begründung, im nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-two-string-kite&amp;mt=8" data-goatcounter-click="store-ios/tech-de/two-string-kite"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-de-two-string-kite" data-goatcounter-click="store-android/tech-de/two-string-kite"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Jetzt bei Google Play"></a>
@@ -341,7 +341,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/two-string-kite">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

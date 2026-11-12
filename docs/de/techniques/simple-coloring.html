@@ -239,13 +239,13 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">Simple Coloring verbindet die Zeilen, Spalten und Blöcke, in denen eine Ziffer genau zwei Kandidaten hat, färbt die Felder abwechselnd in zwei Farben und streicht die Ziffer in jedem Feld, das beide Farben sieht.</p>
       <dl class="facts">
         <div class="px"><dt>Wie viele Ziffern</dt><dd>Eine</dd></div>
-        <div class="px"><dt>Was du brauchst</dt><dd>Gruppe aus Linien und Blöcken mit zwei Kandidaten</dd></div>
+        <div class="px"><dt>Was du brauchst</dt><dd>Gruppe aus Einheiten mit genau zwei Kandidaten</dd></div>
         <div class="px"><dt>Wo streichen</dt><dd>Felder, die beide Farben sehen</dd></div>
       </dl>
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht Simple Coloring aus</h2>
+      <h2 id="shape">Das Muster: Simple Coloring</h2>
       <p>Das Bild zeigt nur die Ziffer 7. Zeile 2, Spalte 8 und Zeile 6 haben je genau zwei Kandidaten für 7. Nur einer davon ist 7, darum bekommen die beiden verschiedene Farben. Die Farben wechseln sich ab: <b>R2C2 (grün)</b> → R2C8 (blau) → R6C8 (grün) → <b>R6C3 (blau)</b>.</p>
       <div class="board px">
         <svg viewBox="0 0 400 400" role="img" aria-label="Nur die Kandidaten für 7. R2C2 und R6C8 sind grün, R2C8 und R6C3 sind blau. Die 7 in R3C3 wird entfernt, denn das Feld sieht das grüne R2C2 und das blaue R6C3.">
@@ -292,7 +292,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du Simple Coloring</h2>
+      <h2 id="find">Simple Coloring Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Wähl <b>eine Ziffer</b> und such <b>Zeilen, Spalten oder Blöcke mit genau zwei Kandidaten</b> dafür.</span></li>
         <li class="px"><span>Häng diese Verbindungen aneinander und färbe die Felder <b>abwechselnd in zwei Farben</b>.</span></li>
@@ -311,7 +311,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="qa">
         <details class="px" open><summary>Wie viele Farben?</summary><p>Zwei. Innerhalb einer Gruppe wechseln sich die beiden Farben ab.</p></details>
         <details class="px"><summary>Und bei zwei Gruppen?</summary><p>Die Beziehung zwischen den Farben zweier Gruppen nutzt Multi-Coloring.</p></details>
-        <details class="px"><summary>Ist das dasselbe wie eine X-Kette?</summary><p>Es ist dieselbe Idee. Beim Färben siehst du nur alle Glieder der Kette auf einmal.</p></details>
+        <details class="px"><summary>Ist das dasselbe wie eine X-Kette?</summary><p>Es ist dieselbe Idee. Beim Färben siehst du einfach alle Glieder der Kette auf einmal.</p></details>
       </div>
     </section>
 
@@ -328,8 +328,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">Simple Coloring</span></h2>
-        <p>Wenn du nicht weiterkommst, zeichnet ein Tipp die zwei Farben und die Streichung aufs Brett. Im Technik-Training lernst du Simple Coloring an einem echten Rätsel. Auf dem ersten Brett zeigen wir dir Muster und Grund, auf dem nächsten findest du es selbst.</p>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">Simple Coloring</span></h2>
+        <p>Wenn du nicht weiterkommst, zeichnet ein Tipp die zwei Farben und die Streichung aufs Brett. Im Technik-Training lernst du die Technik Simple Coloring an einem echten Rätsel. Auf dem ersten Brett zeigen wir dir das Muster und warum es funktioniert, auf dem nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-simple-coloring&amp;mt=8" data-goatcounter-click="store-ios/tech-de/simple-coloring"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-de-simple-coloring" data-goatcounter-click="store-android/tech-de/simple-coloring"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Jetzt bei Google Play"></a>
@@ -340,7 +340,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/simple-coloring">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>遠程數對（Remote Pair）數獨技巧 · 找法與原理</title>
-<meta name="description" content="遠程數對（Remote Pair）是一種數獨技巧：當候選數都只有相同兩個數字的格彼此看見、連成一條鏈時，同時看見鏈上兩個相反值的格，就能刪去這兩個數字。 由相同數對連成的鏈，能清掉遠處格子的候選數。">
+<meta name="description" content="遠程數對（Remote Pair）是一種數獨技巧：當候選數都只有相同兩個數字的格彼此看見、連成一條鏈時，就能從同時看見鏈上兩個相反值格的格刪去這兩個數字。 由相同數對連成的鏈，能清掉遠處格子的候選數。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/zh-hant/techniques/remote-pair.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/remote-pair.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/remote-pair.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:title" content="遠程數對（Remote Pair）數獨技巧 · 找法與原理">
-<meta property="og:description" content="遠程數對（Remote Pair）是一種數獨技巧：當候選數都只有相同兩個數字的格彼此看見、連成一條鏈時，同時看見鏈上兩個相反值的格，就能刪去這兩個數字。">
+<meta property="og:description" content="遠程數對（Remote Pair）是一種數獨技巧：當候選數都只有相同兩個數字的格彼此看見、連成一條鏈時，就能從同時看見鏈上兩個相反值格的格刪去這兩個數字。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/zh-hant/techniques/remote-pair.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "遠程數對（Remote Pair）數獨技巧 · 找法與原理",
-      "description": "遠程數對（Remote Pair）是一種數獨技巧：當候選數都只有相同兩個數字的格彼此看見、連成一條鏈時，同時看見鏈上兩個相反值的格，就能刪去這兩個數字。",
+      "description": "遠程數對（Remote Pair）是一種數獨技巧：當候選數都只有相同兩個數字的格彼此看見、連成一條鏈時，就能從同時看見鏈上兩個相反值格的格刪去這兩個數字。",
       "inLanguage": "zh-Hant",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/zh-hant/techniques/remote-pair.html",
       "author": { "@type": "Organization", "name": "數獨聯盟", "url": "https://sudoku.jaywithme.com/" },
@@ -241,7 +241,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · 第7階段 · 鏈與環</p>
       <h1>遠程數對</h1>
       <p class="aka">Remote Pair</p>
-      <p class="lead">遠程數對（Remote Pair）是一種數獨技巧：當候選數都只有相同兩個數字的格彼此看見、連成一條鏈時，同時看見鏈上兩個相反值的格，就能刪去這兩個數字。</p>
+      <p class="lead">遠程數對（Remote Pair）是一種數獨技巧：當候選數都只有相同兩個數字的格彼此看見、連成一條鏈時，就能從同時看見鏈上兩個相反值格的格刪去這兩個數字。</p>
       <dl class="facts">
         <div class="px"><dt>需要的格</dt><dd>幾個候選數都只有相同兩個數字的格</dd></div>
         <div class="px"><dt>連結方式</dt><dd>透過同一橫列、直行或宮互相看見</dd></div>
@@ -292,7 +292,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">為什麼可以刪？</h2>
-      <p>互相看見的格不能填同一個數字，所以沿著鏈，值會交替決定。</p>
+      <p>互相看見的格不能填同一個數字，所以數值會沿著鏈交替確定。</p>
       <div class="why">
         <div class="px"><b>R2C1是4</b><span>R2C6是9，R7C6是4，R7C3是9。</span></div>
         <div class="px"><b>R2C1是9</b><span>R2C6是4，R7C6是9，R7C3是4。</span></div>
@@ -305,7 +305,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <ol class="steps">
         <li class="px"><span>找出所有候選數<b>只有相同兩個數字的格</b>。</span></li>
         <li class="px"><span>把其中互相看見的格連起來，組成<b>一條鏈</b>。</span></li>
-        <li class="px"><span>沿著鏈<b>每隔一格交替</b>分成兩種顏色。</span></li>
+        <li class="px"><span>沿著鏈把格子<b>交替</b>塗成兩種顏色。</span></li>
         <li class="px"><span>在<b>同時看見兩個不同顏色格的格</b>刪去這兩個數字。</span></li>
       </ol>
     </section>
@@ -319,7 +319,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">容易混淆的地方</h2>
       <div class="qa">
         <details class="px" open><summary>需要幾個格？</summary><p>要四格以上才有用。只有兩格的話，用顯性數對就夠了。</p></details>
-        <details class="px"><summary>看見兩個同色格的格呢？</summary><p>兩個同色格是同一個數字，所以那個格不能刪。只有同時看見兩種不同顏色的格時才能刪。</p></details>
+        <details class="px"><summary>看見兩個同色格的格呢？</summary><p>兩個同色格是同一個數字，所以那一格不能刪。只有同時看見兩種不同顏色的格，才能刪去。</p></details>
         <details class="px"><summary>和XY鏈有什麼關係？</summary><p>它就是每格候選數都是相同兩個數字的XY鏈。因為數字一樣，所以更容易找到。</p></details>
       </div>
     </section>

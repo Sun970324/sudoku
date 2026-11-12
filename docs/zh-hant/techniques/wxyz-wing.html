@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>WXYZ翼（WXYZ-Wing）數獨技巧 · 找法與原理</title>
-<meta name="description" content="WXYZ翼（WXYZ-Wing）是一種數獨技巧：當四個格的候選數合起來只有四個數字，而且其中只有一個數字分布在彼此看不見的格裡時，就能從看得見所有含這個數字的格的格中，刪去這個數字。 由四個格和四個數字組成，是翼系列中最大的形狀。">
+<meta name="description" content="WXYZ翼（WXYZ-Wing）是一種數獨技巧：當四個格的候選數合起來只有四個數字，而且其中只有一個數字分布在彼此看不見的格裡時，只要某格看得見所有含這個數字的格，就能從該格刪去這個數字。 由四個格和四個數字組成，是翼系列中最大的形狀。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/zh-hant/techniques/wxyz-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/wxyz-wing.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/wxyz-wing.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:title" content="WXYZ翼（WXYZ-Wing）數獨技巧 · 找法與原理">
-<meta property="og:description" content="WXYZ翼（WXYZ-Wing）是一種數獨技巧：當四個格的候選數合起來只有四個數字，而且其中只有一個數字分布在彼此看不見的格裡時，就能從看得見所有含這個數字的格的格中，刪去這個數字。">
+<meta property="og:description" content="WXYZ翼（WXYZ-Wing）是一種數獨技巧：當四個格的候選數合起來只有四個數字，而且其中只有一個數字分布在彼此看不見的格裡時，只要某格看得見所有含這個數字的格，就能從該格刪去這個數字。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/zh-hant/techniques/wxyz-wing.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "WXYZ翼（WXYZ-Wing）數獨技巧 · 找法與原理",
-      "description": "WXYZ翼（WXYZ-Wing）是一種數獨技巧：當四個格的候選數合起來只有四個數字，而且其中只有一個數字分布在彼此看不見的格裡時，就能從看得見所有含這個數字的格的格中，刪去這個數字。",
+      "description": "WXYZ翼（WXYZ-Wing）是一種數獨技巧：當四個格的候選數合起來只有四個數字，而且其中只有一個數字分布在彼此看不見的格裡時，只要某格看得見所有含這個數字的格，就能從該格刪去這個數字。",
       "inLanguage": "zh-Hant",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/zh-hant/techniques/wxyz-wing.html",
       "author": { "@type": "Organization", "name": "數獨聯盟", "url": "https://sudoku.jaywithme.com/" },
@@ -241,7 +241,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · 第9階段 · ALS（近似鎖定集）</p>
       <h1>WXYZ翼</h1>
       <p class="aka">WXYZ-Wing</p>
-      <p class="lead">WXYZ翼（WXYZ-Wing）是一種數獨技巧：當四個格的候選數合起來只有四個數字，而且其中只有一個數字分布在彼此看不見的格裡時，就能從看得見所有含這個數字的格的格中，刪去這個數字。</p>
+      <p class="lead">WXYZ翼（WXYZ-Wing）是一種數獨技巧：當四個格的候選數合起來只有四個數字，而且其中只有一個數字分布在彼此看不見的格裡時，只要某格看得見所有含這個數字的格，就能從該格刪去這個數字。</p>
       <dl class="facts">
         <div class="px"><dt>所需格</dt><dd>候選數合起來只有四個數字的四格</dd></div>
         <div class="px"><dt>共同數字</dt><dd>分布在彼此看不見的格裡的那一個</dd></div>
@@ -300,7 +300,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <ol class="steps">
         <li class="px"><span>找出<b>四格候選數合起來只有四個數字</b>的組合。通常是一個候選數很多的中間格，加上三個只有兩個候選數的格。</span></li>
         <li class="px"><span>確認四個數字中<b>有三個只在彼此看得見的格裡</b>，只有一個不是。</span></li>
-        <li class="px"><span>從<b>看得見所有含該數字的格的格</b>中，刪去這個數字。</span></li>
+        <li class="px"><span>若有格<b>看得見所有含該數字的格</b>，就從該格刪去這個數字。</span></li>
       </ol>
     </section>
     <section aria-labelledby="try">

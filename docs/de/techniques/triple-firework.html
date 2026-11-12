@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Triple Firework: Sudoku-Technik einfach erklärt</title>
-<meta name="description" content="Ein Triple Firework (kurz Firework) besteht aus einem Feld in einem Block und je einem Feld in derselben Zeile und derselben Spalte außerhalb des Blocks, die sich drei Ziffern teilen müssen. Alle anderen Kandidaten kannst du aus diesen drei Feldern streichen. Such ein Muster, das von einem Feld aus entlang Zeile und Spalte losschießt.">
+<meta name="description" content="Ein Triple Firework (kurz Firework) besteht aus einem Feld in einem Block und je einem Feld in derselben Zeile und derselben Spalte außerhalb des Blocks, die sich drei Ziffern teilen müssen. Alle anderen Kandidaten kannst du aus diesen drei Feldern streichen. Suche ein Muster, das von einem Feld aus entlang Zeile und Spalte losschießt.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/de/techniques/triple-firework.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/triple-firework.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/triple-firework.html">
@@ -245,7 +245,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht Triple Firework aus</h2>
+      <h2 id="shape">Das Muster: Triple Firework</h2>
       <p>Die Felder sind <b>R2C2</b> in Block 1, <b>R2C7</b> in derselben Zeile außerhalb des Blocks und <b>R8C2</b> in derselben Spalte außerhalb des Blocks. Außerhalb des Blocks hat Zeile 2 die 1, 5 und 8 nur in R2C7, und Spalte 2 hat sie nur in R8C2.</p>
       <div class="board px">
         <svg viewBox="0 0 400 400" role="img" aria-label="Kandidaten mehrerer Felder. R2C2 (1, 3, 5, 8), R2C7 (1, 5, 6, 8) und R8C2 (1, 5, 8, 9) bilden ein Triple Firework. Die 3, 6 und 9, die nicht 1, 5 oder 8 sind, werden aus diesen Feldern gestrichen.">
@@ -299,11 +299,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="px"><b>Dann die 1 in Zeile 2</b><span>Ihr einziger Kandidat außerhalb des Blocks ist R2C7. Also landet sie im Block in Zeile 2.</span></div>
         <div class="px"><b>Und die 1 in Spalte 2</b><span>Ihr einziger Kandidat außerhalb des Blocks ist R8C2. Also landet sie im Block in Spalte 2.</span></div>
       </div>
-      <p>Der Block hat nur eine 1, also muss es dasselbe Feld sein: das in Zeile 2 und Spalte 2, also R2C2. Darum <b>steht die 1 immer in einem der drei Felder.</b> Für 5 und 8 gilt dasselbe. Drei Ziffern füllen die drei Felder je einmal, für andere bleibt kein Platz. Darum streichst du die 3 in R2C2, die 6 in R2C7 und die 9 in R8C2.</p>
+      <p>Der Block hat nur eine 1, also muss es dasselbe Feld sein: das in Zeile 2 und Spalte 2, nämlich R2C2. Somit <b>steht die 1 immer in einem der drei Felder.</b> Für 5 und 8 gilt dasselbe. Drei Ziffern füllen die drei Felder je einmal, für andere bleibt kein Platz. Darum streichst du die 3 in R2C2, die 6 in R2C7 und die 9 in R8C2.</p>
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du Triple Firework</h2>
+      <h2 id="find">Triple Firework Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Wähle einen Block und darin ein Feld, in dem sich eine Zeile und eine Spalte kreuzen.</span></li>
         <li class="px"><span>Suche drei Ziffern, die in dieser Zeile außerhalb des Blocks und in dieser Spalte außerhalb des Blocks <b>jeweils nur einen Kandidaten</b> haben. Für alle drei Ziffern müssen es dieselben zwei Felder sein.</span></li>
@@ -338,7 +338,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">Triple Firework</span></h2>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">Triple Firework</span></h2>
         <p>Wenn du nicht weiterkommst, markiert ein Tipp die drei Felder und die Kandidaten zum Streichen. Im Technik-Training lernst du die Technik Triple Firework an einem echten Rätsel. Auf dem ersten Brett siehst du Muster und Grund, auf dem nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-triple-firework&amp;mt=8" data-goatcounter-click="store-ios/tech-de/triple-firework"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
@@ -350,7 +350,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/triple-firework">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

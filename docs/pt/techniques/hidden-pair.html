@@ -248,9 +248,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="shape">O padrão Par oculto</h2>
       <p>A imagem mostra só a linha 7. Na linha 7, o <b>2</b> e o <b>8</b> só podem ir nas colunas 3 e 7. Essas duas células também têm outros candidatos. Por isso o par fica escondido e se chama par oculto.</p>
       <div class="board px">
-        <svg viewBox="0 240 400 160" role="img" aria-label="Candidatos da linha 7. O 2 e o 8 só aparecem em R7C3 e R7C7, então os outros candidatos dessas células, 1·4 e 5·9, são apagados.">
-<defs><clipPath id="board-view-6vr83w"><rect x="30" y="270" width="360" height="120"/></clipPath></defs>
-<g clip-path="url(#board-view-6vr83w)">
+        <svg viewBox="0 240 400 160" role="img" aria-label="Candidatos da linha 7. O 2 e o 8 só aparecem em R7C3 e R7C7, então os outros candidatos dessas células, 1 e 4 e 5 e 9, são apagados.">
+<defs><clipPath id="board-view-1l5u1u"><rect x="30" y="270" width="360" height="120"/></clipPath></defs>
+<g clip-path="url(#board-view-1l5u1u)">
 <rect x="30" y="30" width="360" height="360" fill="#0e1d42"/>
 <rect x="30" y="270" width="360" height="40" fill="#1d3a7a"/>
 <g stroke="#2a4277" stroke-width="1" fill="none"><path d="M70 30V390M110 30V390M190 30V390M230 30V390M310 30V390M350 30V390M30 70H390M30 110H390M30 190H390M30 230H390M30 310H390M30 350H390"/></g>
@@ -292,7 +292,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="why">
       <h2 id="why">Por que dá para apagar?</h2>
       <p>A linha 7 precisa de um 2, e ele só pode ir na coluna 3 ou na coluna 7. Com o 8 é igual. Então as colunas 3 e 7 têm que <b>dividir o 2 e o 8 entre si</b>.</p>
-      <p>Como as duas células ficam com o 2 e o 8, não sobra lugar para outro número. Por isso, você apaga 1·4 de R7C3 e 5·9 de R7C7. Depois disso, as duas células viram um par nu, com só 2·8 de candidatos.</p>
+      <p>Como as duas células ficam com o 2 e o 8, não sobra lugar para outro número. Por isso, você apaga 1·4 de R7C3 e 5·9 de R7C7. Depois disso, as duas células viram um par nu, só com 2 e 8 como candidatos.</p>
     </section>
 
     <section aria-labelledby="find">
@@ -332,7 +332,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div>
         <p class="eyebrow">NO APP SUDOKU LEAGUE</p>
         <h2 id="app">Travou? A dica mostra <span class="nowrap">Par oculto</span> para você</h2>
-        <p>Se você travar e tocar em dica, o app marca no tabuleiro as duas células do par oculto e os candidatos a apagar. No Treino de técnicas, você aprende Par oculto em um jogo de verdade. No primeiro tabuleiro, você vê o padrão e o porquê. No seguinte, você encontra sozinho.</p>
+        <p>Se você travar e tocar na dica, o app marca no tabuleiro as duas células do par oculto e os candidatos a apagar. No Treino de técnicas, você aprende o Par oculto num jogo de verdade. No primeiro tabuleiro, você vê o padrão e o porquê. No próximo, você mesmo encontra.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-pt-hidden-pair&amp;mt=8" data-goatcounter-click="store-ios/tech-pt/hidden-pair"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Baixar na App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-pt-hidden-pair" data-goatcounter-click="store-android/tech-pt/hidden-pair"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Disponível no Google Play"></a>
@@ -395,7 +395,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   "lesson.find": "Encontre e toque",
   "lesson.restart": "Recomeçar",
   "lesson.nextTech": "Próxima técnica",
-  "lesson.app": "Sudokus reais no app",
+  "lesson.app": "Jogar sudokus no app",
   "lesson.fail": "Não foi possível carregar a lição. Atualize a página."
 }
 </script>

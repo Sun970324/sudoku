@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ソードフィッシュ(Swordfish)ナンプレ解法 · 見つけ方と仕組み</title>
-<meta name="description" content="ソードフィッシュ(Swordfish)は、ある数字の候補が3つの行で同じ3つの列の中だけにあるとき、その3列の残りのマスからその数字を消せるナンプレのテクニックです。 X-ウィングを3本の線に広げると見えてくる、もっと大きな網です。">
+<title>ソードフィッシュ(Swordfish) ナンプレのテクニック · 見つけ方と仕組み</title>
+<meta name="description" content="ソードフィッシュ(Swordfish)は、ある数字の候補が3つの行で同じ3つの列の中だけにあるとき、その3列の残りのマスからその数字を消せるナンプレのテクニックです。 X-ウィングを3行・3列に広げると見えてくる、もっと大きな網です。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/swordfish.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/swordfish.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/swordfish.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="ソードフィッシュ(Swordfish)ナンプレ解法 · 見つけ方と仕組み">
+<meta property="og:title" content="ソードフィッシュ(Swordfish) ナンプレのテクニック · 見つけ方と仕組み">
 <meta property="og:description" content="ソードフィッシュ(Swordfish)は、ある数字の候補が3つの行で同じ3つの列の中だけにあるとき、その3列の残りのマスからその数字を消せるナンプレのテクニックです。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/ja/techniques/swordfish.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "ソードフィッシュ(Swordfish)ナンプレ解法 · 見つけ方と仕組み",
+      "headline": "ソードフィッシュ(Swordfish) ナンプレのテクニック · 見つけ方と仕組み",
       "description": "ソードフィッシュ(Swordfish)は、ある数字の候補が3つの行で同じ3つの列の中だけにあるとき、その3列の残りのマスからその数字を消せるナンプレのテクニックです。",
       "inLanguage": "ja",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/ja/techniques/swordfish.html",
@@ -243,7 +243,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="aka">Swordfish</p>
       <p class="lead">ソードフィッシュ(Swordfish)は、ある数字の候補が3つの行で同じ3つの列の中だけにあるとき、その3列の残りのマスからその数字を消せるナンプレのテクニックです。</p>
       <dl class="facts">
-        <div class="px"><dt>見る数字</dt><dd>1種類</dd></div>
+        <div class="px"><dt>注目する数字</dt><dd>1種類</dd></div>
         <div class="px"><dt>必要な行・列</dt><dd>3行+3列</dd></div>
         <div class="px"><dt>消す場所</dt><dd>3列の残りのマス</dd></div>
       </dl>
@@ -251,7 +251,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="shape">
       <h2 id="shape">ソードフィッシュの形</h2>
-      <p>数字7だけを表示した図です。<b>2行目・5行目・8行目</b>で7が入れるマスは、すべて<b>1列目・5列目・9列目</b>の中にあります。1つの行に2マスでも3マスでもかまいません。X-ウィングを3本の線に広げた形です。</p>
+      <p>数字7だけを表示した図です。<b>2行目・5行目・8行目</b>で7が入れるマスは、すべて<b>1列目・5列目・9列目</b>の中にあります。1つの行に2マスでも3マスでもかまいません。X-ウィングを3行に広げた形です。</p>
       <div class="board px">
         <svg viewBox="0 0 400 400" role="img" aria-label="数字7の候補だけを表示した図。2行目・5行目・8行目の7の候補が1列目・5列目・9列目の中だけにあり、R4C1、R6C5、R1C9の7が消える。">
 <defs><clipPath id="board-view-f4yre1"><rect x="30" y="30" width="360" height="360"/></clipPath></defs>
@@ -308,7 +308,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">なぜ消せるのですか？</h2>
-      <p>2行目、5行目、8行目には7が1つずつ入り、3つとも1列目・5列目・9列目の中にしか入れません。1つの列に7は1つだけなので、3つの行の7は別々の列に入ります。つまり<b>3つの列が、この3行から7を1つずつ受け取ります。</b></p>
+      <p>2行目、5行目、8行目には7が1つずつ入り、3つとも1列目・5列目・9列目の中にしか入れません。1つの列に7は1つだけなので、3つの行の7は別々の列に入ります。つまり<b>3つの列の7は、すべてこの3行の中に入ります。</b></p>
       <p>すると、1列目・5列目・9列目の残りのマス(R4C1、R6C5、R1C9)には7が入りません。そこで、それらのマスの7の候補を消します。</p>
     </section>
 
@@ -332,13 +332,13 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">よくある疑問</h2>
       <div class="qa">
         <details class="px" open><summary>3つの行すべてに候補が3マス必要ですか？</summary><p>いいえ。1つの行に2マスか3マスあればよく、3つの行を合わせたときに列が3つだけなら大丈夫です。</p></details>
-        <details class="px"><summary>線を4本に増やしたら？</summary><p>同じ仕組みでジェリーフィッシュになります。4つの行の候補が4つの列の中だけにあれば成立します。</p></details>
+        <details class="px"><summary>4行に増やしたら？</summary><p>同じ仕組みでジェリーフィッシュになります。4つの行の候補が4つの列の中だけにあれば成立します。</p></details>
         <details class="px"><summary>X-ウィングと一緒に見つけるコツはありますか？</summary><p>候補が2マスだけの行を先に集めておきましょう。同じ2つの列ならX-ウィング、3つの行が3つの列にまとまればソードフィッシュです。</p></details>
       </div>
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="x-wing.html">X-ウィング</a>
         <a class="px" href="jellyfish.html">ジェリーフィッシュ</a>

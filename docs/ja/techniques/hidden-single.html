@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ヒドゥンシングル(Hidden Single)ナンプレのテクニック・見つけ方と仕組み</title>
-<meta name="description" content="ヒドゥンシングル(Hidden Single)は、1つの行・列・ブロックの中で、ある数字が入れるマスが1つしかないとき、そのマスにその数字を入れるナンプレのテクニックです。 マスではなく数字から考えると、隠れていた答えが見えてきます。">
+<title>ヒドゥンシングル(Hidden Single)：ナンプレのテクニックの見つけ方と仕組み</title>
+<meta name="description" content="ヒドゥンシングル(Hidden Single)は、1つの行・列・ブロックの中で、ある数字が入るマスが1つしかないとき、そのマスにその数字を入れるナンプレのテクニックです。 マスではなく数字から考えると、隠れていた答えが見えてきます。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/hidden-single.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/hidden-single.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/hidden-single.html">
@@ -20,8 +20,8 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="ヒドゥンシングル(Hidden Single)ナンプレのテクニック・見つけ方と仕組み">
-<meta property="og:description" content="ヒドゥンシングル(Hidden Single)は、1つの行・列・ブロックの中で、ある数字が入れるマスが1つしかないとき、そのマスにその数字を入れるナンプレのテクニックです。">
+<meta property="og:title" content="ヒドゥンシングル(Hidden Single)：ナンプレのテクニックの見つけ方と仕組み">
+<meta property="og:description" content="ヒドゥンシングル(Hidden Single)は、1つの行・列・ブロックの中で、ある数字が入るマスが1つしかないとき、そのマスにその数字を入れるナンプレのテクニックです。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/ja/techniques/hidden-single.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -43,8 +43,8 @@
     },
     {
       "@type": "Article",
-      "headline": "ヒドゥンシングル(Hidden Single)ナンプレのテクニック・見つけ方と仕組み",
-      "description": "ヒドゥンシングル(Hidden Single)は、1つの行・列・ブロックの中で、ある数字が入れるマスが1つしかないとき、そのマスにその数字を入れるナンプレのテクニックです。",
+      "headline": "ヒドゥンシングル(Hidden Single)：ナンプレのテクニックの見つけ方と仕組み",
+      "description": "ヒドゥンシングル(Hidden Single)は、1つの行・列・ブロックの中で、ある数字が入るマスが1つしかないとき、そのマスにその数字を入れるナンプレのテクニックです。",
       "inLanguage": "ja",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/ja/techniques/hidden-single.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -241,7 +241,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · ステージ1・シングル</p>
       <h1>ヒドゥンシングル</h1>
       <p class="aka">隠れシングル · Hidden Single</p>
-      <p class="lead">ヒドゥンシングル(Hidden Single)は、1つの行・列・ブロックの中で、ある数字が入れるマスが1つしかないとき、そのマスにその数字を入れるナンプレのテクニックです。</p>
+      <p class="lead">ヒドゥンシングル(Hidden Single)は、1つの行・列・ブロックの中で、ある数字が入るマスが1つしかないとき、そのマスにその数字を入れるナンプレのテクニックです。</p>
       <dl class="facts">
         <div class="px"><dt>見る数字</dt><dd>1種類</dd></div>
         <div class="px"><dt>見る場所</dt><dd>行・列・ブロック1つ</dd></div>
@@ -278,7 +278,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 </svg>
         <div class="legend">
           <span><i class="k-pivot"></i>すでにある4</span>
-          <span><i class="k-key"></i>4が入れる唯一のマス</span>
+          <span><i class="k-key"></i>4が入る唯一のマス</span>
         </div>
       </div>
     </section>
@@ -292,11 +292,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="find">
       <h2 id="find">ヒドゥンシングルの見つけ方</h2>
       <ol class="steps">
-        <li class="px"><span>行・列・ブロックを1つと、<b>数字を1つ</b>決めます。</span></li>
+        <li class="px"><span>行・列・ブロックのどれか1つと、<b>数字を1つ</b>選びます。</span></li>
         <li class="px"><span>その数字がすでにある行や列をたどって、<b>入れなくなるマス</b>を消していきます。</span></li>
         <li class="px"><span><b>1マスだけ残ったら</b>、そのマスにその数字を入れます。</span></li>
       </ol>
-      <p class="note">ブロックごとに見るのがいちばん簡単です。盤面全体で同じ数字を1つずつたどり、ブロックごとに残るマスを探してみましょう。</p>
+      <p class="note">ブロックごとに見るのがいちばん簡単です。数字を1つ決めて盤面全体をたどり、ブロックごとに残るマスを探してみましょう。</p>
     </section>
     <section aria-labelledby="try">
       <h2 id="try">ヒドゥンシングルのレッスンを受ける</h2>
@@ -307,14 +307,14 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="faq">
       <h2 id="faq">よくある疑問</h2>
       <div class="qa">
-        <details class="px" open><summary>ネイキッドシングルとは何が違いますか？</summary><p>ヒドゥンシングルは、数字から考えて“この数字が入れるマスが1つしかない”場合です。そのマスには、ほかの候補がいくつかあることもあります。</p></details>
-        <details class="px"><summary>行や列でも使えますか？</summary><p>はい。1つの行や列で、ある数字が入れるマスが1つしかないときも、同じように埋められます。</p></details>
+        <details class="px" open><summary>ネイキッドシングルとは何が違いますか？</summary><p>ヒドゥンシングルは、数字から考えて“この数字が入るマスが1つしかない”場合です。そのマスには、ほかの候補がいくつかあることもあります。</p></details>
+        <details class="px"><summary>行や列でも使えますか？</summary><p>はい。1つの行や列で、ある数字が入るマスが1つしかないときも、同じように埋められます。</p></details>
         <details class="px"><summary>どの数字から見ればいいですか？</summary><p>盤面にすでにたくさん入っている数字から見てみましょう。ふさがる行や列が多いので、残るマスがすぐに見つかります。</p></details>
       </div>
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="naked-single.html">ネイキッドシングル</a>
         <a class="px" href="hidden-pair.html">ヒドゥンペア</a>
@@ -327,7 +327,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div>
         <p class="eyebrow">Sudoku League アプリで</p>
         <h2 id="app">行き詰まったら、ヒントが<span class="nowrap">ヒドゥンシングル</span>を教えてくれます</h2>
-        <p>解いていて行き詰まったときにヒントを押すと、数字が入れる唯一のマスと、ほかのマスをふさぐ数字を盤面に表示します。テクニック練習では、実際の問題でヒドゥンシングルのレッスンを受けられます。1問目でパターンと理由を一緒に確認し、次の問題では自分で見つけてみましょう。</p>
+        <p>解いていて行き詰まったときにヒントを押すと、数字が入る唯一のマスと、ほかのマスをふさぐ数字を盤面に表示します。テクニック練習では、実際の問題でヒドゥンシングルのレッスンを受けられます。1問目でパターンと理由を一緒に確認し、次の問題では自分で見つけてみましょう。</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-ja-hidden-single&amp;mt=8" data-goatcounter-click="store-ios/tech-ja/hidden-single"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="App Storeからダウンロード"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-ja-hidden-single" data-goatcounter-click="store-android/tech-ja/hidden-single"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Google Playで手に入れよう"></a>

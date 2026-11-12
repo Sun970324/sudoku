@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ヒドゥンペア(Hidden Pair)ナンプレのテクニック・見つけ方と仕組み</title>
+<title>ヒドゥンペア(Hidden Pair)とは？見つけ方と仕組み｜ナンプレのテクニック</title>
 <meta name="description" content="ヒドゥンペア(Hidden Pair)は、1つの行・列・ブロックの中で2つの数字が同じ2つのマスにしか入らないとき、その2つのマスの残りの候補を消すナンプレのテクニックです。 ほかの候補に隠れて見えなかったペアを見つけるコツを紹介します。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/hidden-pair.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/hidden-pair.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="ヒドゥンペア(Hidden Pair)ナンプレのテクニック・見つけ方と仕組み">
+<meta property="og:title" content="ヒドゥンペア(Hidden Pair)とは？見つけ方と仕組み｜ナンプレのテクニック">
 <meta property="og:description" content="ヒドゥンペア(Hidden Pair)は、1つの行・列・ブロックの中で2つの数字が同じ2つのマスにしか入らないとき、その2つのマスの残りの候補を消すナンプレのテクニックです。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/ja/techniques/hidden-pair.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "ヒドゥンペア(Hidden Pair)ナンプレのテクニック・見つけ方と仕組み",
+      "headline": "ヒドゥンペア(Hidden Pair)とは？見つけ方と仕組み｜ナンプレのテクニック",
       "description": "ヒドゥンペア(Hidden Pair)は、1つの行・列・ブロックの中で2つの数字が同じ2つのマスにしか入らないとき、その2つのマスの残りの候補を消すナンプレのテクニックです。",
       "inLanguage": "ja",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/ja/techniques/hidden-pair.html",
@@ -251,7 +251,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="shape">
       <h2 id="shape">ヒドゥンペアの形</h2>
-      <p>7行目だけを示した図です。7行目で<b>2</b>と<b>8</b>が入れるマスは、3列目と7列目の2か所だけです。この2つのマスにはほかの候補も混ざっているので、隠れたペア、つまりヒドゥンペアと呼びます。</p>
+      <p>7行目だけを示した図です。7行目で<b>2</b>と<b>8</b>が入るマスは、3列目と7列目の2か所だけです。この2つのマスにはほかの候補も混ざっているので、隠れたペア、つまりヒドゥンペアと呼びます。</p>
       <div class="board px">
         <svg viewBox="0 240 400 160" role="img" aria-label="7行目の候補を示した図。2と8はR7C3とR7C7にしかなく、2つのマスのほかの候補1・4と5・9が消えます。">
 <defs><clipPath id="board-view-hfuswy"><rect x="30" y="270" width="360" height="120"/></clipPath></defs>
@@ -296,7 +296,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">なぜ消せるの？</h2>
-      <p>7行目には2が必ず1つ入ります。入れる場所は3列目か7列目だけです。8も同じです。すると3列目と7列目は、<b>2と8を1つずつ分け合う</b>ことになります。</p>
+      <p>7行目には2が必ず1つ入ります。入る場所は3列目か7列目だけです。8も同じです。すると3列目と7列目は、<b>2と8を1つずつ分け合う</b>ことになります。</p>
       <p>2つのマスは2と8で決まっているので、ほかの数字が入る余地はありません。だから、R7C3の1・4と、R7C7の5・9を消します。消したあと、2つのマスは候補が2・8だけのネイキッドペアになります。</p>
     </section>
 
@@ -319,12 +319,12 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="qa">
         <details class="px" open><summary>2つの数字のうち1つが3つのマスに出ていたら？</summary><p>ヒドゥンペアではありません。2つの数字が両方とも、まったく同じ2つのマスにだけ出ている必要があります。</p></details>
         <details class="px"><summary>行や列だけでなく、ブロックでも使えますか？</summary><p>はい。行・列・ブロックのどこでも同じ仕組みです。</p></details>
-        <details class="px"><summary>ネイキッドペアより見つけにくいのはなぜ？</summary><p>2つのマスにほかの候補が混ざっているので、目立ちにくいからです。マスではなく数字の側から“この数字はどこに入れる？”と考えると、見つけやすくなります。</p></details>
+        <details class="px"><summary>ネイキッドペアより見つけにくいのはなぜですか？</summary><p>2つのマスにほかの候補が混ざっているので、目立ちにくいからです。マスではなく数字の側から“この数字はどこに入る？”と考えると、見つけやすくなります。</p></details>
       </div>
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="naked-pair.html">ネイキッドペア</a>
         <a class="px" href="hidden-single.html">ヒドゥンシングル</a>
@@ -337,7 +337,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div>
         <p class="eyebrow">Sudoku League アプリで</p>
         <h2 id="app">行き詰まったら、ヒントが<span class="nowrap">ヒドゥンペア</span>を教えてくれます</h2>
-        <p>解いている途中で行き詰まってヒントを押すと、今の盤面にあるヒドゥンペアの2マスと消せる候補を盤面に表示します。テクニック練習では、実際の問題でヒドゥンペアのレッスンを受けられます。1問目で形と理由を一緒に確認し、次の問題では自分で見つけてみましょう。</p>
+        <p>解いている途中で行き詰まってヒントを押すと、今の盤面にあるヒドゥンペアの2マスと消せる候補を表示します。テクニック練習では、実際の問題でヒドゥンペアのレッスンを受けられます。1問目で形と理由を一緒に確認し、次の問題では自分で見つけてみましょう。</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-ja-hidden-pair&amp;mt=8" data-goatcounter-click="store-ios/tech-ja/hidden-pair"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="App Storeからダウンロード"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-ja-hidden-pair" data-goatcounter-click="store-android/tech-ja/hidden-pair"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Google Playで手に入れよう"></a>

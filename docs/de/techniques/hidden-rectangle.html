@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hidden Unique Rectangle: Sudoku-Technik einfach erklärt</title>
-<meta name="description" content="Das Hidden Unique Rectangle (Hidden Rectangle) ist eine Sudoku-Technik, bei der vier Felder mit zwei Ziffern ein Rechteck bilden und du, wenn eine Ziffer in Zeile und Spalte der Gegenecke nur zwei Felder hat, dort die andere Ziffer streichst, weil das Sudoku nur eine Lösung hat. Eine Technik der Eindeutigkeit, die nutzt, dass ein Sudoku nur eine Lösung hat.">
+<meta name="description" content="Das Hidden Unique Rectangle (Hidden Rectangle) ist eine Sudoku-Technik für vier Felder, die mit zwei Ziffern ein Rechteck bilden: Steht eine Ziffer in Zeile und Spalte der Gegenecke nur in zwei Feldern, streichst du dort die andere Ziffer, weil das Sudoku nur eine Lösung hat. Eine Eindeutigkeitstechnik: Sie nutzt, dass ein Sudoku nur eine Lösung hat.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/de/techniques/hidden-rectangle.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/hidden-rectangle.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/hidden-rectangle.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="de_DE">
 <meta property="og:title" content="Hidden Unique Rectangle: Sudoku-Technik einfach erklärt">
-<meta property="og:description" content="Das Hidden Unique Rectangle (Hidden Rectangle) ist eine Sudoku-Technik, bei der vier Felder mit zwei Ziffern ein Rechteck bilden und du, wenn eine Ziffer in Zeile und Spalte der Gegenecke nur zwei Felder hat, dort die andere Ziffer streichst, weil das Sudoku nur eine Lösung hat.">
+<meta property="og:description" content="Das Hidden Unique Rectangle (Hidden Rectangle) ist eine Sudoku-Technik für vier Felder, die mit zwei Ziffern ein Rechteck bilden: Steht eine Ziffer in Zeile und Spalte der Gegenecke nur in zwei Feldern, streichst du dort die andere Ziffer, weil das Sudoku nur eine Lösung hat.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/de/techniques/hidden-rectangle.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "Hidden Unique Rectangle: Sudoku-Technik einfach erklärt",
-      "description": "Das Hidden Unique Rectangle (Hidden Rectangle) ist eine Sudoku-Technik, bei der vier Felder mit zwei Ziffern ein Rechteck bilden und du, wenn eine Ziffer in Zeile und Spalte der Gegenecke nur zwei Felder hat, dort die andere Ziffer streichst, weil das Sudoku nur eine Lösung hat.",
+      "description": "Das Hidden Unique Rectangle (Hidden Rectangle) ist eine Sudoku-Technik für vier Felder, die mit zwei Ziffern ein Rechteck bilden: Steht eine Ziffer in Zeile und Spalte der Gegenecke nur in zwei Feldern, streichst du dort die andere Ziffer, weil das Sudoku nur eine Lösung hat.",
       "inLanguage": "de",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/de/techniques/hidden-rectangle.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,16 +236,16 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Stufe 8 · Eindeutigkeit</p>
       <h1>Hidden Unique Rectangle</h1>
       <p class="aka">Verstecktes eindeutiges Rechteck · Hidden Rectangle</p>
-      <p class="lead">Das Hidden Unique Rectangle (Hidden Rectangle) ist eine Sudoku-Technik, bei der vier Felder mit zwei Ziffern ein Rechteck bilden und du, wenn eine Ziffer in Zeile und Spalte der Gegenecke nur zwei Felder hat, dort die andere Ziffer streichst, weil das Sudoku nur eine Lösung hat.</p>
+      <p class="lead">Das Hidden Unique Rectangle (Hidden Rectangle) ist eine Sudoku-Technik für vier Felder, die mit zwei Ziffern ein Rechteck bilden: Steht eine Ziffer in Zeile und Spalte der Gegenecke nur in zwei Feldern, streichst du dort die andere Ziffer, weil das Sudoku nur eine Lösung hat.</p>
       <dl class="facts">
         <div class="px"><dt>Benötigte Felder</dt><dd>2 Zeilen × 2 Spalten, 2 Blöcke</dd></div>
-        <div class="px"><dt>Benötigte Verbindungen</dt><dd>Eine Ziffer mit nur zwei Feldern in Zeile und Spalte</dd></div>
+        <div class="px"><dt>Benötigte Verbindungen</dt><dd>Eine Ziffer nur zweimal in Zeile und Spalte</dd></div>
         <div class="px"><dt>Was du streichst</dt><dd>Die andere Ziffer in der Gegenecke</dd></div>
       </dl>
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht Hidden Unique Rectangle aus</h2>
+      <h2 id="shape">Das Muster: Hidden Unique Rectangle</h2>
       <p>Vier Felder, wo sich die Zeilen 1 und 2 mit den Spalten 1 und 5 kreuzen. Sie liegen in den Blöcken 1 und 2. <b>R1C1</b> hat nur die Kandidaten 3 und 7. In der Zeile (Zeile 2) und der Spalte (Spalte 5) der Gegenecke <b>R2C5</b> steht die <b>3</b> nur in zwei Feldern des Rechtecks.</p>
       <div class="board px">
         <svg viewBox="0 0 400 160" role="img" aria-label="Kandidaten von vier Feldern. R1C1 hat 3 und 7, und in Zeile 2 und Spalte 5 steht die 3 nur in Feldern des Rechtecks. Weil das Sudoku nur eine Lösung hat, wird die 7 in R2C5 gestrichen.">
@@ -297,9 +297,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du Hidden Unique Rectangle</h2>
+      <h2 id="find">Hidden Unique Rectangle Schritt für Schritt finden</h2>
       <ol class="steps">
-        <li class="px"><span>Such ein Rechteck über zwei Zeilen, zwei Spalten und <b>zwei Blöcke</b>, dessen vier Felder dieselben zwei Kandidaten haben. Eine Ecke darf nur diese zwei haben.</span></li>
+        <li class="px"><span>Such ein Rechteck über zwei Zeilen, zwei Spalten und <b>zwei Blöcke</b>, dessen vier Felder dieselben zwei Kandidaten haben. Eine Ecke hat dabei nur diese zwei Kandidaten.</span></li>
         <li class="px"><span>Schau dir die <b>Gegenecke</b> an und prüf, ob eine Ziffer in ihrer Zeile und Spalte <b>nur in Feldern des Rechtecks</b> steht.</span></li>
         <li class="px"><span>Wenn ja, streich in der Gegenecke <b>die andere Ziffer</b>.</span></li>
       </ol>
@@ -332,7 +332,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">Hidden Unique Rectangle</span></h2>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">Hidden Unique Rectangle</span></h2>
         <p>Wenn du nicht weiterkommst, zeigt dir ein Tipp die vier Felder des Rechtecks, die starken Verbindungen und die Ziffer zum Streichen direkt im Raster. Im Technik-Training lernst du Hidden Unique Rectangle an einem echten Rätsel. Beim ersten Rätsel siehst du Muster und Grund, beim nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-hidden-rectangle&amp;mt=8" data-goatcounter-click="store-ios/tech-de/hidden-rectangle"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
@@ -344,7 +344,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/hidden-rectangle">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

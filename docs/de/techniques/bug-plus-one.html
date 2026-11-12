@@ -245,7 +245,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht BUG+1 aus</h2>
+      <h2 id="shape">Das Muster: BUG+1</h2>
       <p>Jedes leere Feld im Raster hat zwei Kandidaten, nur <b>R5C5</b> hat drei: 2, 6 und 7. Das Bild zeigt nur Zeile 5. Dort kommen 2 und 6 je zweimal vor, aber die <b>7 dreimal</b> (Spalten 2, 5 und 8).</p>
       <div class="board px">
         <svg viewBox="0 120 400 160" role="img" aria-label="Kandidaten in Zeile 5. R5C2 hat 2 und 7, R5C5 hat 2, 6 und 7, R5C8 hat 6 und 7. Die 7 kommt dreimal vor, also ist R5C5 eine 7, und 2 und 6 werden gestrichen.">
@@ -275,7 +275,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 </g>
 </svg>
         <div class="legend">
-          <span><i class="k-pivot"></i>7, kommt dreimal vor</span>
+          <span><i class="k-pivot"></i>7 (kommt dreimal vor)</span>
           <span><i class="k-del"></i>Streichbare Kandidaten</span>
           <span><i class="k-other"></i>Kandidaten anderer Felder</span>
         </div>
@@ -285,11 +285,11 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="why">
       <h2 id="why">Warum diese Ziffer?</h2>
       <p>Angenommen, R5C5 wäre 2 oder 6 statt 7. Dann hätte jedes leere Feld im Raster zwei Kandidaten, und jede Ziffer käme in jeder Zeile, Spalte und jedem Block zweimal vor.</p>
-      <p>So ein Raster <b>hat keine eindeutige Lösung</b>: Tauschst du die Kandidaten untereinander, passt es trotzdem zu den Regeln. Ein richtiges Sudoku hat nur eine Lösung, also kann das nicht sein. Darum ist R5C5 die <b>7</b>. Genau die Ziffer, die in Zeile, Spalte oder Block dreimal vorkommt.</p>
+      <p>So ein Raster <b>hat keine eindeutige Lösung</b>: Tauschst du die Kandidaten untereinander, passt es trotzdem zu den Regeln. Ein richtiges Sudoku hat nur eine Lösung, also kann das nicht sein. Darum ist R5C5 die <b>7</b>, genau die Ziffer, die in Zeile, Spalte oder Block dreimal vorkommt.</p>
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du BUG+1</h2>
+      <h2 id="find">BUG+1 Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Wenn alle Kandidaten notiert sind, prüf: Hat <b>genau ein Feld drei Kandidaten</b> und jedes andere leere Feld zwei?</span></li>
         <li class="px"><span>Such in Zeile, Spalte und Block dieses Felds die Ziffer, die <b>dreimal vorkommt</b>.</span></li>
@@ -324,7 +324,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">BUG+1</span></h2>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">BUG+1</span></h2>
         <p>Wenn du nicht weiterkommst, zeigt dir ein Tipp das Feld mit drei Kandidaten und die Ziffer zum Eintragen direkt im Raster. Im Technik-Training lernst du BUG+1 an einem echten Rätsel. Beim ersten Rätsel siehst du Muster und Grund, beim nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-bug-plus-one&amp;mt=8" data-goatcounter-click="store-ios/tech-de/bug-plus-one"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
@@ -336,7 +336,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/bug-plus-one">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

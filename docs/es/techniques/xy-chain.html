@@ -239,7 +239,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">La Cadena XY (XY-Chain) es una técnica de sudoku que enlaza celdas con dos candidatos, pasando un número de una a la siguiente, y cuando los dos extremos comparten un número, lo quita de cualquier celda que vea ambos extremos.</p>
       <dl class="facts">
         <div class="px"><dt>Celdas necesarias</dt><dd>Varias celdas con dos candidatos</dd></div>
-        <div class="px"><dt>Cómo se enlazan</dt><dd>Las vecinas comparten un número</dd></div>
+        <div class="px"><dt>Cómo se enlazan</dt><dd>Cada una comparte un número con la siguiente</dd></div>
         <div class="px"><dt>Dónde eliminar</dt><dd>Celdas que ven ambos extremos</dd></div>
       </dl>
     </div>
@@ -312,7 +312,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="faq">
       <h2 id="faq">Dudas frecuentes</h2>
       <div class="qa">
-        <details class="px" open><summary>¿Qué tan larga puede ser la cadena?</summary><p>No hay límite. Cada celda necesita exactamente dos candidatos, y cada vecina tiene que ver a la siguiente y compartir un número con ella.</p></details>
+        <details class="px" open><summary>¿Qué tan larga puede ser la cadena?</summary><p>No hay límite. Cada celda necesita exactamente dos candidatos, y cada una tiene que ver a la siguiente y compartir un número con ella.</p></details>
         <details class="px"><summary>¿En qué se diferencia de la Cadena X?</summary><p>La Cadena X enlaza celdas con un solo número. La Cadena XY va cambiando de número dentro de celdas con dos candidatos.</p></details>
         <details class="px"><summary>¿Y si los extremos tienen números distintos?</summary><p>Entonces esa cadena no elimina nada. Los extremos deben tener el mismo número. Con extremos distintos, una AIC a veces llega a otra conclusión.</p></details>
       </div>

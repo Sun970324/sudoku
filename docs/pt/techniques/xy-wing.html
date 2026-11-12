@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>XY-Wing (Y-Wing): técnica de sudoku e como encontrar</title>
+<title>XY-Wing (Y-Wing) no sudoku: como achar e por que funciona</title>
 <meta name="description" content="O XY-Wing, também chamado de Y-Wing, é uma técnica de sudoku que usa três células com dois candidatos cada, ligadas por uma célula central, e remove o número que as duas pontas têm em comum de qualquer célula que veja as duas. Bastam três células com dois candidatos. É a porta de entrada para o nível intermediário.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/pt/techniques/xy-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/xy-wing.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="pt_BR">
-<meta property="og:title" content="XY-Wing (Y-Wing): técnica de sudoku e como encontrar">
+<meta property="og:title" content="XY-Wing (Y-Wing) no sudoku: como achar e por que funciona">
 <meta property="og:description" content="O XY-Wing, também chamado de Y-Wing, é uma técnica de sudoku que usa três células com dois candidatos cada, ligadas por uma célula central, e remove o número que as duas pontas têm em comum de qualquer célula que veja as duas.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/pt/techniques/xy-wing.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "XY-Wing (Y-Wing): técnica de sudoku e como encontrar",
+      "headline": "XY-Wing (Y-Wing) no sudoku: como achar e por que funciona",
       "description": "O XY-Wing, também chamado de Y-Wing, é uma técnica de sudoku que usa três células com dois candidatos cada, ligadas por uma célula central, e remove o número que as duas pontas têm em comum de qualquer célula que veja as duas.",
       "inLanguage": "pt",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/pt/techniques/xy-wing.html",
@@ -239,7 +239,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">O XY-Wing, também chamado de Y-Wing, é uma técnica de sudoku que usa três células com dois candidatos cada, ligadas por uma célula central, e remove o número que as duas pontas têm em comum de qualquer célula que veja as duas.</p>
       <dl class="facts">
         <div class="px"><dt>Células necessárias</dt><dd>Três células com dois candidatos</dd></div>
-        <div class="px"><dt>Número comum</dt><dd>Um, presente nas duas pontas</dd></div>
+        <div class="px"><dt>Número em comum</dt><dd>Um, presente nas duas pontas</dd></div>
         <div class="px"><dt>Onde remover</dt><dd>Células que veem as duas pontas</dd></div>
       </dl>
     </div>
@@ -276,7 +276,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="legend">
           <span><i class="k-pivot"></i>Célula central (4 e 6)</span>
           <span><i class="k-key"></i>Números em comum com a central</span>
-          <span><i class="k-z"></i>O 9 comum das pontas</span>
+          <span><i class="k-z"></i>O 9 em comum das pontas</span>
           <span><i class="k-del"></i>9 para remover</span>
         </div>
       </div>
@@ -286,8 +286,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="why">Por que funciona?</h2>
       <p>A célula central é 4 ou 6.</p>
       <div class="why">
-        <div class="px"><b>Se a central é 4</b><span>R2C7, na mesma linha, não pode ser 4, então é 9.</span></div>
-        <div class="px"><b>Se a central é 6</b><span>R6C2, na mesma coluna, não pode ser 6, então é 9.</span></div>
+        <div class="px"><b>Se a central for 4</b><span>R2C7, na mesma linha, não pode ser 4, então é 9.</span></div>
+        <div class="px"><b>Se a central for 6</b><span>R6C2, na mesma coluna, não pode ser 6, então é 9.</span></div>
       </div>
       <p>De qualquer jeito, <b>uma das pontas é 9.</b> R6C7 vê as duas (mesma coluna que R2C7 e mesma linha que R6C2), então não pode ser 9. Remova o 9.</p>
     </section>
@@ -393,7 +393,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   "lesson.find": "Encontre e toque",
   "lesson.restart": "Recomeçar",
   "lesson.nextTech": "Próxima técnica",
-  "lesson.app": "Sudokus reais no app",
+  "lesson.app": "Jogar sudokus no app",
   "lesson.fail": "Não foi possível carregar a lição. Atualize a página."
 }
 </script>

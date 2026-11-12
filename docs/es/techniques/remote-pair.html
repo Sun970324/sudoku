@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Remote Pair (par remoto): técnica de sudoku explicada</title>
-<meta name="description" content="El Remote Pair (par remoto) es una técnica de sudoku que usa una cadena de celdas con los mismos dos candidatos que se ven una a otra, y quita esos dos números de cualquier celda que vea dos celdas de valor opuesto en la cadena. Con una cadena de celdas con los mismos dos candidatos, limpias celdas muy lejanas.">
+<meta name="description" content="El Remote Pair (par remoto) es una técnica de sudoku que usa una cadena de celdas con los mismos dos candidatos, en la que cada una ve a la siguiente, y quita esos dos números de cualquier celda que vea dos celdas de valor opuesto en la cadena. Una cadena de celdas con los mismos dos candidatos despeja celdas muy lejanas.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/es/techniques/remote-pair.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/remote-pair.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/remote-pair.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="es_LA">
 <meta property="og:title" content="Remote Pair (par remoto): técnica de sudoku explicada">
-<meta property="og:description" content="El Remote Pair (par remoto) es una técnica de sudoku que usa una cadena de celdas con los mismos dos candidatos que se ven una a otra, y quita esos dos números de cualquier celda que vea dos celdas de valor opuesto en la cadena.">
+<meta property="og:description" content="El Remote Pair (par remoto) es una técnica de sudoku que usa una cadena de celdas con los mismos dos candidatos, en la que cada una ve a la siguiente, y quita esos dos números de cualquier celda que vea dos celdas de valor opuesto en la cadena.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/es/techniques/remote-pair.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "Remote Pair (par remoto): técnica de sudoku explicada",
-      "description": "El Remote Pair (par remoto) es una técnica de sudoku que usa una cadena de celdas con los mismos dos candidatos que se ven una a otra, y quita esos dos números de cualquier celda que vea dos celdas de valor opuesto en la cadena.",
+      "description": "El Remote Pair (par remoto) es una técnica de sudoku que usa una cadena de celdas con los mismos dos candidatos, en la que cada una ve a la siguiente, y quita esos dos números de cualquier celda que vea dos celdas de valor opuesto en la cadena.",
       "inLanguage": "es",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/es/techniques/remote-pair.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -235,8 +235,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <div>
       <p class="eyebrow">SUDOKU TECHNIQUE · Etapa 7 · Cadenas y bucles</p>
       <h1>Remote Pair</h1>
-      <p class="aka">Par remoto · Remote Pair</p>
-      <p class="lead">El Remote Pair (par remoto) es una técnica de sudoku que usa una cadena de celdas con los mismos dos candidatos que se ven una a otra, y quita esos dos números de cualquier celda que vea dos celdas de valor opuesto en la cadena.</p>
+      <p class="aka">Par remoto</p>
+      <p class="lead">El Remote Pair (par remoto) es una técnica de sudoku que usa una cadena de celdas con los mismos dos candidatos, en la que cada una ve a la siguiente, y quita esos dos números de cualquier celda que vea dos celdas de valor opuesto en la cadena.</p>
       <dl class="facts">
         <div class="px"><dt>Celdas necesarias</dt><dd>Varias celdas con los mismos dos candidatos</dd></div>
         <div class="px"><dt>Cómo se enlazan</dt><dd>Se ven por una fila, columna o caja</dd></div>
@@ -300,7 +300,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <ol class="steps">
         <li class="px"><span>Busca todas las <b>celdas que solo tienen los mismos dos candidatos</b>.</span></li>
         <li class="px"><span>Une las que se ven entre sí para formar <b>una cadena</b>.</span></li>
-        <li class="px"><span>Divide la cadena en dos colores, <b>alternando celda por celda</b>.</span></li>
+        <li class="px"><span>Pinta la cadena con dos colores, <b>alternando celda por celda</b>.</span></li>
         <li class="px"><span>Quita los dos números de las <b>celdas que ven dos celdas de distinto color</b>.</span></li>
       </ol>
     </section>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>XYZ-Wing: técnica de sudoku e como encontrar</title>
+<title>XYZ-Wing no sudoku: como achar e por que funciona</title>
 <meta name="description" content="O XYZ-Wing é uma técnica de sudoku que usa uma célula central com três candidatos e duas células que ela vê, com dois candidatos cada, todas com um número em comum, e remove esse número de qualquer célula que veja as três. É um XY-Wing com um candidato a mais na célula central.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/pt/techniques/xyz-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/xyz-wing.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="pt_BR">
-<meta property="og:title" content="XYZ-Wing: técnica de sudoku e como encontrar">
+<meta property="og:title" content="XYZ-Wing no sudoku: como achar e por que funciona">
 <meta property="og:description" content="O XYZ-Wing é uma técnica de sudoku que usa uma célula central com três candidatos e duas células que ela vê, com dois candidatos cada, todas com um número em comum, e remove esse número de qualquer célula que veja as três.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/pt/techniques/xyz-wing.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "XYZ-Wing: técnica de sudoku e como encontrar",
+      "headline": "XYZ-Wing no sudoku: como achar e por que funciona",
       "description": "O XYZ-Wing é uma técnica de sudoku que usa uma célula central com três candidatos e duas células que ela vê, com dois candidatos cada, todas com um número em comum, e remove esse número de qualquer célula que veja as três.",
       "inLanguage": "pt",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/pt/techniques/xyz-wing.html",
@@ -239,7 +239,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">O XYZ-Wing é uma técnica de sudoku que usa uma célula central com três candidatos e duas células que ela vê, com dois candidatos cada, todas com um número em comum, e remove esse número de qualquer célula que veja as três.</p>
       <dl class="facts">
         <div class="px"><dt>Células necessárias</dt><dd>Uma com três candidatos e duas com dois</dd></div>
-        <div class="px"><dt>Número comum</dt><dd>Um, presente nas três células</dd></div>
+        <div class="px"><dt>Número em comum</dt><dd>Um, presente nas três células</dd></div>
         <div class="px"><dt>Onde remover</dt><dd>Células que veem as três</dd></div>
       </dl>
     </div>
@@ -286,8 +286,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="why">Por que funciona?</h2>
       <p>A célula central é 1, 4 ou 7.</p>
       <div class="why">
-        <div class="px"><b>Se a central é 1 ou 4</b><span>Se for 1, R1C3, no mesmo bloco, é 7. Se for 4, R2C7, na mesma linha, é 7.</span></div>
-        <div class="px"><b>Se a central é 7</b><span>A própria célula central é 7.</span></div>
+        <div class="px"><b>Se a central for 1 ou 4</b><span>Se for 1, R1C3, no mesmo bloco, é 7. Se for 4, R2C7, na mesma linha, é 7.</span></div>
+        <div class="px"><b>Se a central for 7</b><span>A própria célula central é 7.</span></div>
       </div>
       <p>De qualquer jeito, <b>uma das três células é 7.</b> R2C3 vê as três (mesmo bloco que R1C3 e R2C2, mesma linha que R2C7), então não pode ser 7. Remova o 7.</p>
     </section>
@@ -393,7 +393,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   "lesson.find": "Encontre e toque",
   "lesson.restart": "Recomeçar",
   "lesson.nextTech": "Próxima técnica",
-  "lesson.app": "Sudokus reais no app",
+  "lesson.app": "Jogar sudokus no app",
   "lesson.fail": "Não foi possível carregar a lição. Atualize a página."
 }
 </script>

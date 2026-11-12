@@ -293,13 +293,13 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="px"><b>Fila 2 y columna 5</b><span>Si R2C5 es 7, el 3 de la fila 2 va en R2C1 y el 3 de la columna 5 va en R1C5.</span></div>
         <div class="px"><b>Entonces R1C1</b><span>Su fila y su columna ya tienen un 3, así que no es 3: es 7.</span></div>
       </div>
-      <p>Las cuatro celdas quedarían 7, 3, 3, 7. Si intercambias el 3 y el 7 en ellas, se siguen cumpliendo las reglas, así que el sudoku tendría <b>dos soluciones</b>. Un sudoku bien hecho tiene solo una, así que R2C5 no puede ser 7. Por eso quitas el 7.</p>
+      <p>Las cuatro celdas quedarían 7, 3, 3, 7. Si intercambias el 3 y el 7 en ellas, se siguen cumpliendo las reglas, así que el sudoku tendría <b>dos soluciones</b>. Un sudoku bien hecho tiene solo una, por lo que R2C5 no puede ser 7. Por eso se quita el 7.</p>
     </section>
 
     <section aria-labelledby="find">
       <h2 id="find">Cómo encontrar Rectángulo único oculto</h2>
       <ol class="steps">
-        <li class="px"><span>Busca un rectángulo de cuatro celdas en dos filas, dos columnas y <b>dos cajas</b> que compartan los mismos dos candidatos. Una esquina debe tener solo esos dos.</span></li>
+        <li class="px"><span>Busca cuatro celdas que formen un rectángulo en dos filas, dos columnas y <b>dos cajas</b>, y que compartan los mismos dos candidatos. Una esquina debe tener solo esos dos.</span></li>
         <li class="px"><span>Mira la <b>esquina opuesta</b> y revisa si, en su fila y su columna, un número aparece <b>solo en celdas del rectángulo</b>.</span></li>
         <li class="px"><span>Si es así, quita <b>el otro número</b> de la esquina opuesta.</span></li>
       </ol>
@@ -313,7 +313,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="faq">
       <h2 id="faq">Dudas frecuentes</h2>
       <div class="qa">
-        <details class="px" open><summary>¿En qué se diferencia del Rectángulo único?</summary><p>El rectángulo único solo mira los candidatos de las celdas. El oculto también revisa si un número tiene solo dos celdas en una fila y una columna (enlaces fuertes). Por eso funciona aunque haya muchos otros candidatos.</p></details>
+        <details class="px" open><summary>¿En qué se diferencia del Rectángulo único?</summary><p>El Rectángulo único solo mira los candidatos de las celdas. El Rectángulo único oculto también revisa si un número solo puede ir en dos celdas de una fila y de una columna (enlaces fuertes). Por eso funciona aunque haya muchos otros candidatos.</p></details>
         <details class="px"><summary>¿Puedo confiar en que el sudoku tiene una sola solución?</summary><p>Todos los sudokus de Sudoku League están hechos para tener una sola solución. En sudokus con varias soluciones, esta técnica no sirve.</p></details>
         <details class="px"><summary>¿Y si el rectángulo ocupa cuatro cajas?</summary><p>Entonces, al intercambiar los números se rompe la regla de las cajas y no aparece una segunda solución. Solo funciona en dos cajas.</p></details>
       </div>

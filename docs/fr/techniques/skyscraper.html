@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gratte-ciel (Skyscraper) au sudoku : technique expliquée</title>
-<meta name="description" content="Le Gratte-ciel (Skyscraper) est une technique de sudoku : quand deux colonnes n'ont que deux candidats pour un chiffre et qu'une extrémité de chacune est sur la même ligne, on retire ce chiffre des cases qui voient les deux autres extrémités. Une technique à un seul chiffre : il suffit de repérer deux tours de hauteurs différentes.">
+<meta name="description" content="Le Gratte-ciel (Skyscraper) est une technique de sudoku : quand deux colonnes n'ont chacune que deux candidats pour un chiffre et qu'une extrémité de chacune est sur la même ligne, on retire ce chiffre des cases qui voient les deux autres extrémités. Une technique à un seul chiffre : il suffit de repérer deux tours de hauteurs différentes.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/fr/techniques/skyscraper.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/skyscraper.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/skyscraper.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:title" content="Gratte-ciel (Skyscraper) au sudoku : technique expliquée">
-<meta property="og:description" content="Le Gratte-ciel (Skyscraper) est une technique de sudoku : quand deux colonnes n'ont que deux candidats pour un chiffre et qu'une extrémité de chacune est sur la même ligne, on retire ce chiffre des cases qui voient les deux autres extrémités.">
+<meta property="og:description" content="Le Gratte-ciel (Skyscraper) est une technique de sudoku : quand deux colonnes n'ont chacune que deux candidats pour un chiffre et qu'une extrémité de chacune est sur la même ligne, on retire ce chiffre des cases qui voient les deux autres extrémités.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/fr/techniques/skyscraper.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "Gratte-ciel (Skyscraper) au sudoku : technique expliquée",
-      "description": "Le Gratte-ciel (Skyscraper) est une technique de sudoku : quand deux colonnes n'ont que deux candidats pour un chiffre et qu'une extrémité de chacune est sur la même ligne, on retire ce chiffre des cases qui voient les deux autres extrémités.",
+      "description": "Le Gratte-ciel (Skyscraper) est une technique de sudoku : quand deux colonnes n'ont chacune que deux candidats pour un chiffre et qu'une extrémité de chacune est sur la même ligne, on retire ce chiffre des cases qui voient les deux autres extrémités.",
       "inLanguage": "fr",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/fr/techniques/skyscraper.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,7 +236,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Étape 5 · Motifs à un chiffre</p>
       <h1>Gratte-ciel</h1>
       <p class="aka">Skyscraper</p>
-      <p class="lead">Le Gratte-ciel (Skyscraper) est une technique de sudoku : quand deux colonnes n'ont que deux candidats pour un chiffre et qu'une extrémité de chacune est sur la même ligne, on retire ce chiffre des cases qui voient les deux autres extrémités.</p>
+      <p class="lead">Le Gratte-ciel (Skyscraper) est une technique de sudoku : quand deux colonnes n'ont chacune que deux candidats pour un chiffre et qu'une extrémité de chacune est sur la même ligne, on retire ce chiffre des cases qui voient les deux autres extrémités.</p>
       <dl class="facts">
         <div class="px"><dt>Chiffres à suivre</dt><dd>Un seul</dd></div>
         <div class="px"><dt>Rangées requises</dt><dd>2 colonnes à deux candidats</dd></div>
@@ -313,7 +313,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="qa">
         <details class="px" open><summary>Quelle différence avec le X-Wing ?</summary><p>Dans un X-Wing, les quatre extrémités forment un rectangle parfait. Dans un Gratte-ciel, un seul côté est aligné et l'autre est décalé.</p></details>
         <details class="px"><summary>Que veut dire "voir" un toit ?</summary><p>Être sur la même ligne, la même colonne ou dans le même bloc. On ne retire le chiffre que des cases qui voient les deux toits.</p></details>
-        <details class="px"><summary>Il existe des techniques proches ?</summary><p>Le 2-String Kite et le Turbot Fish sont de la même famille. Tous relient deux liens forts sur un seul chiffre.</p></details>
+        <details class="px"><summary>Il existe des techniques proches ?</summary><p>Le 2-String Kite et le Turbot Fish sont de la même famille. Tous enchaînent deux liens forts sur un seul chiffre.</p></details>
       </div>
     </section>
 
@@ -331,19 +331,19 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div>
         <p class="eyebrow">DANS L'APP SUDOKU LEAGUE</p>
         <h2 id="app">Tu bloques ? Un indice te montre le motif <span class="nowrap">Gratte-ciel</span></h2>
-        <p>Si tu bloques et que tu touches Indice, les liens entre les deux colonnes et les cases à vider s'affichent sur la grille. Dans Entraînement aux techniques, tu suis la leçon Gratte-ciel sur une vraie grille. La première grille te montre le motif et son explication, puis tu le trouves toi-même sur la suivante.</p>
+        <p>Si tu bloques et que tu touches Indice, les liens entre les deux colonnes et les candidats à éliminer s'affichent sur la grille. Dans Entraînement aux techniques, tu suis la leçon Gratte-ciel sur une vraie grille. La première grille te montre le motif et son explication, puis tu le trouves toi-même sur la suivante.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-fr-skyscraper&amp;mt=8" data-goatcounter-click="store-ios/tech-fr/skyscraper"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Télécharger dans l'App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-fr-skyscraper" data-goatcounter-click="store-android/tech-fr/skyscraper"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Disponible sur Google Play"></a>
         </div>
       </div>
-      <div class="phone px" data-nosnippet><img src="../../img/tech/skyscraper.webp" loading="lazy" alt="Indice Gratte-ciel dans Sudoku League : des traits relient deux colonnes et les cases à vider sont marquées sur une vraie grille"></div>
+      <div class="phone px" data-nosnippet><img src="../../img/tech/skyscraper.webp" loading="lazy" alt="Indice Gratte-ciel dans Sudoku League : des traits relient deux colonnes et les candidats à éliminer sont marqués sur une vraie grille"></div>
     </section>
     <a class="event-ticket" data-nosnippet href="../../fr/#coupon" data-goatcounter-click="coupon-bar/tech-fr/skyscraper">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
         <p class="ticket-big">1 MOIS OFFERT</p>
-        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Entraînement aux techniques</p>
+        <p class="ticket-perks">Indices illimités · Replay · 6 packs de thèmes · Leçons de techniques</p>
         <span class="ticket-go px">Obtenir le coupon ▸</span>
       </div>
       <div class="ticket-stub px"><span>LIMITED</span><b>Quantité<br> limitée</b></div>
@@ -391,7 +391,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 {
   "lesson.prev": "Précédent",
   "lesson.next": "Suivant",
-  "lesson.find": "Trouve et touche",
+  "lesson.find": "Touche la bonne case",
   "lesson.restart": "Recommencer",
   "lesson.nextTech": "Technique suivante",
   "lesson.app": "Vraies grilles dans l'app",

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>XY-ウィング(XY-Wing・Y-ウィング)ナンプレのテクニック・見つけ方と原理</title>
-<meta name="description" content="XY-ウィング(Y-ウィング)は、候補が2つずつの3マスが真ん中のマスを軸につながるとき、両端のマスを両方見るマスから共通の数字を消せるナンプレのテクニックです。 候補が2つのマスが3つあればできる、中級への最初の関門です。">
+<title>XY-ウィング(XY-Wing・Y-ウィング)：ナンプレのテクニック、見つけ方と原理</title>
+<meta name="description" content="XY-ウィング(Y-ウィング)は、候補が2つずつの3マスが真ん中のマスを軸につながるとき、両端のマスを両方見るマスから共通の数字を消せるナンプレのテクニックです。 候補2つのマスが3つあればできる、中級への最初の関門です。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/xy-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/xy-wing.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/xy-wing.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="XY-ウィング(XY-Wing・Y-ウィング)ナンプレのテクニック・見つけ方と原理">
+<meta property="og:title" content="XY-ウィング(XY-Wing・Y-ウィング)：ナンプレのテクニック、見つけ方と原理">
 <meta property="og:description" content="XY-ウィング(Y-ウィング)は、候補が2つずつの3マスが真ん中のマスを軸につながるとき、両端のマスを両方見るマスから共通の数字を消せるナンプレのテクニックです。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/ja/techniques/xy-wing.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "XY-ウィング(XY-Wing・Y-ウィング)ナンプレのテクニック・見つけ方と原理",
+      "headline": "XY-ウィング(XY-Wing・Y-ウィング)：ナンプレのテクニック、見つけ方と原理",
       "description": "XY-ウィング(Y-ウィング)は、候補が2つずつの3マスが真ん中のマスを軸につながるとき、両端のマスを両方見るマスから共通の数字を消せるナンプレのテクニックです。",
       "inLanguage": "ja",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/ja/techniques/xy-wing.html",
@@ -281,7 +281,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="legend">
           <span><i class="k-pivot"></i>真ん中のマス (4・6)</span>
           <span><i class="k-key"></i>真ん中と共有する数字</span>
-          <span><i class="k-z"></i>両端のマスの共通の数字9</span>
+          <span><i class="k-z"></i>両端のマスに共通する9</span>
           <span><i class="k-del"></i>消せる9</span>
         </div>
       </div>
@@ -300,9 +300,9 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section aria-labelledby="find">
       <h2 id="find"><span class="nowrap">XY-ウィング</span>の見つけ方</h2>
       <ol class="steps">
-        <li class="px"><span>候補が<b>2つのマス</b>を真ん中に決めます。たとえばX・Y。</span></li>
+        <li class="px"><span>候補が<b>2つのマス</b>を選んで、真ん中のマスにします。たとえばX・Y。</span></li>
         <li class="px"><span>真ん中のマスが見るマスの中から、<b>X・Z</b>のマスと<b>Y・Z</b>のマスを探します。</span></li>
-        <li class="px"><span>2つの両端のマスを<b>両方見るマス</b>からZを消します。</span></li>
+        <li class="px"><span>両端の2マスを<b>両方見るマス</b>からZを消します。</span></li>
       </ol>
       <p class="note">両端のマスは、真ん中のマスと同じ行、列、ブロックのどれでつながってもかまいません。名前のX・Y・Zもここから来ています。</p>
     </section>
@@ -317,12 +317,12 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <div class="qa">
         <details class="px" open><summary>両端のマスどうしも、お互いを見ている必要がありますか？</summary><p>いいえ。両端のマスは真ん中のマスを見ていれば十分です。お互いを見ているかは関係ありません。</p></details>
         <details class="px"><summary>真ん中のマスの候補が3つのときは？</summary><p>真ん中がX・Y・Zで、両端がX・ZとY・Zなら、XYZ-ウィングです。このときは3マスすべてを見るマスからしか消せません。</p></details>
-        <details class="px"><summary>消すマスはどうやって探しますか？</summary><p>2つの両端のマスの行・列・ブロックが重なるマスを見てください。両端が別の行・別の列なら、たいてい2本の線が交わるマスです。</p></details>
+        <details class="px"><summary>消すマスはどうやって探しますか？</summary><p>両端の2マスの行・列・ブロックが重なるマスを見てください。両端が別の行・別の列なら、たいていそれぞれの行と列が交わるマスです。</p></details>
       </div>
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="xyz-wing.html">XYZ-ウィング</a>
         <a class="px" href="w-wing.html">W-ウィング</a>

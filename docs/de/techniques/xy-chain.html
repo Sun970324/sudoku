@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>XY-Kette (XY-Chain): Sudoku-Technik erklärt</title>
-<meta name="description" content="Eine XY-Kette (XY-Chain) ist eine Kette aus Feldern mit je zwei Kandidaten, die jeweils eine Ziffer ans nächste Feld weitergeben und deren Enden dieselbe Ziffer haben, sodass diese Ziffer in jedem Feld wegfällt, das beide Enden sieht. Eine Kette aus Feldern mit zwei Kandidaten knackt schwere Rätsel.">
+<meta name="description" content="Eine XY-Kette (XY-Chain) ist eine Kette aus Feldern mit je zwei Kandidaten, in der jedes Feld eine Ziffer ans nächste weitergibt; haben beide Enden dieselbe Ziffer, fällt sie in jedem Feld weg, das beide Enden sieht. Eine Kette aus Feldern mit zwei Kandidaten knackt schwere Rätsel.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/de/techniques/xy-chain.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/xy-chain.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/xy-chain.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="de_DE">
 <meta property="og:title" content="XY-Kette (XY-Chain): Sudoku-Technik erklärt">
-<meta property="og:description" content="Eine XY-Kette (XY-Chain) ist eine Kette aus Feldern mit je zwei Kandidaten, die jeweils eine Ziffer ans nächste Feld weitergeben und deren Enden dieselbe Ziffer haben, sodass diese Ziffer in jedem Feld wegfällt, das beide Enden sieht.">
+<meta property="og:description" content="Eine XY-Kette (XY-Chain) ist eine Kette aus Feldern mit je zwei Kandidaten, in der jedes Feld eine Ziffer ans nächste weitergibt; haben beide Enden dieselbe Ziffer, fällt sie in jedem Feld weg, das beide Enden sieht.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/de/techniques/xy-chain.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "XY-Kette (XY-Chain): Sudoku-Technik erklärt",
-      "description": "Eine XY-Kette (XY-Chain) ist eine Kette aus Feldern mit je zwei Kandidaten, die jeweils eine Ziffer ans nächste Feld weitergeben und deren Enden dieselbe Ziffer haben, sodass diese Ziffer in jedem Feld wegfällt, das beide Enden sieht.",
+      "description": "Eine XY-Kette (XY-Chain) ist eine Kette aus Feldern mit je zwei Kandidaten, in der jedes Feld eine Ziffer ans nächste weitergibt; haben beide Enden dieselbe Ziffer, fällt sie in jedem Feld weg, das beide Enden sieht.",
       "inLanguage": "de",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/de/techniques/xy-chain.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,7 +236,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Stufe 7 · Ketten und Schleifen</p>
       <h1>XY-Kette</h1>
       <p class="aka">XY-Chain</p>
-      <p class="lead">Eine XY-Kette (XY-Chain) ist eine Kette aus Feldern mit je zwei Kandidaten, die jeweils eine Ziffer ans nächste Feld weitergeben und deren Enden dieselbe Ziffer haben, sodass diese Ziffer in jedem Feld wegfällt, das beide Enden sieht.</p>
+      <p class="lead">Eine XY-Kette (XY-Chain) ist eine Kette aus Feldern mit je zwei Kandidaten, in der jedes Feld eine Ziffer ans nächste weitergibt; haben beide Enden dieselbe Ziffer, fällt sie in jedem Feld weg, das beide Enden sieht.</p>
       <dl class="facts">
         <div class="px"><dt>Benötigte Felder</dt><dd>Mehrere Felder mit je zwei Kandidaten</dd></div>
         <div class="px"><dt>Verbindung</dt><dd>Nachbarn teilen eine Ziffer</dd></div>
@@ -245,7 +245,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht <span class="nowrap">XY-Kette</span> aus</h2>
+      <h2 id="shape">Das Muster: <span class="nowrap">XY-Kette</span></h2>
       <p>Vier Felder mit je zwei Kandidaten. Von <b>R1C1</b> (3 und 5) über R1C6 (5 und 8) und R5C6 (8 und 2) bis <b>R5C9</b> (2 und 3) teilen Nachbarn jeweils eine Ziffer. Beide Enden haben eine 3.</p>
       <div class="board px">
         <svg viewBox="0 0 400 280" role="img" aria-label="Kandidaten von vier Feldern. R1C1 (3, 5), R1C6 (5, 8), R5C6 (8, 2) und R5C9 (2, 3) bilden eine Kette. Die 3 in R1C9 und R5C1, die beide Enden sehen, wird entfernt.">
@@ -286,7 +286,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">Warum klappt das?</h2>
-      <p>Angenommen, der Start R1C1 ist keine 3. Dann legt die Kette der Reihe nach den Rest fest.</p>
+      <p>Angenommen, das Startfeld R1C1 ist keine 3. Dann legt die Kette der Reihe nach den Rest fest.</p>
       <div class="why">
         <div class="px"><b>R1C1 ist 5</b><span>R1C6 in derselben Zeile ist keine 5, also 8. R5C6 in derselben Spalte ist keine 8, also 2.</span></div>
         <div class="px"><b>Dann das Ende</b><span>R5C9 in derselben Zeile ist keine 2, also 3.</span></div>
@@ -295,7 +295,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du <span class="nowrap">XY-Kette</span></h2>
+      <h2 id="find"><span class="nowrap">XY-Kette</span> Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Starte in einem <b>Feld mit zwei Kandidaten</b>. Wähl eine seiner Ziffern als "Endziffer".</span></li>
         <li class="px"><span>Geh über die andere Ziffer zum <b>nächsten Feld mit zwei Kandidaten</b>. Es muss in derselben Zeile, Spalte oder im selben Block liegen.</span></li>
@@ -332,8 +332,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">XY-Kette</span></h2>
-        <p>Wenn du nicht weiterkommst, zeichnet ein Tipp die Kette Glied für Glied aufs Brett. Im Technik-Training lernst du XY-Kette an einem echten Rätsel. Auf dem ersten Brett zeigen wir dir Muster und Grund, auf dem nächsten findest du es selbst.</p>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">XY-Kette</span></h2>
+        <p>Wenn du nicht weiterkommst, zeichnet ein Tipp die Kette Glied für Glied aufs Brett. Im Technik-Training lernst du die Technik XY-Kette an einem echten Rätsel. Auf dem ersten Brett zeigen wir dir das Muster und warum es funktioniert, auf dem nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-xy-chain&amp;mt=8" data-goatcounter-click="store-ios/tech-de/xy-chain"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-de-xy-chain" data-goatcounter-click="store-android/tech-de/xy-chain"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Jetzt bei Google Play"></a>
@@ -344,7 +344,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/xy-chain">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

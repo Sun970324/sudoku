@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>X-ウィング(X-Wing)ナンプレ解法 · 見つけ方と仕組み</title>
+<title>X-ウィング(X-Wing) ナンプレのテクニック · 見つけ方と仕組み</title>
 <meta name="description" content="X-ウィング(X-Wing)は、ある数字の候補が2つの行で同じ2つの列にしかないとき、その2列の残りのマスからその数字を消せるナンプレのテクニックです。 4つのマスが作る長方形1つで、2つの列の候補をまとめて消せます。">
 <link rel="canonical" href="https://sudoku.jaywithme.com/ja/techniques/x-wing.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/x-wing.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="X-ウィング(X-Wing)ナンプレ解法 · 見つけ方と仕組み">
+<meta property="og:title" content="X-ウィング(X-Wing) ナンプレのテクニック · 見つけ方と仕組み">
 <meta property="og:description" content="X-ウィング(X-Wing)は、ある数字の候補が2つの行で同じ2つの列にしかないとき、その2列の残りのマスからその数字を消せるナンプレのテクニックです。">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/ja/techniques/x-wing.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "X-ウィング(X-Wing)ナンプレ解法 · 見つけ方と仕組み",
+      "headline": "X-ウィング(X-Wing) ナンプレのテクニック · 見つけ方と仕組み",
       "description": "X-ウィング(X-Wing)は、ある数字の候補が2つの行で同じ2つの列にしかないとき、その2列の残りのマスからその数字を消せるナンプレのテクニックです。",
       "inLanguage": "ja",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/ja/techniques/x-wing.html",
@@ -243,7 +243,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="aka">Xウィング · エックスウィング · X-Wing</p>
       <p class="lead">X-ウィング(X-Wing)は、ある数字の候補が2つの行で同じ2つの列にしかないとき、その2列の残りのマスからその数字を消せるナンプレのテクニックです。</p>
       <dl class="facts">
-        <div class="px"><dt>見る数字</dt><dd>1種類</dd></div>
+        <div class="px"><dt>注目する数字</dt><dd>1種類</dd></div>
         <div class="px"><dt>必要な行・列</dt><dd>2行+2列</dd></div>
         <div class="px"><dt>消す場所</dt><dd>2列の残りのマス</dd></div>
       </dl>
@@ -304,7 +304,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="px"><b>ケース1</b><span>3行目の5が3列目なら、5行目の5は5列目です。</span></div>
         <div class="px"><b>ケース2</b><span>3行目の5が5列目なら、5行目の5は3列目です。</span></div>
       </div>
-      <p>どちらの場合も、<b>3列目と5列目は、この2つの行から5を1つずつ受け取ります。</b>1つの列に5は1つだけなので、3列目と5列目の残りのマス(R1C3、R8C3、R7C5)には5が入りません。そこで、それらのマスの5の候補を消します。</p>
+      <p>どちらの場合も、<b>3列目と5列目の5は、どちらもこの2つの行の中に入ります。</b>1つの列に5は1つだけなので、3列目と5列目の残りのマス(R1C3、R8C3、R7C5)には5が入りません。そこで、それらのマスの5の候補を消します。</p>
     </section>
 
     <section aria-labelledby="find">
@@ -333,7 +333,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="swordfish.html">ソードフィッシュ</a>
         <a class="px" href="jellyfish.html">ジェリーフィッシュ</a>

@@ -244,14 +244,14 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">スー・デ・コック（Sue de Coq）は、ブロックとライン（行や列）が重なるマスの候補を、ライン側のマスとブロック側のマスが分けて受け持つとき、ラインとブロックの残りのマスから、それぞれが受け持つ数字を消すナンプレのテクニックです。</p>
       <dl class="facts">
         <div class="px"><dt>必要なマス</dt><dd>重なるマス2つ + ライン側1つ + ブロック側1つ</dd></div>
-        <div class="px"><dt>見る候補</dt><dd>合わせて4つの数字</dd></div>
+        <div class="px"><dt>注目する候補</dt><dd>合わせて4つの数字</dd></div>
         <div class="px"><dt>消す場所</dt><dd>ラインとブロックの残りのマス</dd></div>
       </dl>
     </div>
 
     <section aria-labelledby="shape">
       <h2 id="shape">スー・デ・コックの形</h2>
-      <p>1行目とブロック1が重なるところに、<b>R1C1</b>（1・2・4・5）と<b>R1C2</b>（1・4・5）があります。1行目側には<b>R1C7</b>（1・2）、ブロック側には<b>R3C3</b>（4・5）があります。4マスの候補を合わせると1・2・4・5で、1・2は行側、4・5はブロック側が分けて受け持ちます。</p>
+      <p>1行目とブロック1が重なるところに、<b>R1C1</b>（1・2・4・5）と<b>R1C2</b>（1・4・5）があります。行側には<b>R1C7</b>（1・2）、ブロック側には<b>R3C3</b>（4・5）があります。4マスの候補を合わせると1・2・4・5で、1・2は行側、4・5はブロック側が分けて受け持ちます。</p>
       <div class="board px">
         <svg viewBox="0 0 400 160" role="img" aria-label="6つのマスの候補を示した図。重なるR1C1（1・2・4・5）とR1C2（1・4・5）、行側のR1C7（1・2）、ブロック側のR3C3（4・5）がスー・デ・コックで、R1C5の1とR2C3の5が消えます。">
 <defs><clipPath id="board-view-7ga2o3"><rect x="30" y="30" width="360" height="120"/></clipPath></defs>
@@ -321,7 +321,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="pointing.html">交差(ポインティング)</a>
         <a class="px" href="claiming.html">交差(クレーミング)</a>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cadena ALS (ALS-AIC): técnica de sudoku y cómo encontrarla</title>
-<meta name="description" content="La Cadena ALS (ALS-AIC) es una técnica de sudoku que usa como eslabón de una AIC un conjunto casi bloqueado (ALS), un grupo con un candidato más que celdas; como uno de sus dos extremos siempre es verdadero, eliminas ese candidato de las celdas que ven ambos extremos. Es una técnica avanzada que usa un grupo de celdas casi bloqueado como eslabón de la cadena.">
+<meta name="description" content="La Cadena ALS (ALS-AIC) es una técnica de sudoku que usa como eslabón de una AIC un conjunto casi bloqueado (ALS), un grupo con un candidato más que celdas; como uno de sus dos extremos siempre es verdadero, eliminas ese número de las celdas que ven ambos extremos. Es una técnica avanzada que usa un grupo de celdas casi bloqueado como eslabón de la cadena.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/es/techniques/als-chain.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/als-chain.html">
 <link rel="alternate" hreflang="en" href="https://sudoku.jaywithme.com/en/techniques/als-chain.html">
@@ -21,7 +21,7 @@
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="es_LA">
 <meta property="og:title" content="Cadena ALS (ALS-AIC): técnica de sudoku y cómo encontrarla">
-<meta property="og:description" content="La Cadena ALS (ALS-AIC) es una técnica de sudoku que usa como eslabón de una AIC un conjunto casi bloqueado (ALS), un grupo con un candidato más que celdas; como uno de sus dos extremos siempre es verdadero, eliminas ese candidato de las celdas que ven ambos extremos.">
+<meta property="og:description" content="La Cadena ALS (ALS-AIC) es una técnica de sudoku que usa como eslabón de una AIC un conjunto casi bloqueado (ALS), un grupo con un candidato más que celdas; como uno de sus dos extremos siempre es verdadero, eliminas ese número de las celdas que ven ambos extremos.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/es/techniques/als-chain.html">
 <meta name="twitter:card" content="summary_large_image">
@@ -44,7 +44,7 @@
     {
       "@type": "Article",
       "headline": "Cadena ALS (ALS-AIC): técnica de sudoku y cómo encontrarla",
-      "description": "La Cadena ALS (ALS-AIC) es una técnica de sudoku que usa como eslabón de una AIC un conjunto casi bloqueado (ALS), un grupo con un candidato más que celdas; como uno de sus dos extremos siempre es verdadero, eliminas ese candidato de las celdas que ven ambos extremos.",
+      "description": "La Cadena ALS (ALS-AIC) es una técnica de sudoku que usa como eslabón de una AIC un conjunto casi bloqueado (ALS), un grupo con un candidato más que celdas; como uno de sus dos extremos siempre es verdadero, eliminas ese número de las celdas que ven ambos extremos.",
       "inLanguage": "es",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/es/techniques/als-chain.html",
       "author": { "@type": "Organization", "name": "Sudoku League", "url": "https://sudoku.jaywithme.com/" },
@@ -236,7 +236,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="eyebrow">SUDOKU TECHNIQUE · Etapa 9 · ALS (conjuntos casi bloqueados)</p>
       <h1>Cadena ALS</h1>
       <p class="aka">ALS-AIC · ALS Chain</p>
-      <p class="lead">La Cadena ALS (ALS-AIC) es una técnica de sudoku que usa como eslabón de una AIC un conjunto casi bloqueado (ALS), un grupo con un candidato más que celdas; como uno de sus dos extremos siempre es verdadero, eliminas ese candidato de las celdas que ven ambos extremos.</p>
+      <p class="lead">La Cadena ALS (ALS-AIC) es una técnica de sudoku que usa como eslabón de una AIC un conjunto casi bloqueado (ALS), un grupo con un candidato más que celdas; como uno de sus dos extremos siempre es verdadero, eliminas ese número de las celdas que ven ambos extremos.</p>
       <dl class="facts">
         <div class="px"><dt>Qué necesitas</dt><dd>Una AIC que incluya un ALS</dd></div>
         <div class="px"><dt>ALS</dt><dd>N celdas con N+1 candidatos</dd></div>
@@ -279,7 +279,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 </svg>
         <div class="legend">
           <span><i class="k-pivot"></i>Extremos de la cadena (7)</span>
-          <span><i class="k-key"></i>Mitad de la cadena</span>
+          <span><i class="k-key"></i>Eslabones intermedios</span>
           <span><i class="k-z"></i>El ALS (dos celdas, 3, 7 y 9)</span>
           <span><i class="k-del"></i>7 que se puede eliminar</span>
         </div>

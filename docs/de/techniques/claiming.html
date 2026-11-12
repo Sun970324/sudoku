@@ -239,18 +239,18 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">Die Block-Linien-Reduktion (Claiming) ist eine Sudoku-Technik: Liegen alle Kandidaten einer Ziffer in einer Zeile oder Spalte in nur einem Block, streichst du diese Ziffer aus den übrigen Feldern dieses Blocks.</p>
       <dl class="facts">
         <div class="px"><dt>Ziffern im Blick</dt><dd>Eine</dd></div>
-        <div class="px"><dt>Wo</dt><dd>Eine Linie und ein Block darauf</dd></div>
-        <div class="px"><dt>Was streichen</dt><dd>Gleicher Block, außerhalb der Linie</dd></div>
+        <div class="px"><dt>Wo</dt><dd>Eine Linie und ein Block, den sie kreuzt</dd></div>
+        <div class="px"><dt>Wo streichen</dt><dd>Gleicher Block, außerhalb der Linie</dd></div>
       </dl>
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht <span class="nowrap">Block-Linien-Reduktion</span> aus</h2>
+      <h2 id="shape">Das Muster: <span class="nowrap">Block-Linien-Reduktion</span></h2>
       <p>Das Bild zeigt nur die Ziffer 6. In <b>Zeile 5</b> kann die 6 nur in R5C4 oder R5C6 stehen, beide in <b>Block 5</b>.</p>
       <div class="board px">
-        <svg viewBox="0 0 400 400" role="img" aria-label="Nur die Kandidaten für 6. In Zeile 5 steht die 6 nur in R5C4 und R5C6 in Block 5, also wird die 6 in R4C5 und R6C4 desselben Blocks gestrichen.">
-<defs><clipPath id="board-view-cpp0s0"><rect x="30" y="30" width="360" height="360"/></clipPath></defs>
-<g clip-path="url(#board-view-cpp0s0)">
+        <svg viewBox="0 0 400 400" role="img" aria-label="Nur die Kandidaten für 6. In Zeile 5 kann die 6 nur in R5C4 oder R5C6 in Block 5 stehen, also wird die 6 in R4C5 und R6C4 desselben Blocks gestrichen.">
+<defs><clipPath id="board-view-9jmy1h"><rect x="30" y="30" width="360" height="360"/></clipPath></defs>
+<g clip-path="url(#board-view-9jmy1h)">
 <rect x="30" y="30" width="360" height="360" fill="#0e1d42"/>
 <rect x="150" y="150" width="120" height="120" fill="#16306a"/>
 <rect x="30" y="190" width="360" height="40" fill="#1d3a7a"/>
@@ -287,7 +287,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du <span class="nowrap">Block-Linien-Reduktion</span></h2>
+      <h2 id="find"><span class="nowrap">Block-Linien-Reduktion</span> Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Wähle eine Zeile oder Spalte und <b>eine Ziffer</b>.</span></li>
         <li class="px"><span>Prüfe, ob alle ihre Kandidaten auf dieser Linie <b>in einem Block</b> liegen.</span></li>
@@ -322,19 +322,19 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">Block-Linien-Reduktion</span></h2>
-        <p>Wenn du nicht weiterkommst, markiert ein Tipp die Kandidaten auf der Linie und die Felder zum Streichen im Block. Im Technik-Training lernst du die Block-Linien-Reduktion an einem echten Rätsel. Auf dem ersten Brett siehst du Muster und Grund, auf dem nächsten findest du es selbst.</p>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">Block-Linien-Reduktion</span></h2>
+        <p>Wenn du nicht weiterkommst, markiert ein Tipp die Kandidaten auf der Linie und die Felder zum Streichen im Block. Im Technik-Training lernst du die Block-Linien-Reduktion an einem echten Rätsel. Im ersten Rätsel siehst du Muster und Grund, im nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-claiming&amp;mt=8" data-goatcounter-click="store-ios/tech-de/claiming"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-de-claiming" data-goatcounter-click="store-android/tech-de/claiming"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Jetzt bei Google Play"></a>
         </div>
       </div>
-      <div class="phone px" data-nosnippet><img src="../../img/tech/claiming.webp" loading="lazy" alt="Echtes Sudoku-League-Brett mit einem Tipp zur Block-Linien-Reduktion"></div>
+      <div class="phone px" data-nosnippet><img src="../../img/tech/claiming.webp" loading="lazy" alt="Echtes Spielfeld in Sudoku League mit einem Tipp zur Block-Linien-Reduktion"></div>
     </section>
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/claiming">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

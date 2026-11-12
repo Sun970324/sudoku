@@ -244,7 +244,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="lead">トリプルファイアワーク（Triple Firework）は、ブロック内の1マスと、同じ行・列にあるブロック外の2マスが3つの数字を分け合うしかないとき、その3マスから3つの数字以外の候補を消すナンプレのテクニックです。</p>
       <dl class="facts">
         <div class="px"><dt>必要なマス</dt><dd>ブロック内1マス + 同じ行1マス + 同じ列1マス</dd></div>
-        <div class="px"><dt>見る数字</dt><dd>3つ</dd></div>
+        <div class="px"><dt>注目する数字</dt><dd>3つ</dd></div>
         <div class="px"><dt>消すもの</dt><dd>3マスのほかの候補</dd></div>
       </dl>
     </div>
@@ -304,7 +304,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
         <div class="px"><b>すると2行目の1は</b><span>ブロック外の候補はR2C7だけなので、ブロック内の2行目のマスに入ります。</span></div>
         <div class="px"><b>そして2列目の1は</b><span>ブロック外の候補はR8C2だけなので、ブロック内の2列目のマスに入ります。</span></div>
       </div>
-      <p>ブロックに1は1つだけなので、2つは同じマスでなければなりません。2行目でもあり2列目でもあるマス、つまりR2C2です。だから<b>1は3マスのどこかに必ずあります。</b>5と8も同じです。3つの数字が3マスに1つずつ入るので、3マスにはほかの数字が入る余地がありません。だからR2C2の3、R2C7の6、R8C2の9を消します。</p>
+      <p>ブロックに1は1つだけなので、2つは同じマスでなければなりません。2行目でもあり2列目でもあるマス、つまりR2C2です。つまり<b>1は3マスのどこかに必ずあります。</b>5と8も同じです。3つの数字が3マスに1つずつ入るので、3マスにはほかの数字が入る余地がありません。そこで、R2C2の3、R2C7の6、R8C2の9を消します。</p>
     </section>
 
     <section aria-labelledby="find">
@@ -331,7 +331,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="related">
-      <h2 id="related">似ているテクニック</h2>
+      <h2 id="related">似たテクニック</h2>
       <div class="related">
         <a class="px" href="sue-de-coq.html">スー・デ・コック</a>
         <a class="px" href="hidden-single.html">ヒドゥンシングル</a>

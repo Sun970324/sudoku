@@ -245,8 +245,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </div>
 
     <section aria-labelledby="shape">
-      <h2 id="shape">So sieht <span class="nowrap">X-Kette</span> aus</h2>
-      <p>Das Bild zeigt nur die Ziffer 8. Durchgezogene Linien sind <b>starke Verbindungen</b>: Auf dieser Linie gibt es genau zwei Kandidaten für 8. Ist einer keine 8, ist es der andere. Gestrichelte Linien sind <b>schwache Verbindungen</b>: Zwei Felder auf derselben Linie können nicht beide 8 sein. Die Kette beginnt bei R3C5 und endet bei R1C8.</p>
+      <h2 id="shape">Das Muster: <span class="nowrap">X-Kette</span></h2>
+      <p>Das Bild zeigt nur die Ziffer 8. Durchgezogene Linien sind <b>starke Verbindungen</b>: In dieser Zeile oder Spalte gibt es genau zwei Kandidaten für 8. Ist einer keine 8, ist es der andere. Gestrichelte Linien sind <b>schwache Verbindungen</b>: Zwei Felder in derselben Zeile oder Spalte können nicht beide 8 sein. Die Kette beginnt bei R3C5 und endet bei R1C8.</p>
       <div class="board px">
         <svg viewBox="0 0 400 400" role="img" aria-label="Nur die Kandidaten für 8. Eine Kette läuft von R3C5 über R7C5, R7C2, R5C2 und R5C8 bis R1C8, abwechselnd mit starken und schwachen Verbindungen. Die 8 in R1C6 und R3C9, die beide Enden sehen, wird entfernt.">
 <defs><clipPath id="board-view-7kt2bq"><rect x="30" y="30" width="360" height="360"/></clipPath></defs>
@@ -290,7 +290,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
 
     <section aria-labelledby="why">
       <h2 id="why">Warum klappt das?</h2>
-      <p>Angenommen, der Start R3C5 ist keine 8. Dann legen die Verbindungen der Reihe nach den Rest fest.</p>
+      <p>Angenommen, das Startfeld R3C5 ist keine 8. Dann legen die Verbindungen der Reihe nach den Rest fest.</p>
       <div class="why">
         <div class="px"><b>Stark</b><span>Spalte 5: Ist Zeile 3 keine 8, ist es Zeile 7. Spalte 2: Ist es Zeile 7 nicht, dann Zeile 5. Spalte 8: Ist es Zeile 5 nicht, dann Zeile 1.</span></div>
         <div class="px"><b>Schwach</b><span>Zeile 7: Ist R7C5 eine 8, ist R7C2 keine. Zeile 5: Ist R5C2 eine 8, ist R5C8 keine.</span></div>
@@ -299,7 +299,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     </section>
 
     <section aria-labelledby="find">
-      <h2 id="find">So findest du <span class="nowrap">X-Kette</span></h2>
+      <h2 id="find"><span class="nowrap">X-Kette</span> Schritt für Schritt finden</h2>
       <ol class="steps">
         <li class="px"><span>Wähl <b>eine Ziffer</b> und such <b>Zeilen, Spalten oder Blöcke mit genau zwei Kandidaten</b> dafür. Das sind starke Verbindungen.</span></li>
         <li class="px"><span>Geh vom Ende einer starken Verbindung zu einem anderen Kandidaten in derselben Zeile, Spalte oder im selben Block (schwache Verbindung) und <b>häng die nächste starke Verbindung an.</b></span></li>
@@ -317,7 +317,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <h2 id="faq">Häufige Fragen</h2>
       <div class="qa">
         <details class="px" open><summary>Wie lang darf die Kette sein?</summary><p>Es gibt kein Limit. Sie muss nur mit starken Verbindungen beginnen und enden und dazwischen abwechseln.</p></details>
-        <details class="px"><summary>Kann eine schwache Verbindung eine starke ersetzen?</summary><p>Nein. Eine starke Verbindung braucht "wenn nicht hier, dann dort". Das gilt nur, wo eine Zeile, Spalte oder ein Block genau zwei Kandidaten hat. Ein Platz für eine schwache Verbindung darf aber eine starke sein.</p></details>
+        <details class="px"><summary>Kann eine schwache Verbindung eine starke ersetzen?</summary><p>Nein. Eine starke Verbindung braucht "wenn nicht hier, dann dort". Das gilt nur, wo eine Zeile, Spalte oder ein Block genau zwei Kandidaten hat. An der Stelle einer schwachen Verbindung darf aber auch eine starke stehen.</p></details>
         <details class="px"><summary>Kann eine Kette mehrere Ziffern nutzen?</summary><p>Ja. Eine Kette, die die Ziffer wechselt, ist eine AIC. Eine X-Kette ist eine AIC mit nur einer Ziffer.</p></details>
       </div>
     </section>
@@ -335,8 +335,8 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <section class="app px" aria-labelledby="app">
       <div>
         <p class="eyebrow">IN DER APP SUDOKU LEAGUE</p>
-        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir <span class="nowrap">X-Kette</span></h2>
-        <p>Wenn du nicht weiterkommst, zeichnet ein Tipp die Kette Glied für Glied aufs Brett. Im Technik-Training lernst du X-Kette an einem echten Rätsel. Auf dem ersten Brett zeigen wir dir Muster und Grund, auf dem nächsten findest du es selbst.</p>
+        <h2 id="app">Steckst du fest? Ein Tipp zeigt dir: <span class="nowrap">X-Kette</span></h2>
+        <p>Wenn du nicht weiterkommst, zeichnet ein Tipp die Kette Glied für Glied aufs Brett. Im Technik-Training lernst du die Technik X-Kette an einem echten Rätsel. Auf dem ersten Brett zeigen wir dir das Muster und warum es funktioniert, auf dem nächsten findest du es selbst.</p>
         <div class="badges" data-nosnippet>
           <a href="https://apps.apple.com/app/apple-store/id6794986328?pt=129224023&amp;ct=tech-de-x-chain&amp;mt=8" data-goatcounter-click="store-ios/tech-de/x-chain"><img src="../../img/badges/apple_en.svg" width="132" height="44" alt="Laden im App Store"></a>
           <a href="https://play.google.com/store/apps/details?id=jaywithme.sudoku&amp;utm_source=sudoku.jaywithme.com&amp;utm_medium=web&amp;utm_campaign=tech-de-x-chain" data-goatcounter-click="store-android/tech-de/x-chain"><img src="../../img/badges/gp_en.png" width="148" height="44" alt="Jetzt bei Google Play"></a>
@@ -347,7 +347,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
     <a class="event-ticket" data-nosnippet href="../../de/#coupon" data-goatcounter-click="coupon-bar/tech-de/x-chain">
       <div class="ticket-main px">
         <p class="ticket-brand">EVENT · SUDOKU LEAGUE PREMIUM</p>
-        <p class="ticket-big">1 MONAT FREI</p>
+        <p class="ticket-big">1 MONAT GRATIS</p>
         <p class="ticket-perks">Unbegrenzte Tipps · Replay · 6 Themen · Technik-Übungen</p>
         <span class="ticket-go px">Gutschein holen ▸</span>
       </div>

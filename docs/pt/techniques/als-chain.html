@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cadeia ALS (ALS-AIC): técnica de sudoku, como achar e por quê</title>
+<title>Cadeia ALS (ALS-AIC): como achar e por que funciona</title>
 <meta name="description" content="A Cadeia ALS (ALS-AIC) é uma técnica de sudoku que usa como elo de uma AIC um grupo com um candidato a mais que células (ALS), e como uma das duas pontas sempre é verdadeira, elimina o candidato de toda célula que vê as duas pontas. Uma técnica avançada que usa um grupo quase travado de células como elo da cadeia.">
 <link rel="canonical" href="https://sudoku.jaywithme.com/pt/techniques/als-chain.html">
 <link rel="alternate" hreflang="ko" href="https://sudoku.jaywithme.com/techniques/als-chain.html">
@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Sudoku League">
 <meta property="og:locale" content="pt_BR">
-<meta property="og:title" content="Cadeia ALS (ALS-AIC): técnica de sudoku, como achar e por quê">
+<meta property="og:title" content="Cadeia ALS (ALS-AIC): como achar e por que funciona">
 <meta property="og:description" content="A Cadeia ALS (ALS-AIC) é uma técnica de sudoku que usa como elo de uma AIC um grupo com um candidato a mais que células (ALS), e como uma das duas pontas sempre é verdadeira, elimina o candidato de toda célula que vê as duas pontas.">
 <meta property="og:image" content="https://sudoku.jaywithme.com/img/og.png">
 <meta property="og:url" content="https://sudoku.jaywithme.com/pt/techniques/als-chain.html">
@@ -43,7 +43,7 @@
     },
     {
       "@type": "Article",
-      "headline": "Cadeia ALS (ALS-AIC): técnica de sudoku, como achar e por quê",
+      "headline": "Cadeia ALS (ALS-AIC): como achar e por que funciona",
       "description": "A Cadeia ALS (ALS-AIC) é uma técnica de sudoku que usa como elo de uma AIC um grupo com um candidato a mais que células (ALS), e como uma das duas pontas sempre é verdadeira, elimina o candidato de toda célula que vê as duas pontas.",
       "inLanguage": "pt",
       "mainEntityOfPage": "https://sudoku.jaywithme.com/pt/techniques/als-chain.html",
@@ -238,7 +238,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <p class="aka">ALS-AIC · ALS Chain</p>
       <p class="lead">A Cadeia ALS (ALS-AIC) é uma técnica de sudoku que usa como elo de uma AIC um grupo com um candidato a mais que células (ALS), e como uma das duas pontas sempre é verdadeira, elimina o candidato de toda célula que vê as duas pontas.</p>
       <dl class="facts">
-        <div class="px"><dt>O que precisa</dt><dd>Uma AIC com um ALS</dd></div>
+        <div class="px"><dt>Do que precisa</dt><dd>Uma AIC com um ALS</dd></div>
         <div class="px"><dt>ALS</dt><dd>N células com N+1 candidatos</dd></div>
         <div class="px"><dt>O que eliminar</dt><dd>Células que veem as duas pontas</dd></div>
       </dl>
@@ -301,7 +301,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
       <ol class="steps">
         <li class="px"><span>Procure um <b>ALS</b>, um grupo com um candidato a mais que células. Por exemplo, duas células de uma linha, coluna ou bloco com três candidatos.</span></li>
         <li class="px"><span>Entre por um candidato que <b>vê todas as cópias de um número do ALS</b> (elo fraco) e saia por <b>outro número</b> do ALS (elo forte).</span></li>
-        <li class="px"><span>Se a cadeia começa e termina com elos fortes, elimine nas <b>células que veem as duas pontas</b>.</span></li>
+        <li class="px"><span>Se a cadeia começa e termina com elos fortes, elimine o candidato das <b>células que veem as duas pontas</b>.</span></li>
       </ol>
     </section>
     <section aria-labelledby="try">
@@ -396,7 +396,7 @@ header.top { --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-
   "lesson.find": "Encontre e toque",
   "lesson.restart": "Recomeçar",
   "lesson.nextTech": "Próxima técnica",
-  "lesson.app": "Sudokus reais no app",
+  "lesson.app": "Jogar sudokus no app",
   "lesson.fail": "Não foi possível carregar a lição. Atualize a página."
 }
 </script>
